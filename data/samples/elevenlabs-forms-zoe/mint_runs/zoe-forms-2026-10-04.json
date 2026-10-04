@@ -1,0 +1,3039 @@
+{
+  "schemaVersion": 1,
+  "runId": "zoe-forms-2026-10-04",
+  "label": "Zoe forms seed (378)",
+  "note": "Zoe form surfaces, plain only, not published",
+  "batch": "elevenlabs-forms-zoe",
+  "createdAt": "2026-10-04T02:44:48.721Z",
+  "voice": {
+    "label": "Zoe",
+    "voice_id": "fkNQrdHI0J7vOhlSK5fE",
+    "model": "eleven_v4"
+  },
+  "items": [
+    {
+      "slot": "utt_f0005",
+      "spokenText": "wants",
+      "slug": "wants",
+      "takeRel": "elevenlabs-forms-zoe/takes/wants_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0007",
+      "spokenText": "wanting",
+      "slug": "wanting",
+      "takeRel": "elevenlabs-forms-zoe/takes/wanting_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0009",
+      "spokenText": "likes",
+      "slug": "likes",
+      "takeRel": "elevenlabs-forms-zoe/takes/likes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0011",
+      "spokenText": "liking",
+      "slug": "liking",
+      "takeRel": "elevenlabs-forms-zoe/takes/liking_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0013",
+      "spokenText": "goes",
+      "slug": "goes",
+      "takeRel": "elevenlabs-forms-zoe/takes/goes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0015",
+      "spokenText": "going",
+      "slug": "going",
+      "takeRel": "elevenlabs-forms-zoe/takes/going_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0017",
+      "spokenText": "comes",
+      "slug": "comes",
+      "takeRel": "elevenlabs-forms-zoe/takes/comes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0019",
+      "spokenText": "coming",
+      "slug": "coming",
+      "takeRel": "elevenlabs-forms-zoe/takes/coming_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0021",
+      "spokenText": "gets",
+      "slug": "gets",
+      "takeRel": "elevenlabs-forms-zoe/takes/gets_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0023",
+      "spokenText": "getting",
+      "slug": "getting",
+      "takeRel": "elevenlabs-forms-zoe/takes/getting_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0025",
+      "spokenText": "makes",
+      "slug": "makes",
+      "takeRel": "elevenlabs-forms-zoe/takes/makes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0027",
+      "spokenText": "making",
+      "slug": "making",
+      "takeRel": "elevenlabs-forms-zoe/takes/making_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0029",
+      "spokenText": "does",
+      "slug": "does",
+      "takeRel": "elevenlabs-forms-zoe/takes/does_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0031",
+      "spokenText": "doing",
+      "slug": "doing",
+      "takeRel": "elevenlabs-forms-zoe/takes/doing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0033",
+      "spokenText": "sees",
+      "slug": "sees",
+      "takeRel": "elevenlabs-forms-zoe/takes/sees_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0035",
+      "spokenText": "seeing",
+      "slug": "seeing",
+      "takeRel": "elevenlabs-forms-zoe/takes/seeing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0037",
+      "spokenText": "looks",
+      "slug": "looks",
+      "takeRel": "elevenlabs-forms-zoe/takes/looks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0039",
+      "spokenText": "looking",
+      "slug": "looking",
+      "takeRel": "elevenlabs-forms-zoe/takes/looking_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0041",
+      "spokenText": "puts",
+      "slug": "puts",
+      "takeRel": "elevenlabs-forms-zoe/takes/puts_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0043",
+      "spokenText": "putting",
+      "slug": "putting",
+      "takeRel": "elevenlabs-forms-zoe/takes/putting_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0045",
+      "spokenText": "takes",
+      "slug": "takes",
+      "takeRel": "elevenlabs-forms-zoe/takes/takes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0047",
+      "spokenText": "taking",
+      "slug": "taking",
+      "takeRel": "elevenlabs-forms-zoe/takes/taking_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0049",
+      "spokenText": "gives",
+      "slug": "gives",
+      "takeRel": "elevenlabs-forms-zoe/takes/gives_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0051",
+      "spokenText": "giving",
+      "slug": "giving",
+      "takeRel": "elevenlabs-forms-zoe/takes/giving_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0053",
+      "spokenText": "helps",
+      "slug": "helps",
+      "takeRel": "elevenlabs-forms-zoe/takes/helps_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0055",
+      "spokenText": "helping",
+      "slug": "helping",
+      "takeRel": "elevenlabs-forms-zoe/takes/helping_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0057",
+      "spokenText": "stops",
+      "slug": "stops",
+      "takeRel": "elevenlabs-forms-zoe/takes/stops_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0059",
+      "spokenText": "stopping",
+      "slug": "stopping",
+      "takeRel": "elevenlabs-forms-zoe/takes/stopping_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0061",
+      "spokenText": "plays",
+      "slug": "plays",
+      "takeRel": "elevenlabs-forms-zoe/takes/plays_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0063",
+      "spokenText": "playing",
+      "slug": "playing",
+      "takeRel": "elevenlabs-forms-zoe/takes/playing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0065",
+      "spokenText": "eats",
+      "slug": "eats",
+      "takeRel": "elevenlabs-forms-zoe/takes/eats_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0067",
+      "spokenText": "eating",
+      "slug": "eating",
+      "takeRel": "elevenlabs-forms-zoe/takes/eating_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0069",
+      "spokenText": "drinks",
+      "slug": "drinks",
+      "takeRel": "elevenlabs-forms-zoe/takes/drinks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0071",
+      "spokenText": "drinking",
+      "slug": "drinking",
+      "takeRel": "elevenlabs-forms-zoe/takes/drinking_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0073",
+      "spokenText": "opens",
+      "slug": "opens",
+      "takeRel": "elevenlabs-forms-zoe/takes/opens_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0075",
+      "spokenText": "opening",
+      "slug": "opening",
+      "takeRel": "elevenlabs-forms-zoe/takes/opening_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0077",
+      "spokenText": "turns",
+      "slug": "turns",
+      "takeRel": "elevenlabs-forms-zoe/takes/turns_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0079",
+      "spokenText": "turning",
+      "slug": "turning",
+      "takeRel": "elevenlabs-forms-zoe/takes/turning_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0081",
+      "spokenText": "reads",
+      "slug": "reads",
+      "takeRel": "elevenlabs-forms-zoe/takes/reads_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0083",
+      "spokenText": "reading",
+      "slug": "reading",
+      "takeRel": "elevenlabs-forms-zoe/takes/reading_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0085",
+      "spokenText": "needs",
+      "slug": "needs",
+      "takeRel": "elevenlabs-forms-zoe/takes/needs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0087",
+      "spokenText": "needing",
+      "slug": "needing",
+      "takeRel": "elevenlabs-forms-zoe/takes/needing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0089",
+      "spokenText": "feels",
+      "slug": "feels",
+      "takeRel": "elevenlabs-forms-zoe/takes/feels_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0091",
+      "spokenText": "feeling",
+      "slug": "feeling",
+      "takeRel": "elevenlabs-forms-zoe/takes/feeling_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0093",
+      "spokenText": "tells",
+      "slug": "tells",
+      "takeRel": "elevenlabs-forms-zoe/takes/tells_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0095",
+      "spokenText": "telling",
+      "slug": "telling",
+      "takeRel": "elevenlabs-forms-zoe/takes/telling_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0097",
+      "spokenText": "thinks",
+      "slug": "thinks",
+      "takeRel": "elevenlabs-forms-zoe/takes/thinks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0099",
+      "spokenText": "thinking",
+      "slug": "thinking",
+      "takeRel": "elevenlabs-forms-zoe/takes/thinking_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0101",
+      "spokenText": "finds",
+      "slug": "finds",
+      "takeRel": "elevenlabs-forms-zoe/takes/finds_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0103",
+      "spokenText": "finding",
+      "slug": "finding",
+      "takeRel": "elevenlabs-forms-zoe/takes/finding_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0105",
+      "spokenText": "works",
+      "slug": "works",
+      "takeRel": "elevenlabs-forms-zoe/takes/works_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0107",
+      "spokenText": "working",
+      "slug": "working",
+      "takeRel": "elevenlabs-forms-zoe/takes/working_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0109",
+      "spokenText": "waits",
+      "slug": "waits",
+      "takeRel": "elevenlabs-forms-zoe/takes/waits_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0111",
+      "spokenText": "waiting",
+      "slug": "waiting",
+      "takeRel": "elevenlabs-forms-zoe/takes/waiting_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0114",
+      "spokenText": "having",
+      "slug": "having",
+      "takeRel": "elevenlabs-forms-zoe/takes/having_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0116",
+      "spokenText": "hurts",
+      "slug": "hurts",
+      "takeRel": "elevenlabs-forms-zoe/takes/hurts_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0118",
+      "spokenText": "hurting",
+      "slug": "hurting",
+      "takeRel": "elevenlabs-forms-zoe/takes/hurting_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0120",
+      "spokenText": "coughs",
+      "slug": "coughs",
+      "takeRel": "elevenlabs-forms-zoe/takes/coughs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0122",
+      "spokenText": "coughing",
+      "slug": "coughing",
+      "takeRel": "elevenlabs-forms-zoe/takes/coughing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0124",
+      "spokenText": "runs",
+      "slug": "runs",
+      "takeRel": "elevenlabs-forms-zoe/takes/runs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0126",
+      "spokenText": "running",
+      "slug": "running",
+      "takeRel": "elevenlabs-forms-zoe/takes/running_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0128",
+      "spokenText": "jumps",
+      "slug": "jumps",
+      "takeRel": "elevenlabs-forms-zoe/takes/jumps_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0130",
+      "spokenText": "jumping",
+      "slug": "jumping",
+      "takeRel": "elevenlabs-forms-zoe/takes/jumping_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0132",
+      "spokenText": "walks",
+      "slug": "walks",
+      "takeRel": "elevenlabs-forms-zoe/takes/walks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0134",
+      "spokenText": "walking",
+      "slug": "walking",
+      "takeRel": "elevenlabs-forms-zoe/takes/walking_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0136",
+      "spokenText": "sits",
+      "slug": "sits",
+      "takeRel": "elevenlabs-forms-zoe/takes/sits_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0138",
+      "spokenText": "sitting",
+      "slug": "sitting",
+      "takeRel": "elevenlabs-forms-zoe/takes/sitting_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0140",
+      "spokenText": "stands",
+      "slug": "stands",
+      "takeRel": "elevenlabs-forms-zoe/takes/stands_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0142",
+      "spokenText": "standing",
+      "slug": "standing",
+      "takeRel": "elevenlabs-forms-zoe/takes/standing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0144",
+      "spokenText": "climbs",
+      "slug": "climbs",
+      "takeRel": "elevenlabs-forms-zoe/takes/climbs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0146",
+      "spokenText": "climbing",
+      "slug": "climbing",
+      "takeRel": "elevenlabs-forms-zoe/takes/climbing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0148",
+      "spokenText": "dances",
+      "slug": "dances",
+      "takeRel": "elevenlabs-forms-zoe/takes/dances_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0150",
+      "spokenText": "dancing",
+      "slug": "dancing",
+      "takeRel": "elevenlabs-forms-zoe/takes/dancing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0152",
+      "spokenText": "swims",
+      "slug": "swims",
+      "takeRel": "elevenlabs-forms-zoe/takes/swims_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0154",
+      "spokenText": "swimming",
+      "slug": "swimming",
+      "takeRel": "elevenlabs-forms-zoe/takes/swimming_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0156",
+      "spokenText": "rides",
+      "slug": "rides",
+      "takeRel": "elevenlabs-forms-zoe/takes/rides_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0158",
+      "spokenText": "riding",
+      "slug": "riding",
+      "takeRel": "elevenlabs-forms-zoe/takes/riding_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0160",
+      "spokenText": "crawls",
+      "slug": "crawls",
+      "takeRel": "elevenlabs-forms-zoe/takes/crawls_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0162",
+      "spokenText": "crawling",
+      "slug": "crawling",
+      "takeRel": "elevenlabs-forms-zoe/takes/crawling_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0164",
+      "spokenText": "kicks",
+      "slug": "kicks",
+      "takeRel": "elevenlabs-forms-zoe/takes/kicks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0166",
+      "spokenText": "kicking",
+      "slug": "kicking",
+      "takeRel": "elevenlabs-forms-zoe/takes/kicking_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0168",
+      "spokenText": "throws",
+      "slug": "throws",
+      "takeRel": "elevenlabs-forms-zoe/takes/throws_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0170",
+      "spokenText": "throwing",
+      "slug": "throwing",
+      "takeRel": "elevenlabs-forms-zoe/takes/throwing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0172",
+      "spokenText": "catches",
+      "slug": "catches",
+      "takeRel": "elevenlabs-forms-zoe/takes/catches_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0174",
+      "spokenText": "catching",
+      "slug": "catching",
+      "takeRel": "elevenlabs-forms-zoe/takes/catching_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0176",
+      "spokenText": "pushes",
+      "slug": "pushes",
+      "takeRel": "elevenlabs-forms-zoe/takes/pushes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0178",
+      "spokenText": "pushing",
+      "slug": "pushing",
+      "takeRel": "elevenlabs-forms-zoe/takes/pushing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0180",
+      "spokenText": "pulls",
+      "slug": "pulls",
+      "takeRel": "elevenlabs-forms-zoe/takes/pulls_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0182",
+      "spokenText": "pulling",
+      "slug": "pulling",
+      "takeRel": "elevenlabs-forms-zoe/takes/pulling_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0184",
+      "spokenText": "swings",
+      "slug": "swings",
+      "takeRel": "elevenlabs-forms-zoe/takes/swings_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0187",
+      "spokenText": "slides",
+      "slug": "slides",
+      "takeRel": "elevenlabs-forms-zoe/takes/slides_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0189",
+      "spokenText": "sliding",
+      "slug": "sliding",
+      "takeRel": "elevenlabs-forms-zoe/takes/sliding_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0191",
+      "spokenText": "falls",
+      "slug": "falls",
+      "takeRel": "elevenlabs-forms-zoe/takes/falls_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0193",
+      "spokenText": "falling",
+      "slug": "falling",
+      "takeRel": "elevenlabs-forms-zoe/takes/falling_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0195",
+      "spokenText": "carries",
+      "slug": "carries",
+      "takeRel": "elevenlabs-forms-zoe/takes/carries_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0197",
+      "spokenText": "carrying",
+      "slug": "carrying",
+      "takeRel": "elevenlabs-forms-zoe/takes/carrying_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0199",
+      "spokenText": "drops",
+      "slug": "drops",
+      "takeRel": "elevenlabs-forms-zoe/takes/drops_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0201",
+      "spokenText": "dropping",
+      "slug": "dropping",
+      "takeRel": "elevenlabs-forms-zoe/takes/dropping_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0203",
+      "spokenText": "writes",
+      "slug": "writes",
+      "takeRel": "elevenlabs-forms-zoe/takes/writes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0205",
+      "spokenText": "writing",
+      "slug": "writing",
+      "takeRel": "elevenlabs-forms-zoe/takes/writing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0207",
+      "spokenText": "draws",
+      "slug": "draws",
+      "takeRel": "elevenlabs-forms-zoe/takes/draws_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0209",
+      "spokenText": "drawing",
+      "slug": "drawing",
+      "takeRel": "elevenlabs-forms-zoe/takes/drawing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0211",
+      "spokenText": "colors",
+      "slug": "colors",
+      "takeRel": "elevenlabs-forms-zoe/takes/colors_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0213",
+      "spokenText": "coloring",
+      "slug": "coloring",
+      "takeRel": "elevenlabs-forms-zoe/takes/coloring_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0215",
+      "spokenText": "paints",
+      "slug": "paints",
+      "takeRel": "elevenlabs-forms-zoe/takes/paints_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0217",
+      "spokenText": "painting",
+      "slug": "painting",
+      "takeRel": "elevenlabs-forms-zoe/takes/painting_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0219",
+      "spokenText": "cuts",
+      "slug": "cuts",
+      "takeRel": "elevenlabs-forms-zoe/takes/cuts_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0221",
+      "spokenText": "cutting",
+      "slug": "cutting",
+      "takeRel": "elevenlabs-forms-zoe/takes/cutting_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0223",
+      "spokenText": "glues",
+      "slug": "glues",
+      "takeRel": "elevenlabs-forms-zoe/takes/glues_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0225",
+      "spokenText": "gluing",
+      "slug": "gluing",
+      "takeRel": "elevenlabs-forms-zoe/takes/gluing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0227",
+      "spokenText": "listens",
+      "slug": "listens",
+      "takeRel": "elevenlabs-forms-zoe/takes/listens_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0229",
+      "spokenText": "listening",
+      "slug": "listening",
+      "takeRel": "elevenlabs-forms-zoe/takes/listening_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0231",
+      "spokenText": "speaks",
+      "slug": "speaks",
+      "takeRel": "elevenlabs-forms-zoe/takes/speaks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0233",
+      "spokenText": "speaking",
+      "slug": "speaking",
+      "takeRel": "elevenlabs-forms-zoe/takes/speaking_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0235",
+      "spokenText": "talks",
+      "slug": "talks",
+      "takeRel": "elevenlabs-forms-zoe/takes/talks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0237",
+      "spokenText": "talking",
+      "slug": "talking",
+      "takeRel": "elevenlabs-forms-zoe/takes/talking_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0239",
+      "spokenText": "sings",
+      "slug": "sings",
+      "takeRel": "elevenlabs-forms-zoe/takes/sings_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0241",
+      "spokenText": "singing",
+      "slug": "singing",
+      "takeRel": "elevenlabs-forms-zoe/takes/singing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0243",
+      "spokenText": "counts",
+      "slug": "counts",
+      "takeRel": "elevenlabs-forms-zoe/takes/counts_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0245",
+      "spokenText": "counting",
+      "slug": "counting",
+      "takeRel": "elevenlabs-forms-zoe/takes/counting_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0247",
+      "spokenText": "shares",
+      "slug": "shares",
+      "takeRel": "elevenlabs-forms-zoe/takes/shares_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0249",
+      "spokenText": "sharing",
+      "slug": "sharing",
+      "takeRel": "elevenlabs-forms-zoe/takes/sharing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0251",
+      "spokenText": "cleans up",
+      "slug": "cleans_up",
+      "takeRel": "elevenlabs-forms-zoe/takes/cleans_up_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0253",
+      "spokenText": "cleaning up",
+      "slug": "cleaning_up",
+      "takeRel": "elevenlabs-forms-zoe/takes/cleaning_up_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0255",
+      "spokenText": "washes",
+      "slug": "washes",
+      "takeRel": "elevenlabs-forms-zoe/takes/washes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0257",
+      "spokenText": "washing",
+      "slug": "washing",
+      "takeRel": "elevenlabs-forms-zoe/takes/washing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0259",
+      "spokenText": "wipes",
+      "slug": "wipes",
+      "takeRel": "elevenlabs-forms-zoe/takes/wipes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0261",
+      "spokenText": "wiping",
+      "slug": "wiping",
+      "takeRel": "elevenlabs-forms-zoe/takes/wiping_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0263",
+      "spokenText": "cooks",
+      "slug": "cooks",
+      "takeRel": "elevenlabs-forms-zoe/takes/cooks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0265",
+      "spokenText": "cooking",
+      "slug": "cooking",
+      "takeRel": "elevenlabs-forms-zoe/takes/cooking_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0267",
+      "spokenText": "builds",
+      "slug": "builds",
+      "takeRel": "elevenlabs-forms-zoe/takes/builds_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0269",
+      "spokenText": "building",
+      "slug": "building",
+      "takeRel": "elevenlabs-forms-zoe/takes/building_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0271",
+      "spokenText": "fixes",
+      "slug": "fixes",
+      "takeRel": "elevenlabs-forms-zoe/takes/fixes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0273",
+      "spokenText": "fixing",
+      "slug": "fixing",
+      "takeRel": "elevenlabs-forms-zoe/takes/fixing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0275",
+      "spokenText": "holds",
+      "slug": "holds",
+      "takeRel": "elevenlabs-forms-zoe/takes/holds_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0277",
+      "spokenText": "holding",
+      "slug": "holding",
+      "takeRel": "elevenlabs-forms-zoe/takes/holding_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0279",
+      "spokenText": "touches",
+      "slug": "touches",
+      "takeRel": "elevenlabs-forms-zoe/takes/touches_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0281",
+      "spokenText": "touching",
+      "slug": "touching",
+      "takeRel": "elevenlabs-forms-zoe/takes/touching_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0283",
+      "spokenText": "knows",
+      "slug": "knows",
+      "takeRel": "elevenlabs-forms-zoe/takes/knows_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0285",
+      "spokenText": "knowing",
+      "slug": "knowing",
+      "takeRel": "elevenlabs-forms-zoe/takes/knowing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0287",
+      "spokenText": "remembers",
+      "slug": "remembers",
+      "takeRel": "elevenlabs-forms-zoe/takes/remembers_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0289",
+      "spokenText": "remembering",
+      "slug": "remembering",
+      "takeRel": "elevenlabs-forms-zoe/takes/remembering_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0291",
+      "spokenText": "forgets",
+      "slug": "forgets",
+      "takeRel": "elevenlabs-forms-zoe/takes/forgets_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0293",
+      "spokenText": "forgetting",
+      "slug": "forgetting",
+      "takeRel": "elevenlabs-forms-zoe/takes/forgetting_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0295",
+      "spokenText": "chooses",
+      "slug": "chooses",
+      "takeRel": "elevenlabs-forms-zoe/takes/chooses_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0297",
+      "spokenText": "choosing",
+      "slug": "choosing",
+      "takeRel": "elevenlabs-forms-zoe/takes/choosing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0299",
+      "spokenText": "shows",
+      "slug": "shows",
+      "takeRel": "elevenlabs-forms-zoe/takes/shows_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0301",
+      "spokenText": "showing",
+      "slug": "showing",
+      "takeRel": "elevenlabs-forms-zoe/takes/showing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0303",
+      "spokenText": "asks",
+      "slug": "asks",
+      "takeRel": "elevenlabs-forms-zoe/takes/asks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0305",
+      "spokenText": "asking",
+      "slug": "asking",
+      "takeRel": "elevenlabs-forms-zoe/takes/asking_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0307",
+      "spokenText": "hugs",
+      "slug": "hugs",
+      "takeRel": "elevenlabs-forms-zoe/takes/hugs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0309",
+      "spokenText": "hugging",
+      "slug": "hugging",
+      "takeRel": "elevenlabs-forms-zoe/takes/hugging_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0312",
+      "spokenText": "kissing",
+      "slug": "kissing",
+      "takeRel": "elevenlabs-forms-zoe/takes/kissing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0314",
+      "spokenText": "laughs",
+      "slug": "laughs",
+      "takeRel": "elevenlabs-forms-zoe/takes/laughs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0316",
+      "spokenText": "laughing",
+      "slug": "laughing",
+      "takeRel": "elevenlabs-forms-zoe/takes/laughing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0318",
+      "spokenText": "cries",
+      "slug": "cries",
+      "takeRel": "elevenlabs-forms-zoe/takes/cries_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0320",
+      "spokenText": "crying",
+      "slug": "crying",
+      "takeRel": "elevenlabs-forms-zoe/takes/crying_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0322",
+      "spokenText": "sleeps",
+      "slug": "sleeps",
+      "takeRel": "elevenlabs-forms-zoe/takes/sleeps_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0324",
+      "spokenText": "sleeping",
+      "slug": "sleeping",
+      "takeRel": "elevenlabs-forms-zoe/takes/sleeping_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0326",
+      "spokenText": "wakes up",
+      "slug": "wakes_up",
+      "takeRel": "elevenlabs-forms-zoe/takes/wakes_up_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0328",
+      "spokenText": "waking up",
+      "slug": "waking_up",
+      "takeRel": "elevenlabs-forms-zoe/takes/waking_up_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0330",
+      "spokenText": "rains",
+      "slug": "rains",
+      "takeRel": "elevenlabs-forms-zoe/takes/rains_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0332",
+      "spokenText": "raining",
+      "slug": "raining",
+      "takeRel": "elevenlabs-forms-zoe/takes/raining_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0334",
+      "spokenText": "doesn't",
+      "slug": "doesn_t",
+      "takeRel": "elevenlabs-forms-zoe/takes/doesn_t_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0336",
+      "spokenText": "be",
+      "slug": "be",
+      "takeRel": "elevenlabs-forms-zoe/takes/be_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0341",
+      "spokenText": "hits",
+      "slug": "hits",
+      "takeRel": "elevenlabs-forms-zoe/takes/hits_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0343",
+      "spokenText": "hitting",
+      "slug": "hitting",
+      "takeRel": "elevenlabs-forms-zoe/takes/hitting_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0345",
+      "spokenText": "bites",
+      "slug": "bites",
+      "takeRel": "elevenlabs-forms-zoe/takes/bites_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0347",
+      "spokenText": "biting",
+      "slug": "biting",
+      "takeRel": "elevenlabs-forms-zoe/takes/biting_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0349",
+      "spokenText": "breaks",
+      "slug": "breaks",
+      "takeRel": "elevenlabs-forms-zoe/takes/breaks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0351",
+      "spokenText": "breaking",
+      "slug": "breaking",
+      "takeRel": "elevenlabs-forms-zoe/takes/breaking_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0353",
+      "spokenText": "scratches",
+      "slug": "scratches",
+      "takeRel": "elevenlabs-forms-zoe/takes/scratches_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0355",
+      "spokenText": "scratching",
+      "slug": "scratching",
+      "takeRel": "elevenlabs-forms-zoe/takes/scratching_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0357",
+      "spokenText": "closes",
+      "slug": "closes",
+      "takeRel": "elevenlabs-forms-zoe/takes/closes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0359",
+      "spokenText": "closing",
+      "slug": "closing",
+      "takeRel": "elevenlabs-forms-zoe/takes/closing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0361",
+      "spokenText": "shuts",
+      "slug": "shuts",
+      "takeRel": "elevenlabs-forms-zoe/takes/shuts_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0363",
+      "spokenText": "shutting",
+      "slug": "shutting",
+      "takeRel": "elevenlabs-forms-zoe/takes/shutting_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0365",
+      "spokenText": "tickles",
+      "slug": "tickles",
+      "takeRel": "elevenlabs-forms-zoe/takes/tickles_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0367",
+      "spokenText": "tickling",
+      "slug": "tickling",
+      "takeRel": "elevenlabs-forms-zoe/takes/tickling_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0369",
+      "spokenText": "loves",
+      "slug": "loves",
+      "takeRel": "elevenlabs-forms-zoe/takes/loves_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0371",
+      "spokenText": "loving",
+      "slug": "loving",
+      "takeRel": "elevenlabs-forms-zoe/takes/loving_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0377",
+      "spokenText": "hers",
+      "slug": "hers",
+      "takeRel": "elevenlabs-forms-zoe/takes/hers_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0380",
+      "spokenText": "ours",
+      "slug": "ours",
+      "takeRel": "elevenlabs-forms-zoe/takes/ours_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0383",
+      "spokenText": "theirs",
+      "slug": "theirs",
+      "takeRel": "elevenlabs-forms-zoe/takes/theirs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0385",
+      "spokenText": "water's",
+      "slug": "water_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/water_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0387",
+      "spokenText": "pancakes",
+      "slug": "pancakes",
+      "takeRel": "elevenlabs-forms-zoe/takes/pancakes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0389",
+      "spokenText": "waffles",
+      "slug": "waffles",
+      "takeRel": "elevenlabs-forms-zoe/takes/waffles_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0391",
+      "spokenText": "bagels",
+      "slug": "bagels",
+      "takeRel": "elevenlabs-forms-zoe/takes/bagels_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0393",
+      "spokenText": "eggs",
+      "slug": "eggs",
+      "takeRel": "elevenlabs-forms-zoe/takes/eggs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0395",
+      "spokenText": "sandwiches",
+      "slug": "sandwiches",
+      "takeRel": "elevenlabs-forms-zoe/takes/sandwiches_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0397",
+      "spokenText": "chicken's",
+      "slug": "chicken_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/chicken_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0399",
+      "spokenText": "crackers",
+      "slug": "crackers",
+      "takeRel": "elevenlabs-forms-zoe/takes/crackers_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0401",
+      "spokenText": "cookies",
+      "slug": "cookies",
+      "takeRel": "elevenlabs-forms-zoe/takes/cookies_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0403",
+      "spokenText": "pretzels",
+      "slug": "pretzels",
+      "takeRel": "elevenlabs-forms-zoe/takes/pretzels_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0405",
+      "spokenText": "muffins",
+      "slug": "muffins",
+      "takeRel": "elevenlabs-forms-zoe/takes/muffins_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0407",
+      "spokenText": "donuts",
+      "slug": "donuts",
+      "takeRel": "elevenlabs-forms-zoe/takes/donuts_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0409",
+      "spokenText": "apples",
+      "slug": "apples",
+      "takeRel": "elevenlabs-forms-zoe/takes/apples_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0411",
+      "spokenText": "bananas",
+      "slug": "bananas",
+      "takeRel": "elevenlabs-forms-zoe/takes/bananas_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0413",
+      "spokenText": "strawberries",
+      "slug": "strawberries",
+      "takeRel": "elevenlabs-forms-zoe/takes/strawberries_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0415",
+      "spokenText": "carrots",
+      "slug": "carrots",
+      "takeRel": "elevenlabs-forms-zoe/takes/carrots_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0417",
+      "spokenText": "head's",
+      "slug": "head_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/head_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0419",
+      "spokenText": "hair's",
+      "slug": "hair_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/hair_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0421",
+      "spokenText": "eyes",
+      "slug": "eyes",
+      "takeRel": "elevenlabs-forms-zoe/takes/eyes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0423",
+      "spokenText": "ears",
+      "slug": "ears",
+      "takeRel": "elevenlabs-forms-zoe/takes/ears_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0425",
+      "spokenText": "arms",
+      "slug": "arms",
+      "takeRel": "elevenlabs-forms-zoe/takes/arms_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0427",
+      "spokenText": "hands",
+      "slug": "hands",
+      "takeRel": "elevenlabs-forms-zoe/takes/hands_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0429",
+      "spokenText": "hand's",
+      "slug": "hand_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/hand_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0431",
+      "spokenText": "legs",
+      "slug": "legs",
+      "takeRel": "elevenlabs-forms-zoe/takes/legs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0433",
+      "spokenText": "feet",
+      "slug": "feet",
+      "takeRel": "elevenlabs-forms-zoe/takes/feet_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0435",
+      "spokenText": "foot's",
+      "slug": "foot_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/foot_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0437",
+      "spokenText": "diapers",
+      "slug": "diapers",
+      "takeRel": "elevenlabs-forms-zoe/takes/diapers_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0439",
+      "spokenText": "toothbrushes",
+      "slug": "toothbrushes",
+      "takeRel": "elevenlabs-forms-zoe/takes/toothbrushes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0441",
+      "spokenText": "towels",
+      "slug": "towels",
+      "takeRel": "elevenlabs-forms-zoe/takes/towels_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0443",
+      "spokenText": "combs",
+      "slug": "combs",
+      "takeRel": "elevenlabs-forms-zoe/takes/combs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0445",
+      "spokenText": "tissues",
+      "slug": "tissues",
+      "takeRel": "elevenlabs-forms-zoe/takes/tissues_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0447",
+      "spokenText": "bandages",
+      "slug": "bandages",
+      "takeRel": "elevenlabs-forms-zoe/takes/bandages_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0449",
+      "spokenText": "moms",
+      "slug": "moms",
+      "takeRel": "elevenlabs-forms-zoe/takes/moms_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0451",
+      "spokenText": "mom's",
+      "slug": "mom_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/mom_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0453",
+      "spokenText": "dads",
+      "slug": "dads",
+      "takeRel": "elevenlabs-forms-zoe/takes/dads_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0455",
+      "spokenText": "dad's",
+      "slug": "dad_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/dad_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0457",
+      "spokenText": "mama's",
+      "slug": "mama_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/mama_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0459",
+      "spokenText": "dada's",
+      "slug": "dada_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/dada_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0461",
+      "spokenText": "babies",
+      "slug": "babies",
+      "takeRel": "elevenlabs-forms-zoe/takes/babies_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0463",
+      "spokenText": "baby's",
+      "slug": "baby_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/baby_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0465",
+      "spokenText": "brothers",
+      "slug": "brothers",
+      "takeRel": "elevenlabs-forms-zoe/takes/brothers_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0467",
+      "spokenText": "brother's",
+      "slug": "brother_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/brother_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0469",
+      "spokenText": "sisters",
+      "slug": "sisters",
+      "takeRel": "elevenlabs-forms-zoe/takes/sisters_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0471",
+      "spokenText": "sister's",
+      "slug": "sister_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/sister_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0473",
+      "spokenText": "grandmas",
+      "slug": "grandmas",
+      "takeRel": "elevenlabs-forms-zoe/takes/grandmas_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0475",
+      "spokenText": "grandma's",
+      "slug": "grandma_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/grandma_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0477",
+      "spokenText": "grandpa's",
+      "slug": "grandpa_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/grandpa_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0479",
+      "spokenText": "aunts",
+      "slug": "aunts",
+      "takeRel": "elevenlabs-forms-zoe/takes/aunts_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0481",
+      "spokenText": "cousins",
+      "slug": "cousins",
+      "takeRel": "elevenlabs-forms-zoe/takes/cousins_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0483",
+      "spokenText": "pets",
+      "slug": "pets",
+      "takeRel": "elevenlabs-forms-zoe/takes/pets_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0485",
+      "spokenText": "teachers",
+      "slug": "teachers",
+      "takeRel": "elevenlabs-forms-zoe/takes/teachers_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0487",
+      "spokenText": "teacher's",
+      "slug": "teacher_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/teacher_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0489",
+      "spokenText": "students",
+      "slug": "students",
+      "takeRel": "elevenlabs-forms-zoe/takes/students_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0491",
+      "spokenText": "friends",
+      "slug": "friends",
+      "takeRel": "elevenlabs-forms-zoe/takes/friends_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0493",
+      "spokenText": "friend's",
+      "slug": "friend_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/friend_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0495",
+      "spokenText": "firefighters",
+      "slug": "firefighters",
+      "takeRel": "elevenlabs-forms-zoe/takes/firefighters_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0497",
+      "spokenText": "neighbors",
+      "slug": "neighbors",
+      "takeRel": "elevenlabs-forms-zoe/takes/neighbors_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0499",
+      "spokenText": "person's",
+      "slug": "person_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/person_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0501",
+      "spokenText": "people's",
+      "slug": "people_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/people_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0503",
+      "spokenText": "doctor's",
+      "slug": "doctor_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/doctor_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0505",
+      "spokenText": "nurses",
+      "slug": "nurses",
+      "takeRel": "elevenlabs-forms-zoe/takes/nurses_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0507",
+      "spokenText": "nurse's",
+      "slug": "nurse_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/nurse_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0509",
+      "spokenText": "names",
+      "slug": "names",
+      "takeRel": "elevenlabs-forms-zoe/takes/names_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0511",
+      "spokenText": "name's",
+      "slug": "name_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/name_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0513",
+      "spokenText": "houses",
+      "slug": "houses",
+      "takeRel": "elevenlabs-forms-zoe/takes/houses_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0515",
+      "spokenText": "school's",
+      "slug": "school_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/school_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0517",
+      "spokenText": "parks",
+      "slug": "parks",
+      "takeRel": "elevenlabs-forms-zoe/takes/parks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0519",
+      "spokenText": "museums",
+      "slug": "museums",
+      "takeRel": "elevenlabs-forms-zoe/takes/museums_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0521",
+      "spokenText": "toys",
+      "slug": "toys",
+      "takeRel": "elevenlabs-forms-zoe/takes/toys_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0523",
+      "spokenText": "balls",
+      "slug": "balls",
+      "takeRel": "elevenlabs-forms-zoe/takes/balls_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0525",
+      "spokenText": "puzzles",
+      "slug": "puzzles",
+      "takeRel": "elevenlabs-forms-zoe/takes/puzzles_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0527",
+      "spokenText": "dolls",
+      "slug": "dolls",
+      "takeRel": "elevenlabs-forms-zoe/takes/dolls_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0529",
+      "spokenText": "doll's",
+      "slug": "doll_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/doll_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0531",
+      "spokenText": "dinosaurs",
+      "slug": "dinosaurs",
+      "takeRel": "elevenlabs-forms-zoe/takes/dinosaurs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0533",
+      "spokenText": "dinosaur's",
+      "slug": "dinosaur_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/dinosaur_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0535",
+      "spokenText": "robots",
+      "slug": "robots",
+      "takeRel": "elevenlabs-forms-zoe/takes/robots_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0537",
+      "spokenText": "bikes",
+      "slug": "bikes",
+      "takeRel": "elevenlabs-forms-zoe/takes/bikes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0539",
+      "spokenText": "songs",
+      "slug": "songs",
+      "takeRel": "elevenlabs-forms-zoe/takes/songs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0541",
+      "spokenText": "tablets",
+      "slug": "tablets",
+      "takeRel": "elevenlabs-forms-zoe/takes/tablets_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0543",
+      "spokenText": "phone's",
+      "slug": "phone_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/phone_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0545",
+      "spokenText": "movies",
+      "slug": "movies",
+      "takeRel": "elevenlabs-forms-zoe/takes/movies_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0547",
+      "spokenText": "videos",
+      "slug": "videos",
+      "takeRel": "elevenlabs-forms-zoe/takes/videos_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0549",
+      "spokenText": "books",
+      "slug": "books",
+      "takeRel": "elevenlabs-forms-zoe/takes/books_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0551",
+      "spokenText": "book's",
+      "slug": "book_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/book_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0553",
+      "spokenText": "chairs",
+      "slug": "chairs",
+      "takeRel": "elevenlabs-forms-zoe/takes/chairs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0555",
+      "spokenText": "doors",
+      "slug": "doors",
+      "takeRel": "elevenlabs-forms-zoe/takes/doors_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0557",
+      "spokenText": "door's",
+      "slug": "door_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/door_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0559",
+      "spokenText": "windows",
+      "slug": "windows",
+      "takeRel": "elevenlabs-forms-zoe/takes/windows_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0561",
+      "spokenText": "lamps",
+      "slug": "lamps",
+      "takeRel": "elevenlabs-forms-zoe/takes/lamps_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0563",
+      "spokenText": "mirrors",
+      "slug": "mirrors",
+      "takeRel": "elevenlabs-forms-zoe/takes/mirrors_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0565",
+      "spokenText": "plates",
+      "slug": "plates",
+      "takeRel": "elevenlabs-forms-zoe/takes/plates_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0567",
+      "spokenText": "bowls",
+      "slug": "bowls",
+      "takeRel": "elevenlabs-forms-zoe/takes/bowls_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0569",
+      "spokenText": "cups",
+      "slug": "cups",
+      "takeRel": "elevenlabs-forms-zoe/takes/cups_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0571",
+      "spokenText": "forks",
+      "slug": "forks",
+      "takeRel": "elevenlabs-forms-zoe/takes/forks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0573",
+      "spokenText": "spoons",
+      "slug": "spoons",
+      "takeRel": "elevenlabs-forms-zoe/takes/spoons_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0575",
+      "spokenText": "knives",
+      "slug": "knives",
+      "takeRel": "elevenlabs-forms-zoe/takes/knives_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0577",
+      "spokenText": "napkins",
+      "slug": "napkins",
+      "takeRel": "elevenlabs-forms-zoe/takes/napkins_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0579",
+      "spokenText": "bottles",
+      "slug": "bottles",
+      "takeRel": "elevenlabs-forms-zoe/takes/bottles_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0581",
+      "spokenText": "bags",
+      "slug": "bags",
+      "takeRel": "elevenlabs-forms-zoe/takes/bags_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0583",
+      "spokenText": "blankets",
+      "slug": "blankets",
+      "takeRel": "elevenlabs-forms-zoe/takes/blankets_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0585",
+      "spokenText": "pillows",
+      "slug": "pillows",
+      "takeRel": "elevenlabs-forms-zoe/takes/pillows_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0587",
+      "spokenText": "fans",
+      "slug": "fans",
+      "takeRel": "elevenlabs-forms-zoe/takes/fans_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0589",
+      "spokenText": "boxes",
+      "slug": "boxes",
+      "takeRel": "elevenlabs-forms-zoe/takes/boxes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0591",
+      "spokenText": "batteries",
+      "slug": "batteries",
+      "takeRel": "elevenlabs-forms-zoe/takes/batteries_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0593",
+      "spokenText": "brooms",
+      "slug": "brooms",
+      "takeRel": "elevenlabs-forms-zoe/takes/brooms_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0595",
+      "spokenText": "tape's",
+      "slug": "tape_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/tape_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0597",
+      "spokenText": "buckets",
+      "slug": "buckets",
+      "takeRel": "elevenlabs-forms-zoe/takes/buckets_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0599",
+      "spokenText": "shirts",
+      "slug": "shirts",
+      "takeRel": "elevenlabs-forms-zoe/takes/shirts_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0601",
+      "spokenText": "dresses",
+      "slug": "dresses",
+      "takeRel": "elevenlabs-forms-zoe/takes/dresses_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0603",
+      "spokenText": "coats",
+      "slug": "coats",
+      "takeRel": "elevenlabs-forms-zoe/takes/coats_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0605",
+      "spokenText": "hats",
+      "slug": "hats",
+      "takeRel": "elevenlabs-forms-zoe/takes/hats_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0607",
+      "spokenText": "buttons",
+      "slug": "buttons",
+      "takeRel": "elevenlabs-forms-zoe/takes/buttons_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0609",
+      "spokenText": "pockets",
+      "slug": "pockets",
+      "takeRel": "elevenlabs-forms-zoe/takes/pockets_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0611",
+      "spokenText": "animals",
+      "slug": "animals",
+      "takeRel": "elevenlabs-forms-zoe/takes/animals_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0613",
+      "spokenText": "dogs",
+      "slug": "dogs",
+      "takeRel": "elevenlabs-forms-zoe/takes/dogs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0615",
+      "spokenText": "dog's",
+      "slug": "dog_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/dog_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0617",
+      "spokenText": "cats",
+      "slug": "cats",
+      "takeRel": "elevenlabs-forms-zoe/takes/cats_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0619",
+      "spokenText": "cat's",
+      "slug": "cat_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/cat_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0621",
+      "spokenText": "puppies",
+      "slug": "puppies",
+      "takeRel": "elevenlabs-forms-zoe/takes/puppies_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0623",
+      "spokenText": "puppy's",
+      "slug": "puppy_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/puppy_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0625",
+      "spokenText": "kittens",
+      "slug": "kittens",
+      "takeRel": "elevenlabs-forms-zoe/takes/kittens_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0627",
+      "spokenText": "birds",
+      "slug": "birds",
+      "takeRel": "elevenlabs-forms-zoe/takes/birds_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0629",
+      "spokenText": "bird's",
+      "slug": "bird_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/bird_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0631",
+      "spokenText": "bunnies",
+      "slug": "bunnies",
+      "takeRel": "elevenlabs-forms-zoe/takes/bunnies_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0633",
+      "spokenText": "bunny's",
+      "slug": "bunny_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/bunny_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0635",
+      "spokenText": "ducks",
+      "slug": "ducks",
+      "takeRel": "elevenlabs-forms-zoe/takes/ducks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0637",
+      "spokenText": "duck's",
+      "slug": "duck_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/duck_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0639",
+      "spokenText": "hens",
+      "slug": "hens",
+      "takeRel": "elevenlabs-forms-zoe/takes/hens_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0641",
+      "spokenText": "cows",
+      "slug": "cows",
+      "takeRel": "elevenlabs-forms-zoe/takes/cows_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0643",
+      "spokenText": "cow's",
+      "slug": "cow_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/cow_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0645",
+      "spokenText": "horses",
+      "slug": "horses",
+      "takeRel": "elevenlabs-forms-zoe/takes/horses_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0647",
+      "spokenText": "horse's",
+      "slug": "horse_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/horse_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0649",
+      "spokenText": "pigs",
+      "slug": "pigs",
+      "takeRel": "elevenlabs-forms-zoe/takes/pigs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0651",
+      "spokenText": "pig's",
+      "slug": "pig_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/pig_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0653",
+      "spokenText": "sheep's",
+      "slug": "sheep_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/sheep_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0655",
+      "spokenText": "goats",
+      "slug": "goats",
+      "takeRel": "elevenlabs-forms-zoe/takes/goats_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0657",
+      "spokenText": "bears",
+      "slug": "bears",
+      "takeRel": "elevenlabs-forms-zoe/takes/bears_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0659",
+      "spokenText": "bear's",
+      "slug": "bear_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/bear_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0661",
+      "spokenText": "lions",
+      "slug": "lions",
+      "takeRel": "elevenlabs-forms-zoe/takes/lions_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0663",
+      "spokenText": "lion's",
+      "slug": "lion_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/lion_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0665",
+      "spokenText": "tiger's",
+      "slug": "tiger_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/tiger_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0667",
+      "spokenText": "elephants",
+      "slug": "elephants",
+      "takeRel": "elevenlabs-forms-zoe/takes/elephants_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0669",
+      "spokenText": "elephant's",
+      "slug": "elephant_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/elephant_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0671",
+      "spokenText": "monkeys",
+      "slug": "monkeys",
+      "takeRel": "elevenlabs-forms-zoe/takes/monkeys_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0673",
+      "spokenText": "monkey's",
+      "slug": "monkey_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/monkey_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0675",
+      "spokenText": "giraffes",
+      "slug": "giraffes",
+      "takeRel": "elevenlabs-forms-zoe/takes/giraffes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0677",
+      "spokenText": "giraffe's",
+      "slug": "giraffe_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/giraffe_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0679",
+      "spokenText": "zebras",
+      "slug": "zebras",
+      "takeRel": "elevenlabs-forms-zoe/takes/zebras_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0681",
+      "spokenText": "hippos",
+      "slug": "hippos",
+      "takeRel": "elevenlabs-forms-zoe/takes/hippos_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0683",
+      "spokenText": "hippo's",
+      "slug": "hippo_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/hippo_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0685",
+      "spokenText": "penguins",
+      "slug": "penguins",
+      "takeRel": "elevenlabs-forms-zoe/takes/penguins_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0687",
+      "spokenText": "dolphins",
+      "slug": "dolphins",
+      "takeRel": "elevenlabs-forms-zoe/takes/dolphins_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0689",
+      "spokenText": "whales",
+      "slug": "whales",
+      "takeRel": "elevenlabs-forms-zoe/takes/whales_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0691",
+      "spokenText": "snakes",
+      "slug": "snakes",
+      "takeRel": "elevenlabs-forms-zoe/takes/snakes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0693",
+      "spokenText": "snake's",
+      "slug": "snake_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/snake_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0695",
+      "spokenText": "turtles",
+      "slug": "turtles",
+      "takeRel": "elevenlabs-forms-zoe/takes/turtles_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0697",
+      "spokenText": "frogs",
+      "slug": "frogs",
+      "takeRel": "elevenlabs-forms-zoe/takes/frogs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0699",
+      "spokenText": "frog's",
+      "slug": "frog_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/frog_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0701",
+      "spokenText": "bugs",
+      "slug": "bugs",
+      "takeRel": "elevenlabs-forms-zoe/takes/bugs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0703",
+      "spokenText": "spiders",
+      "slug": "spiders",
+      "takeRel": "elevenlabs-forms-zoe/takes/spiders_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0705",
+      "spokenText": "spider's",
+      "slug": "spider_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/spider_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0707",
+      "spokenText": "butterflies",
+      "slug": "butterflies",
+      "takeRel": "elevenlabs-forms-zoe/takes/butterflies_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0709",
+      "spokenText": "trees",
+      "slug": "trees",
+      "takeRel": "elevenlabs-forms-zoe/takes/trees_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0711",
+      "spokenText": "flowers",
+      "slug": "flowers",
+      "takeRel": "elevenlabs-forms-zoe/takes/flowers_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0713",
+      "spokenText": "sun's",
+      "slug": "sun_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/sun_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0715",
+      "spokenText": "clouds",
+      "slug": "clouds",
+      "takeRel": "elevenlabs-forms-zoe/takes/clouds_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0717",
+      "spokenText": "vehicles",
+      "slug": "vehicles",
+      "takeRel": "elevenlabs-forms-zoe/takes/vehicles_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0719",
+      "spokenText": "cars",
+      "slug": "cars",
+      "takeRel": "elevenlabs-forms-zoe/takes/cars_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0721",
+      "spokenText": "car's",
+      "slug": "car_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/car_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0723",
+      "spokenText": "trucks",
+      "slug": "trucks",
+      "takeRel": "elevenlabs-forms-zoe/takes/trucks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0725",
+      "spokenText": "trains",
+      "slug": "trains",
+      "takeRel": "elevenlabs-forms-zoe/takes/trains_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0727",
+      "spokenText": "train's",
+      "slug": "train_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/train_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0729",
+      "spokenText": "bicycles",
+      "slug": "bicycles",
+      "takeRel": "elevenlabs-forms-zoe/takes/bicycles_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0731",
+      "spokenText": "vans",
+      "slug": "vans",
+      "takeRel": "elevenlabs-forms-zoe/takes/vans_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0733",
+      "spokenText": "tractors",
+      "slug": "tractors",
+      "takeRel": "elevenlabs-forms-zoe/takes/tractors_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0735",
+      "spokenText": "tractor's",
+      "slug": "tractor_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/tractor_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0737",
+      "spokenText": "airplanes",
+      "slug": "airplanes",
+      "takeRel": "elevenlabs-forms-zoe/takes/airplanes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0739",
+      "spokenText": "rockets",
+      "slug": "rockets",
+      "takeRel": "elevenlabs-forms-zoe/takes/rockets_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0741",
+      "spokenText": "boats",
+      "slug": "boats",
+      "takeRel": "elevenlabs-forms-zoe/takes/boats_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0743",
+      "spokenText": "ships",
+      "slug": "ships",
+      "takeRel": "elevenlabs-forms-zoe/takes/ships_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0745",
+      "spokenText": "today's",
+      "slug": "today_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/today_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0747",
+      "spokenText": "tomorrow's",
+      "slug": "tomorrow_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/tomorrow_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0749",
+      "spokenText": "minutes",
+      "slug": "minutes",
+      "takeRel": "elevenlabs-forms-zoe/takes/minutes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0751",
+      "spokenText": "hours",
+      "slug": "hours",
+      "takeRel": "elevenlabs-forms-zoe/takes/hours_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0753",
+      "spokenText": "things",
+      "slug": "things",
+      "takeRel": "elevenlabs-forms-zoe/takes/things_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0755",
+      "spokenText": "thing's",
+      "slug": "thing_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/thing_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0757",
+      "spokenText": "boys",
+      "slug": "boys",
+      "takeRel": "elevenlabs-forms-zoe/takes/boys_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0759",
+      "spokenText": "boy's",
+      "slug": "boy_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/boy_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0761",
+      "spokenText": "girls",
+      "slug": "girls",
+      "takeRel": "elevenlabs-forms-zoe/takes/girls_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0763",
+      "spokenText": "girl's",
+      "slug": "girl_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/girl_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0765",
+      "spokenText": "men",
+      "slug": "men",
+      "takeRel": "elevenlabs-forms-zoe/takes/men_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0767",
+      "spokenText": "man's",
+      "slug": "man_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/man_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0769",
+      "spokenText": "women",
+      "slug": "women",
+      "takeRel": "elevenlabs-forms-zoe/takes/women_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": "utt_f0771",
+      "spokenText": "woman's",
+      "slug": "woman_s",
+      "takeRel": "elevenlabs-forms-zoe/takes/woman_s_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    }
+  ]
+}
