@@ -38,6 +38,7 @@ files touched, proof state, and next action.
 | Add a word: sheet, new-word card, picture/voice states | `docs/phases/029_Add_A_Word.md` |
 | Picture reuse by meaning, drawing once, allowance, calibration | `docs/phases/030_Picture_Finder_And_Drawing.md` |
 | Spotlight page, try-it demo, suggested lists | `docs/phases/032_Spotlight_Page.md` |
+| Help page, FAQ answers, Help search, Write to us (in-app + site FAQ) | `docs/phases/042_Help.md` |
 | Voice emotion tags, prosody formulas (Eleven sentences § 7; Grok legacy § 2) | `docs/operations/Grok_Voice_Emotional_Prosody.md` |
 | Vision, roadmap, monetization | `docs/strategy/Vision.md` + `docs/strategy/Roadmap.md` |
 | Stack, commands, local setup | `docs/operations/TechStack.md` |

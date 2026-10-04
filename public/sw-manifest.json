@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-1d6df7ad5b2b",
+  "buildId": "r1-5f649e0225b6",
   "files": [
     {
       "path": "/board.js",
@@ -105,6 +105,16 @@
       "path": "/board/groups-ui.js",
       "bytes": 17945,
       "sha256": "47f00970910213ddf3e3d85b72de7298e2042680eb545a99d2d6ee6e0f4faf14"
+    },
+    {
+      "path": "/board/help-ui.css",
+      "bytes": 3248,
+      "sha256": "14761bebd156dbc2437b2b61ab930a2fb2e3d141629e886d7bc59e289b64b5b5"
+    },
+    {
+      "path": "/board/help-ui.js",
+      "bytes": 12264,
+      "sha256": "7f7a2235ae5fb1c61f4d8fb00825b4eefe6613fddcb736b8a7afaa597133cbb0"
     },
     {
       "path": "/board/inline-icons.js",
@@ -228,8 +238,8 @@
     },
     {
       "path": "/board/settings-ui.js",
-      "bytes": 20477,
-      "sha256": "68f0508a12d67b49e99ec4ea22c5fd7826f0fa715eecd4f0cc3e29ba66ea852d"
+      "bytes": 17793,
+      "sha256": "11f3a313d21b106d4c360c78d89d50bfe74ff997df53734597a12ef5382803d2"
     },
     {
       "path": "/board/setup-ui.css",
@@ -400,6 +410,11 @@
       "path": "/fresh_db.sqlite",
       "bytes": 2981888,
       "sha256": "22027da0e6fdd4dc1757e3f55fd7d99deeabc443ebde68d8e8a98c2fbe38ad58"
+    },
+    {
+      "path": "/help.en.json",
+      "bytes": 29805,
+      "sha256": "a55c7790af6eb212010d31e717f9550edbc76015c3077aa87fb7a69770e0f68f"
     },
     {
       "path": "/icons/backspace.svg",
@@ -728,8 +743,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 68433,
-      "sha256": "c5922fd4fb7f210efd4ac95bd9fd96de54c90d3d27bd34074a26a68d30855b10"
+      "bytes": 68970,
+      "sha256": "0c639c5989eae1f448ab5de229e849523cf69552ef5979158fa64d010c98fa5d"
     },
     {
       "path": "/manifest.webmanifest",
@@ -810,6 +825,11 @@
       "path": "/shared/groups.mjs",
       "bytes": 18001,
       "sha256": "4c6d9b1b611fb5b1073d46da896ebf4a8b3be94777b4897a0883884eab67f2aa"
+    },
+    {
+      "path": "/shared/help_search.mjs",
+      "bytes": 3406,
+      "sha256": "92fdcc08d31b8ff6ee9306e94b88efbc4505da3f00a0885a0a9c873057dfc609"
     },
     {
       "path": "/shared/images.mjs",

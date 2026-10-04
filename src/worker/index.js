@@ -9,6 +9,7 @@ import { PairingLobby } from "./lobby.js";
 import { SupporterAccounts } from "./accounts.js";
 import { verifyAssertion } from "./webauthn.mjs";
 import { handleResearch } from "./research.js";
+import { handleHelpSearch, handleHelpWrite } from "./help.js";
 import { handleSpeak, usageCheck, usageRecord } from "./voice.js";
 import { handleTransform } from "./transform.js";
 import { handleTrial, ipHashFor } from "./trial.mjs";
@@ -159,6 +160,15 @@ export default {
     if ((path === "/api/v1/trial" && request.method === "GET")
         || (path === "/api/v1/trial/start" && request.method === "POST")) {
       return handleTrial(request, env, url);
+    }
+
+    // 042 Help: search by meaning (the site's FAQ reads it too) and
+    // Write to us.
+    if (path === "/api/v1/help/search" && request.method === "GET") {
+      return handleHelpSearch(request, env, url);
+    }
+    if (path === "/api/v1/help/write" && request.method === "POST") {
+      return handleHelpWrite(request, env);
     }
 
     // "Help improve Pip" intake (Stats_And_Progress § 6.3): whitelisted

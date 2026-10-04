@@ -1,0 +1,59 @@
+/* 042 — Help page and search results (public/board/help-ui.js). */
+#help-q, .help-email, .help-msg {
+  width: 100%; box-sizing: border-box; font: inherit; font-size: 17px; color: var(--ink-text);
+  padding: 12px 14px; border-radius: 12px; border: 2px solid var(--line); background: var(--cream);
+}
+#help-q:focus, .help-email:focus, .help-msg:focus { outline: none; border-color: var(--ink); background: #fff; }
+.help-msg { resize: vertical; min-height: 120px; line-height: 1.4; margin-top: 8px; }
+.help-email { margin-top: 8px; }
+
+.help-list { display: flex; flex-direction: column; gap: 8px; }
+#help-ask .help-list:not(:empty) { margin-top: 12px; }
+.help-none { margin: 12px 0 0; }
+
+/* One answer: the question, tap to open. */
+.help-a { background: #fff; border: 2px solid var(--line); border-radius: 12px; }
+.help-a[open] { border-color: var(--ink); }
+.help-a summary {
+  list-style: none; cursor: pointer; padding: 13px 44px 13px 14px; position: relative;
+  font-weight: 700; font-size: 17px; line-height: 1.3; min-height: 24px;
+}
+.help-a summary::-webkit-details-marker { display: none; }
+.help-a summary::after {
+  content: "+"; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line);
+  display: grid; place-items: center; font-size: 16px; line-height: 1; color: var(--muted);
+}
+.help-a[open] summary::after { content: "–"; background: #fdf0c8; border-color: var(--ink); color: var(--ink); }
+.help-a-body { padding: 0 14px 14px; }
+.help-a-body p { margin: 0 0 10px; font-size: 16px; line-height: 1.5; color: var(--neutral-text); }
+.help-a-body p:last-of-type { margin-bottom: 0; }
+.help-go { margin-top: 12px; }
+
+/* A Settings row as a result: label left, where it lives right. */
+.help-set {
+  background: #fff; border: 2px solid var(--line) !important; border-radius: 12px; padding: 12px 14px;
+}
+.help-set b { flex: 1; }
+
+.help-browse { display: flex; flex-direction: column; gap: 8px; }
+.help-topic { font-size: 18px; margin: 18px 0 0; }
+.help-topic:first-child { margin-top: 0; }
+.help-topics { display: flex; flex-direction: column; gap: 8px; }
+.help-topics[open] { padding-bottom: 6px; }
+.help-topics summary {
+  list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 4px; border-top: 1px solid var(--line); font-size: 17px;
+}
+.help-topics summary::-webkit-details-marker { display: none; }
+.help-topics summary span { color: var(--muted); font-size: 14px; }
+.help-topics summary span::after { content: " ›"; display: inline-block; margin-left: 6px; transition: transform .15s; }
+.help-topics[open] summary span::after { transform: rotate(90deg); }
+.help-topics > .hint { margin: 0 0 4px; }
+.help-topics > .help-a + .help-a, .help-topics > .hint + .help-a { margin-top: 0; }
+.help-topics > .help-a { margin-bottom: 0; }
+
+.help-check { display: flex; gap: 10px; align-items: flex-start; margin-top: 10px; font-size: 14px; color: var(--muted); line-height: 1.4; }
+.help-check input { width: 20px; height: 20px; flex: none; margin: 0; accent-color: var(--ink); }
+.help-write .row { margin-top: 12px; }
+.help-status { font-weight: 700; color: var(--ink-text) !important; }

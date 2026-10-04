@@ -38,6 +38,7 @@ const PRECACHE_FILES = [
   "form_answers.en.json",
   "suggest_answers.en.json",
   "feeling_voice.json",
+  "help.en.json",
   "manifest.webmanifest",
 ];
 const PRECACHE_DIRS = [

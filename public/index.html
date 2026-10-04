@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="/board/recovery-ui.css" />
     <link rel="stylesheet" href="/board/editor-ui.css" />
     <link rel="stylesheet" href="/board/settings-ui.css" />
+    <link rel="stylesheet" href="/board/help-ui.css" />
     <link rel="stylesheet" href="/board/progress-ui.css" />
     <link rel="stylesheet" href="/board/onramp-ui.css" />
     <link rel="stylesheet" href="/board/voice-ui.css" />
@@ -166,7 +167,7 @@
             <span class="set-whotext"><b><span id="set-name">Settings</span> <span class="set-caret" aria-hidden="true">▾</span></b><small>Settings · switch person</small></span>
           </button>
           <div class="set-pop" id="set-pop" hidden></div>
-          <input type="search" id="set-search" placeholder="Search settings: voice, keyboard, teacher…" autocomplete="off" aria-label="Search settings" />
+          <input type="search" id="set-search" placeholder="Search or ask: feelings, teacher, bigger…" autocomplete="off" aria-label="Search settings and help" />
           <button class="btn set-done" id="set-done" data-close>Done</button>
         </header>
         <div class="set-body" id="set-body" data-view="list">
@@ -291,8 +292,9 @@
 
             <section class="set-sec" data-sec="results" data-title="Search" id="set-results">
               <h2 id="set-results-title">Results</h2>
-              <div class="set-glance set-card" id="set-results-list"></div>
-              <p class="set-intro" id="set-results-none" hidden>Nothing matches. Try "voice", "bigger", or "teacher".</p>
+              <div class="help-list" id="set-results-list"></div>
+              <p class="set-intro" id="set-results-none" hidden></p>
+              <p class="set-intro"><button class="set-link" data-help-write>Didn't find it? Write to us</button></p>
             </section>
 
             <section class="set-sec" data-sec="words" data-title="Words">
@@ -687,6 +689,14 @@
                   <button class="btn secondary" id="acct-delete">Delete your account…</button>
                 </div>
               </div>
+            </section>
+
+            <!-- 042: Help — answers, one search, Write to us
+                 (public/board/help-ui.js builds the rows). -->
+            <section class="set-sec" data-sec="help" data-title="Help" data-group="you">
+              <h2>Help</h2>
+              <p class="set-intro">Ask in your own words, or browse the common questions.</p>
+              <div class="seg-row" id="help-ask"></div>
             </section>
           </div>
         </div>

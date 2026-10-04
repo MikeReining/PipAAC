@@ -38,3 +38,52 @@
     form.action = "http://localhost:21087/api/v1/checkout/codes";
   }
 })();
+
+// faq.html search (042): the same answers the app's Help shows, built
+// from src/help/answers.en.json. Words match on the page at once; the
+// app's search by meaning ("emotions" → feeling faces) refines it.
+(() => {
+  const input = document.getElementById("faq-q");
+  if (!input) return;
+  const items = [...document.querySelectorAll(".faq details[id]")];
+  const none = document.getElementById("faq-none");
+  const words = (s) => s.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [];
+  const text = new Map(items.map((d) => [d, words(d.textContent)]));
+  let seq = 0;
+  let timer = null;
+  const paint = (show, top) => {
+    for (const d of items) {
+      d.hidden = !!show && !show.has(d.id);
+      d.open = d.id === top;
+    }
+    for (const g of document.querySelectorAll(".faq")) {
+      const empty = ![...g.querySelectorAll("details")].some((d) => !d.hidden);
+      g.hidden = empty;
+      for (let p = g.previousElementSibling; p && !p.classList.contains("faq"); p = p.previousElementSibling) {
+        if (p.matches(".faq-group, .faq-intro")) p.hidden = empty;
+        if (p.matches(".faq-group")) break;
+      }
+    }
+    none.hidden = !show || show.size > 0;
+  };
+  input.addEventListener("input", () => {
+    const my = ++seq;
+    clearTimeout(timer);
+    const q = input.value.trim();
+    if (!q) { paint(null); return; }
+    const qs = words(q);
+    const local = new Set(items.filter((d) => qs.every((w) => text.get(d).some((t) => t.startsWith(w)))).map((d) => d.id));
+    paint(local);
+    if (q.length < 2) return;
+    timer = setTimeout(async () => {
+      try {
+        const r = await fetch(`https://app.pipaac.org/api/v1/help/search?q=${encodeURIComponent(q)}`);
+        const { hits = [] } = r.ok ? await r.json() : {};
+        if (my !== seq) return;
+        const ids = hits.filter((h) => h.id.startsWith("a:")).map((h) => h.id.slice(2))
+          .filter((id) => document.getElementById(id)?.matches(".faq details"));
+        paint(new Set([...ids, ...local]), ids[0]);
+      } catch { /* offline: the word matches stand */ }
+    }, 300);
+  });
+})();

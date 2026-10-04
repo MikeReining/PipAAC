@@ -16,6 +16,7 @@ const GATES = [
   { name: "data:answer-tables", cmd: process.execPath, args: ["scripts/prediction/build_answer_tables.mjs", "--check"] },
   { name: "regression_law_meta_gate", cmd: process.execPath, args: ["scripts/regression_law_meta_gate.mjs"] },
   { name: "bytes:symbols", cmd: process.execPath, args: ["scripts/check_symbol_bytes.mjs"] },
+  { name: "help:index", cmd: process.execPath, args: ["scripts/help/build_help.mjs", "--check"] },
   { name: "sw:manifest", cmd: process.execPath, args: ["scripts/sw/sw_manifest.mjs", "--check"] },
   { name: "site:compare", cmd: process.execPath, args: ["scripts/site/build_compare.mjs", "--check"] },
   { name: "guard-liveness", cmd: "bash", args: ["scripts/check-test-guard-liveness.sh"] },

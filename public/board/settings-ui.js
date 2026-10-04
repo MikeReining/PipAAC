@@ -11,6 +11,7 @@
 
 import { untilText } from "../shared/spotlight.mjs";
 import { paintAvatar } from "./avatar.js";
+import { mountHelp } from "./help-ui.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -28,6 +29,7 @@ export const SECTION_ICONS = {
   backup: svg('<path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6z"/><path d="M9 12l2 2 4-4"/>'),
   lifetime: svg('<path d="M12 3l2.5 5.6L20.5 9.5l-4.3 4 1.2 6-5.4-3.1-5.4 3.1 1.2-6-4.3-4 6-0.9z"/>'),
   you: svg('<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-3.5 3.8-5.5 7-5.5s6 2 7 5.5"/>'),
+  help: svg('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><path d="M12 17.2v.1"/>'),
 };
 
 /** The words the chrome uses for the person: their name, or a neutral
@@ -337,6 +339,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
   function openSettings(section = "overview") {
     if (section === "results") section = "overview";
     $("set-search").value = "";
+    help.reset();
     for (const fn of onOpen) fn();
     paintNames();
     current = section;
@@ -346,67 +349,16 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
     open("menu");
   }
 
-  /* Search: every row's own words (label, hint, button text) plus the
-   * everyday words people use for a page ("voice", "bigger", "teacher").
-   * A hit opens the page and marks the row. */
-  const SYNONYMS = {
-    lifetime: "lifetime upgrade buy price trial",
-    overview: "add word edit",
-    spotlight: "practice goal target model modeling teach lesson glow highlight dim coach tips",
-    words: "vocabulary library photo picture name add list people places family meal breakfast lunch dinner snack groups folder hide",
-    board: "cells size bigger smaller grid layout top row core keyboard typing letters spell qwerty abc alphabet pictures images symbols words text only",
-    talking: "voice voices speak sound speed slow slower fast faster rate pip eve leo sam younger change expressive emotion feelings happy sad angry tone play sentence clear fresh",
-    lang: "grammar forms endings plural tense highlight predict prediction hint next smart bar question families",
-    progress: "stats report iep evidence week numbers",
-    team: "invite supporter slp teacher therapist share device link pair ipad phone tablet code person people user switch client add",
-    backup: "backup qr restore lost recovery card pin lock password privacy research data anonymous delete remove erase",
-    you: "account email sign login passkey license lifetime buy upgrade",
-  };
+  /* Search: answers and Settings rows together (042, help-ui.js) —
+   * words on the device at once, then search by meaning online. A
+   * Settings hit opens its page and marks the row. */
+  const help = mountHelp({ pane, show, me, trial });
   const search = $("set-search");
-  const results = $("set-results");
-  const rowText = (row) => row.textContent.replace(/\s+/g, " ").trim();
   function runSearch() {
-    const q = search.value.trim().toLowerCase();
+    const q = search.value.trim();
     if (!q) { show(current === "results" ? "overview" : current); return; }
-    // Match at the start of a word: "pin" finds PIN, not "typing".
-    const esc = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const re = new RegExp(`(^|[^\\p{L}\\p{N}])${esc}`, "iu");
-    const hits = [];
-    for (const sec of sections) {
-      if (sec === results || isEmpty(sec)) continue;
-      // Overview's checklist and summary repeat other pages' words.
-      const rows = [...sec.querySelectorAll(":scope > .seg-row")]
-        .filter((r) => !r.hidden && r.id !== "set-check" && !r.querySelector("#set-glance"));
-      const matched = rows.filter((r) => re.test(rowText(r)));
-      if (matched.length) {
-        for (const r of matched) hits.push({ sec, row: r, label: r.querySelector(".seg-label")?.textContent || sec.dataset.title });
-      } else if (re.test(SYNONYMS[sec.dataset.sec] ?? "") || re.test(sec.dataset.title)) {
-        hits.push({ sec, row: null, label: sec.dataset.title });
-      }
-    }
-    const list = $("set-results-list");
-    list.replaceChildren();
-    $("set-results-title").textContent = `Results for "${search.value.trim()}"`;
-    for (const h of hits) {
-      const b = document.createElement("button");
-      b.className = "set-glance-row";
-      const t = document.createElement("b");
-      t.textContent = h.label;
-      const v = document.createElement("span");
-      v.textContent = h.row ? h.sec.dataset.title : "Open page";
-      b.append(t, v);
-      b.onclick = () => {
-        search.value = "";
-        show(h.sec.dataset.sec);
-        if (h.row) {
-          h.row.scrollIntoView({ block: "center" });
-          h.row.classList.add("set-found");
-          setTimeout(() => h.row.classList.remove("set-found"), 1600);
-        }
-      };
-      list.append(b);
-    }
-    $("set-results-none").hidden = hits.length > 0;
+    $("set-results-title").textContent = `Results for "${q}"`;
+    help.search(search.value, $("set-results-list"), $("set-results-none"));
     show("results");
   }
   search.addEventListener("input", runSearch);
