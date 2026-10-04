@@ -37,7 +37,7 @@ picture library (phase 010); the labels themselves already ship.
 
 1. 009 — Word Library and customization: every meaning as pictures on add (P1), home-screen Edit mode and the word card, the Library, Record my own, picture overrides, bulk paste, many photos, Hide, suggested words, first-run setup; the voice picker after launch (`docs/phases/009_Word_Library_And_Customize.md`).
 2. 010 — Extended picture library: 2,000 drawn words + 300 phrases, found on add, and Draw it for me (`docs/phases/010_Extended_Picture_Library.md`).
-3. 011 — Sync and web editing: edit on a computer, the iPad gets it; free backup (`docs/phases/011_Sync_And_Web_Editing.md`).
+3. 011 — Sync and web editing: edit on a computer, the iPad gets it; free backup (phase 011, in git history).
    Then 015 — Accounts and one price: supporter accounts (email + passkey), many users per device, the QR card, \$49 once per user (`docs/phases/015_Accounts_And_One_Price.md`).
 4. No phase yet: the iOS App Store app. The build approach is open (`docs/product/Platforms_iOS_And_Web.md` § 3).
 

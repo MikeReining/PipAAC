@@ -481,7 +481,7 @@ follows 7 and 8. 10 waits on 008 slice 3. 5 is post-launch.
 ## Out of scope
 
 Extended picture library (`docs/phases/010_Extended_Picture_Library.md`).
-Editing from a computer (`docs/phases/011_Sync_And_Web_Editing.md`). Save
+Editing from a computer (phase 011, in git history). Save
 from the sentence and typed-word suggestions (rejected 2026-09-22). People
 names from the iOS Photos app (not available,
 `docs/product/Word_Library.md` § 5.3). Re-voicing recordings (PROPOSED,

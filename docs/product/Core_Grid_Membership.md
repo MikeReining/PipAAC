@@ -45,7 +45,7 @@ the middle band) plus **frequency zoning** (earlier words sit higher).
 
 ## 2. The selection rule
 
-> **Amended 2026-09-24 (founder; `docs/phases/018_Core_Board_V2_And_Groups.md` D1–D3).** Rules 0 and 1 stand.
+> **Amended 2026-09-24 (founder; phase 018 D1–D3, in git history).** Rules 0 and 1 stand.
 > Frequency in real children's speech (CHILDES) joins age of acquisition
 > in rule 2, which promotes *is*, *this*, *have*, *we*, *how*, *who*. The
 > child's own people (*mom*, *dad* by default) take two cells by rule 3

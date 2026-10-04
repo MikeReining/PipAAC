@@ -25,8 +25,8 @@ claim goes live.
 first so the precache covers every symbol, not just art seen before.
 037's code landed 2026-10-02 and its byte gate passes — 036 is unblocked;
 the shipped-art story it caches goes live when 037 deploys.
-**Related:** `037_Shipped_Payload_Diet.md` (the § 3C input),
-`docs/phases/035_Marketing_Site_Proposal.md` (claims table,
+**Related:** phase 037 (in git history; the § 3C input),
+the 035 site proposal (in git history; claims table,
 § "Offline"), 024 (sentence clip cache — the pattern this copies), 028
 (tile voice Cache Storage + offline queue), 015 (server-signed offline
 license statement), `docs/product/SSOT.md` (the origin decision already

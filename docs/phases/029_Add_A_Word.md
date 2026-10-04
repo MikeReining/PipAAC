@@ -282,7 +282,7 @@ Slice A alone fixes the confusion in the founder's screenshots.
   description).
 - `Clipart_Pipeline_And_Catalog_Growth.md` → reuse-first note, 030 pointer.
 - `Personal_Entities.md` → hint is asked as "Describe it"; kind inferred.
-- `018_Core_Board_V2_And_Groups.md` D7 → the kind question becomes an
+- phase 018 D7 (in git history) → the kind question becomes an
   inferred chip.
 - `Pricing_And_Packaging.md` § 4.2 → what a drawing counts.
 

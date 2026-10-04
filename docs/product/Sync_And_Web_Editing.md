@@ -5,7 +5,7 @@ things on a computer and then have them also on their iPad"). **Rulings
 DECIDED 2026-09-22** (§ 11). The mechanics in § 3–§ 6 are the proposed
 engineering design, confirmed or changed by the 011 slices. Not built.
 Intake: `docs/founder/2026-09-22_Customization_Library_Sync.md`.
-Execution: `docs/phases/011_Sync_And_Web_Editing.md`.
+Execution: phase 011 (in git history).
 
 **Amended 2026-09-23 (§ 12):** supporter accounts, many users per device,
 the QR card instead of 24 words, one price per user. The sync unit this

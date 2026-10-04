@@ -1,6 +1,9 @@
 # 040 — The 7-day trial and the Pip Lifetime page
 
-**Status:** spec for a developer, not built. Founder decisions 2026-10-03
+**Status:** built 2026-10-04 (`f7455246`, `a7e33b60`) — the 7-day trial
+replaces 039's pool; the Lifetime page tops Settings. Owed: founder
+sign-off on page/toast strings + a listen of `demo-sentence`, then
+`--ship` + deploy + Works Test. Founder decisions 2026-10-03
 (chat); items marked **Founder confirm** are my recommendations, not rulings.
 **Supersedes:** 039's *pool* (10 taps). 039 shipped (`360ba07`, `c2db8c3`,
 `ef19c12`, docs `2b074d9`); this phase replaces its gate with a trial and adds
@@ -194,7 +197,7 @@ board is synced. A parent who taps Buy cannot buy.
   cost, founder 2026-10-03); keep § 3 "no time-bomb" meaning *speech and
   vocabulary never lock* and say so.
 - `Sentence_Bar.md` § Gates and failure: the pool rule → the trial rule.
-- `docs/phases/039_Free_Taste.md`: banner "Superseded by 040 (pool → trial)".
+- phase 039 (in git history): its banner read "Superseded by 040 (pool → trial)".
 - **Audit pipaac.org** (`site/public/*.html`, `compare-data.json`) for any
   claim that natural full-sentence voice, feelings, voices or the sentence
   buttons are free. "Every word speaks, free, forever" stays true.

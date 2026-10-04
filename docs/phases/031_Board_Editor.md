@@ -281,7 +281,7 @@ changes; art and voice generation (030, 028).
 - `docs/product/Sync_And_Web_Editing.md` § 7 — original editor spec (layout
   superseded here; sync and "live" behavior unchanged)
 - `docs/phases/029_Add_A_Word.md` — the add flow and card this editor uses
-- `docs/phases/018_Core_Board_V2_And_Groups.md` — main-board editing rules
+- phase 018 (in git history) — main-board editing rules
 - `docs/phases/027_Occasion_Boards.md` — occasion groups, add to other groups
 - `docs/product/Design_System.md` — tokens, tiles
 

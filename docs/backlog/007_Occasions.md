@@ -1,5 +1,9 @@
 # Phase 007 — Occasions
 
+**HOLD — moved to backlog 2026-10-04.** Decided but never started; an
+optional experiment per the phases index. Unhold: the founder chooses
+to run the occasion-prior experiment.
+
 **Status:** Ready to execute. Not started. Slice 1 can run any time; it
 touches no app code.
 

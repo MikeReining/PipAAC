@@ -26,16 +26,14 @@ Executing phases only. Each row names the **next** slice.
 
 | Phase | Next slice |
 | --- | --- |
-| [005 — Word Forms](005_Word_Forms.md) | Present tense moved to 021 (2026-09-25); the rest waits on the past-tense conversation |
-| [007 — Occasions](007_Occasions.md) | Optional prediction/window experiment; independent of the curated occasion groups launching in 027. |
+| [005 — Word Forms](../backlog/005_Word_Forms.md) | Held 2026-10-04 — waits on the founder's past-tense ruling |
+| [007 — Occasions](../backlog/007_Occasions.md) | Held 2026-10-04 — optional experiment, never started |
 | [008 — Partner Listening](../backlog/008_Partner_Listening.md) | Held 2026-09-24 (017 R20: no listening) |
 | [009 — Word Library and customization](009_Word_Library_And_Customize.md) | Slice 10 — suggested words (blocked on 008 slice 3; 008 held 2026-09-24); slice 5 is post-launch |
 | [010 — Extended picture library](010_Extended_Picture_Library.md) | Slice 1 done 2026-09-26 (4,000-entry JSON + 170-word everyday-gaps list, data only). Slice 2 — the art: review page built, generation waits on founder approval |
-| [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | Code-complete. Slice 9 moved to 015 slices 6–7; its relay legs (device cap, restore-move, retention sweep, dev license) are built there |
 | [014 — Grid density and individual fit](014_Grid_Density_And_Fit.md) | Slices 1–5, 7, 9–11 built. Remaining: slice 6 message tiles (waits on 010's phrase list), slice 8 keyguard (later). Nothing unblocked — the phase idles until 010 slice 1 lands |
 | [015 — Accounts and one price](015_Accounts_And_One_Price.md) | Slices 1–5 and 7 built (through supporter email warnings + account deletion). Slice 6 web leg built 2026-10-02 (Stripe checkout + webhook, license codes) — owed: live Stripe wiring/secrets, free-limit gates, iOS IAP with the shell |
 | [017 — Prediction you can prove](017_Prediction_Hardening.md) | Re-planned 2026-09-24 (R16–R19): real children are the scoreboard. Items 1–4 and 6 done; step-28 items 1–4 built (WPM quartiles, per-path timings, Jev-timing experiment, wrong-pick count — `predictionReport.speed`, whitelisted payload fields). Holdback **deferred — not authorized** (founder, 2026-09-24); step-28 item 6 (calibration) waits on real totals; steps 15 and 18 parked. Open: step 26 flywheel (decided, unbuilt) |
-| [018 — Core board v2 and groups](018_Core_Board_V2_And_Groups.md) | All six decided slices done — v2 `grid60` + Purple, `grid90`/`grid15` re-laid, setup's people seated, groups re-ordered + doors + glow + banded layout, kind-colored personal words, home-board edit (📊 counts + placement sheet). Open items only |
 | [019 — User-testing readiness](019_User_Testing_Readiness.md) | Deployed 2026-10-01: `https://app.pipaac.org` (custom domain + Email Sending + prod secrets). Local board paints and speaks, including a board saved before the v2 map. The first-open question now lands the 009 slice-11 world pass |
 | [022 — Whose and how many](022_Whose_And_How_Many.md) | Code done 2026-09-26 (1464e4c): whose/plurals/EOS ship, three never-show-a-mistake rulings landed (own-word plural spelling, same-length pooling, caregiver plural use). Remaining: shipped catalog.json waits on the Ara word-form clips (144 uncovered, `forms_audio.json`) |
 | [023 — Transform buttons](023_Transform_Buttons.md) | Proof of concept proven 2026-09-25 (Groq qwen3.8-27b, temperature 0, short prompts). Top bar previewed (⏪ ▶ ⏩ ✨ ❓), not wired; § 5 lists what's open before building |
@@ -54,11 +52,8 @@ Executing phases only. Each row names the **next** slice.
 
 | Proposal | Ask |
 | --- | --- |
-| [035 — pipaac.org design + copy proposal](035_Marketing_Site_Proposal.md) | Direction set 2026-10-02 (board first, $300 headline, /method attack page). Next: hero mockup (§ 13); founder story + contact (§ 14) |
-| [037 — Shipped payload diet](037_Shipped_Payload_Diet.md) | **Shipped 2026-10-03** — symbols 600 MB → 7.7 MB WebP (709 files) deployed, `_headers` live, assets bypass the Worker (tail-verified), picture indexes re-embedded (thumbnails return `.webp`) |
 | [036 — Works offline](036_Offline_Support.md) | **Deployed 2026-10-03** — `sw.js` + generated precache (3,522 files, 70.0 MB) live; offline probe passes against the deployed origin. Open: real-iPad Works Test — the claim is already live on pipaac.org |
 | [038 — Sentence bar settings](038_Sentence_Bar_Settings.md) | Built 2026-10-03: per-person choice of which sentence buttons show under Settings → Talking (`bar_controls`, synced); Play grows into freed space. Open: licensed-default question in § 7 |
-| [039 — The free taste](039_Free_Taste.md) | Built 2026-10-03: taste pool on the shared ledger DO + speak grants + client ask. Owed: founder sign-off on the § 4.5 strings and a listen of the four tour takes, then `--ship` + deploy + Works Test |
 | [040 — Trial and the Lifetime page](040_Trial_And_Upgrade_Page.md) | Built 2026-10-04: 7-day trial replaces 039's pool (`trial.mjs`, one `entitled()` gate); the Lifetime page tops Settings; Buy is a no-account code checkout that auto-redeems in-app; site audited to the § 3 table. Owed: founder sign-off on page/toast strings + a listen of `demo-sentence`, then `--ship` + deploy + Works Test |
 | [034 — Leave the panned document after the welcome](034_Welcome_Page.md) | Reviewed; ready to build: `location.replace` after Continue + one-shot tour flag |
 

@@ -1,7 +1,7 @@
 # 035 — The marketing site (pipaac.org)
 
 **Executing.** Slice A (skeleton) BUILT 2026-10-02. **Slice B (design +
-copy) BUILT 2026-10-02** per `035_Marketing_Site_Proposal.md`: home, /method,
+copy) BUILT 2026-10-02** per the 035 site proposal (in git history): home, /method,
 /slps, /pricing, /faq, /compare (hub + 6), /schools, /about, 404. Next:
 founder story for /about, /privacy (founder + legal), `hello@pipaac.org`
 routing, then the DNS fix and `npm run deploy:site`.
@@ -51,7 +51,7 @@ API token on this machine covers zone DNS.
 
 ## Slice B — design + copy
 
-**BUILT 2026-10-02.** Spec: `035_Marketing_Site_Proposal.md`. Static pages in
+**BUILT 2026-10-02.** Spec: the 035 site proposal (in git history). Static pages in
 `site/public/`; one stylesheet, one tiny script (`site.js`, sticky phone CTA,
 no tracking). Every primary CTA → `app.pipaac.org` (board first; the account
 ask is the app's Protect card). Home first paint 147 KB (fonts are latin

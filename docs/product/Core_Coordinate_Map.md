@@ -1,8 +1,8 @@
 # Core coordinate map
 
 **DECIDED 2026-09-24, core board v2** — `grid60` is organized into vertical
-color bands (founder spec, `docs/phases/018_Core_Board_V2_And_Groups.md`
-D1–D3). Membership is the output of the selection rule in
+color bands (founder spec, phase 018 D1–D3, in git history).
+Membership is the output of the selection rule in
 `docs/product/Core_Grid_Membership.md` §2. Root core is 78 senses (`is`,
 `mom`, `dad` promoted; `take`, `give`, `big`, `little`, `bad`, `happy`,
 `please`, `at` demoted to their Tier-2 groups). Built as of the catalog
@@ -18,7 +18,7 @@ named layout. It is original work: the words came from the published lists
 named in the vocabulary doc, and the placement below is Pip AAC's own pass.
 No incumbent board was consulted for coordinates. **Amended 2026-09-24:**
 incumbent boards were looked at for the v2 board and deliberately
-differed from; the derivation is recorded in `docs/phases/018_Core_Board_V2_And_Groups.md` D3.
+differed from; the derivation is recorded in phase 018 D3 (in git history).
 
 ---
 
@@ -80,7 +80,7 @@ groups and the strip.
 ## 3. `grid60` — default
 
 > **DECIDED 2026-09-24** (founder, 018 D1). Provenance:
-> `docs/phases/018_Core_Board_V2_And_Groups.md` D3.
+> phase 018 D3 (in git history).
 
 Rows top to bottom, slots left to right. `slot_index` is row-major, 0-based.
 

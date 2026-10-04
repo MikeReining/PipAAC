@@ -1,5 +1,11 @@
 # Phase 005 — Word Forms
 
+**HOLD — moved to backlog 2026-10-04.** Held by the founder's
+2026-09-25 note below ("asking this audience for extra actions to reach
+a form may not be feasible"). Unhold: the founder rules on the
+past-tense / plurals / adjectives approach; present tense already
+shipped via phase 021 (in git history).
+
 **Status:** Ready to execute. Not started. **Partly superseded 2026-09-25:**
 present tense (-s, -ing) is now automatic on the board, the bar and the
 sentence. See phase 021 (in git history), which builds the present-tense part of

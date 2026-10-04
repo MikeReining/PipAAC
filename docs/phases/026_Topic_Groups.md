@@ -21,7 +21,7 @@ and topic door icons. All new groups use the same local editing rules.
 | --- | --- |
 | Occasion seed composition, geometry, and execution map | `docs/phases/027_Occasion_Boards.md` |
 | Groups are the backup path to every word | `docs/product/Motor_Grid_And_Art.md` § Groups |
-| Door order, doors, banded layout | `docs/phases/018_Core_Board_V2_And_Groups.md` D5, D6 (D6's list replaced here) |
+| Door order, doors, banded layout | phase 018 D5, D6 (in git history; D6's list replaced here) |
 | Occasion time windows (prediction) | `docs/phases/007_Occasions.md`; occasion doors are 027 |
 | Word colors | `docs/product/Motor_Grid_And_Art.md` § 3 (amended by D8) |
 

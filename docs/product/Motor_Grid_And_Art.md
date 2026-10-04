@@ -312,7 +312,7 @@ less. That look cost decides whether prediction pays at all (017 R18).
 0. **Words only (DECIDED 2026-09-24, founder).** The Predict row never
    holds a group door. Groups open from the 🗂 Groups anchor only, and the
    likely group glows in the list
-   (`docs/phases/018_Core_Board_V2_And_Groups.md` D9).
+   (phase 018 D9, in git history).
 
 1. **Board words count.** Core words are ranked with everything else
    and may appear in the bar. The grid never changes.
@@ -375,7 +375,7 @@ family and SLP choose. Pip ships its default.
 
 ## 3. Modified Fitzgerald Key
 
-> **Amended 2026-09-24 (founder; `docs/phases/018_Core_Board_V2_And_Groups.md` D2, D7), BUILT 018 slice 1.**
+> **Amended 2026-09-24 (founder; phase 018 D2, D7, in git history), BUILT 018 slice 1.**
 > One column band, one color, one kind of word. Questions get their own
 > **purple** role. The last column is the **safety column**, red
 > whatever the grammar (*yes*, *no*, *not*, *stop*, *help*, *hurt*).

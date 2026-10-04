@@ -49,7 +49,7 @@ or droppable; a hidden door shows faded with Show/Hide).
 
 ## Palette
 
-> **Amended 2026-09-24 (`docs/phases/018_Core_Board_V2_And_Groups.md` slice 1):** a sixth role, **Purple**, for
+> **Amended 2026-09-24 (phase 018 slice 1, in git history):** a sixth role, **Purple**, for
 > questions; group doors use the neutral no-role pair. **Amended 2026-09-29:**
 > no folder tab — a door reads by structure (glyph above label, one cream
 > fill with no label band, ink line glyph vs clipart).
@@ -333,7 +333,7 @@ sign-in before the wow.
   sentences. **Known lie (2026-10-03):** the script ("want apple" → "I want an
   apple") does not match the live buttons (live: "Want an apple." — the wand
   law never adds a subject). Replacement specified in
-  `docs/phases/039_Free_Taste.md` § 7 (*you · want · apple*, ✨ + ❓, recorded
+  phase 039 § 7 (in git history; *you · want · apple*, ✨ + ❓, recorded
   clips; takes minted, awaiting a founder listen).
 - **Voice** (**BUILT 2026-09-29**, founder: "very important and highly
   requested"). Settings → Talking opens on Voice: the voice in use, ▶
