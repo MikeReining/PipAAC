@@ -118,7 +118,7 @@ if (!me && users.length === 0) {
   // Parent-Corner add gets (014 § 9 ruling 1, 019 blocker 2).
   me = await addUser(userStore, { home: true, needsSetup: true });
 }
-if (!me) me = await pickPerson(users); // shared device, no home — ask
+if (!me) me = await pickPerson(users, loadPhotoURL); // shared device, no home — ask
 sessionStorage.setItem("pip_active_user", me.id);
 await touchOpened(userStore, me.id);
 let nameToProfile = () => {}; // set once the db is open (below)
@@ -168,7 +168,7 @@ getDeviceIdentity().then(({ deviceId }) => setDeviceId(deviceId))
  *  screen. Debounced: a drain batch is one repaint, not one per op. */
 let syncRepaintTimer = null;
 function onSyncApplied() {
-  followName().catch(() => {});
+  followName().then(() => peopleUi.follow()).catch(() => {}); // names, photos
   clearTimeout(syncRepaintTimer);
   syncRepaintTimer = setTimeout(() => {
     entityPhoto.clear(); // photo_key may have changed
@@ -1136,6 +1136,7 @@ wordCard = mountWordCard({
 const devicesUi = mountDevices({
   db, me, saveUser, userStore, flushDb, toast,
   initSync, onSyncApplied, onModel, qrcode, settings: settingsUi, syncRekey,
+  renderUsers: () => peopleUi.renderUsers(),
 });
 // ?unlock — the test link that turns Pip Lifetime on (public/board/unlock.js).
 // ?unlicensed — the 040 trial preview: no dev-license self-mint.
@@ -1189,10 +1190,11 @@ addEventListener("online", () => { if (!trialActive()) trialClock.boot(); });
 /* People — public/board/people-ui.js: the Settings header switcher and
  * "When Pip opens". */
 const peopleUi = mountPeople({
-  me, userStore, keyStore: openKeyStore(), flushDb, settings: settingsUi,
-  onHomeChanged: () => { devicesUi.renderAccount(); devicesUi.renderUsers(); },
+  me, userStore, keyStore: openKeyStore(), flushDb, settings: settingsUi, saveUser,
+  db, savePhoto, syncUploadBlob, loadPhoto: loadPhotoURL, // names and photos
+  onHomeChanged: () => { devicesUi.renderAccount(); peopleUi.renderUsers(); },
 });
-settingsUi.onOpen(() => { peopleUi.closePop(); peopleUi.renderOpens(); });
+settingsUi.onOpen(() => { peopleUi.closePop(); peopleUi.renderOpens(); peopleUi.follow(); });
 /* Show groups — public/board/group-shows.js (Settings → Words). */
 const groupShows = mountGroupShows({ db, locale, all: ALL, toast, onChange: () => rerenderView() });
 settingsUi.onOpen(() => groupShows.render());

@@ -10,6 +10,7 @@
  */
 
 import { untilText } from "../shared/spotlight.mjs";
+import { paintAvatar } from "./avatar.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -51,7 +52,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
   function paintNames() {
     const w = personWords(me.name);
     $("set-name").textContent = w.title;
-    $("set-avatar").textContent = w.unnamed ? "" : w.title[0].toUpperCase();
+    paintAvatar($("set-avatar"), { name: w.unnamed ? "" : w.title, photo: me.photo });
     for (const el of document.querySelectorAll("#menu [data-person], #devchoose [data-person]")) el.textContent = w.inline;
     for (const el of pane.querySelectorAll("[data-person-cap]")) el.textContent = w.cap;
   }
@@ -109,7 +110,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
   function checklist() {
     const f = facts();
     return [
-      { done: !!me.name?.trim(), label: "Name who uses Pip", hint: "Team & devices → Name", go: () => show("team") },
+      { done: !!me.name?.trim(), label: "Name who uses Pip", hint: "Name and photo, top of this page", go: () => $("person-name").focus() },
       { done: f.entities > 0, label: "Add their people and places", hint: "Names and photos Pip can suggest", go: () => $("open-setup").click() },
     ];
   }

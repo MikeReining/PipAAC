@@ -220,14 +220,14 @@ test("no identity: ledger columns, rows, R2 keys, and synth args are anonymous",
 
 /* ------------------------- validation + voices ------------------------ */
 
-test("gates: bad ids, bad license, bad voice (Zoe is planned), bad text", async () => {
+test("gates: bad ids, bad license, bad voice (Joy is planned), bad text", async () => {
   const env = makeEnv();
   const license = await licenseFor(SECRET, UID);
   const r1 = await tile(env, { user_id: UID, license: "pip-life-nope", text: "x" });
   assert.equal(r1.status, 403);
   const r2 = await tile(env, { user_id: "nope", license, text: "x" });
   assert.equal(r2.status, 400);
-  const r3 = await good(env, { voice: "voi_zoe_en" }); // planned — not selectable
+  const r3 = await good(env, { voice: "voi_joy_en" }); // planned — not selectable
   assert.equal(r3.status, 400);
   assert.equal((await r3.json()).error, "bad_voice");
   const r4 = await good(env, { voice: "voi_nobody" });

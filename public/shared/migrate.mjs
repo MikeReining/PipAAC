@@ -162,6 +162,8 @@ export const ADDITIVE_COLUMNS = {
     "person_name TEXT CHECK (person_name IS NULL OR length(person_name) BETWEEN 1 AND 80)",
     // Sentence bar settings (038): JSON list of shown controls; NULL = all.
     "bar_controls TEXT",
+    // The person's photo key, synced (2026-10-03, shared/person_name.mjs).
+    "person_photo TEXT CHECK (person_photo IS NULL OR person_photo GLOB 'blob:*')",
   ],
   // 032 E: the ✨ / ❓ buttons a Spotlight list lights.
   spotlight_list: "controls TEXT",
@@ -176,6 +178,11 @@ export const ADDITIVE_TABLES = {
   pressed_at INTEGER NOT NULL CHECK (pressed_at > 0),
   tz_offset_min INTEGER NOT NULL,
   spotlit INTEGER NOT NULL DEFAULT 0 CHECK (spotlit IN (0, 1))
+);`,
+  // Team names (2026-10-03, shared/team_names.mjs).
+  supporter_name: `CREATE TABLE IF NOT EXISTS supporter_name (
+  acct_id TEXT PRIMARY KEY CHECK (length(acct_id) > 0),
+  name TEXT NOT NULL CHECK (length(name) BETWEEN 1 AND 80)
 );`,
 };
 export function ensureAdditiveColumns(d) {

@@ -236,6 +236,17 @@
 
             <section class="set-sec" data-sec="overview" data-title="Overview">
               <h2>Overview</h2>
+              <div class="seg-row set-person">
+                <span class="set-avatar" id="person-avatar" aria-hidden="true"></span>
+                <div class="set-person-fields">
+                  <label class="seg-label" for="person-name">Name</label>
+                  <input type="text" class="set-name-input" id="person-name" maxlength="80" autocomplete="off" placeholder="Their name" />
+                  <div class="row">
+                    <label class="btn secondary" id="person-photo-btn">Add a photo<input type="file" id="person-photo" accept="image/*" hidden /></label>
+                    <button class="set-link" id="person-photo-rm" hidden>Remove photo</button>
+                  </div>
+                </div>
+              </div>
               <div class="seg-row set-spot-now" id="set-spot-now" hidden></div>
               <div class="seg-row set-protect" id="set-protect" hidden></div>
               <div class="seg-row set-check" id="set-check" hidden></div>
@@ -624,6 +635,11 @@
             <section class="set-sec" data-sec="you" data-title="Your account" data-group="you">
               <h2>Your account</h2>
               <p class="set-intro">About you, the adult. <span data-person-cap></span> never needs an account.</p>
+              <div class="seg-row" id="my-name-row" hidden>
+                <label class="seg-label" for="my-name">Your name</label>
+                <input type="text" class="set-name-input" id="my-name" maxlength="80" autocomplete="name" placeholder="Mom, Dad, Ms. Rivera…" />
+                <p class="hint">The rest of <span data-person></span>'s team sees this instead of your email.</p>
+              </div>
               <div class="seg-row" id="acct-row" hidden>
                 <span class="seg-label">Sign in</span>
                 <div id="acct-state"><p class="hint">Not signed in.</p></div>

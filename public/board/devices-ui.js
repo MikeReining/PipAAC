@@ -14,7 +14,8 @@ import {
   listInvites, openInvite, redeemLicense, registerAccount, requestLink,
   revokeInvite, saveAccountState, shareUserToAccount, signInAccount,
 } from "../shared/account.mjs";
-import { addUser, listUsers, putUser, removeUser } from "../shared/users.mjs";
+import { addUser, listUsers, putUser } from "../shared/users.mjs";
+import { supporterNames } from "../shared/team_names.mjs";
 
 const $ = (id) => document.getElementById(id);
 
@@ -24,6 +25,8 @@ export function mountDevices({
   // Re-seals the running sync client after a key rotation (015 s5) —
   // injected so this module stays free of the sqlite-backed db graph.
   syncRekey = async () => null,
+  // People on this device lives in people-ui.js; repaint it after changes.
+  renderUsers = async () => {},
 }) {
   /* ------------------------------------------------------------------ *
    * Linked devices + pairing (sync § 3). The new device shows an 8-char
@@ -204,71 +207,6 @@ export function mountDevices({
     await renderDevices();
   }
 
-  /** Users on this device (015 slice 2): the registry rendered in Parent
-   *  corner — switch, name, pick who opens first, add. The active user's
-   *  DB flushes before the tab reloads into the other user. */
-  async function renderUsers() {
-    const list = $("usr-list");
-    const rows = await listUsers(userStore);
-    const ks = openKeyStore();
-    list.innerHTML = "";
-    for (const u of rows) {
-      const row = document.createElement("div");
-      row.className = "dev-row";
-      const name = document.createElement("span");
-      name.className = "dev-id";
-      // Locked (015 slice 4): the account brought this user but not its
-      // keys — they arrive by an Allow on another device or a QR card.
-      const locked = u.sync?.userId
-        && !(await ks.get(`user/${u.id}/key_e${u.sync.epoch ?? 1}`));
-      name.textContent = (u.id === me.id ? "● " : "")
-        + (u.name || "Unnamed") + (u.home ? " — opens first" : "")
-        + (locked ? " 🔒 needs an Allow or QR card" : "");
-      row.append(name);
-      if (u.id !== me.id && !locked) {
-        const sw = document.createElement("button");
-        sw.className = "btn secondary";
-        sw.textContent = "Switch";
-        sw.onclick = async () => {
-          sessionStorage.setItem("pip_active_user", u.id);
-          sessionStorage.setItem("pip_reopen_settings", "team");
-          await flushDb();
-          location.reload();
-        };
-        row.append(sw);
-        // Remove from this device only — the user stays on the relay and
-        // other devices. Warn when this device may hold the only copy.
-        const rm = document.createElement("button");
-        rm.className = "btn secondary";
-        rm.textContent = "Remove";
-        rm.onclick = async () => {
-          const label = u.name || "this user";
-          const warn = u.sync?.userId
-            ? `Remove ${label} from this device? The user stays on the relay and its other devices.`
-            : `Remove ${label} from this device? It is not linked anywhere — its words will be gone unless a QR card exists.`;
-          if (!confirm(warn)) return;
-          await removeUser(userStore, u.id);
-          await renderUsers();
-        };
-        row.append(rm);
-      }
-      const edit = document.createElement("button");
-      edit.className = "btn secondary";
-      edit.textContent = "Name";
-      edit.onclick = async () => {
-        const n = prompt("Name this person", u.name || "");
-        if (n === null) return;
-        if (u.id === me.id) await saveUser({ name: n.trim() });
-        else await putUser(userStore, { ...u, name: n.trim(), nameDirty: true });
-        await renderUsers();
-      };
-      row.append(edit);
-      // Which person opens first is Settings → "When Pip opens"
-      // (people-ui.js), one control for one fact.
-      list.append(row);
-    }
-  }
-
   $("usr-add").onclick = async () => {
     const name = prompt("Name this person", "") ?? "";
     const added = await addUser(userStore, { name: name.trim() });
@@ -296,6 +234,7 @@ export function mountDevices({
       : `<p class="hint">Not signed in.</p>`;
     $("acct-form").hidden = !!st;
     $("acct-danger").hidden = !st;
+    $("my-name-row").hidden = $("acct-row").hidden; // supporters only
   }
   // 015 slice 7: deleting the account removes this account's access on
   // every user's relay, then the account — the users' boards, devices,
@@ -500,8 +439,9 @@ export function mountDevices({
       }
       await renderSupporters();
     }];
+    const names = supporterNames(db); // each supporter's own name, synced
     const memberRow = (acct, email, token) => mkRow(
-      `${email ?? acct} — ${levelOf(acct) === "owner" ? "owner" : "team, can edit everything"}`,
+      `${names.get(acct) ?? email ?? acct} — ${levelOf(acct) === "owner" ? "owner" : "team, can edit everything"}`,
       [ownerButton(acct), ["Remove", () => removeSupporterFlow({ acct_id: acct, email, token })]]);
     for (const inv of invites) {
       if (inv.status === "granted") {

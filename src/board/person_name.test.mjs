@@ -11,7 +11,10 @@ import { join } from "node:path";
 
 import { createDatabase, importCatalog } from "./catalog.mjs";
 import { drainOps, ensureBaseline, listOps } from "../../public/shared/ops.mjs";
-import { followProfileName, nameToProfile, profileName } from "../../public/shared/person_name.mjs";
+import {
+  followProfileName, nameToProfile, profileName, profilePhoto, setProfilePhoto,
+} from "../../public/shared/person_name.mjs";
+import { setSupporterName, supporterNames } from "../../public/shared/team_names.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
@@ -76,4 +79,43 @@ test("a rename made while the person wasn't open lands on their next open", asyn
   await followProfileName(a, p.me, p.saveUser);
   assert.equal(profileName(a), "Maya Lee");
   assert.equal(p.me.nameDirty, false);
+});
+
+const replayInto = (from) => {
+  const b = device();
+  drainOps(b, listOps(from).map((o, i) => ({ ...o, relay_seq: i + 1 })));
+  return b;
+};
+
+test("a photo set on one device reaches another device's people list", async () => {
+  const a = device();
+  setProfilePhoto(a, "blob:abc123");
+  setProfilePhoto(a, "blob:abc123"); // the same photo again records nothing
+  assert.equal(listOps(a).filter((o) => o.kind === "set_setting").length, 1);
+
+  const b = replayInto(a);
+  assert.equal(profilePhoto(b), "blob:abc123");
+  db0 = b;
+  const pb = person({ name: "Maya" });
+  await followProfileName(b, pb.me, pb.saveUser);
+  assert.equal(pb.me.photo, "blob:abc123", "the switcher and launch list get the photo");
+
+  setProfilePhoto(a, null); // Remove photo
+  const c = replayInto(a);
+  assert.equal(profilePhoto(c), null);
+  assert.throws(() => setProfilePhoto(a, "https://x/y.png"), "only blob-store keys");
+});
+
+test("each supporter's own name reaches the rest of the team, sealed in the op log", () => {
+  const a = device();
+  setSupporterName(a, "acct_mom", "Mom");
+  setSupporterName(a, "acct_slp", "Ms. Rivera");
+  setSupporterName(a, "acct_mom", "Mum"); // a rename touches only her row
+  const b = replayInto(a);
+  assert.deepEqual([...supporterNames(b)].sort(), [["acct_mom", "Mum"], ["acct_slp", "Ms. Rivera"]]);
+
+  setSupporterName(b, "acct_slp", ""); // clearing your name drops the row
+  const c = replayInto(b);
+  assert.equal(supporterNames(c).has("acct_slp"), false);
+  assert.equal(supporterNames(c).get("acct_mom"), "Mum");
 });

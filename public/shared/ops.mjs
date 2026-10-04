@@ -46,6 +46,7 @@ import { moveCore, placeOnBoard } from "./coremove.mjs";
 import { setBoardLayout } from "./movecost.mjs";
 import { createFamily, setFamilyItems } from "./families.mjs";
 import { writeStatsDay } from "./stats.mjs";
+import { setSupporterName } from "./team_names.mjs";
 
 let replaying = false;
 // The signing key's fingerprint (sync_crypto.getDeviceIdentity); set at
@@ -286,6 +287,9 @@ export function applyOp(db, op) {
         // ORIGINATING device so several devices' totals add up.
         writeStatsDay(db, a.day, op.device_id ?? "dev_remote", a.computed_at, a.payload);
         break;
+      case "set_supporter_name":
+        setSupporterName(db, a.acctId, a.name);
+        break;
       default:
         throw new Error(`applyOp: unknown op kind ${op.kind}`);
     }
@@ -315,6 +319,7 @@ const SYNCED_TABLES = [
   "group_cell", "group_seed_install",
   "sense_mask", "spotlight_list", "spotlight_item", "spotlight_session",
   "core_override", "move_mark", "bar_family", "bar_family_item",
+  "supporter_name",
 ];
 
 /** Every synced table's rows, with rowids, oldest first. */

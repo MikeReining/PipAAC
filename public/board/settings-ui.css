@@ -355,3 +355,22 @@ button.set-who:hover { background: var(--tray); }
 .bar-ex-ico { width: 36px; height: 36px; border-radius: 10px; background: #efeadf; display: grid; place-items: center; }
 .bar-ex-ico svg { width: 22px; height: 22px; }
 .bar-ex-out { font-size: 17px; font-weight: 700; }
+
+/* Names and photos (2026-10-03): the person's card at the top of
+ * Overview, the people rows in Team & devices, and Your name all edit a
+ * name in place — one field style, saved on change. */
+.set-sec .seg-row.set-person { flex-direction: row; align-items: center; gap: 18px; }
+.set-person > .set-avatar { width: 76px; height: 76px; font-size: 32px; }
+.set-person-fields { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.set-person-fields .row { display: flex; align-items: center; gap: 12px; }
+.set-person-fields .row > * { flex: none; }
+.set-name-input {
+  width: 100%; min-width: 0; font: inherit; font-size: 17px; font-weight: 700;
+  padding: 8px 12px; border: 2px solid var(--line); border-radius: 10px; background: #fff;
+}
+.set-name-input:focus { outline: none; border-color: var(--ink-text); }
+.usr-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; }
+.usr-row .set-avatar { width: 40px; height: 40px; font-size: 17px; }
+.usr-row .set-name-input { flex: 1; font-size: 15px; padding: 6px 10px; }
+.usr-sub { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.usr-row button { flex: none; padding: 4px 10px; font-size: 13px; }

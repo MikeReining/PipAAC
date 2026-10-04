@@ -171,7 +171,11 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   -- shown control names (fix question past future backspace clear). NULL
   -- is Everything, the pre-038 bar. Play is never listed: it always
   -- shows. Synced, adult-set only.
-  bar_controls TEXT
+  bar_controls TEXT,
+  -- The person's photo (2026-10-03): a blob:<sha> photo key, synced and
+  -- sealed like every edit. The bytes ride the sealed blob store, the
+  -- same path as a family photo on a word.
+  person_photo TEXT CHECK (person_photo IS NULL OR person_photo GLOB 'blob:*')
 );
 
 CREATE TABLE IF NOT EXISTS personal_entity (
@@ -818,6 +822,14 @@ BEGIN
       AND voice.locale = NEW.locale
   );
 END;
+
+-- Team names (2026-10-03): each supporter account's display name, set
+-- by that supporter and synced sealed, so the Team list reads names
+-- instead of emails. The relay never sees a name in the clear.
+CREATE TABLE IF NOT EXISTS supporter_name (
+  acct_id TEXT PRIMARY KEY CHECK (length(acct_id) > 0),
+  name TEXT NOT NULL CHECK (length(name) BETWEEN 1 AND 80)
+);
 
 -- Daily totals (016 § 6.2): one row per local day, computed on the
 -- device from learner_event_log + sentence. Counts only — payload is

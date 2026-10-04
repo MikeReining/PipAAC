@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-041342338df3",
+  "buildId": "r1-8be5e09c09c6",
   "files": [
     {
       "path": "/audio/1/882d0ee59798.mp3",
@@ -29413,8 +29413,8 @@
     },
     {
       "path": "/board.js",
-      "bytes": 63015,
-      "sha256": "969fe1f4c4ffd72a533ceb5f7603849e87d2cd9ed71aed0c7ef7f769e4a64de4"
+      "bytes": 63109,
+      "sha256": "59387456ad7b223191a5a2f24c3a2c7fb3fc37ae7c42f2db45bff54ec17278e3"
     },
     {
       "path": "/board/add-flow.css",
@@ -29573,8 +29573,8 @@
     },
     {
       "path": "/board/people-ui.js",
-      "bytes": 8488,
-      "sha256": "026c7a88826d43c3acc270d74243d6eac5f4b1933afebb87cb230094de5f906b"
+      "bytes": 9266,
+      "sha256": "c4e2b178daec290c34d2cc6c8d221860efbff1ffc53f3f6e54217ff73e19d516"
     },
     {
       "path": "/board/person-card.js",
@@ -29638,13 +29638,13 @@
     },
     {
       "path": "/board/settings-ui.css",
-      "bytes": 21352,
-      "sha256": "e7b68ac1e38589db35850705602eb69c212927bd55823d4efd7792d42ea69bd8"
+      "bytes": 21419,
+      "sha256": "800406818bda4d1d80eed2b2ea26195481c5a97f8f954b00f5f294abd3ad1d47"
     },
     {
       "path": "/board/settings-ui.js",
-      "bytes": 20802,
-      "sha256": "2997f974a216164112b6c7e211e89a2a769293f9a31e82b52bbf27dfd6799c12"
+      "bytes": 20823,
+      "sha256": "e577606d156d10de6fb591ff4985b9d75eaf593d91c4affce6524ac64025ba9e"
     },
     {
       "path": "/board/setup-ui.css",

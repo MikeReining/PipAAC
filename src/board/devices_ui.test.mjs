@@ -26,7 +26,7 @@ test("the account row says when nobody is signed in", () => {
   const ids = [
     "pairform", "pair-body", "pair-title", "pair-go",
     "usr-add", "acct-send", "acct-email", "acct-form", "acct-row",
-    "acct-danger", "acct-delete",
+    "acct-danger", "acct-delete", "my-name-row",
     "dev-link", "dev-add", "corner", "dev-activate", "dev-license",
     "dev-delete", "dev-undelete",
     "sup-row", "sup-list", "sup-form", "sup-email", "sup-invite",
@@ -60,7 +60,7 @@ test("Add a user flags first-open setup — 'Who do they call for?'", async () =
   const ids = [
     "pairform", "pair-body", "pair-title", "pair-go",
     "usr-add", "acct-send", "acct-email", "acct-form", "acct-row",
-    "acct-danger", "acct-delete",
+    "acct-danger", "acct-delete", "my-name-row",
     "dev-link", "dev-add", "corner", "dev-activate", "dev-license",
     "dev-delete", "dev-undelete",
     "sup-row", "sup-list", "sup-form", "sup-email", "sup-invite",

@@ -13,14 +13,16 @@
  * writes that flag, and only from inside the PIN-gated Settings, so it
  * never lets a child past the gate.
  */
-import { listUsers, setHome } from "../shared/users.mjs";
+import { listUsers, putUser, removeUser, setHome } from "../shared/users.mjs";
 import { appRoot } from "./viewport.js";
+import { paintAvatar, setPhotoLoader } from "./avatar.js";
+import { mountPersonCard } from "./person-card.js";
+import { mountMyName } from "./team-name-ui.js";
 
 const $ = (id) => document.getElementById(id);
 
 export const REOPEN_KEY = "pip_reopen_settings";
 
-const initial = (u) => (u.name?.trim()?.[0] ?? "").toUpperCase();
 const nameOf = (u) => u.name?.trim() || "Unnamed";
 
 /** Boot: which Settings page to reopen after a switch, once. */
@@ -33,7 +35,8 @@ export function takeReopen(storage = sessionStorage) {
 /** The launch list: many people on a device where nobody opens first.
  *  Last opened first — the registry already sorts that way. Shown
  *  before the board boots, so it carries no Settings chrome. */
-export function pickPerson(rows) {
+export function pickPerson(rows, loadPhoto) {
+  if (loadPhoto) setPhotoLoader(loadPhoto);
   return new Promise((resolve) => {
     const wrap = document.createElement("div");
     wrap.className = "launch-list";
@@ -46,7 +49,7 @@ export function pickPerson(rows) {
       b.className = "launch-person";
       const av = document.createElement("span");
       av.className = "set-avatar";
-      av.textContent = initial(u);
+      paintAvatar(av, u);
       const t = document.createElement("span");
       t.textContent = nameOf(u);
       b.append(av, t);
@@ -59,9 +62,11 @@ export function pickPerson(rows) {
 }
 
 export function mountPeople({
-  me, userStore, keyStore, flushDb, settings, onHomeChanged = () => {},
+  me, userStore, keyStore, flushDb, settings, saveUser, onHomeChanged = () => {},
+  db, savePhoto, syncUploadBlob, loadPhoto,
   storage = sessionStorage, reload = () => location.reload(),
 }) {
+  if (loadPhoto) setPhotoLoader(loadPhoto);
   const who = $("set-who");
   const pop = $("set-pop");
 
@@ -82,7 +87,7 @@ export function mountPeople({
       b.className = "set-pop-person" + (u.id === me.id ? " on" : "");
       const av = document.createElement("span");
       av.className = "set-avatar";
-      av.textContent = initial(u);
+      paintAvatar(av, u);
       const txt = document.createElement("span");
       txt.className = "set-whotext";
       const n = document.createElement("b");
@@ -124,6 +129,73 @@ export function mountPeople({
     if (!pop.hidden && !e.target.closest("#set-pop, #set-who")) closePop();
   });
 
+  /** People on this device (015 slice 2, rows 2026-10-03): each person's
+   *  avatar, their name edited in place, Switch and Remove. Who opens
+   *  first is "When Pip opens" below. The active user's DB flushes before
+   *  the tab reloads into the other user. */
+  async function renderUsers() {
+    const list = $("usr-list");
+    const rows = await listUsers(userStore);
+    list.innerHTML = "";
+    for (const u of rows) {
+      // One row per person: their avatar, their name edited in place,
+      // and where they stand on this device (2026-10-03).
+      const row = document.createElement("div");
+      row.className = "usr-row";
+      const av = document.createElement("span");
+      av.className = "set-avatar";
+      paintAvatar(av, u);
+      const name = document.createElement("input");
+      name.type = "text";
+      name.className = "set-name-input";
+      name.maxLength = 80;
+      name.value = u.name ?? "";
+      name.placeholder = "Name";
+      name.setAttribute("aria-label", "Name");
+      name.onchange = async () => {
+        const n = name.value.trim();
+        if (!n) { name.value = u.name ?? ""; return; } // a name can't be blank
+        if (u.id === me.id) await saveUser({ name: n });
+        else await putUser(userStore, { ...u, name: n, nameDirty: true });
+        settings.paintNames();
+      };
+      // Locked (015 slice 4): the account brought this user but not its
+      // keys — they arrive by an Allow on another device or a QR card.
+      const isLocked = await locked(u);
+      const sub = document.createElement("span");
+      sub.className = "usr-sub";
+      sub.textContent = isLocked ? "🔒 needs an Allow or QR card"
+        : [u.id === me.id && "Open now", u.home && "Opens first"].filter(Boolean).join(" · ");
+      row.append(av, name, sub);
+      if (u.id !== me.id && !isLocked) {
+        const sw = document.createElement("button");
+        sw.className = "btn secondary";
+        sw.textContent = "Switch";
+        sw.onclick = () => switchTo(u.id, "team");
+        row.append(sw);
+        // Remove from this device only — the user stays on the relay and
+        // other devices. Warn when this device may hold the only copy.
+        const rm = document.createElement("button");
+        rm.className = "btn secondary";
+        rm.textContent = "Remove";
+        rm.onclick = async () => {
+          const label = u.name || "this user";
+          const warn = u.sync?.userId
+            ? `Remove ${label} from this device? The user stays on the relay and its other devices.`
+            : `Remove ${label} from this device? It is not linked anywhere — its words will be gone unless a QR card exists.`;
+          if (!confirm(warn)) return;
+          await removeUser(userStore, u.id);
+          await renderUsers();
+        };
+        row.append(rm);
+      }
+      // Which person opens first is Settings → "When Pip opens"
+      // (people-ui.js), one control for one fact.
+      list.append(row);
+    }
+  }
+
+
   /* "When Pip opens on this device": a person, or the list. */
   async function renderOpens() {
     const row = $("opens-row");
@@ -148,5 +220,19 @@ export function mountPeople({
     }
   }
 
-  return { switchTo, renderPop, renderOpens, closePop };
+  /* Names and photos (2026-10-03): the open person's card on Overview
+   * (person-card.js) and the adult's own name (team-name-ui.js). Both
+   * follow the synced profile after each sync and on every open. */
+  const card = db && mountPersonCard({
+    db, me, saveUser, savePhoto, syncUploadBlob,
+    onChange: () => { settings.paintNames(); renderUsers(); },
+  });
+  const myName = db && mountMyName({ db });
+  function follow() {
+    card?.render();
+    settings.paintNames?.();
+    myName?.follow();
+  }
+
+  return { switchTo, renderPop, renderOpens, renderUsers, closePop, follow };
 }
