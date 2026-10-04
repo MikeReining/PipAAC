@@ -1389,6 +1389,7 @@ const onramp = mountOnramp({
   say: sayClip, // recorded clips in the product voice, never device TTS
   tileFor: tileForSense,
   fitLabels,
+  join: () => devicesUi.join(),
 });
 /* The demo — public/board/tour-ui.js. The board side: add a word, set
  * the bar to a scripted sentence, speak it — none of it logged. */

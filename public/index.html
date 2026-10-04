@@ -346,7 +346,7 @@
                 <p class="hint" id="spot-model-hint"></p>
                 <div class="row">
                   <button class="btn secondary" id="spot-model">Model from this device</button>
-                  <button class="btn secondary" id="spot-link" data-click="dev-choose">Link a phone</button>
+                  <button class="btn secondary" id="spot-link" data-click="dev-add">Link a phone</button>
                 </div>
                 <span class="seg-label spot-sub">When a modeled word arrives</span>
                 <div class="seg" id="model-speaks">
@@ -569,6 +569,7 @@
                 <div id="usr-list"></div>
                 <div class="row">
                   <button class="btn secondary" id="usr-add">Add a person</button>
+                  <button class="btn secondary" id="usr-join">Join with a code</button>
                 </div>
                 <p class="hint">Each person keeps their own words, groups, and sync. Switching opens that person; the others keep everything they had.</p>
               </div>
@@ -594,12 +595,9 @@
                 <span class="seg-label">Devices</span>
                 <div id="dev-list"><p class="hint">Only on this device so far.</p></div>
                 <div class="row">
-                  <button class="btn secondary" id="dev-choose">Add a device</button>
-                  <!-- The two flows devices-ui owns; Add a device asks which one. -->
-                  <button id="dev-add" hidden>Approve a new device</button>
-                  <button id="dev-link" hidden>Link this device</button>
+                  <button class="btn secondary" id="dev-add">Add a device</button>
                 </div>
-                <p class="hint">A linked device sees and edits everything for this person. Removing one locks it out.</p>
+                <p class="hint">Add a device shows a code here — type it on the other device. A linked device sees and edits everything for this person. Removing one locks it out.</p>
               </div>
             </section>
 
@@ -833,22 +831,6 @@
           <button class="btn danger" id="del-yes">Delete</button>
           <button class="btn secondary" data-close>Keep</button>
         </div>
-      </div>
-    </div>
-
-    <!-- Settings → Team & devices → Add a device: which device is this? -->
-    <div class="overlay" id="devchoose">
-      <div class="sheet">
-        <h2>Which device are you holding?</h2>
-        <button class="btn secondary set-choice" data-pick="dev-link">
-          <b>The new one</b>
-          <span class="hint">It shows a code; type it on a device that already has <span data-person></span>.</span>
-        </button>
-        <button class="btn secondary set-choice" data-pick="dev-add">
-          <b>One that already has <span data-person></span></b>
-          <span class="hint">Type the code the new device is showing, then Allow.</span>
-        </button>
-        <button class="btn secondary" data-close>Cancel</button>
       </div>
     </div>
 

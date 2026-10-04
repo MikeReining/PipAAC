@@ -5,7 +5,7 @@
  * short demo (tour-ui.js). Every prompt and every choice is said aloud
  * on show and on tap — through shipped recordings in the product voice
  * (shared/onramp_audio.mjs), never device TTS. No photos, PIN, backup or
- * sign-in up front:
+ * sign-in up front (a second device types the first one's code instead):
  * those come later, once something is worth protecting (Settings →
  * Overview). The old four-step "their world" form still opens from
  * Settings → Words → People & places, never by itself.
@@ -26,7 +26,7 @@ const el = (tag, cls, text) => {
 /** Preview tiles for the look question: real board words, real art. */
 const PREVIEW = ["sns_0013", "sns_0128"]; // want, apple
 
-export function mountOnramp({ me, saveUser, setLook, flushDb, tileFor, say = () => {}, fitLabels = () => {} }) {
+export function mountOnramp({ me, saveUser, setLook, flushDb, tileFor, say = () => {}, fitLabels = () => {}, join = () => {} }) {
   let wrap = null;
 
   function screen(build) {
@@ -83,6 +83,13 @@ export function mountOnramp({ me, saveUser, setLook, flushDb, tileFor, say = () 
         go.disabled = false;
       }));
       card.append(go);
+      // The second device's front door: the board already exists on
+      // another device, so there is nothing to set up — type its code.
+      const other = el("p", "welcome-join", "Already use Pip on another device? ");
+      const code = el("button", "welcome-join-go", "Enter a code");
+      code.onclick = () => join();
+      other.append(code);
+      card.append(other);
       go.onclick = async () => {
         await saveUser({ name: name.value.trim(), audience });
         if (audience === "adult") look();

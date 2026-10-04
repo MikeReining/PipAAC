@@ -36,6 +36,11 @@
 }
 .welcome-go { min-height: 60px; font-size: 19px; }
 .welcome-go:disabled { opacity: .35; }
+.welcome-join { color: var(--muted); text-align: center; margin: 0; }
+.welcome-join-go {
+  border: 0; background: none; font: inherit; font-weight: 700; color: var(--ink-text);
+  text-decoration: underline; cursor: pointer; padding: 8px 4px;
+}
 .welcome-tiles { display: flex; gap: 8px; pointer-events: none; }
 .welcome-tiles .cell { width: 84px; height: 84px; }
 @media (max-width: 420px) {

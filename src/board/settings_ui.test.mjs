@@ -22,7 +22,7 @@ const CONTROLS = [
   "open-library", "hl-next", "group-toprow", "group-shows",
   "fresh-speak", "grammar-help", "expressive-voice", "share-research",
   "spot-pick", "cells-seg", "fam-list", "kb-mode", "kb-order", "usr-list",
-  "usr-add", "acct-row", "dev-list", "dev-add", "dev-link", "sup-row",
+  "usr-add", "acct-row", "dev-list", "dev-add", "usr-join", "sup-row",
   "dev-lifetime-row", "dev-sheet", "dev-restore", "dev-delete-row",
 ];
 

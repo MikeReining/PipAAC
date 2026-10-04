@@ -21,7 +21,7 @@ const licenseSecret = Object.fromEntries(
   readFileSync(join(repoRoot, ".dev.vars"), "utf8").split("\n")
     .map((l) => l.match(/^\s*([A-Z_]+)\s*=\s*(.+?)\s*$/))
     .filter(Boolean).map((m) => [m[1], m[2]])).PIP_LICENSE_SECRET;
-const ORIGIN = "http://localhost:8794";
+const ORIGIN = process.env.PIP_ORIGIN ?? "http://localhost:8794";
 
 const stubDialogs =
   `window.confirm=()=>true;window.prompt=()=>'';window.alert=()=>{};1`;
@@ -105,18 +105,19 @@ const B = await device("phone", 9261, "/tmp/pip-spot3b-probe");
 const out = {};
 
 // A opens Add a device — dev-add runs ensureUser, creating the user on
-// the relay, then shows the code input. Lifetime activates while the
-// form is open (a free user allows one linked device; B is the second).
+// the relay (free: the Lifetime door). Lifetime activates, then A shows
+// the code B types.
 await A.loadApp();
 await A.evalJs(`(() => {
   document.querySelector('#corner').click();
   document.querySelector('#dev-add').click();
   return 1;
 })()`);
-out.linked = await A.until(`!!window.pip.user.sync?.userId && !!document.querySelector('#pair-code')`);
+out.linked = await A.until(`!!window.pip.user.sync?.userId`);
 const userId = await A.evalJs(`window.pip.user.sync.userId`);
 const license = await licenseFor(licenseSecret, userId);
 await A.evalJs(`(() => {
+  document.querySelector('#pairform [data-close]')?.click();
   document.querySelector('#dev-license').value = ${JSON.stringify(license)};
   document.querySelector('#dev-activate').click();
   return 1;
@@ -124,26 +125,22 @@ await A.evalJs(`(() => {
 out.lifetime = await A.until(
   `document.querySelector('#dev-lifetime').textContent.includes('Lifetime')`);
 
-// B requests pairing; A allows it in the same open form. B reloads into
-// the same user.
+// A shows the code; B types it. A hands over the key on the claim.
+await A.evalJs(`document.querySelector('#dev-add').click(), 1`);
+out.codeShown = await A.until(`!!document.querySelector('#pair-body .pair-code')`);
+const code = await A.evalJs(`document.querySelector('#pair-body .pair-code').textContent`);
 await B.loadApp();
 await B.evalJs(`(() => {
   document.querySelector('#corner').click();
-  document.querySelector('#dev-link').click();
-  return 1;
-})()`);
-out.codeShown = await B.until(`!!document.querySelector('.pair-code')`);
-const code = await B.evalJs(`document.querySelector('.pair-code').textContent`);
-await A.evalJs(`(() => {
+  document.querySelector('#usr-join').click();
   const input = document.querySelector('#pair-code');
   input.value = ${JSON.stringify(code)};
   input.dispatchEvent(new Event('input'));
   return 1;
 })()`);
-out.allowShown = await A.until(`!document.querySelector('#pair-go').hidden`);
-await A.evalJs(`document.querySelector('#pair-go').click()`);
 out.granted = await A.until(
-  `!document.querySelector('#pairform').classList.contains('open')`, 15000);
+  `!!document.querySelector('#pair-body .pair-done')`, 15000);
+await A.evalJs(`document.querySelector('#pairform [data-close]').click(), 1`);
 // B polls every 2s, then unwraps the grant and reloads into the user.
 out.bJoined = await B.until(
   `window.pip.user.id === ${JSON.stringify(userId)} && window.pip.user.sync?.userId === ${JSON.stringify(userId)}`,
@@ -209,7 +206,7 @@ out.bClears = await B.until(
   15000);
 
 console.log(JSON.stringify(out, null, 2));
-const ok = out.linked && out.lifetime && out.codeShown && out.allowShown &&
+const ok = out.linked && out.lifetime && out.codeShown &&
   out.granted && out.bJoined && out.bBoard && out.aListSaved && out.bSeesList &&
   out.aGlows && out.aRunning.session && out.aClears && !out.aCleared.session &&
   out.bGlows && out.bClears;

@@ -98,7 +98,7 @@ const A = await device("ipad", 9265, "/tmp/pip-coach-a-probe");
 const B = await device("phone", 9266, "/tmp/pip-coach-b-probe");
 const out = {};
 
-// Pair: A opens Add a device (ensureUser), activates Lifetime, Allows B.
+// Pair: A opens Add a device (ensureUser), activates Lifetime, shows B the code.
 await A.loadApp();
 await A.evalJs(`(() => {
   window.pip.db.exec("DELETE FROM spotlight_item; DELETE FROM spotlight_list; DELETE FROM spotlight_session;");
@@ -106,10 +106,11 @@ await A.evalJs(`(() => {
   document.querySelector('#dev-add').click();
   return 1;
 })()`);
-out.linked = await A.until(`!!window.pip.user.sync?.userId && !!document.querySelector('#pair-code')`);
+out.linked = await A.until(`!!window.pip.user.sync?.userId`);
 const userId = await A.evalJs(`window.pip.user.sync.userId`);
 const license = await licenseFor(licenseSecret, userId);
 await A.evalJs(`(() => {
+  document.querySelector('#pairform [data-close]')?.click();
   document.querySelector('#dev-license').value = ${JSON.stringify(license)};
   document.querySelector('#dev-activate').click();
   return 1;
@@ -117,22 +118,19 @@ await A.evalJs(`(() => {
 out.lifetime = await A.until(
   `document.querySelector('#dev-lifetime').textContent.includes('Lifetime')`);
 
+// A shows the code (Add a device); B types it (Team & devices → Join with a code).
+await A.evalJs(`document.querySelector('#dev-add').click(), 1`);
+out.codeShown = await A.until(`!!document.querySelector('#pair-body .pair-code')`);
+const code = await A.evalJs(`document.querySelector('#pair-body .pair-code').textContent`);
 await B.loadApp();
 await B.evalJs(`(() => {
   document.querySelector('#corner').click();
-  document.querySelector('#dev-link').click();
-  return 1;
-})()`);
-out.codeShown = await B.until(`!!document.querySelector('.pair-code')`);
-const code = await B.evalJs(`document.querySelector('.pair-code').textContent`);
-await A.evalJs(`(() => {
+  document.querySelector('#usr-join').click();
   const input = document.querySelector('#pair-code');
   input.value = ${JSON.stringify(code)};
   input.dispatchEvent(new Event('input'));
   return 1;
 })()`);
-out.allowShown = await A.until(`!document.querySelector('#pair-go').hidden`);
-await A.evalJs(`document.querySelector('#pair-go').click()`);
 out.bJoined = await B.until(
   `window.pip.user.id === ${JSON.stringify(userId)} && window.pip.user.sync?.userId === ${JSON.stringify(userId)}`,
   20000);

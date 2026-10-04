@@ -78,30 +78,32 @@ pairing below stay.*
 - The server knows board ids and device public keys. It never holds the
   board key, a name, a photo or a recording in the clear.
 
-### Pairing (adding a device) — **BUILT** (011 slice 5)
+### Pairing (adding a device) — **BUILT** (011 slice 5; flipped 2026-10-04)
 
-1. The new device (a laptop browser, say) opens Pip and chooses **Link to
-   a board**. It shows a QR code and an 8-character code. Both carry only
-   its public key and a short-lived pairing id. **BUILT**: the code is the
-   `PairingLobby` DO name (`POST /pair` stores the new device's
-   `device_id`, signing pubkey, and dh pubkey for 10 minutes); the QR
-   encodes `{pair}` and renders via `public/vendor/qrcode.mjs`.
-2. On an already-linked device, in the Parent Corner, the adult scans
-   the QR or types the code. The linked device shows **"Allow … to edit
-   this board?"** Nothing happens until Allow.
-3. On Allow, the linked device encrypts the board key to the new device's
-   public key and sends it through the relay. The new device downloads
-   the snapshot and the log (§ 5). **BUILT**: `wrapUserKey` (ephemeral
-   ECDH → AES-GCM wrap) → `POST /pair/:code/grant` + `POST
-   /users/:id/devices`; the new device polls `GET /pair/:code`, unwraps
-   with `unwrapUserKey`, stores the key, and `initSync` drains the
-   confirmed log.
+1. On the device that already has the person, Settings → Team & devices
+   → **Add a device** shows an 8-character code, a QR, and **Send the
+   link instead**. **BUILT**: `POST /pair` opens a `PairingLobby` DO
+   named by the code for 10 minutes; the QR and the link are
+   `<origin>/join#CODE`. A free user (one device) gets the Pip Lifetime
+   door instead of a code — the relay's entitlement decides.
+2. The new device types the code: on the welcome (**Enter a code**), in
+   Team & devices (**Join with a code**), or at `<origin>/join`. A phone
+   camera on the QR opens the link and needs no typing. **BUILT**:
+   `POST /pair/:code/claim` stores the new device's `device_id`, signing
+   pubkey, dh pubkey, and name ("Mac · Chrome"); first claim wins.
+3. The offering device, polling `GET /pair/:code`, sees the claim and
+   hands over the key with no further tap — the code on its own screen
+   was the consent. **BUILT**: `POST /users/:id/devices` (with the name)
+   + `wrapUserKey` (ephemeral ECDH → AES-GCM wrap) → `POST
+   /pair/:code/grant`; the new device unwraps with `unwrapUserKey`,
+   stores the key, replaces its untouched welcome placeholder (no
+   duplicate person), and `initSync` drains the confirmed log.
 
-The QR never contains the board key, so a photo of the screen is useless
-after the pairing window closes (starting value: 10 minutes). The
-direction is reversed from the old sketch (the linked device scans, the new
-device shows) because a laptop has no camera to scan with, and the iPad
-does.
+The code never carries the user key, so a photo of the screen is useless
+after the pairing window closes (10 minutes) or once it is claimed. The
+code is shown on the device that already has the person because that is
+the device the adult is holding when they decide to add one; the new
+device has nothing to show yet (founder 2026-10-04).
 
 ### Linked devices and revoke — **BUILT** (011 slice 5)
 

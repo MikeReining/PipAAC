@@ -49,6 +49,8 @@ export function relayClient({ userId, baseUrl, identity, userKey }) {
       call("POST", "/devices", { device_id, pubkey, ...extra }),
     /** The user's device list (device_id, epoch, added_at). */
     listDevices: () => call("GET", "/devices"),
+    /** Name the calling device ("iPad · Safari") in the device list. */
+    setLabel: (label) => call("POST", "/label", { label }),
     /** The calling device's own row — wrapped user key + epoch. */
     selfKey: () => call("GET", "/devices/self"),
     /** Remove a device (signed). Rotate keys after — it keeps old ops. */
@@ -167,18 +169,31 @@ export async function joinDeviceWithToken(baseUrl, userId, { token, device_id, p
  * device polls status until granted or expired.
  */
 export function pairClient(baseUrl) {
+  const fail = async (res, what) => {
+    const body = await res.json().catch(() => ({}));
+    const e = new Error(body.error ?? `${what}: ${res.status}`);
+    e.status = res.status;
+    throw e;
+  };
   return {
-    request: async (device_id, sig_pub, dh_pub) => {
-      const res = await fetch(`${baseUrl}/pair`, {
-        method: "POST", headers: { "content-type": "application/json" },
-        body: JSON.stringify({ device_id, sig_pub, dh_pub }),
-      });
-      if (!res.ok) throw new Error(`pair request: ${res.status}`);
+    /** The device that has the user opens a code (and QR) to show. */
+    offer: async () => {
+      const res = await fetch(`${baseUrl}/pair`, { method: "POST" });
+      if (!res.ok) await fail(res, "pair offer");
       return res.json(); // { pair: "ABCD2345" }
+    },
+    /** The new device claims a typed code with its public keys. */
+    claim: async (code, { device_id, sig_pub, dh_pub, label }) => {
+      const res = await fetch(`${baseUrl}/pair/${code}/claim`, {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ device_id, sig_pub, dh_pub, label }),
+      });
+      if (!res.ok) await fail(res, "pair claim");
+      return res.json();
     },
     status: async (code) => {
       const res = await fetch(`${baseUrl}/pair/${code}`);
-      if (!res.ok) throw new Error(`pair status: ${res.status}`);
+      if (!res.ok) await fail(res, "pair status");
       return res.json();
     },
     grant: async (code, g) => {
@@ -186,7 +201,7 @@ export function pairClient(baseUrl) {
         method: "POST", headers: { "content-type": "application/json" },
         body: JSON.stringify(g),
       });
-      if (!res.ok) throw new Error(`pair grant: ${res.status}`);
+      if (!res.ok) await fail(res, "pair grant");
       return res.json();
     },
   };

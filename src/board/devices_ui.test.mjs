@@ -4,7 +4,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { mountDevices } from "../../public/board/devices-ui.js";
+import { deviceName, mountDevices } from "../../public/board/devices-ui.js";
 import { listUsers, memoryUserStore } from "../../public/shared/users.mjs";
 
 function el() {
@@ -27,7 +27,7 @@ test("the account row says when nobody is signed in", () => {
     "pairform", "pair-body", "pair-title", "pair-go",
     "usr-add", "acct-send", "acct-email", "acct-form", "acct-row",
     "acct-danger", "acct-delete", "my-name-row",
-    "dev-link", "dev-add", "corner", "dev-activate", "dev-license",
+    "usr-join", "dev-add", "corner", "dev-activate", "dev-license",
     "dev-delete", "dev-undelete",
     "sup-row", "sup-list", "sup-form", "sup-email", "sup-invite",
   ];
@@ -61,7 +61,7 @@ test("Add a user opens their board directly — no first-open setup (041 B5)", a
     "pairform", "pair-body", "pair-title", "pair-go",
     "usr-add", "acct-send", "acct-email", "acct-form", "acct-row",
     "acct-danger", "acct-delete", "my-name-row",
-    "dev-link", "dev-add", "corner", "dev-activate", "dev-license",
+    "usr-join", "dev-add", "corner", "dev-activate", "dev-license",
     "dev-delete", "dev-undelete",
     "sup-row", "sup-list", "sup-form", "sup-email", "sup-invite",
   ];
@@ -96,4 +96,14 @@ test("Add a user opens their board directly — no first-open setup (041 B5)", a
   // device that already has one opens their board, no setup question.
   assert.equal(row.needsSetup ?? false, false, "an added person skips the welcome");
   assert.equal(reloaded, true);
+});
+
+test("devices are named the way a family says them", () => {
+  const mac = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15";
+  // iPadOS Safari reports a Mac — touch points give it away.
+  assert.equal(deviceName({ userAgent: mac, maxTouchPoints: 5 }), "iPad · Safari");
+  assert.equal(deviceName({ userAgent: mac, maxTouchPoints: 0 }), "Mac · Safari");
+  assert.equal(deviceName({ userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36", maxTouchPoints: 0 }), "Mac · Chrome");
+  assert.equal(deviceName({ userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/140.0 Mobile/15E148 Safari/604.1", maxTouchPoints: 5 }), "iPhone · Chrome");
+  assert.equal(deviceName({ userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0", maxTouchPoints: 0 }), "Windows PC · Edge");
 });

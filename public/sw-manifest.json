@@ -1,10 +1,10 @@
 {
-  "buildId": "r1-462ff2066a72",
+  "buildId": "r1-1065b91bfc9d",
   "files": [
     {
       "path": "/board.js",
-      "bytes": 65969,
-      "sha256": "398d1c6ea2212f32591c5ef2712c41ab6492d8c759ad73871ba4f5db64566c50"
+      "bytes": 66001,
+      "sha256": "40956beafadb7a849634b0e17ad7b896909ab8607a18ceb6f0206b58a8082e24"
     },
     {
       "path": "/board/add-flow.css",
@@ -48,13 +48,13 @@
     },
     {
       "path": "/board/devices-ui.css",
-      "bytes": 538,
-      "sha256": "959e6aff0d50eb71b5e08b3c2c78b4c814272e7ce8ace577fa791f693a53e7ca"
+      "bytes": 809,
+      "sha256": "dcf1e81b4048fa51893e0197ba2e1a995ff6c60ef6008599a404530f4824ab4a"
     },
     {
       "path": "/board/devices-ui.js",
-      "bytes": 36606,
-      "sha256": "6ca9c42e34585f791ae33b0a4704099f2ac899dbabe0afa35291acedfeb446cd"
+      "bytes": 41743,
+      "sha256": "9f7f6c641a415c985518bc39aa43c40f5128e34d080d3e8b9b31fb4a57823471"
     },
     {
       "path": "/board/edit-shared.js",
@@ -153,13 +153,13 @@
     },
     {
       "path": "/board/onramp-ui.css",
-      "bytes": 3692,
-      "sha256": "39fb9dc44d08dddaa2ea0e7de056af3530d6310274e008d6c0010e6565d49bf8"
+      "bytes": 3936,
+      "sha256": "0dca6c5b4fc84c11c89a80df46b95ee514c005b9d59d8aeef8c9c4932658518a"
     },
     {
       "path": "/board/onramp-ui.js",
-      "bytes": 5077,
-      "sha256": "9788b1da86e8cbadb5a94976325fe1fc6cd32d4afe46e679cefcf728400485a9"
+      "bytes": 5529,
+      "sha256": "3a500194f5448291051449c44e84ee5f93a055a94ced735b6c1501b0c5758a49"
     },
     {
       "path": "/board/people-ui.js",
@@ -233,8 +233,8 @@
     },
     {
       "path": "/board/settings-ui.js",
-      "bytes": 20823,
-      "sha256": "e577606d156d10de6fb591ff4985b9d75eaf593d91c4affce6524ac64025ba9e"
+      "bytes": 20392,
+      "sha256": "dc145c5a941f77a7d0a000856541faf0514ab27c114096261feb2b33829b732b"
     },
     {
       "path": "/board/setup-ui.css",
@@ -728,8 +728,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 68260,
-      "sha256": "b75723e9e928579f09b3c6880631f180d88cc21dddcad3e48f84ce88e984d459"
+      "bytes": 67409,
+      "sha256": "bee6e36ac6137ef787ac100137b1810813d72dc8fc47971c1b3799208a0c5db7"
     },
     {
       "path": "/manifest.webmanifest",
@@ -933,8 +933,8 @@
     },
     {
       "path": "/shared/sync_client.mjs",
-      "bytes": 8972,
-      "sha256": "bcae6c53cafb6fbc1eff6fe9fb1f5630286c9706d409715507cf8af3097b802c"
+      "bytes": 9612,
+      "sha256": "6892bb46aa8f356fe0e5bc9e647a24c324ee3e5bd0cb2666fe605223792161fa"
     },
     {
       "path": "/shared/sync_crypto.mjs",

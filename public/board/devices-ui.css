@@ -7,3 +7,7 @@
 .dev-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
 .dev-row .dev-id { flex: 1; font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
 .dev-row button { flex: none; padding: 4px 10px; font-size: 13px; }
+.pair-done { font-size: 20px; font-weight: 800; text-align: center; color: var(--ink-text); padding: 12px 0; }
+.pair-qr svg { width: 180px; height: 180px; }
+/* Join from the welcome: the sheet sits above it (onramp z-index 90). */
+#pairform.over-welcome { z-index: 95; }

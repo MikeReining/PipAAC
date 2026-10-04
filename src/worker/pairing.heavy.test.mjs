@@ -2,10 +2,10 @@
  * 011 slice 5 Works Test — pairing, linked devices, revoke (heavy:
  * spawns `wrangler dev`).
  *
- * The real flow: the new device posts its public keys under an 8-char
- * code and polls; the linked device reads them, taps Allow (registers
- * the device + writes the wrapped-key grant); the new device unwraps the
- * user key and syncs. Before Allow it reads nothing. After Remove its
+ * The real flow: the device that has the user opens an 8-char code; the
+ * new device claims it with its public keys and polls; the offering
+ * device registers it and writes the wrapped-key grant; the new device
+ * unwraps the user key and syncs. Before Allow it reads nothing. After Remove its
  * next write is rejected and post-rotation ops are sealed under a key it
  * never received.
  *
@@ -97,23 +97,37 @@ test("pair through the real flow; revoke locks out and rotates", async () => {
   await makeLifetime(clientA, user.user_id);
   const lobby = pairClient(BASE);
 
-  // B shows a code (the QR payload is these fields + the code).
-  const { pair } = await lobby.request(b.deviceId,
-    await exportPublicKey(b.verify), await exportDhPublic(b.dh.publicKey));
+  // A (has the user) opens a code; it is open, nobody has claimed it.
+  const { pair } = await lobby.offer();
   assert.match(pair, /^[A-Z0-9]{8}$/);
+  assert.equal((await lobby.status(pair)).status, "open");
+  // A wrong code is not open.
+  await assert.rejects(lobby.claim("ZZZZZZZZ", { device_id: "x", sig_pub: "x", dh_pub: "x" }),
+    (e) => e.status === 404);
 
-  // Before Allow: B reads nothing on the user.
+  // B types the code: claims the lobby with its public keys and name.
+  await lobby.claim(pair, { device_id: b.deviceId,
+    sig_pub: await exportPublicKey(b.verify), dh_pub: await exportDhPublic(b.dh.publicKey),
+    label: "Mac · Chrome" });
+  // A second claim on the same code is refused — first one wins.
+  await assert.rejects(lobby.claim(pair, { device_id: "c", sig_pub: "c", dh_pub: "c" }),
+    (e) => e.status === 409);
+
+  // Before the grant: B reads nothing on the user.
   const blindB = relayClient({ userId: user.user_id, baseUrl: BASE, identity: b, userKey });
   await assert.rejects(blindB.fetchOps(0), (e) => e.status === 403);
-  assert.equal((await lobby.status(pair)).status, "pending");
 
-  // A types the code → sees B's keys → Allow: register B on the user
-  // and write the wrapped-key grant.
+  // A sees the claim → registers B on the user (with its name) and
+  // writes the wrapped-key grant.
   const req = await lobby.status(pair);
+  assert.equal(req.status, "claimed");
   assert.equal(req.device_id, b.deviceId);
+  assert.equal(req.label, "Mac · Chrome");
   const wrapped = await wrapUserKey(userKey, req.dh_pub);
-  await clientA.addDevice(b.deviceId, req.sig_pub, { dh_pub: req.dh_pub });
+  await clientA.addDevice(b.deviceId, req.sig_pub, { dh_pub: req.dh_pub, label: req.label });
   await lobby.grant(pair, { user_id: user.user_id, by_device: a.deviceId, ...wrapped });
+  const named = (await clientA.listDevices()).devices.find((d) => d.device_id === b.deviceId);
+  assert.equal(named.label, "Mac · Chrome");
 
   // B polls → granted → unwraps → now it can read and write.
   const st = await lobby.status(pair);

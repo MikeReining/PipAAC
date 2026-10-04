@@ -14,10 +14,33 @@ import {
   listInvites, openInvite, redeemLicense, registerAccount, requestLink,
   revokeInvite, saveAccountState, shareUserToAccount, signInAccount,
 } from "../shared/account.mjs";
-import { addUser, listUsers } from "../shared/users.mjs";
+import { addUser, listUsers, removeUser } from "../shared/users.mjs";
 import { supporterNames } from "../shared/team_names.mjs";
 
 const $ = (id) => document.getElementById(id);
+
+/** What a person calls this device — "iPad · Safari", "Mac · Chrome".
+ *  iPadOS Safari reports itself as a Mac; touch gives it away. */
+export function deviceName(nav = globalThis.navigator) {
+  const ua = nav?.userAgent ?? "";
+  const touch = (nav?.maxTouchPoints ?? 0) > 1;
+  const kind = /iPad/.test(ua) || (/Macintosh/.test(ua) && touch) ? "iPad"
+    : /iPhone/.test(ua) ? "iPhone"
+    : /Android/.test(ua) ? (/Mobile/.test(ua) ? "Android phone" : "Android tablet")
+    : /CrOS/.test(ua) ? "Chromebook"
+    : /Macintosh/.test(ua) ? "Mac"
+    : /Windows/.test(ua) ? "Windows PC"
+    : /Linux/.test(ua) ? "Linux computer" : "Device";
+  const browser = /Edg\//.test(ua) ? "Edge"
+    : /Firefox|FxiOS/.test(ua) ? "Firefox"
+    : /Chrome|CriOS/.test(ua) ? "Chrome"
+    : /Safari/.test(ua) ? "Safari" : "";
+  return browser ? `${kind} · ${browser}` : kind;
+}
+
+/** A typed or scanned code: letters and digits only, upper case. */
+const cleanCode = (v) => String(v ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
+const showCode = (c) => `${c.slice(0, 4)} ${c.slice(4)}`;
 
 export function mountDevices({
   db, me, saveUser, userStore, flushDb, toast,
@@ -29,10 +52,10 @@ export function mountDevices({
   renderUsers = async () => {},
 }) {
   /* ------------------------------------------------------------------ *
-   * Linked devices + pairing (sync § 3). The new device shows an 8-char
-   * code (and QR); a linked device types or scans it, taps Allow, and the
-   * user key travels wrapped to the new device's dh key through the
-   * pairing lobby — the relay never sees it.
+   * Linked devices + pairing (sync § 3). The device that already has the
+   * person shows an 8-char code (and QR / link); the new device types
+   * it, and the user key travels wrapped to the new device's dh key
+   * through the pairing lobby — the relay never sees it.
    * ------------------------------------------------------------------ */
 
   const relayBase = location.origin;
@@ -53,6 +76,7 @@ export function mountDevices({
     clearInterval(pairPoll);
     pairPoll = null;
     pairOverlay.classList.remove("open");
+    pairOverlay.classList.remove("over-welcome");
   };
   pairOverlay.addEventListener("click", (e) => {
     if (e.target === pairOverlay || e.target.closest("[data-close]")) closePair();
@@ -75,6 +99,7 @@ export function mountDevices({
         pubkey: await exportPublicKey(identity.verify),
         dh_pub: await exportDhPublic(identity.dh.publicKey),
         recovery_proof: await recoveryProof(root),
+        label: deviceName(),
       }),
     });
     if (!res.ok) throw new Error(`user create: ${res.status}`);
@@ -95,7 +120,7 @@ export function mountDevices({
   function applyOwner(isOwner) {
     owner = isOwner;
     me.owner = isOwner;
-    $("dev-choose").hidden = !isOwner;
+    $("dev-add").hidden = !isOwner;
     if (!isOwner) $("dev-delete-row").hidden = true;
     $("team-note").hidden = isOwner;
   }
@@ -122,13 +147,19 @@ export function mountDevices({
       const isOwner = self?.owner !== false;
       list.innerHTML = "";
       for (const d of devices) {
+        const mine = d.device_id === identity.deviceId;
+        // Rows from before device names carry none: this device names
+        // itself now; the others read "A device" until they open Pip.
+        if (mine && !d.label) client.setLabel(deviceName()).catch(() => {});
         const row = document.createElement("div");
         row.className = "dev-row";
         const name = document.createElement("span");
         name.className = "dev-id";
-        name.textContent = (d.device_id === identity.deviceId
-          ? `${d.device_id} (this device)` : d.device_id)
-          + (d.via_acct ? " — supporter device" : "");
+        const added = d.added_at
+          ? new Date(d.added_at).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "";
+        name.textContent = (mine ? `${d.label || deviceName()} (this one)` : d.label || "A device")
+          + (d.via_acct ? " — team member" : "")
+          + (added ? ` · added ${added}` : "");
         row.append(name);
         if (isOwner && d.device_id !== identity.deviceId) {
           const rm = document.createElement("button");
@@ -592,39 +623,65 @@ export function mountDevices({
     inviteLanding(inviteToken).catch(() => {});
   }
 
-  /** This device is the NEW device: post keys, show code + QR, poll. */
-  async function linkThisDevice() {
-    const store = openKeyStore();
-    const identity = await getDeviceIdentity(store);
-    const { pair } = await pairClient(relayBase).request(
-      identity.deviceId,
-      await exportPublicKey(identity.verify),
-      await exportDhPublic(identity.dh.publicKey),
-    );
-    openPair("Link this device");
-    const code = document.createElement("div");
-    code.className = "pair-code";
-    code.textContent = pair;
-    pairBody.append(code);
-    const qr = document.createElement("div");
-    qr.className = "pair-qr";
-    const q = qrcode(0, "M");
-    q.addData(JSON.stringify({ pair }));
-    q.make();
-    qr.innerHTML = q.createSvgTag({ cellSize: 4, margin: 8, scalable: true });
-    pairBody.append(qr);
-    const hint = document.createElement("p");
-    hint.className = "hint";
-    hint.textContent = "On the other device: Settings → Team & devices → Add a device → type this code → Allow.";
-    pairBody.append(hint);
-    const status = document.createElement("p");
-    status.className = "hint";
-    status.textContent = "Waiting for Allow…";
-    pairBody.append(status);
+  /** This device is the NEW device: type the code the other device
+   *  shows, then wait for it to hand over the key. Reachable from the
+   *  welcome, from Team & devices, and from app.pipaac.org/join#CODE. */
+  async function joinFlow(prefill = "") {
+    // The welcome is its own top layer; the sheet sits above it at the
+    // body's level (#app is a stacking context under the welcome).
+    if (me.needsSetup || document.querySelector(".welcome")) {
+      document.body.append(pairOverlay);
+      pairOverlay.classList.add("over-welcome");
+    }
+    openPair("Join with a code");
+    pairBody.innerHTML = `
+      <p class="hint">On the device that already has the board, open
+        <b>Settings → Team &amp; devices → Add a device</b>. Type the code it shows.</p>
+      <input type="text" id="pair-code" maxlength="9" autocomplete="off" autocapitalize="characters"
+        spellcheck="false" aria-label="Code"
+        style="width:100%; box-sizing:border-box; text-transform:uppercase; letter-spacing:4px; font-size:24px; text-align:center;" />
+      <p class="hint" id="pair-status" role="status"></p>`;
+    const input = pairBody.querySelector("#pair-code");
+    const status = pairBody.querySelector("#pair-status");
+    let busy = false;
+    const tryCode = async () => {
+      const code = cleanCode(input.value);
+      if (code.length !== 8 || busy) return;
+      busy = true;
+      status.textContent = "Connecting…";
+      try {
+        const store = openKeyStore();
+        const identity = await getDeviceIdentity(store);
+        await pairClient(relayBase).claim(code, {
+          device_id: identity.deviceId,
+          sig_pub: await exportPublicKey(identity.verify),
+          dh_pub: await exportDhPublic(identity.dh.publicKey),
+          label: deviceName(),
+        });
+        if (!input.isConnected) return;
+        input.disabled = true;
+        status.textContent = "Connected — finishing on the other device…";
+        waitForGrant(code, identity, store, status);
+      } catch (e) {
+        busy = false;
+        status.textContent = e.status === 410
+          ? "That code ran out. Make a new one on the other device."
+          : e.status === 409
+            ? "That code was already used. Make a new one on the other device."
+            : e.status === 404
+              ? "That code isn't open — check the letters, or make a new one."
+              : `Could not reach Pip: ${e.message}`;
+      }
+    };
+    input.addEventListener("input", tryCode);
+    input.value = prefill ? showCode(cleanCode(prefill)) : "";
+    if (prefill) tryCode(); else input.focus();
+  }
 
+  function waitForGrant(code, identity, store, status) {
     pairPoll = setInterval(async () => {
       try {
-        const st = await pairClient(relayBase).status(pair);
+        const st = await pairClient(relayBase).status(code);
         if (st.status === "refused") {
           clearInterval(pairPoll);
           pairPoll = null;
@@ -639,6 +696,10 @@ export function mountDevices({
         // which one; storing it as e1 would break post-rotation ops.
         const epoch = st.grant.epoch ?? 1;
         await putUserKey(store, st.grant.user_id, key, epoch);
+        // A fresh device's untouched welcome person is a placeholder —
+        // the joined person replaces it instead of sitting beside it.
+        const fresh = me.needsSetup && me.id !== st.grant.user_id;
+        if (fresh) await removeUser(userStore, me.id);
         // 015 slice 2: the linked user joins this device's registry — the
         // relay id is the registry id — and the app opens it. A user that
         // joins by link is the partner device (013 § 5a: the coach view
@@ -647,11 +708,13 @@ export function mountDevices({
           id: st.grant.user_id,
           sync: { userId: st.grant.user_id, epoch, cursor: 0 },
           role: "partner",
+          home: fresh,
         });
-        status.textContent = "Linked — syncing…";
+        status.textContent = "Joined — opening the board…";
         sessionStorage.setItem("pip_active_user", linked.id);
-        await flushDb();
-        location.reload();
+        // Flushing would write the removed placeholder's database back.
+        if (!fresh) await flushDb();
+        location.replace("/");
       } catch { /* expired or relay hiccup — poll again */ }
     }, 2000);
   }
@@ -668,79 +731,123 @@ export function mountDevices({
       store, identity, userKey };
   }
 
-  /** This device is the LINKED device: type the code the new one shows. */
-  async function addDeviceFlow() {
+  /** This device HAS the person: show a code (and QR / link) for the
+   *  new device, then hand it the key the moment it claims the code. */
+  async function offerFlow() {
     await ensureUser();
-    openPair("Add a device");
+    const { client, identity, userKey } = await userClient();
+    const who = me.name || "this board";
+    // The relay's own answer decides the free limit (one device); the
+    // sheet asks first so nobody types a code only to be refused.
+    const [{ devices }, self] = await Promise.all([client.listDevices(), client.selfKey()]);
+    if (self?.entitlement !== "lifetime" && devices.length >= 1) {
+      openPair("Add a device");
+      const why = document.createElement("p");
+      why.className = "hint";
+      why.textContent = `Free Pip lives on one device. Pip Lifetime puts ${who} on every phone, laptop, and tablet you use.`;
+      pairBody.append(why);
+      const door = document.createElement("button");
+      door.className = "btn";
+      door.textContent = "See Pip Lifetime · $49";
+      door.onclick = () => { closePair(); settings?.show?.("lifetime", { focus: true }); };
+      pairBody.append(door);
+      return;
+    }
+    const { pair } = await pairClient(relayBase).offer();
+    const link = `${location.origin}/join#${pair}`;
+    openPair(`Open ${who} on another device`);
     pairBody.innerHTML = `
-      <p class="hint">Type the 8-letter code the new device is showing.</p>
-      <input type="text" id="pair-code" maxlength="8" autocomplete="off"
-        style="text-transform:uppercase; letter-spacing:4px; font-size:22px; text-align:center;" />`;
-    const input = pairBody.querySelector("#pair-code");
-    input.focus();
-    let pending = null;
-    input.addEventListener("input", async () => {
-      const code = input.value.trim().toUpperCase();
-      if (code.length !== 8) return;
+      <p class="hint">On the other device, go to <b>${location.host}/join</b>
+        and type this code. On a phone, just point the camera at the square.</p>`;
+    const code = document.createElement("div");
+    code.className = "pair-code";
+    code.textContent = showCode(pair);
+    const qr = document.createElement("div");
+    qr.className = "pair-qr";
+    const q = qrcode(0, "M");
+    q.addData(link);
+    q.make();
+    qr.innerHTML = q.createSvgTag({ cellSize: 4, margin: 8, scalable: true });
+    const send = document.createElement("button");
+    send.className = "btn secondary";
+    send.textContent = "Send the link instead";
+    send.onclick = async () => {
       try {
-        const req = await pairClient(relayBase).status(code);
-        // A reopened form rebuilds pair-body and detaches this input — a
-        // late status() reply must not revive Allow on the new form's
-        // empty pending.
-        if (!input.isConnected) return;
-        pending = { code, req };
-        pairBody.querySelector(".hint").textContent =
-          `Allow ${req.device_id.slice(0, 12)}… to edit this user?`;
-        pairGo.hidden = false;
-        pairGo.textContent = "Allow";
-      } catch {
-        pairBody.querySelector(".hint").textContent = "That code is not open — check it and retry.";
-      }
-    });
-    pairGo.onclick = async () => {
-      if (!pending) return;
-      const { client, identity, userKey } = await userClient();
-      const wrapped = await wrapUserKey(userKey, pending.req.dh_pub);
-      try {
-        await client.addDevice(pending.req.device_id, pending.req.sig_pub, { dh_pub: pending.req.dh_pub });
-      } catch (e) {
-        // The relay refused — a free user allows one linked device. The
-        // new device gets a real answer, not a silent timeout.
-        const msg = e.message === "upgrade_required"
-          ? "A free user allows one linked device. Pip Lifetime unlocks more."
-          : `The relay refused: ${e.message}`;
-        pairBody.querySelector(".hint").textContent = msg;
-        if (e.message === "upgrade_required") {
-          // 040: every paid wall ends at the same page — one destination,
-          // one button.
-          const door = document.createElement("button");
-          door.className = "btn secondary";
-          door.textContent = "See Pip Lifetime · $49";
-          door.onclick = () => {
-            $("pairform").classList.remove("open");
-            settings?.show?.("lifetime", { focus: true });
-          };
-          pairBody.appendChild(door);
+        if (navigator.share) {
+          await navigator.share({ title: `Open ${who} in Pip`, url: link });
+        } else {
+          await navigator.clipboard.writeText(link);
+          toast("Link copied — paste it in a text or email. It works for 10 minutes.");
         }
-        await pairClient(relayBase).grant(pending.code, { refused: msg });
+      } catch { /* share sheet dismissed */ }
+    };
+    const status = document.createElement("p");
+    status.className = "hint";
+    status.setAttribute("role", "status");
+    status.textContent = "Waiting for the other device… This code works for 10 minutes.";
+    pairBody.append(code, qr, send, status);
+
+    let granting = false;
+    pairPoll = setInterval(async () => {
+      if (granting) return;
+      let st;
+      try {
+        st = await pairClient(relayBase).status(pair);
+      } catch (e) {
+        if (e.status === 410) {
+          clearInterval(pairPoll);
+          pairPoll = null;
+          status.textContent = "This code ran out.";
+          send.hidden = true;
+          pairGo.hidden = false;
+          pairGo.textContent = "New code";
+          pairGo.onclick = () => offerFlow().catch(() => {});
+        }
+        return; // relay hiccup — poll again
+      }
+      if (st.status !== "claimed") return;
+      granting = true;
+      clearInterval(pairPoll);
+      pairPoll = null;
+      const name = st.label || "the other device";
+      try {
+        await client.addDevice(st.device_id, st.sig_pub, { dh_pub: st.dh_pub, label: st.label });
+      } catch (e) {
+        // The relay refused — tell the new device too, not a silent wait.
+        const msg = e.message === "upgrade_required"
+          ? "Pip Lifetime is needed for more than one device."
+          : `Pip refused the device: ${e.message}`;
+        status.textContent = msg;
+        await pairClient(relayBase).grant(pair, { refused: msg }).catch(() => {});
         return;
       }
-      await pairClient(relayBase).grant(pending.code, {
+      const wrapped = await wrapUserKey(userKey, st.dh_pub);
+      await pairClient(relayBase).grant(pair, {
         user_id: me.sync.userId, by_device: identity.deviceId,
         epoch: me.sync.epoch ?? 1, ...wrapped });
-      closePair();
+      const done = document.createElement("p");
+      done.className = "pair-done";
+      done.textContent = `✓ ${who} is on ${name}.`;
+      pairBody.replaceChildren(done);
       await renderDevices();
-    };
+    }, 2000);
   }
 
-  $("dev-link").onclick = () => linkThisDevice().catch((e) => {
-    openPair("Link this device");
-    pairBody.innerHTML = `<p class="hint">Could not reach the relay: ${e.message}</p>`;
-  });
-  $("dev-add").onclick = () => addDeviceFlow().catch((e) => {
+  $("dev-add").onclick = () => offerFlow().catch((e) => {
     openPair("Add a device");
-    pairBody.innerHTML = `<p class="hint">Could not reach the relay: ${e.message}</p>`;
+    pairBody.innerHTML = `<p class="hint">Could not reach Pip: ${e.message}</p>`;
   });
+  const join = (code) => joinFlow(code).catch((e) => {
+    openPair("Join with a code");
+    pairBody.innerHTML = `<p class="hint">Could not reach Pip: ${e.message}</p>`;
+  });
+  $("usr-join").onclick = () => join();
+  // app.pipaac.org/join#CODE — the QR, the sent link, or a typed address.
+  if (location.pathname === "/join") {
+    const code = location.hash.slice(1);
+    history.replaceState(null, "", "/");
+    join(code);
+  }
   $("corner").addEventListener("click", renderDevices);
   $("corner").addEventListener("click", renderUsers);
   $("corner").addEventListener("click", renderAccount);
@@ -828,5 +935,5 @@ export function mountDevices({
   }
 
   return { userClient, renderAccount, renderUsers, ensureUser, activateLicense,
-    claimPurchasedLicense };
+    claimPurchasedLicense, join };
 }
