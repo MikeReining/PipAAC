@@ -2,3 +2,14 @@
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Embedder-Policy: require-corp
   Cross-Origin-Resource-Policy: same-origin
+
+# 041 C1 — art, icons, fonts and audio change only on deploy (new clips
+# land under new hash names), so the edge may keep them warm.
+/symbols/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/icons/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/fonts/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/audio/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400

@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-f307e0cb9b12",
+  "buildId": "r1-459a879d8560",
   "files": [
     {
       "path": "/board.js",
@@ -728,8 +728,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 68392,
-      "sha256": "3635365d0119cafb3ae4186ed4fc4d4b18d677bb3832c869a766f8e6f64d3fe8"
+      "bytes": 68260,
+      "sha256": "b75723e9e928579f09b3c6880631f180d88cc21dddcad3e48f84ce88e984d459"
     },
     {
       "path": "/manifest.webmanifest",
