@@ -49,8 +49,10 @@ export function keyMap(locale, order = "standard") {
   }
   keys.push({ slot, span: BACKSPACE_SLOT - slot, kind: "space", value: " " });
   keys.push({ slot: BACKSPACE_SLOT, span: 2, kind: "backspace", value: "Backspace" });
+  // Row 6 holds only the answer keys, at its right end; the rest is empty.
+  const answerStart = PARTNER_ROW_START + 10 - PARTNER_SENSES.length;
   PARTNER_SENSES.forEach((id, i) => {
-    keys.push({ slot: PARTNER_ROW_START + i * 2, span: 2, kind: "partner", value: id });
+    keys.push({ slot: answerStart + i, span: 1, kind: "partner", value: id });
   });
   return keys;
 }

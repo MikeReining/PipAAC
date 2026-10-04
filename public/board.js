@@ -931,7 +931,7 @@ const kbUi = mountKeyboard({
   setSentencePicks: (n) => { sentencePicks = n; },
   speak, speakItem, speakSentence, playClip, renderBar, renderStrip, tap,
   isTxBusy,
-  showGroupHint, applyLikely, fitLabels, senseById,
+  showGroupHint, applyLikely, fitLabels, senseById, tileFor: tileForSense,
   grammar: {
     on: () => grammarHelp,
     forSense: (ctxItems, senseId, nextItem = null) =>

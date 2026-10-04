@@ -121,7 +121,7 @@ row 2   ┐
 row 3   │  the locale's letters (30 cells); spare cells take punctuation
 row 4   ┘
 row 5   [locale punctuation][──── space ────][ ⌫ ]        ⌫ never moves
-row 6   [ yes ][ no ][wait, I'm spelling][guess my word][ oops ]
+row 6                                           [yes][no]   board tiles
 ```
 
 English standard order, for example:
@@ -132,8 +132,7 @@ English standard order, for example:
  a   s   d   f   g   h   j   k   l   '
  z   x   c   v   b   n   m   ,   .   ?
  !   -  [──────── space ────────] [ ⌫ ]
-[ yes ][ no  ][wait, I'm][guess my][ oops ]
-               spelling    word
+                                     [yes] [no]
 ```
 
 | Locale | Standard letters | Extra keys | Row 5 punctuation |
@@ -154,12 +153,16 @@ who knows the alphabet song find letters today, but it does not carry over
 to any other device. Changing letter order moves every letter, so the Parent
 corner warns: pick one and keep it.
 
-**Partner row.** Typing is slow, and partners interrupt and guess. These
-keys speak right away and **do not change the sentence or the word in
-progress**. They are catalog senses referenced by id
-(`docs/product/Initial_Vocabulary_600.md` § 3.14), so every locale shows
-its own label for the same key. A locale cannot ship without labels and
-clips for all five.
+**yes / no.** Typing is slow, and partners guess ("is it pizza?"). Row 6
+holds only **yes** and **no**, at its right end, drawn as the words' own
+board tiles (same picture, color and label as on the board). A tap speaks
+right away and **does not change the sentence or the word in progress**.
+They are catalog senses referenced by id (`PARTNER_SENSES` in
+`public/shared/keymaps.mjs`), so every locale shows its own label; a
+locale cannot ship without labels and clips for both. Founder 2026-10-03
+dropped "wait, I'm spelling", "guess my word" and "oops": nobody could
+tell what they were for, and ⌫ already fixes a wrong key. They stay
+catalog words a family can add.
 
 ### 4.3 Device keyboard
 
@@ -167,7 +170,7 @@ For literate users who can use the system keyboard, with its autocorrect,
 swipe typing, third-party keyboards, external keyboards, and their own
 country's layout. The text field carries the profile locale as its `lang`,
 so autocorrect and spellcheck use the right language. The system keyboard
-covers the bottom of the screen, so Pip shows the partner row and a large
+covers the bottom of the screen, so Pip shows yes / no and a large
 text field at the top of the grid area. The bar, strip completions,
 sentence model, and voice are the same as with Pip keys. A locale with no
 Pip key map uses Device keyboard automatically.

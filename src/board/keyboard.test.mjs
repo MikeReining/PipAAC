@@ -1,6 +1,7 @@
 /**
  * Phase 004 slice 1 Works Test — every key map covers the 60 slots
- * exactly once, keeps the fixed skeleton (digits, space, ⌫, partner row),
+ * exactly once (row 6 holds only yes/no at its right end), keeps the fixed
+ * skeleton (digits, space, ⌫, yes/no),
  * and never loses a key between standard and ABC order.
  */
 import { test } from "node:test";
@@ -17,7 +18,7 @@ import {
 const LOCALES = Object.keys(KEYMAPS);
 const ORDERS = ["standard", "abc"];
 
-test("every slot 0–59 is covered by exactly one key", () => {
+test("every slot is covered by exactly one key; row 6 is yes, no at the right", () => {
   for (const locale of LOCALES) {
     for (const order of ORDERS) {
       const cover = new Array(60).fill(0);
@@ -25,8 +26,11 @@ test("every slot 0–59 is covered by exactly one key", () => {
         for (let s = k.slot; s < k.slot + k.span; s++) cover[s]++;
       }
       cover.forEach((n, s) =>
-        assert.equal(n, 1, `${locale}/${order}: slot ${s} covered ${n} times`),
+        assert.equal(n, s >= 50 && s < 58 ? 0 : 1, `${locale}/${order}: slot ${s} covered ${n} times`),
       );
+      const answers = keyMap(locale, order).filter((k) => k.kind === "partner")
+        .map((k) => `${k.slot}:${k.value}`);
+      assert.deepEqual(answers, ["58:sns_0073", "59:sns_0072"], `${locale}/${order}: yes, no`);
     }
   }
 });

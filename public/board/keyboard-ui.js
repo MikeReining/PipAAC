@@ -20,7 +20,7 @@ export function mountKeyboard({
   startFresh,
   speakItem, speakSentence, renderBar, renderStrip, tap,
   isTxBusy, tileEnsure,
-  showGroupHint, applyLikely, fitLabels, senseById,
+  showGroupHint, applyLikely, fitLabels, senseById, tileFor,
   grammar,
   getHighlightNext,
   getView, setViewName, renderGroupIndex, renderGroupPage, renderEditor,
@@ -97,6 +97,7 @@ export function mountKeyboard({
   const kbCapCtx = document.createElement("canvas").getContext("2d");
 
   function fitKbCaps() {
+    fitLabels($("kb")); // the answer keys are board tiles
     document.fonts.ready.then(() => {
       for (const key of $("kb").querySelectorAll(".kb-key:not(.kb-util)")) {
         const cap = key.querySelector(".kc");
@@ -137,19 +138,17 @@ export function mountKeyboard({
     return el;
   }
 
+  /** yes / no: the word's own board tile. A tap speaks it and leaves the
+   *  sentence and the word in progress alone. */
   function partnerCell(senseId) {
     const s = senseById(senseId);
-    const el = document.createElement("button");
     if (!s) {
+      const el = document.createElement("button");
       el.className = "gcell empty";
       el.disabled = true;
       return el;
     }
-    el.className = `kb-key kb-partner r-${s.fitzgerald_role}`;
-    const cap = document.createElement("span");
-    cap.className = "kc";
-    cap.textContent = s.label;
-    el.appendChild(cap);
+    const el = tileFor(senseId);
     el.addEventListener("mousedown", (e) => e.preventDefault());
     el.addEventListener("click", async () => {
       el.classList.add("flash");
@@ -314,7 +313,7 @@ export function mountKeyboard({
   function buildKbDevice(kb) {
     PARTNER_SENSES.forEach((id, i) => {
       const el = partnerCell(id);
-      el.style.gridColumn = `${i * 2 + 1} / span 2`;
+      el.style.gridColumn = `${11 - PARTNER_SENSES.length + i}`;
       el.style.gridRow = "1";
       kb.appendChild(el);
     });

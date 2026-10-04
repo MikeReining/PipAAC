@@ -45,8 +45,9 @@ export const KEYMAPS = {
 };
 
 /**
- * Partner row (slots 50–59, all locales, every order): yes, no,
- * wait-I'm-spelling, guess-my-word, oops — sense ids, never English text,
- * so each locale shows its own label for the same key.
+ * Answer keys (row 6, far right — slots 58–59, all locales, every order):
+ * yes, no — sense ids, never English text, so each locale shows its own
+ * label, drawn as the word's board tile. Founder 2026-10-03 dropped
+ * wait-I'm-spelling, guess-my-word and oops (still catalog words).
  */
-export const PARTNER_SENSES = ["sns_0073", "sns_0072", "sns_0685", "sns_0686", "sns_0687"];
+export const PARTNER_SENSES = ["sns_0073", "sns_0072"];

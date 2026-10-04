@@ -1,5 +1,5 @@
 /* Keyboard: a board mode, same 10×6 geometry, never a modal. */
-#kb { flex: 1; display: none; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(6, 1fr); gap: var(--gap); }
+#kb { flex: 1; min-height: 0; display: none; grid-template-columns: repeat(10, minmax(0, 1fr)); grid-template-rows: repeat(6, minmax(0, 1fr)); gap: var(--gap); }
 body.kb #grid { display: none; }
 body.kb #kb { display: grid; }
 /* Keycaps size their glyph from the key's own box
@@ -26,10 +26,8 @@ body.kb #kb { display: grid; }
 .kb-util { border-color: var(--muted); background: var(--tray); }
 .kb-util .kc { font-size: min(34cqh, 22cqw); }
 .kb-key.latched { box-shadow: inset 0 0 0 3px var(--muted); background: #ddd6c4; }
-/* Partner keys carry their sense's Fitzgerald color. */
-.kb-partner { border-color: var(--rb); background: var(--rf); }
-.kb-partner .kc { padding: 0 6px; }
-.kb-partner.flash { filter: brightness(0.82); }
+/* yes / no are board tiles (.cell); a tap flashes like a key. */
+#kb .cell.flash { filter: brightness(0.82); }
 /* Device mode: the field holds the word in progress; the system
    keyboard covers rows 3–6. */
 #kb-device {
