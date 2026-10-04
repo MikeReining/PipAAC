@@ -18,6 +18,20 @@ const el = (tag, cls, text) => {
   return n;
 };
 
+/* 043 E — ask the service worker whether a voice's clips are fully
+ *  cached (its pack carries a completion sentinel; the SW answers from
+ *  storage, not a guess). Pushed progress re-renders the badge. */
+const offlineState = (id) => new Promise((res) => {
+  if (!navigator.serviceWorker) return res(null);
+  navigator.serviceWorker.ready.then((reg) => {
+    if (!reg.active) return res(null);
+    const ch = new MessageChannel();
+    const t = setTimeout(() => res(null), 4000);
+    ch.port1.onmessage = (e) => { clearTimeout(t); res(e.data ?? null); };
+    reg.active.postMessage({ type: "pip-voice-status", voice: id }, [ch.port2]);
+  }).catch(() => res(null));
+});
+
 export function mountVoice({ db, locale, open, getVoiceId, chooseVoice, sample, locked = () => false, onLocked = () => {} }) {
   function renderRow() {
     $("voice-name").textContent = voiceName(db, getVoiceId());
@@ -46,6 +60,19 @@ export function mountVoice({ db, locale, open, getVoiceId, chooseVoice, sample, 
     c.append(play);
     if (v.id === getVoiceId()) {
       c.append(el("span", "voice-badge current", "In use"));
+      // 043 E — adults see whether this voice speaks without Wi-Fi.
+      // The SW answers from the pack's completion sentinel, not a guess.
+      const off = el("span", "voice-badge voice-offline", "");
+      off.hidden = true;
+      c.append(off);
+      offlineState(v.id).then((s) => {
+        if (!s) return;
+        off.hidden = false;
+        off.textContent = s.ready ? "Works offline"
+          : s.hasOlder ? "Older voice keeps working offline"
+          : "Downloading for offline…";
+        off.classList.toggle("warn", !s.ready);
+      });
     } else if (!navigator.onLine) {
       // 041 A3 — the new voice's clips live on the network. Offline the
       // card greys and says why; it never pretends a switch can happen.
@@ -94,5 +121,7 @@ export function mountVoice({ db, locale, open, getVoiceId, chooseVoice, sample, 
   $("voice-change").addEventListener("click", openPicker);
   $("voice-hear").addEventListener("click", () => sample(getVoiceId()));
 
-  return { renderRow, openPicker };
+  // Re-render whichever surface is showing — the SW pushes progress.
+  const refresh = () => { renderRow(); renderSheet(); };
+  return { renderRow, openPicker, refresh };
 }

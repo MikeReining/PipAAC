@@ -1,10 +1,10 @@
 {
-  "buildId": "r1-4c7139a89414",
+  "buildId": "r1-f97ff1cc3382",
   "files": [
     {
       "path": "/board.js",
-      "bytes": 67170,
-      "sha256": "0c5abe7356c5e6a271501da33dd5b0d548ef44ec059c1d331587318012c75fa0"
+      "bytes": 67373,
+      "sha256": "a523d63665a7903628709fcf6f52d1ed20483abf575dae5b7143bbe99257abed"
     },
     {
       "path": "/board/add-flow.css",
@@ -318,8 +318,8 @@
     },
     {
       "path": "/board/voice-ui.js",
-      "bytes": 3907,
-      "sha256": "a0465adcf5b39d875c9cd82aa9827acc208b2a1f2e7889a32fb942146ce16cf4"
+      "bytes": 5278,
+      "sha256": "9545e999b203fc04010cc945b8ddeab3f08d6628803ddc385a59fd45fa9743c8"
     },
     {
       "path": "/board/wincard-ui.js",

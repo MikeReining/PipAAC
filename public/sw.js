@@ -112,10 +112,17 @@ async function loadAudioMap() {
   return audioMap;
 }
 
+/* A sentinel stored inside each completed voice pack: its presence is
+ * the "this voice works offline" proof an adult can see (043 E). It
+ * survives SW restarts where in-memory progress does not. */
+const voiceMetaUrl = () => `${location.origin}/audio/.pip-voice-meta`;
+
 /** Fill the active voice's cache in the background — best effort: a
  *  clip that misses is skipped (that word mints or stays silent once),
- *  it never strands the others. Stale versions of THIS voice prune;
- *  other voices keep their caches. */
+ *  it never strands the others. 043 E — the swap is atomic: stale
+ *  versions of THIS voice prune only after every file lands, so an
+ *  interrupted download leaves the last complete pack serving; the
+ *  next fill resumes (cache.match skips what already came down). */
 async function fillVoice(voice) {
   if (!voice || filling.has(voice)) return;
   const map = await loadAudioMap();
@@ -125,21 +132,48 @@ async function fillVoice(voice) {
   filling.add(voice);
   try {
     const cache = await caches.open(name);
-    for (const k of await caches.keys()) {
-      if (k.startsWith(`${AUDIO_PREFIX}${voice}-`) && k !== name) await caches.delete(k);
-    }
+    let cached = 0, missing = 0;
     for (let i = 0; i < entry.files.length; i += CHUNK) {
       await Promise.all(entry.files.slice(i, i + CHUNK).map(async (path) => {
-        if (await cache.match(path)) return;
+        if (await cache.match(path)) { cached++; return; }
         try {
           const res = await fetch(path);
-          if (res.ok) await cache.put(path, res);
-        } catch { /* offline or a missing clip — skipped, see header */ }
+          if (res.ok) { await cache.put(path, res); cached++; }
+          else missing++;
+        } catch { missing++; /* offline or a missing clip — see header */ }
       }));
+      if (voice === activeVoice) clients.matchAll().then((all) => all.forEach((c) =>
+        c.postMessage({ type: "pip-voice-status",
+          voice, ready: false, cached, total: entry.files.length, filling: true })));
     }
+    if (!missing) {
+      // The new pack is complete — only now does the previous one go.
+      for (const k of await caches.keys()) {
+        if (k.startsWith(`${AUDIO_PREFIX}${voice}-`) && k !== name) await caches.delete(k);
+      }
+      await cache.put(voiceMetaUrl(), new Response(
+        JSON.stringify({ ready: true, total: entry.files.length, at: Date.now() })));
+    }
+    if (voice === activeVoice) clients.matchAll().then((all) => all.forEach((c) =>
+      c.postMessage({ type: "pip-voice-status",
+        voice, ready: !missing, cached, total: entry.files.length, filling: false })));
   } finally {
     filling.delete(voice);
   }
+}
+
+/** Adults ask "does this voice work offline?" — answered by the pack's
+ *  sentinel, not a guess. `hasOlder` means a stale pack still serves
+ *  most clips while the new one fills. */
+async function voiceReady(voice) {
+  const entry = (await loadAudioMap().catch(() => null))?.[voice];
+  if (!entry) return { voice, ready: false, total: 0, cached: 0 };
+  const names = (await caches.keys()).filter((k) => k.startsWith(`${AUDIO_PREFIX}${voice}-`));
+  const name = `${AUDIO_PREFIX}${voice}-${entry.hash}`;
+  const current = names.includes(name) ? await caches.open(name) : null;
+  const ready = !!(current && await current.match(voiceMetaUrl()));
+  return { voice, ready, total: entry.files.length,
+    cached: null, hasOlder: names.some((k) => k !== name), filling: filling.has(voice) };
 }
 
 self.addEventListener("message", (e) => {
@@ -148,6 +182,10 @@ self.addEventListener("message", (e) => {
   if (e.data?.type === "pip-active-voice") {
     activeVoice = e.data.voice;
     e.waitUntil?.(fillVoice(activeVoice));
+  }
+  if (e.data?.type === "pip-voice-status") {
+    e.waitUntil?.(voiceReady(e.data.voice ?? activeVoice)
+      .then((s) => e.ports[0]?.postMessage(s)));
   }
 });
 

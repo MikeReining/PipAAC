@@ -1389,6 +1389,10 @@ const voiceUi = mountVoice({
   },
   sample: sampleVoice,
 });
+// The SW pushes pip-voice-status as the pack fills — repaint the badge.
+navigator.serviceWorker?.addEventListener("message", (e) => {
+  if (e.data?.type === "pip-voice-status") voiceUi.refresh();
+});
 settingsUi.onOpen(() => voiceUi.renderRow());
 $("speed-seg").addEventListener("click", (e) => {
   const v = e.target.closest("button")?.dataset.v;
