@@ -4,7 +4,7 @@
  *  checks the index before a paid mint. Shared plumbing lives in
  *  pictures_shared.js. */
 import { checkLicense } from "./license.mjs";
-import { usageCheck, usageRecord } from "./voice.js";
+import { usageRefund, usageReserve } from "./voice.js";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import {
   captionForDrawing, drawKey, drawSubject,
@@ -124,6 +124,7 @@ async function synthesizeDraw(env, { prompt, refs }) {
         ...appHeaders("pictures"),
       },
       body: JSON.stringify(body),
+      signal: AbortSignal.timeout(45_000), // 043 I — bounded provider call
     });
     if (!res.ok) throw new Error(`draw_${res.status}`);
     const b64 = (await res.json())?.data?.[0]?.b64_json;
@@ -315,6 +316,11 @@ async function runDraw(env, { uid, text, description, cap }, emit) {
     return err(503, { error: "draw_unavailable" });
   }
   const refund = () => refundAllowance(env, uid);
+  // 043 I — exits after a successful usage reserve return both
+  // reservations; the deny path above refunds the allowance only.
+  const refundBoth = () => Promise.all([
+    refund(), usageRefund(env, { ns: DRAW_NS, uid, chars: 1 }).catch(() => {}),
+  ]);
   if (!rs.reserved) {
     // § 6.1 — the client offers a photo (and later a top-up) at zero.
     return err(402,
@@ -324,12 +330,11 @@ async function runDraw(env, { uid, text, description, cap }, emit) {
   // honest uncharged remainder on a free hit is one more.
   const left = rs.left;
   const leftFree = Math.min(cap, left + 1);
-  const guard = await usageCheck(env, {
+  const guard = await usageReserve(env, {
     ns: DRAW_NS, uid, chars: 1, maxChars: 1, dayBudget: DRAW_DAY, minBudget: DRAW_MIN,
   });
   if (!guard.allowed) {
     await refund();
-    await usageRecord(env, { ns: DRAW_NS, uid, chars: 0, over: guard.over });
     return err(429, { error: "fair_use", over: guard.over });
   }
 
@@ -345,14 +350,14 @@ async function runDraw(env, { uid, text, description, cap }, emit) {
     jev = null;
   }
   if (!jev?.scope) {
-    await refund();
+    await refundBoth();
     return err(503, { error: "classify_unavailable" });
   }
   const scope = jev.scope === "personal" ? "personal" : "common";
   // A person/pet with no description has nothing to draw (and the name
   // alone is never drawable — it never reaches the prompt).
   if (scope === "personal" && !description) {
-    await refund();
+    await refundBoth();
     return err(400, { error: "bad_description" });
   }
 
@@ -371,11 +376,11 @@ async function runDraw(env, { uid, text, description, cap }, emit) {
       description, scope, kind: jev.kind, lens: jev.draw.framing,
     })).json();
   } catch {
-    await refund();
+    await refundBoth();
     return err(503, { error: "draw_unavailable" });
   }
 
-  if (claimed.disposition !== "mint") await refund();
+  if (claimed.disposition !== "mint") await refundBoth();
   if (claimed.disposition === "hit") {
     emit("serving");
     return (await serveRow(claimed.row, "hit", leftFree))
@@ -432,7 +437,7 @@ async function runDraw(env, { uid, text, description, cap }, emit) {
   const fail = async () => {
     await picPost(env, "/pic/draw/fail", { key, retryAfter: Date.now() + 60_000 })
       .catch(() => {});
-    await refund();
+    await refundBoth();
     return err(502, { error: "draw_failed" });
   };
   let minted;
@@ -474,7 +479,6 @@ async function runDraw(env, { uid, text, description, cap }, emit) {
     }
   } catch { /* a missed index row costs nothing — the ledger still serves */ }
 
-  await usageRecord(env, { ns: DRAW_NS, uid, chars: 1 });
   return {
     png: minted.bytes,
     headers: headersFor(minted.cache, left, key),

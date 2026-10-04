@@ -91,6 +91,14 @@ export async function usageCheck(env, { ns, uid, chars, maxChars, dayBudget, min
 }
 
 export async function usageRecord(env, { ns, uid, chars, over = null }) {
+  /* 043 I — the ledger DO owns counters when bound; R2 rows are the
+   *  pre-DO fallback (unit tests, dev without the binding). */
+  if (env.USAGE) {
+    await env.USAGE.get(env.USAGE.idFromName(ns)).fetch(new Request(
+      "https://usage/add",
+      { method: "POST", body: JSON.stringify({ ns, uid, chars, over }) }));
+    return;
+  }
   const bump = async (key, patch) => {
     const obj = await env.VOICE.get(key).catch(() => null);
     const cur = obj ? JSON.parse(await obj.text()) : { chars: 0, reqs: 0 };
@@ -103,6 +111,48 @@ export async function usageRecord(env, { ns, uid, chars, over = null }) {
     await env.VOICE.put(`${ns}-hits/${uid}/${Date.now()}`,
       JSON.stringify({ over, chars }));
   }
+}
+
+/** 043 I — atomic check + count. One DO call: a denied request never
+ *  shares a stale counter read with a concurrent one, and the denial is
+ *  on the ledger's hit trail. Allowed requests are already billed —
+ *  callers refund on provider failure instead of recording on success.
+ *  No USAGE binding (unit tests/dev) falls back to the non-atomic pair —
+ *  single-threaded callers can't race it. */
+export async function usageReserve(env, { ns, uid, chars, maxChars, dayBudget, minBudget }) {
+  if (chars > maxChars) return { allowed: false, over: "sentence" };
+  if (env.USAGE) {
+    const res = await env.USAGE.get(env.USAGE.idFromName(ns)).fetch(new Request(
+      "https://usage/reserve",
+      { method: "POST", body: JSON.stringify({ ns, uid, chars, dayBudget, minBudget }) }));
+    return res.json();
+  }
+  const gate = await usageCheck(env, { ns, uid, chars, maxChars, dayBudget, minBudget });
+  if (!gate.allowed) {
+    await usageRecord(env, { ns, uid, chars: 0, over: gate.over });
+    return gate;
+  }
+  await usageRecord(env, { ns, uid, chars });
+  return { allowed: true };
+}
+
+/** Give back a reservation whose provider call failed (day chars+reqs
+ *  return; the minute burst keeps counting attempts). */
+export async function usageRefund(env, { ns, uid, chars }) {
+  if (env.USAGE) {
+    await env.USAGE.get(env.USAGE.idFromName(ns)).fetch(new Request(
+      "https://usage/refund",
+      { method: "POST", body: JSON.stringify({ ns, uid, chars }) }));
+    return;
+  }
+  const key = counterKey(ns, uid);
+  const obj = await env.VOICE.get(key).catch(() => null);
+  if (!obj) return;
+  const cur = JSON.parse(await obj.text());
+  await env.VOICE.put(key, JSON.stringify({
+    chars: Math.max(0, (cur.chars ?? 0) - chars),
+    reqs: Math.max(0, (cur.reqs ?? 0) - 1),
+  }));
 }
 
 /** Eleven v4 expressive sentence. env.VOICE_SYNTH is the test seam. */
@@ -124,6 +174,8 @@ async function synthesize(env, mintText, voiceRow) {
         model_id: voiceRow.model,
         voice_settings: voiceRow.voice_settings,
       }),
+      // 043 I — a provider call may not hang a request slot forever.
+      signal: AbortSignal.timeout(30_000),
     });
   if (!res.ok) throw new Error(`elevenlabs_${res.status}`);
   return new Uint8Array(await res.arrayBuffer());
@@ -168,11 +220,10 @@ export async function handleSpeak(request, env, ctx) {
     }
   }
 
-  const gate = await usageCheck(env, { ns: "usage", uid, chars: text.length,
+  const gate = await usageReserve(env, { ns: "usage", uid, chars: text.length,
     maxChars: MAX_SENTENCE_CHARS, dayBudget: DAY_CHAR_BUDGET,
     minBudget: MINUTE_REQUEST_BURST });
   if (!gate.allowed) {
-    await usageRecord(env, { ns: "usage", uid, chars: 0, over: gate.over });
     return json({ error: "fair_use", over: gate.over }, { status: 429 });
   }
 
@@ -181,12 +232,15 @@ export async function handleSpeak(request, env, ctx) {
   try {
     audio = await synthesize(env, mintText, voiceRow);
   } catch {
+    await usageRefund(env, { ns: "usage", uid, chars: text.length });
     return json({ error: "tts_failed" }, { status: 502 });
   }
-  if (!audio) return json({ error: "voice_unavailable" }, { status: 503 });
+  if (!audio) {
+    await usageRefund(env, { ns: "usage", uid, chars: text.length });
+    return json({ error: "voice_unavailable" }, { status: 503 });
+  }
 
   const after = (async () => {
-    await usageRecord(env, { ns: "usage", uid, chars: text.length });
     if (eligible) {
       await env.VOICE.put(key, audio, {
         customMetadata: { voice: voiceKey, feeling, chars: String(text.length) },

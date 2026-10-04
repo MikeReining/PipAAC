@@ -17,7 +17,7 @@ import help from "../../public/help.en.json" with { type: "json" };
 import { helpDocs, rankByMeaning } from "../../public/shared/help_search.mjs";
 import { embed } from "./pictures_shared.js";
 import { ipHashFor } from "./trial.mjs";
-import { usageCheck, usageRecord } from "./voice.js";
+import { usageReserve } from "./voice.js";
 
 export const HELP_TO = "hello@pipaac.org";
 const HELP_FROM = "accounts@pipaac.org"; // the verified sender (SSOT)
@@ -82,8 +82,8 @@ async function overLimit(request, env, ns, { day, minute }) {
   if (env?.ENVIRONMENT === "development" || !env?.VOICE) return null;
   const ipHash = await ipHashFor(env, request);
   if (!ipHash) return null;
-  const gate = await usageCheck(env, { ns, uid: ipHash, chars: 1, maxChars: 1, dayBudget: day, minBudget: minute });
-  await usageRecord(env, { ns, uid: ipHash, chars: 1, over: gate.allowed ? null : gate.over });
+  // 043 I — the reservation counts the attempt atomically.
+  const gate = await usageReserve(env, { ns, uid: ipHash, chars: 1, maxChars: 1, dayBudget: day, minBudget: minute });
   return gate.allowed ? null : gate.over;
 }
 

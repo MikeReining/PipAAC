@@ -172,6 +172,17 @@ test("no Eleven key and no stub -> 503, client falls back to clips", async () =>
   assert.equal(r.status, 503);
 });
 
+test("043 I — a failed synth refunds the reservation: no chars counted", async () => {
+  const env = makeEnv();
+  env.VOICE_SYNTH = async () => { throw new Error("eleven down"); };
+  const r = await good(env, { text: "please count this fairly" });
+  assert.equal(r.status, 502);
+  const day = new Date().toISOString().slice(0, 10);
+  const row = JSON.parse(env.VOICE.store.get(`usage/${UID}/${day}`));
+  assert.equal(row.chars, 0);
+  assert.equal(row.reqs, 0);
+});
+
 test("the feeling shapes the Eleven text, not the cache text or the count", async () => {
   const env = makeEnv();
   const seen = [];

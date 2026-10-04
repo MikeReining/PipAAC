@@ -17,7 +17,7 @@
  * env.GROQ_CHAT is the test seam; without it or GROQ_API_KEY the caller
  * gets 503 and the button speaks the sentence as built.
  */
-import { usageCheck, usageRecord } from "./voice.js";
+import { usageRefund, usageReserve } from "./voice.js";
 import { entitled } from "./trial.mjs";
 import { TRANSFORM_PROMPTS, transformPrompt } from "../shared/transform_prompts.mjs";
 
@@ -51,6 +51,7 @@ async function groq(env, mode, text, shape) {
         { role: "user", content: text },
       ],
     }),
+    signal: AbortSignal.timeout(30_000), // 043 I — bounded provider call
   });
   if (!res.ok) throw new Error(`groq_${res.status}`);
   const data = await res.json();
@@ -78,11 +79,10 @@ export async function handleTransform(request, env) {
   }
   if (!env.VOICE) return json({ error: "transform_unavailable" }, { status: 503 });
 
-  const gate = await usageCheck(env, { ns: "usage-tr", uid, chars: text.length,
+  const gate = await usageReserve(env, { ns: "usage-tr", uid, chars: text.length,
     maxChars: MAX_INPUT_CHARS, dayBudget: DAY_CHAR_BUDGET,
     minBudget: MINUTE_REQUEST_BURST });
   if (!gate.allowed) {
-    await usageRecord(env, { ns: "usage-tr", uid, chars: 0, over: gate.over });
     return json({ error: "fair_use", over: gate.over }, { status: 429 });
   }
 
@@ -98,10 +98,13 @@ export async function handleTransform(request, env) {
   try {
     out = await groq(env, mode, text, shape);
   } catch {
+    await usageRefund(env, { ns: "usage-tr", uid, chars: text.length });
     return json({ error: "groq_failed" }, { status: 502 });
   }
-  if (!out) return json({ error: "transform_unavailable" }, { status: 503 });
+  if (!out) {
+    await usageRefund(env, { ns: "usage-tr", uid, chars: text.length });
+    return json({ error: "transform_unavailable" }, { status: 503 });
+  }
 
-  await usageRecord(env, { ns: "usage-tr", uid, chars: text.length });
   return json({ text: out });
 }

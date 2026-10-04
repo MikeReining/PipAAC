@@ -10,7 +10,7 @@ import { SupporterAccounts } from "./accounts.js";
 import { verifyAssertion } from "./webauthn.mjs";
 import { handleResearch } from "./research.js";
 import { handleHelpSearch, handleHelpWrite } from "./help.js";
-import { handleSpeak, usageCheck, usageRecord } from "./voice.js";
+import { handleSpeak, usageReserve } from "./voice.js";
 import { handleTransform } from "./transform.js";
 import { handleTrial, ipHashFor } from "./trial.mjs";
 import { handleTile, handleTileAdmin, handleTileFlag, handleTileReplaced, TileLedger, adminOk } from "./tile.js";
@@ -20,8 +20,9 @@ import {
   handlePick, handlePictureImage, handlePicturesAdmin, handleReject,
 } from "./pictures.js";
 import { licenseFor } from "./license.mjs";
+import { UsageLedger } from "./usage_ledger.mjs";
 
-export { UserRelay, PairingLobby, SupporterAccounts, TileLedger };
+export { UserRelay, PairingLobby, SupporterAccounts, TileLedger, UsageLedger };
 
 const json = (data, init = {}) =>
   new Response(JSON.stringify(data), {
@@ -44,10 +45,9 @@ const abuseGate = async (request, env, ns) => {
   if (env?.ENVIRONMENT === "development" || !env?.VOICE) return null;
   const ipHash = await ipHashFor(env, request);
   if (!ipHash) return null;
-  const gate = await usageCheck(env, {
+  const gate = await usageReserve(env, {
     ns, uid: ipHash, chars: 1, maxChars: 1, dayBudget: 30, minBudget: 5,
   });
-  await usageRecord(env, { ns, uid: ipHash, chars: 1, over: gate.allowed ? null : gate.over });
   return gate.allowed ? null
     : json({ error: "fair_use", over: gate.over }, { status: 429 });
 };

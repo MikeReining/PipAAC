@@ -15,7 +15,7 @@
  *  translate. No user, device, or license id leaves this Worker (§ 8).
  */
 import { checkLicense } from "./license.mjs";
-import { usageCheck, usageRecord } from "./voice.js";
+import { usageReserve } from "./voice.js";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import pictureFinder from "../../data/catalog/picture_finder.json" with { type: "json" };
 import pictureLabels from "../../data/catalog/picture_labels.json" with { type: "json" };
@@ -117,6 +117,7 @@ export async function classify(env, { text, description, forDraw = false }) {
       state: JEV_STATE(text, description),
       questions: forDraw ? { ...JEV_QUESTIONS, ...DRAW_JEV_QUESTIONS } : JEV_QUESTIONS,
     }),
+    signal: AbortSignal.timeout(30_000), // 043 I — bounded provider call
   });
   if (!res.ok) throw new Error(`jev_${res.status}`);
   const data = await res.json();
@@ -265,12 +266,11 @@ export async function findGuard(body, env, n = 1) {
   if (!env.AI || !env.PICTURES) {
     return { err: json({ error: "pictures_unavailable" }, { status: 503 }) };
   }
-  const gate = await usageCheck(env, {
+  const gate = await usageReserve(env, {
     ns: "usage-pic", uid, chars: n, maxChars: BATCH_MAX,
     dayBudget: FIND_DAY, minBudget: FIND_MIN,
   });
   if (!gate.allowed) {
-    await usageRecord(env, { ns: "usage-pic", uid, chars: 0, over: gate.over });
     return { err: json({ error: "fair_use", over: gate.over }, { status: 429 }) };
   }
   return { uid };

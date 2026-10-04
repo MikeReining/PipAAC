@@ -4,7 +4,7 @@
 import {
   BATCH_MAX, DESC_MAX, TEXT_MAX, cleanText, findGuard, findOne, json,
 } from "./pictures_shared.js";
-import { usageRecord } from "./voice.js";
+import { usageRefund } from "./voice.js";
 
 export async function handleFind(request, env, ctx) {
   const body = await request.json().catch(() => null);
@@ -13,11 +13,15 @@ export async function handleFind(request, env, ctx) {
   const text = cleanText(body?.text, TEXT_MAX);
   const description = cleanText(body?.description, DESC_MAX);
   if (!text || description === null) {
+    await usageRefund(env, { ns: "usage-pic", uid, chars: 1 });
     return json({ error: "bad_text" }, { status: 400 });
   }
-  const result = await findOne(env, { text, description, locale: body?.locale });
-  const after = usageRecord(env, { ns: "usage-pic", uid, chars: 1 });
-  if (ctx?.waitUntil) ctx.waitUntil(after); else await after;
+  // The guard's reservation already billed this request (043 I).
+  const result = await findOne(env, { text, description, locale: body?.locale })
+    .catch(async (e) => {
+      await usageRefund(env, { ns: "usage-pic", uid, chars: 1 });
+      throw e;
+    });
   return json(result);
 }
 
@@ -37,9 +41,10 @@ export async function handleFindBatch(request, env, ctx) {
   const results = await Promise.all(cleaned.map(async (it) =>
     it.text && it.description !== null
       ? findOne(env, { ...it, locale: body?.locale })
-      : { error: "bad_text" }));
-  const after = usageRecord(env, { ns: "usage-pic", uid, chars: items.length });
-  if (ctx?.waitUntil) ctx.waitUntil(after); else await after;
+      : { error: "bad_text" })).catch(async (e) => {
+    await usageRefund(env, { ns: "usage-pic", uid, chars: items.length });
+    throw e;
+  });
   return json({ results });
 }
 

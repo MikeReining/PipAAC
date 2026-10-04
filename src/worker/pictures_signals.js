@@ -3,7 +3,7 @@
  *  a null scope fails closed (a stored "common" would leak a personal
  *  name). Posts land on the Tile-ledger DO via picPost. */
 import { checkLicense } from "./license.mjs";
-import { usageCheck, usageRecord } from "./voice.js";
+import { usageRefund, usageReserve } from "./voice.js";
 import { signalsKey } from "../shared/picture_index.mjs";
 import {
   DESC_MAX, TEXT_MAX, classify, cleanText, isUnsafe, json, okUuid, picPost,
@@ -33,11 +33,10 @@ export async function handlePick(request, env, ctx) {
   if (!env.VOICE || !env.TILE_LEDGER) {
     return json({ error: "pictures_unavailable" }, { status: 503 });
   }
-  const guard = await usageCheck(env, {
+  const guard = await usageReserve(env, {
     ns: PICK_NS, uid, chars: 1, maxChars: 1, dayBudget: PICK_DAY, minBudget: PICK_MIN,
   });
   if (!guard.allowed) {
-    await usageRecord(env, { ns: PICK_NS, uid, chars: 0, over: guard.over });
     return json({ error: "fair_use", over: guard.over }, { status: 429 });
   }
 
@@ -50,18 +49,26 @@ export async function handlePick(request, env, ctx) {
   // Fail closed: a null scope stored "common" would write a personal
   // name into the anonymous pick table. The client never decides scope.
   if (!jev?.scope) {
+    await usageRefund(env, { ns: PICK_NS, uid, chars: 1 });
     return json({ error: "classify_unavailable" }, { status: 503 });
   }
   const scope = jev.scope === "personal" ? "personal" : "common";
   if (scope === "personal" && !description) {
+    await usageRefund(env, { ns: PICK_NS, uid, chars: 1 });
     return json({ error: "bad_description" }, { status: 400 });
   }
   const textNorm = signalsKey(scope, text, description);
-  if (!textNorm) return json({ error: "bad_request" }, { status: 400 });
+  if (!textNorm) {
+    await usageRefund(env, { ns: PICK_NS, uid, chars: 1 });
+    return json({ error: "bad_request" }, { status: 400 });
+  }
 
-  const res = await picPost(env, "/pic/pick", { text_norm: textNorm, image_id: imageId });
-  if (!res.ok) return json({ error: "pick_failed" }, { status: 502 });
-  await usageRecord(env, { ns: PICK_NS, uid, chars: 1 });
+  const res = await picPost(env, "/pic/pick", { text_norm: textNorm, image_id: imageId })
+    .catch(() => null);
+  if (!res?.ok) {
+    await usageRefund(env, { ns: PICK_NS, uid, chars: 1 });
+    return json({ error: "pick_failed" }, { status: 502 });
+  }
   return new Response(null, { status: 204 });
 }
 
@@ -105,11 +112,10 @@ export async function handleReject(request, env, ctx) {
   if (isUnsafe(text, description)) {
     return json({ error: "unsafe" }, { status: 422 });
   }
-  const guard = await usageCheck(env, {
+  const guard = await usageReserve(env, {
     ns: REJECT_NS, uid, chars: 1, maxChars: 1, dayBudget: PICK_DAY, minBudget: PICK_MIN,
   });
   if (!guard.allowed) {
-    await usageRecord(env, { ns: REJECT_NS, uid, chars: 0, over: guard.over });
     return json({ error: "fair_use", over: guard.over }, { status: 429 });
   }
 
@@ -122,21 +128,28 @@ export async function handleReject(request, env, ctx) {
   // Fail closed: a null scope stored "common" would leak a name into the
   // disagreement rows and onto the founder's review page (§ 5.5, § 8).
   if (!jev?.scope) {
+    await usageRefund(env, { ns: REJECT_NS, uid, chars: 1 });
     return json({ error: "classify_unavailable" }, { status: 503 });
   }
   const scope = jev.scope === "personal" ? "personal" : "common";
   if (scope === "personal" && !description) {
+    await usageRefund(env, { ns: REJECT_NS, uid, chars: 1 });
     return json({ error: "bad_description" }, { status: 400 });
   }
   const textNorm = signalsKey(scope, text, description);
-  if (!textNorm) return json({ error: "bad_request" }, { status: 400 });
+  if (!textNorm) {
+    await usageRefund(env, { ns: REJECT_NS, uid, chars: 1 });
+    return json({ error: "bad_request" }, { status: 400 });
+  }
 
   const res = await picPost(env, "/pic/reject", {
     text_norm: textNorm, ours, action,
     theirs: action === "photo" ? null : theirs,
     description, scope,
-  });
-  if (!res.ok) return json({ error: "reject_failed" }, { status: 502 });
-  await usageRecord(env, { ns: REJECT_NS, uid, chars: 1 });
+  }).catch(() => null);
+  if (!res?.ok) {
+    await usageRefund(env, { ns: REJECT_NS, uid, chars: 1 });
+    return json({ error: "reject_failed" }, { status: 502 });
+  }
   return new Response(null, { status: 204 });
 }

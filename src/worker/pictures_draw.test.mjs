@@ -350,7 +350,13 @@ test("§ 0.5: a personal drawing (description-keyed) is a free hit at 0 left", a
 test("a post-mint storage failure fails the row and refunds the allowance", async () => {
   let calls = 0;
   const env = makeEnv({ synth: async () => (calls++, PNG_BYTES) });
-  env.VOICE.put = async () => { throw new Error("r2 down"); };
+  // Usage counters write to the same bucket before the mint — the
+  // "post-mint failure" the test wants must not break the reservation.
+  const origPut = env.VOICE.put;
+  env.VOICE.put = async (key, v) => {
+    if (String(key).startsWith("usage-")) return origPut(key, v);
+    throw new Error("r2 down");
+  };
   const r = await draw(env, { text: "trampoline" });
   assert.equal(r.status, 502);
   assert.equal((await r.json()).error, "draw_failed");

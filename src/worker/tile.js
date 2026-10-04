@@ -13,7 +13,7 @@
  * mp3 with x-tile-cache: stub — a dev server never spends money.
  */
 import tileVoices from "../../data/catalog/tile_voices.json" with { type: "json" };
-import { usageCheck, usageRecord } from "./voice.js";
+import { usageRefund, usageReserve } from "./voice.js";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import {
   TILE_PROFILE,
@@ -64,6 +64,7 @@ async function synthesizeElevenLabs(env, mintText, voice) {
         model_id: voice.model,
         voice_settings: voice.voice_settings,
       }),
+      signal: AbortSignal.timeout(30_000), // 043 I — bounded provider call
     });
   if (!res.ok) throw new Error(`elevenlabs_${res.status}`);
   return new Uint8Array(await res.arrayBuffer());
@@ -146,15 +147,18 @@ export async function handleTile(request, env, ctx) {
   }))).json();
 
   // § 4.7 — only a fresh mint counts; hits are free and uncounted.
+  // 043 I — the reservation is atomic: an allowed mint is already
+  //  billed; a failed ledger fetch gives it back.
+  let reserved = false;
   if (peek.disposition === "mint") {
-    const gate = await usageCheck(env, {
+    const gate = await usageReserve(env, {
       ns: "usage-tile", uid, chars: 1, maxChars: 1,
       dayBudget: LICENSE_DAY_MINTS, minBudget: LICENSE_MIN_MINTS,
     });
     if (!gate.allowed) {
-      await usageRecord(env, { ns: "usage-tile", uid, chars: 0, over: gate.over });
       return json({ error: "fair_use", over: gate.over }, { status: 429 });
     }
+    reserved = true;
   }
 
   const res = await stub.fetch(new Request("https://tile/clip", {
@@ -162,11 +166,11 @@ export async function handleTile(request, env, ctx) {
     body: JSON.stringify({
       id, voice_key: voice.voice_key, locale, text, source,
     }),
-  }));
-  if (res.ok && res.headers.get("x-tile-billed") === "1") {
-    const after = usageRecord(env, { ns: "usage-tile", uid, chars: 1 });
-    if (ctx?.waitUntil) ctx.waitUntil(after); else await after;
+  })).catch((e) => e);
+  if (reserved && !(res instanceof Response && res.ok && res.headers.get("x-tile-billed") === "1")) {
+    await usageRefund(env, { ns: "usage-tile", uid, chars: 1 });
   }
+  if (!(res instanceof Response)) return json({ error: "mint_failed" }, { status: 502 });
   return res;
 }
 
@@ -186,20 +190,22 @@ export async function handleTileFlag(request, env) {
   if (!text || text.length > TILE_TEXT_MAX) {
     return json({ error: "bad_text" }, { status: 400 });
   }
-  const gate = await usageCheck(env, {
+  const gate = await usageReserve(env, {
     ns: "usage-tileflag", uid, chars: 1, maxChars: 1,
     dayBudget: FLAG_DAY_LIMIT, minBudget: FLAG_MIN_LIMIT,
   });
   if (!gate.allowed) {
-    await usageRecord(env, { ns: "usage-tileflag", uid, chars: 0, over: gate.over });
     return json({ error: "fair_use", over: gate.over }, { status: 429 });
   }
   const locale = typeof body?.locale === "string" ? body.locale : "";
   const id = await ledger.tileClipId(String(body?.voice ?? ""), locale, text);
-  await tileStub(env).fetch(new Request("https://tile/flag", {
+  const res = await tileStub(env).fetch(new Request("https://tile/flag", {
     method: "POST", body: JSON.stringify({ id }),
-  }));
-  await usageRecord(env, { ns: "usage-tileflag", uid, chars: 1 });
+  })).catch(() => null);
+  if (!res) {
+    await usageRefund(env, { ns: "usage-tileflag", uid, chars: 1 });
+    return json({ error: "flag_failed" }, { status: 502 });
+  }
   return new Response(null, { status: 204 });
 }
 

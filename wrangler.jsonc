@@ -21,7 +21,8 @@
       { "name": "RELAY", "class_name": "UserRelay" },
       { "name": "PAIR", "class_name": "PairingLobby" },
       { "name": "ACCOUNTS", "class_name": "SupporterAccounts" },
-      { "name": "TILE_LEDGER", "class_name": "TileLedger" }
+      { "name": "TILE_LEDGER", "class_name": "TileLedger" },
+      { "name": "USAGE", "class_name": "UsageLedger" }
     ]
   },
   "migrations": [
@@ -29,7 +30,8 @@
     { "tag": "v2", "new_sqlite_classes": ["PairingLobby"] },
     { "tag": "v3", "renamed_classes": [{ "from": "BoardRelay", "to": "UserRelay" }] },
     { "tag": "v4", "new_sqlite_classes": ["SupporterAccounts"] },
-    { "tag": "v5", "new_sqlite_classes": ["TileLedger"] }
+    { "tag": "v5", "new_sqlite_classes": ["TileLedger"] },
+    { "tag": "v6", "new_sqlite_classes": ["UsageLedger"] }
   ],
   "ai": { "binding": "AI", "remote": true },
   "vectorize": [
