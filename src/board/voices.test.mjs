@@ -23,7 +23,7 @@ function fresh() {
   return db;
 }
 
-test("today: Pip, Leo, Mia, Sam in use; Zoe, Tom, Rey are coming soon", () => {
+test("today: Pip, Leo, Mia, Sam in use; Zoe, Tom, Rey, Joy are coming soon", () => {
   const db = fresh();
   const { available, coming } = voiceChoices(db, "en");
   assert.deepEqual(available.map((v) => voiceName(db, v.id)), ["Pip", "Leo", "Mia", "Sam"]); // default first, then alphabetical
@@ -31,7 +31,7 @@ test("today: Pip, Leo, Mia, Sam in use; Zoe, Tom, Rey are coming soon", () => {
   assert.equal(available.find((v) => v.id === "voi_leo_en").note, "Grown-up, male");
   assert.equal(available.find((v) => v.id === "voi_eve_en").note, "Younger, female");
   assert.equal(available.find((v) => v.id === "voi_sam_en").note, "Younger, male");
-  assert.deepEqual(coming.map((v) => v.name), ["Zoe", "Tom", "Rey"]);
+  assert.deepEqual(coming.map((v) => v.name), ["Zoe", "Tom", "Rey", "Joy"]);
 });
 
 test("every lineup voice is linked to its ElevenLabs voice id in tile_voices.json", () => {
@@ -52,6 +52,7 @@ test("every lineup voice is linked to its ElevenLabs voice id in tile_voices.jso
   assert.equal(rows.get("voi_zoe_en").voice_id, "fkNQrdHI0J7vOhlSK5fE");
   assert.equal(rows.get("voi_tom_en").voice_id, "RliWjSXK3mZtypIjNgvO");
   assert.equal(rows.get("voi_rey_en").voice_id, "eb1698hSoNbHSWKDmVLe");
+  assert.equal(rows.get("voi_joy_en").voice_id, "hdbWhKwBTlcfklhVvUW0");
 });
 
 test("a shipped voice leaves coming soon and can be chosen; the choice is a synced setting", () => {
