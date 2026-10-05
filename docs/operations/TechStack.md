@@ -6,18 +6,20 @@ stub until product routes land. Founder brief → live phase doc is next
 
 ## Product direction
 
-**PROPOSED.** PipAAC — see `docs/strategy/Vision.md`. No executing product phase
-yet; stack choices for media, curriculum, or APIs follow the founder brief.
+**LIVE.** PipAAC — see `docs/strategy/Vision.md`. The web app is in production
+(`app.pipaac.org`, live 2026-10-01); the iOS build approach is open.
 
 **DECIDED 2026-09-22** (not built). An iOS App Store app plus the web app in
 this repo, sharing one SQLite schema; the iOS build approach is open
-(`docs/product/Platforms_iOS_And_Web.md`). Sync relay on Cloudflare Workers,
-Durable Objects and R2 is PROPOSED (`docs/product/Sync_And_Web_Editing.md`).
+(`docs/product/Platforms_iOS_And_Web.md`). Sync relay on Cloudflare Workers —
+Durable Objects (`RELAY` per board, `TILE_LEDGER` per-day mint counters,
+`USAGE` fair-use reservations) and R2 (`BLOBS`, `VOICE`) are built and live
+(`docs/product/Sync_And_Web_Editing.md`, `wrangler.jsonc`).
 
 ## Current
 
 - Package manager: npm with `package-lock.json`
-- Node: see `.nvmrc` (>=20)
+- Node: see `.nvmrc` (24 — `node:sqlite` drives tests and scripts)
 - Harness runtime stub: Cloudflare Workers (`wrangler.jsonc`, `src/worker/index.js`)
 - Test runner: `scripts/test.sh` + `node --test`
 - Closeout gates: `npm run check` / `npm run check:fast`

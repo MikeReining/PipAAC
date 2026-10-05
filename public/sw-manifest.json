@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-0ceff0c72435",
+  "buildId": "r1-28a571925d49",
   "files": [
     {
       "path": "/board.js",
@@ -183,8 +183,8 @@
     },
     {
       "path": "/board/picture-fill.js",
-      "bytes": 5119,
-      "sha256": "2e9add7c922e3c8f08187ccdc0a8862d1270d4452f8eff32d878bf05b12a88bd"
+      "bytes": 5143,
+      "sha256": "8c4ae311031bba12bc2f1fbafd7cf2d32967f385038de7b3f1cb956cc265cd35"
     },
     {
       "path": "/board/pin.js",

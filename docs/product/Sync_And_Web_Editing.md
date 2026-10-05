@@ -159,6 +159,13 @@ an **op** in `sync_op` via `recordOp` (`public/shared/ops.mjs`):
   their op (`syncUploadBlob`, sealed under the current epoch); a fetch
   miss retries once on the next repaint in case the upload lost the
   race. Legacy `opfs:photos/<id>` keys still read.
+  **043 C amendment (built):** uploads are durable — `syncUploadBlob`
+  queues the sha in the device keystore (`blobq/<user>`) so a kill,
+  an offline edit, or a pre-link add never loses it; `drainBlobs` runs
+  at boot and every recover, dropping an entry only after the relay
+  holds the bytes, and a locally missing sha heals *from* the relay
+  instead of re-uploading. Failed drains re-arm with bounded backoff;
+  `syncHealth().mediaPending`/`mediaError` surface the queue.
 - Retire, never delete, fits: a removal is an op, and the retired row
   keeps its bytes (`docs/product/Vocabulary_Masking_And_Safety.md` § 3.2).
 
@@ -211,6 +218,13 @@ itself is still PROPOSED.
   `ensureBaseline`, before the first local edit), applies the confirmed
   stream in `relay_seq` order, saves that as the new baseline, then
   re-applies the still-pending local ops.
+  **043 B amendment (built):** recovery is one flow — `recover()` runs
+  at boot, on socket (re)open, on `online`, and on visibility: fetch
+  ops after cursor → apply → persist → advance cursor. A live push
+  never moves the cursor (it proves nothing about earlier ops); a seq
+  hole — relay-pruned history — rebases on the sealed snapshot. Drain
+  failures surface as `syncHealth().ingestError` instead of wedging
+  silently.
 - **Ops carry intent, not results.** "Place Cooper in People" means "the
   next free slot when applied". "Move `cup` to page 0 slot 12" means
   "slot 12 if free; if another item took it, the next free slot". An
@@ -616,6 +630,12 @@ never shares a sibling.
   the relay id: `POST /users` accepts it and bootstrap refuses an
   already-initialized user (`src/worker/relay.js`). `pip_sync`, kvvfs
   and flat key names migrate into the first registry row on first boot.
+  **043 A amendment (built):** `db/<id>` keeps a `db/<id>.prev` copy of
+  the last database that opened cleanly — an unreadable primary
+  restores it and self-heals on the next flush. A read that *fails*
+  (transient IndexedDB error) is not corruption: the board boots
+  temporary with saves blocked so a bad save never overwrites good
+  stored bytes; `dbHealth()` and the editor status line surface it.
 - **Measured 2026-09-23:** one user's database is about 1.0 MB (999,424
   bytes with 680 senses); export and reload each take under 1 ms.
   Per-user isolation, switching, the Web Lock and the kvvfs migration

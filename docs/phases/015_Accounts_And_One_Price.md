@@ -570,6 +570,19 @@ the iOS shell — Out of scope), the 20-word and 5-drawing counters, the
 web-editor gate, the own-device + one-supporter cap replacing the
 one-device cap, and the server-signed offline license statement.
 
+**043 K amendment (built):** the webhook handled only
+`checkout.session.completed` — a bank-debit buyer whose session settles
+later never got the grant. The handler now also covers
+`checkout.session.async_payment_succeeded` (grants, keyed on the PI
+metadata `client_reference_id` carried through Checkout),
+`checkout.session.async_payment_failed`, `charge.refunded`, and
+`charge.dispute.created` (each records a `payment_issue` flag on the
+user, surfaced on `devices/self` and `GET /entitlement`, shown once in
+the devices sheet — conservative: no silent revoke). Both Stripe
+endpoints (live `we_1UMEFYFPjZdfZdLb1r6KEpbO`, test `we_1UMEFMFPjZdfZdLbqak24cbK`)
+subscribe to all five event types. **OPEN — founder call:** whether a
+refund/dispute should also revoke the lifetime grant (flag-only today).
+
 Goal: `docs/product/Pricing_And_Packaging.md` § 4 enforced, honestly.
 
 **Payments DECIDED 2026-09-23:**

@@ -294,6 +294,17 @@ per shared normalized text carries `default_for_text = 1` — the lowest
 catalog slot — which is the label lookups and typed-word completions resolve
 to. The non-default senses stay reachable through their groups and cells.
 
+**043 G amendment (built):** `locale` is a runtime boundary, not just an
+index column. Every label read scopes to `learner_profile.locale` — the
+profile is the speaking language's single owner; `labelsFor`
+(`public/shared/forms.mjs`) used to query all approved labels regardless
+of locale, which let a German label surface on an English board. `resolveSlot`
+and the other label queries already filtered; the cache now keys on
+`(db, locale)`. Language-file loading (`loadLanguage` in `public/db.js`)
+fetches `form_answers`/`suggest_answers` per locale — strict for locales
+the catalog ships, absent-tolerant elsewhere, so a missing file can never
+mask a shipped one.
+
 ### 5.4 Image
 
 ```sql

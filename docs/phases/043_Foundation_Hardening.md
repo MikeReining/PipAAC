@@ -3,11 +3,22 @@
 **Status:** PROPOSAL 2026-10-04 — an external stack audit (verbatim in the
 handoff message) reviewed the working checkout and returned twelve
 findings. Each finding below was re-verified against the code before
-landing here; the audit's file references are accurate. Nothing is built
-yet. The audit's sequencing stands: **items A–F first** (they protect the
-shipping English app), then **G** (German gets a small end-to-end proof,
-never a bulk translation), then **H–K** before App Store submission,
-with **L** folded in as the slices land.
+landing here; the audit's file references are accurate.
+
+**Built** (deployed, live-verified): **A** `7cbcbc7a`, **B** `a9da05cc`,
+**C** `75490527`, **D** (transform freshness), **E** `f27a63d8`,
+**F** (Node 24 + portable Chrome + wrangler audit), **G** `e8647ae7`
+(locale boundary — the small German *runtime* proof is done;
+the ~20-word German vocabulary itself is owed before catalog
+translation is scoped), **H** (Unicode masking + privacy page),
+**I** `7ec06c95`, **J** `c3cbb6f0` (seams built + typed; the
+real-device prototype decision stays **OPEN** — iOS spike before any
+iOS phase), **K** `ee651803` (refund/dispute **revoke** policy stays an
+**OPEN** founder call — flag-only ships).
+
+**Remaining:** E's real-iPad audible proof (extends 036 § 5 — headless
+can't prove a speaker makes sound), J's device prototype, K's revoke
+decision, and the ops-alerting verification noted under I.
 
 **Verdict on the stack:** keep it. Plain JS, SQLite WASM, Workers +
 Durable Objects + R2, and the meanings/labels/voices separation are all

@@ -16,7 +16,7 @@ This replaces the "built as a PWA" line in `docs/strategy/Vision.md` § 4.4.
 | --- | --- | --- |
 | Main job | The child's device. Speaking, all day, offline | Editing on a computer; also a full board on any device |
 | Who uses it | The child, and adults in the Parent Corner | Parents, SLPs and teachers at a keyboard; families without an iPad |
-| Storage | On-device SQLite, same schema | SQLite in the browser (OPFS). A cache when sync is on |
+| Storage | On-device SQLite, same schema | SQLite WASM in memory, exported to IndexedDB `pip-users` (with a `.prev` fallback, 043 A). OPFS holds media blobs only. A cache when sync is on |
 | Distribution | App Store, grant and Medicaid friendly | A URL |
 
 Both apps use the same database schema
@@ -45,9 +45,11 @@ platform (`docs/product/Word_Library.md` § 5.3).
 
 ## 3. Open question: how the iOS app is built
 
-**OPEN.** Needs a spike before any iOS phase. The web code is the working
-product today (sqlite-wasm, OPFS, `public/board.js`). There are two honest
-options:
+**OPEN.** Needs a real-device spike before any iOS phase. The web code is
+the working product today (sqlite-wasm, IndexedDB persistence,
+`public/board.js`). 043 J named the seams a port would swap —
+`public/shared/platform.mjs` owns storage, audio, media blobs, and
+lifecycle; `checkJs` types the boundary. Two honest options:
 
 1. **Native shell around the web board.** One codebase. Native bridges
    for storage, audio, photos, Face ID and the microphone. Risk: audio
