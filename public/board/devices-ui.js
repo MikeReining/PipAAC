@@ -16,6 +16,7 @@ import {
 } from "../shared/account.mjs";
 import { addUser, listUsers, removeUser } from "../shared/users.mjs";
 import { supporterNames } from "../shared/team_names.mjs";
+import { kv } from "../shared/platform.mjs";
 
 const $ = (id) => document.getElementById(id);
 
@@ -965,7 +966,7 @@ export function mountDevices({
     // request — the relay keeps the status, the device keeps a copy.
     await store.put(`user/${me.id}/license`, key);
     resetLicense();
-    localStorage.removeItem(`pip-unlicensed:${me.id}`); // ends the 040 preview flag
+    kv.removeItem(`pip-unlicensed:${me.id}`); // ends the 040 preview flag
     await renderDevices();
   }
 

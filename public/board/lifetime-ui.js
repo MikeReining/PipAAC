@@ -13,6 +13,7 @@
  * relay calls in devices-ui.js.
  */
 import { buyCodes } from "../shared/account.mjs";
+import { kv } from "../shared/platform.mjs";
 
 const $ = (id) => document.getElementById(id);
 const ALL = (db, sql, p = []) => db.all(sql, p);
@@ -111,12 +112,12 @@ export function mountTrialClock({ me, db, locale, refreshTrial, trialNudge,
     const defId = ALL(db,
       "SELECT id FROM voice WHERE locale = ? AND is_default = 1", [locale])[0]?.id;
     if (!defId) return;
-    const wanted = localStorage.getItem(VOICE_WANTED_KEY);
+    const wanted = kv.getItem(VOICE_WANTED_KEY);
     if (isEntitled()) {
       if (wanted && wanted !== getVoiceId()
           && ALL(db, "SELECT 1 AS x FROM voice WHERE id = ? AND status = 'active'", [wanted])[0]) {
         setVoiceId(wanted);
-        localStorage.removeItem(VOICE_WANTED_KEY);
+        kv.removeItem(VOICE_WANTED_KEY);
         repaint();
       }
       return;
@@ -124,7 +125,7 @@ export function mountTrialClock({ me, db, locale, refreshTrial, trialNudge,
     const voiceId = getVoiceId();
     if (voiceId !== defId
         && !ALL(db, "SELECT is_default AS d FROM voice WHERE id = ?", [voiceId])[0]?.d) {
-      localStorage.setItem(VOICE_WANTED_KEY, voiceId);
+      kv.setItem(VOICE_WANTED_KEY, voiceId);
       setVoiceId(defId);
       repaint();
     }

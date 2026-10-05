@@ -11,13 +11,14 @@
  */
 import { setEntityPhoto, setEntityRole } from "../shared/groups.mjs";
 import { pictureAction, roleForKind } from "../shared/pictures.mjs";
+import { kv } from "../shared/platform.mjs";
 
 const PENDING_KEY = "pip-pic-pending";
 const TRANSIENT = new Set(["offline", "unavailable", "fair_use"]);
 
 export function mountPictureFill({
   db, all, locale, client, creds, savePhoto, syncUploadBlob, onChanged,
-  storage = globalThis.localStorage,
+  storage = kv,
 }) {
   const entity = (id) => all(db,
     "SELECT id, spoken_name, hint, photo_key, fitzgerald_role, status FROM personal_entity WHERE id = ?",

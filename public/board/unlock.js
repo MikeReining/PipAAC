@@ -11,6 +11,7 @@
  * activateLicense: relay first, device copy second). The param is
  * stripped at once so a token doesn't linger in the address bar.
  */
+import { kv } from "../shared/platform.mjs";
 const LOOPBACK = ["localhost", "127.0.0.1", "[::1]"];
 
 /** ?unlicensed (localhost only) — the 040 trial preview: stops the
@@ -23,12 +24,12 @@ export function unlicensedFromUrl({ me }) {
   const qs = params.toString();
   history.replaceState(null, "", location.pathname + (qs ? `?${qs}` : ""));
   if (LOOPBACK.includes(location.hostname)) {
-    localStorage.setItem(`pip-unlicensed:${me.id}`, "1");
+    kv.setItem(`pip-unlicensed:${me.id}`, "1");
   }
 }
 export const unlicensedPreview = (userId) =>
   LOOPBACK.includes(location.hostname)
-  && localStorage.getItem(`pip-unlicensed:${userId}`) === "1";
+  && kv.getItem(`pip-unlicensed:${userId}`) === "1";
 
 export function unlockFromUrl({ me, activateLicense, toast }) {
   const params = new URLSearchParams(location.search);

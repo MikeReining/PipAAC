@@ -15,6 +15,7 @@ import { groupGlyph } from "./group-glyph.js";
 import { normalizeV1 } from "../shared/normalize.mjs";
 import { SENSE_ART_SQL } from "../shared/images.mjs";
 import { needsDraw, pictureAction, shouldConfirmDraws } from "../shared/pictures.mjs";
+import { kv } from "../shared/platform.mjs";
 
 const $ = (id) => document.getElementById(id);
 
@@ -57,12 +58,12 @@ export function mountAddFlow({
      (index_slot — one order everywhere), then New group. */
   const RECENT_KEY = "pip-add-recent";
   const readRecent = () => {
-    try { return JSON.parse(localStorage.getItem(RECENT_KEY) ?? "[]"); } catch { return []; }
+    try { return JSON.parse(kv.getItem(RECENT_KEY) ?? "[]"); } catch { return []; }
   };
   function noteRecent(id) {
     try {
       const next = [id, ...readRecent().filter((x) => x !== id)].slice(0, 3);
-      localStorage.setItem(RECENT_KEY, JSON.stringify(next));
+      kv.setItem(RECENT_KEY, JSON.stringify(next));
     } catch { /* private mode: no recents */ }
   }
 

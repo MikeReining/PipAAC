@@ -52,7 +52,7 @@
     "catalog:forms:mint-batch": "node scripts/catalog/build_elevenlabs_forms_queue.mjs && node scripts/catalog/mint_elevenlabs_tile_batch.mjs --batch elevenlabs-forms-core",
     "catalog:forms:publish-shortlist": "node scripts/catalog/publish_elevenlabs_forms_shortlist.mjs",
     "pictures:add": "node scripts/pictures/add_drawing.mjs",
-    "pictures:index":"node scripts/pictures/build_index.mjs --upsert",
+    "pictures:index": "node scripts/pictures/build_index.mjs --upsert",
     "pictures:index:calib": "node scripts/pictures/build_index.mjs --calibration --upsert",
     "pictures:calibrate": "node scripts/pictures/calibration_dev.mjs",
     "pictures:lab": "node scripts/pictures/calibration_dev.mjs",
@@ -61,6 +61,7 @@
   },
   "devDependencies": {
     "sharp": "0.35.4",
+    "typescript": "5.7.3",
     "wrangler": "^4.45.0"
   },
   "dependencies": {

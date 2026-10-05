@@ -8,12 +8,13 @@
  */
 import { accountState } from "../shared/account.mjs";
 import { setSupporterName, supporterNames } from "../shared/team_names.mjs";
+import { kv } from "../shared/platform.mjs";
 
 const $ = (id) => document.getElementById(id);
 const LS_KEY = "pip_my_name";
 
 const local = () => {
-  try { return localStorage.getItem(LS_KEY) ?? ""; } catch { return ""; }
+  try { return kv.getItem(LS_KEY) ?? ""; } catch { return ""; }
 };
 
 export function mountMyName({ db, onChange = () => {} }) {
@@ -27,7 +28,7 @@ export function mountMyName({ db, onChange = () => {} }) {
     const synced = supporterNames(db).get(acct) ?? "";
     if (mine && mine !== synced) setSupporterName(db, acct, mine);
     else if (!mine && synced) {
-      try { localStorage.setItem(LS_KEY, synced); } catch { /* storage off */ }
+      try { kv.setItem(LS_KEY, synced); } catch { /* storage off */ }
     }
     render();
   }
@@ -38,7 +39,7 @@ export function mountMyName({ db, onChange = () => {} }) {
 
   $("my-name").addEventListener("change", () => {
     const name = $("my-name").value.trim().slice(0, 80);
-    try { localStorage.setItem(LS_KEY, name); } catch { /* storage off */ }
+    try { kv.setItem(LS_KEY, name); } catch { /* storage off */ }
     const acct = accountState()?.acct_id;
     if (acct) setSupporterName(db, acct, name);
     onChange();

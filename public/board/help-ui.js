@@ -11,6 +11,7 @@
  */
 import { localHits, mergeHits } from "../shared/help_search.mjs";
 import { withIcons } from "./inline-icons.js";
+import { kv } from "../shared/platform.mjs";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -22,8 +23,8 @@ const el = (tag, cls, text) => {
 const OUTBOX = "pip-help-outbox";
 const EMAIL_KEY = "pip-help-email";
 const store = {
-  get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
-  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* private mode */ } },
+  get: (k, d) => { try { return JSON.parse(kv.getItem(k)) ?? d; } catch { return d; } },
+  set: (k, v) => { try { kv.setItem(k, JSON.stringify(v)); } catch { /* private mode */ } },
 };
 
 export function mountHelp({ pane, show, me, trial }) {

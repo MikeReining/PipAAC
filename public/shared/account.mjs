@@ -16,6 +16,7 @@ import {
   genAccountKeys, importAccountPriv, openAccountPriv, sealAccountPriv,
   sealBlob, openBlob, wrapUserKey, unwrapUserKey,
 } from "./sync_crypto.mjs";
+import { kv } from "./platform.mjs";
 
 const te = new TextEncoder();
 const td = new TextDecoder();
@@ -44,12 +45,12 @@ const get = async (path) => {
 /* --- sign-in state (device-local) --- */
 const LS_KEY = "pip_account";
 export const accountState = () => {
-  try { return JSON.parse(localStorage.getItem(LS_KEY) ?? "null"); }
+  try { return JSON.parse(kv.getItem(LS_KEY) ?? "null"); }
   catch { return null; }
 };
 export const saveAccountState = (s) =>
-  s ? localStorage.setItem(LS_KEY, JSON.stringify(s))
-    : localStorage.removeItem(LS_KEY);
+  s ? kv.setItem(LS_KEY, JSON.stringify(s))
+    : kv.removeItem(LS_KEY);
 
 /** Delete the account (015 slice 7): removes this account's access on
  *  every user's relay, then the account itself. The users, their

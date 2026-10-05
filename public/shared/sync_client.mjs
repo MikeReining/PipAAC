@@ -10,6 +10,15 @@ const te = new TextEncoder();
 const hex = (buf) =>
   [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 
+/** 043 J — the network seam carries types: a porter reads the boundary
+ *  signatures, not the closures inside.
+ * @typedef {Object} DeviceIdentity
+ * @property {string} deviceId
+ * @property {CryptoKey} sign
+ * @property {CryptoKey} verify
+ * @property {{publicKey: CryptoKey, privateKey: CryptoKey}} dh
+ */
+
 async function signedHeaders(identity, method, path, body) {
   const ts = Date.now();
   const bodyHash = hex(await crypto.subtle.digest(
@@ -20,6 +29,11 @@ async function signedHeaders(identity, method, path, body) {
 
 /**
  * client = { userId, baseUrl, identity: {deviceId,sign,verify}, userKey }
+ * @param {object} args
+ * @param {string} args.userId
+ * @param {string} args.baseUrl
+ * @param {DeviceIdentity} args.identity
+ * @param {CryptoKey} args.userKey
  */
 export function relayClient({ userId, baseUrl, identity, userKey }) {
   const path = (suffix) => `/users/${userId}${suffix}`;
@@ -36,8 +50,9 @@ export function relayClient({ userId, baseUrl, identity, userKey }) {
       // The relay answers {error} — carry the code so callers can tell
       // "upgrade_required" from a dead relay.
       const body = await res.json().catch(() => null);
-      const err = new Error(body?.error ?? `relay ${method}${suffix}: ${res.status}`);
-      err.status = res.status;
+      const err = Object.assign(
+        new Error(body?.error ?? `relay ${method}${suffix}: ${res.status}`),
+        { status: res.status });
       throw err;
     }
     return res.json();
@@ -194,8 +209,8 @@ export async function joinDeviceWithToken(baseUrl, userId, { token, device_id, p
 export function pairClient(baseUrl) {
   const fail = async (res, what) => {
     const body = await res.json().catch(() => ({}));
-    const e = new Error(body.error ?? `${what}: ${res.status}`);
-    e.status = res.status;
+    const e = Object.assign(
+      new Error(body.error ?? `${what}: ${res.status}`), { status: res.status });
     throw e;
   };
   return {

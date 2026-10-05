@@ -89,6 +89,7 @@ import { mountGrid } from "./board/grid.js";
 import { mountStrip } from "./board/strip.js";
 import { pictureClient } from "./shared/pictures.mjs";
 import qrcode from "../vendor/qrcode.mjs";
+import { kv } from "./shared/platform.mjs";
 
 const $ = (id) => document.getElementById(id);
 installViewportPin();
@@ -105,7 +106,7 @@ const RUN = (db, sql, p = []) => db.prepare(sql).run(...p);
 const userStore = openUserStore();
 
 await migrateLegacy({
-  storage: localStorage,
+  storage: kv,
   exportLegacyDb: exportLegacyKvvfsDb,
   keyStore: openKeyStore(),
   userStore,

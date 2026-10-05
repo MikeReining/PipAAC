@@ -1,10 +1,10 @@
 {
-  "buildId": "r1-94761a76c235",
+  "buildId": "r1-0ceff0c72435",
   "files": [
     {
       "path": "/board.js",
-      "bytes": 67373,
-      "sha256": "a523d63665a7903628709fcf6f52d1ed20483abf575dae5b7143bbe99257abed"
+      "bytes": 67407,
+      "sha256": "99767ca0c0a04a40433ff3ca5425ee02dcc8926b0967c52ee4a7095a1de47ff2"
     },
     {
       "path": "/board/add-flow.css",
@@ -13,8 +13,8 @@
     },
     {
       "path": "/board/add-flow.js",
-      "bytes": 26565,
-      "sha256": "3cf6a554f56dbc9228a34c92f0322d93fa18fdd7026bca9217562ee92bf564e0"
+      "bytes": 26590,
+      "sha256": "1009c63bf86d38e2cd143fcaec6d18d915501db486cd10f074e4719d492298f9"
     },
     {
       "path": "/board/avatar.js",
@@ -38,8 +38,8 @@
     },
     {
       "path": "/board/coach-ui.js",
-      "bytes": 3070,
-      "sha256": "7bfae3d2464f188913974a1288cbbfa5bfe04c03015464e5f80d5b21cf7bd98a"
+      "bytes": 3095,
+      "sha256": "3d2c3f7a0d1bcd9620d7fbe90b7a4fc9f85bb63b4198c396120fda287c7b57b3"
     },
     {
       "path": "/board/db-health.js",
@@ -53,8 +53,8 @@
     },
     {
       "path": "/board/devices-ui.js",
-      "bytes": 45915,
-      "sha256": "2f1e7349ff274a398a42eab6460957efbd4e2de069e5b4da64a59f95358a766a"
+      "bytes": 45950,
+      "sha256": "58bc0945078dd747adc2c819c21fae5596b699f82f3966de924a5b45b8108483"
     },
     {
       "path": "/board/edit-shared.js",
@@ -73,8 +73,8 @@
     },
     {
       "path": "/board/editor-ui.js",
-      "bytes": 44605,
-      "sha256": "c7d205e84c076fef7f0e494fa7a7e546a23386050ee7ab0c79d74c403bb3a665"
+      "bytes": 44630,
+      "sha256": "3869414062d8f528572ab8c66a277756ab1199f5863ab23640616bcbb403dbe1"
     },
     {
       "path": "/board/family-editor.css",
@@ -118,8 +118,8 @@
     },
     {
       "path": "/board/help-ui.js",
-      "bytes": 12264,
-      "sha256": "7f7a2235ae5fb1c61f4d8fb00825b4eefe6613fddcb736b8a7afaa597133cbb0"
+      "bytes": 12289,
+      "sha256": "0746f28ff7fe10c140044d6031490b141da93b1d00c476858ded60de80b81c8c"
     },
     {
       "path": "/board/inline-icons.js",
@@ -148,8 +148,8 @@
     },
     {
       "path": "/board/lifetime-ui.js",
-      "bytes": 5855,
-      "sha256": "20313de59f777160ebcdf81fecb2212dec162b983f7a6800218b2df6a0ab0d9e"
+      "bytes": 5870,
+      "sha256": "1b49d9eed10cac568935e8fd7211351c87b35cdd60570b72c8ade1802ca845bc"
     },
     {
       "path": "/board/meta-cache.js",
@@ -208,8 +208,8 @@
     },
     {
       "path": "/board/progress-ui.js",
-      "bytes": 19311,
-      "sha256": "a5ba1cd82039045c41cb011a7134d657a71beaef6087a05e919a41cb8b86e1fd"
+      "bytes": 19336,
+      "sha256": "28fb2d5f48e21a5a79a6e29cc6f300149dfee3ee2cc200193bc791d0f1d3eae2"
     },
     {
       "path": "/board/recovery-ui.css",
@@ -258,8 +258,8 @@
     },
     {
       "path": "/board/speech.js",
-      "bytes": 26480,
-      "sha256": "d053c63de698650649ce5ea2aae39ad3f2e1aff681b0ad2ac9e9fe747ff3250f"
+      "bytes": 26470,
+      "sha256": "1b67c38aec018611bf51a6c6dc66f05c98d1b2342d97a29ec09feda4df8d3b1b"
     },
     {
       "path": "/board/spotlight-demo.js",
@@ -288,8 +288,8 @@
     },
     {
       "path": "/board/team-name-ui.js",
-      "bytes": 1803,
-      "sha256": "9e47bdc0fbe128841c3b8511abf3d11875cf370af385ec784f49718655b7026b"
+      "bytes": 1818,
+      "sha256": "e00b83a5b1d301b15e540c3004ee682b1586c6dd354a5bdc51c961bb8bb97c85"
     },
     {
       "path": "/board/tour-ui.js",
@@ -298,8 +298,8 @@
     },
     {
       "path": "/board/unlock.js",
-      "bytes": 5764,
-      "sha256": "a910c242dcfc734fa7409db868f88ec5050767e3a177e8dccb487992cb47c350"
+      "bytes": 5789,
+      "sha256": "26f72139495b1b860830f2e938f59134437927e4e3344c50794f634d6a1b0385"
     },
     {
       "path": "/board/version.js",
@@ -323,8 +323,8 @@
     },
     {
       "path": "/board/wincard-ui.js",
-      "bytes": 2557,
-      "sha256": "c9fe31bf2b33be2b5c5d40b50de080d33426eb058e30799a52e7b75b765eace9"
+      "bytes": 2582,
+      "sha256": "40d794f2be71a30a7cdee3c2880f13c15f8ea12ac41009c66b95dc90fa2f4984"
     },
     {
       "path": "/board/word-card.css",
@@ -388,8 +388,8 @@
     },
     {
       "path": "/db.js",
-      "bytes": 13177,
-      "sha256": "ad27016086c7e4c426f7cd376c8dc2a0705f75d52d997b50a7e0d252bd39290e"
+      "bytes": 13027,
+      "sha256": "ae02151988971425cd1cfaecaa030d3bfed0ad1a5c08f7694d3de315cf8b7f03"
     },
     {
       "path": "/feeling_voice.json",
@@ -763,8 +763,8 @@
     },
     {
       "path": "/shared/account.mjs",
-      "bytes": 12815,
-      "sha256": "7d6d17cb5fe1cdbba83ad893aaca23dadc289517f76db8359f5d175652ad7a06"
+      "bytes": 12822,
+      "sha256": "c439a51f1b78511714e81098e6f6149aeeb63c34705ee4e2634309b1a20c4691"
     },
     {
       "path": "/shared/bar_example.mjs",
@@ -907,6 +907,11 @@
       "sha256": "5ba4545ae7f622e16d9a80d29a088680ac6553429f7ffe22031fa3669c9bc7c9"
     },
     {
+      "path": "/shared/platform.mjs",
+      "bytes": 2280,
+      "sha256": "4d787cd422fe7b8023401c8dd435f341ac828d67ed08c31b68743e11920b26d4"
+    },
+    {
       "path": "/shared/profile.mjs",
       "bytes": 1376,
       "sha256": "0d2e6f72484a19be6f5713b59d41e7d70069c4aa98ff7f8efe7d70cd156263d1"
@@ -958,8 +963,8 @@
     },
     {
       "path": "/shared/sync_client.mjs",
-      "bytes": 10572,
-      "sha256": "c9bce42af07819d6e2faae587273252b3c1f2bb2bb3a49651b5fccf16e417652"
+      "bytes": 11092,
+      "sha256": "87f0f003f5925baade5d7ef83918add77b7417626bd7cc71e9d6c17bdfd2a2e9"
     },
     {
       "path": "/shared/sync_crypto.mjs",
@@ -968,8 +973,8 @@
     },
     {
       "path": "/shared/sync.mjs",
-      "bytes": 17546,
-      "sha256": "d2868c3679d233a29ea92b7b8a36140b783c0543147f321f21f12d46bf8242af"
+      "bytes": 17460,
+      "sha256": "e5a77f1100adefd468b9b72bce74cfe505ef3328cfdfca562c2fb6970c3adf85"
     },
     {
       "path": "/shared/team_names.mjs",

@@ -24,13 +24,14 @@ import { listUsers } from "../shared/users.mjs";
 import { overrideFor } from "../shared/voice.mjs";
 import { ICON_SET, groupGlyph, iconUrl } from "./group-glyph.js";
 import { editorStatus, findSections, isList } from "./editor-find.js";
+import { kv } from "../shared/platform.mjs";
 
 const $ = (id) => document.getElementById(id);
 const HELLO_KEY = "pip-ed-hello-done";
 const PLACE_KEY = "pip-ed-place";
 const store = {
-  get: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
-  set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* private mode */ } },
+  get: (k) => { try { return kv.getItem(k); } catch { return null; } },
+  set: (k, v) => { try { kv.setItem(k, v); } catch { /* private mode */ } },
 };
 /* Where the adult is in the editor, for this tab: survives Preview and a
    reload; Done (leaving the editor) forgets it. */

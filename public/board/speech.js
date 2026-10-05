@@ -15,6 +15,7 @@ import { entityNames, maskNames } from "../shared/name_shield.mjs";
 import { applyTransform, snapshotBar, sourceText } from "../shared/txbar.mjs";
 import { EOS, formFor } from "../shared/forms.mjs";
 import { ONRAMP_CLIPS, onrampClipPath } from "../shared/onramp_audio.mjs";
+import { createAudio, kv } from "../shared/platform.mjs";
 
 const $ = (id) => document.getElementById(id);
 const ALL = (db, sql, p = []) => db.all(sql, p);
@@ -26,7 +27,7 @@ export function mountSpeech({
   scheduleStatsRefresh, artForWord, syncTxButtons, toast, openSettings,
 }) {
   const SILENT_SLOT_MS = 400;
-  const audio = new Audio();
+  const audio = createAudio();
   // Speaking speed (Settings → Talking; learner_profile.speech_rate,
   // synced). Browsers keep pitch at a changed playbackRate by default.
   const SPEECH_RATES = { slower: 0.8, normal: 1, faster: 1.2 };
@@ -104,12 +105,12 @@ export function mountSpeech({
      for everything and afterwards it is a delta. */
   const tileSweep = async (voice = live.voiceId) => {
     const key = `pip-tile-sweep:${voice}`;
-    const since = Number(localStorage.getItem(key) ?? 0);
+    const since = Number(kv.getItem(key) ?? 0);
     if (since && Date.now() - since < 86_400_000) return;
     const res = await tileVoice.sweepReplaced({
       userId: me.id, license: await voiceLicense(), trial: trialActive(), voice, since,
     }).catch(() => null);
-    if (res?.next) localStorage.setItem(key, String(res.next));
+    if (res?.next) kv.setItem(key, String(res.next));
   };
   /* § 5.3 — prefetch on boot (idle) and the offline queue drain on
      reconnect. Active entity names are the family's own words: hits are
@@ -150,7 +151,7 @@ export function mountSpeech({
         // ?unlicensed (unlock.js): the founder's trial preview — the
         // stored dev-license is ignored, no fresh mint either.
         if (LOCALHOST.includes(location.hostname)
-            && localStorage.getItem(`pip-unlicensed:${me.id}`) === "1") return null;
+            && kv.getItem(`pip-unlicensed:${me.id}`) === "1") return null;
         if (lic || !LOCALHOST.includes(location.hostname)) return lic;
         const res = await fetch("/api/v1/voice/dev-license", {
           method: "POST",
@@ -509,13 +510,13 @@ export function mountSpeech({
    * live.trialEndsAt is only this session's mirror. */
   async function refreshTrial() {
     const license = await voiceLicense();
-    if (!localStorage.getItem(`pip-trial-ok:${me.id}`) && !license) {
+    if (!kv.getItem(`pip-trial-ok:${me.id}`) && !license) {
       const res = await fetch("/api/v1/trial/start", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ user_id: me.id }),
       }).catch(() => null);
-      if (res?.ok) localStorage.setItem(`pip-trial-ok:${me.id}`, "1");
+      if (res?.ok) kv.setItem(`pip-trial-ok:${me.id}`, "1");
     }
     const res = await fetch("/api/v1/trial", {
       headers: { "x-pip-user": me.id, "x-pip-license": license ?? "" },
@@ -537,12 +538,12 @@ export function mountSpeech({
     if (live.trialLicensed || !live.trialEndsAt) return;
     const daysLeft = Math.ceil((live.trialEndsAt - Date.now()) / 86_400_000);
     let marks = [];
-    try { marks = JSON.parse(localStorage.getItem(`pip-trial-nudge:${me.id}`) ?? "[]"); }
+    try { marks = JSON.parse(kv.getItem(`pip-trial-nudge:${me.id}`) ?? "[]"); }
     catch { /* fresh marks */ }
     const fire = (tag, msg) => {
       if (marks.includes(tag)) return;
       marks.push(tag);
-      localStorage.setItem(`pip-trial-nudge:${me.id}`, JSON.stringify(marks));
+      kv.setItem(`pip-trial-nudge:${me.id}`, JSON.stringify(marks));
       toast?.(msg, null, { actionLabel: "See Pip Lifetime",
         onAction: () => openSettings?.("lifetime") });
     };

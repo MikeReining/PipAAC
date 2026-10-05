@@ -1,0 +1,19 @@
+{
+  "//": "043 J — checkJs on the platform seams only. The iOS boundary",
+  "//2": "carries types; the app stays plain JS. check:fast gate: types:seams.",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "strict": false,
+    "skipLibCheck": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+  },
+  "files": [
+    "public/shared/platform.mjs",
+    "public/shared/sync_client.mjs"
+  ]
+}

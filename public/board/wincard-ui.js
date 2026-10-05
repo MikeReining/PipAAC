@@ -11,6 +11,7 @@
  */
 import { weeklyCard, WINCARD_DAYS } from "../shared/wincard.mjs";
 import { dayIndex } from "../shared/stats.mjs";
+import { kv } from "../shared/platform.mjs";
 
 const $ = (id) => document.getElementById(id);
 
@@ -52,10 +53,10 @@ export function mountWincard({ db, me, nameOf, entitlement, toast, settings }) {
     const tz = -new Date(now).getTimezoneOffset();
     const week = Math.floor(dayIndex(now, tz) / WINCARD_DAYS);
     const key = `pip_wincard:${me.id}`;
-    if (localStorage.getItem(key) === String(week)) return;
+    if (kv.getItem(key) === String(week)) return;
     const card = weeklyCard(db, now, nameOf);
     if (card.empty) return;
-    localStorage.setItem(key, String(week));
+    kv.setItem(key, String(week));
     toast(`${card.summary} — ${card.wins[0] ?? "open Settings for the week."}`);
   }
 

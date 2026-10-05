@@ -12,6 +12,7 @@ import { importCatalog } from "./shared/import.mjs";
 import { reseedBuiltinGroups } from "./shared/groups.mjs";
 import { getDbBytes, getDbPrev, putDbBytes, putDbPrev } from "./shared/users.mjs";
 import { ADDITIVE_COLUMNS, beforeCleanBreak, migrateSchema, ensureAdditiveColumns } from "./shared/migrate.mjs";
+import { onHidden, onPageHide, opfsRoot } from "./shared/platform.mjs";
 
 let handle = null;
 
@@ -153,14 +154,8 @@ export async function bootDb(userStore, userId) {
     saveTimer = setTimeout(flush, 300);
   };
   // Flush on the way out — debounce alone can lose the last writes.
-  if (typeof document !== "undefined") {
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "hidden") flush();
-    });
-  }
-  if (typeof window !== "undefined") {
-    window.addEventListener("pagehide", () => flush());
-  }
+  if (typeof document !== "undefined") onHidden(flush);
+  if (typeof window !== "undefined") onPageHide(flush);
 
   const d = adapt(db, scheduleSave);
 
@@ -278,7 +273,7 @@ export async function savePhoto(file) {
 /** Raw access to the OPFS blob store — the media queue drains bytes by
  *  sha and heals a missing local copy the same way (043 C). */
 export async function saveBlobBytes(sha, bytes) {
-  const root = await navigator.storage.getDirectory();
+  const root = await opfsRoot();
   const dir = await root.getDirectoryHandle("blobs", { create: true });
   const fh = await dir.getFileHandle(sha, { create: true });
   const w = await fh.createWritable();
@@ -288,7 +283,7 @@ export async function saveBlobBytes(sha, bytes) {
 
 export async function loadBlobBytes(sha) {
   try {
-    const root = await navigator.storage.getDirectory();
+    const root = await opfsRoot();
     const dir = await root.getDirectoryHandle("blobs");
     const file = await (await dir.getFileHandle(sha)).getFile();
     return new Uint8Array(await file.arrayBuffer());
@@ -299,7 +294,7 @@ export async function loadBlobBytes(sha) {
 
 export async function loadPhotoURL(photoKey) {
   try {
-    const root = await navigator.storage.getDirectory();
+    const root = await opfsRoot();
     if (photoKey?.startsWith("blob:")) {
       const sha = photoKey.slice(5);
       const dir = await root.getDirectoryHandle("blobs", { create: true });

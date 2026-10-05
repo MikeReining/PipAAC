@@ -9,6 +9,7 @@
  */
 import { CONTROLS, spotlight, tipFor } from "../shared/spotlight.mjs";
 import { withIcons } from "./inline-icons.js";
+import { kv } from "../shared/platform.mjs";
 
 const $ = (id) => document.getElementById(id);
 const COUNTS_KEY = "spot_counts";
@@ -17,7 +18,7 @@ export function mountCoach({ db, locale, all, catalog, me, repaint }) {
   /** { s: session started_at, c: { "kind:id": n } } — device-local, so a
    *  reload keeps the session's counts; a new session starts at zero. */
   let counts = { s: null, c: {} };
-  try { counts = JSON.parse(localStorage.getItem(COUNTS_KEY)) ?? counts; } catch { /* fresh */ }
+  try { counts = JSON.parse(kv.getItem(COUNTS_KEY)) ?? counts; } catch { /* fresh */ }
   let tip = null; // the last modeled word's tip, until the next tap
 
   const name = () => me.name?.trim() || null;
@@ -48,7 +49,7 @@ export function mountCoach({ db, locale, all, catalog, me, repaint }) {
     if (m.s !== s.startedAt) return; // a tap from another session
     if (counts.s !== s.startedAt) counts = { s: s.startedAt, c: {} };
     counts.c[m.t] = (counts.c[m.t] ?? 0) + 1;
-    try { localStorage.setItem(COUNTS_KEY, JSON.stringify(counts)); } catch { /* memory only */ }
+    try { kv.setItem(COUNTS_KEY, JSON.stringify(counts)); } catch { /* memory only */ }
     repaint();
   }
 

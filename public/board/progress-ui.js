@@ -16,6 +16,7 @@ import { mountReportShare } from "./report-share.js";
 import { columns, ownGlowBars, sparkline } from "./progress-charts.js";
 import { withIcons } from "./inline-icons.js";
 import { barControls } from "../shared/bar.mjs";
+import { kv } from "../shared/platform.mjs";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -36,7 +37,7 @@ const TOP_SHOWN = 8;
 
 export function mountProgress({ db, me, nameOf, roleOf = () => "None", artOf = async () => null, entitlement, settings }) {
   let span = "month";
-  let mode = localStorage.getItem(`pip_dash_mode:${me.id}`) ?? "symbol";
+  let mode = kv.getItem(`pip_dash_mode:${me.id}`) ?? "symbol";
   let current = null; // {fromDay, toDay} of the rendered view
   let showAllNew = false;
   let charts = []; // column charts draw once their box has a width
@@ -439,7 +440,7 @@ export function mountProgress({ db, me, nameOf, roleOf = () => "None", artOf = a
     const v = e.target.closest("button")?.dataset.v;
     if (!v) return;
     mode = v;
-    localStorage.setItem(`pip_dash_mode:${me.id}`, v);
+    kv.setItem(`pip_dash_mode:${me.id}`, v);
     for (const b of $("prog-mode").children) b.classList.toggle("on", b.dataset.v === mode);
     render();
   });

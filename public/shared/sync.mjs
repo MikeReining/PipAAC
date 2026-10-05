@@ -19,6 +19,7 @@ import {
   sealBlob, unwrapUserKey,
 } from "./sync_crypto.mjs";
 import { relayClient } from "./sync_client.mjs";
+import { onOnline, onVisible } from "./platform.mjs";
 
 let running = null;
 /** 031 § 8 — honest save status: did the last attempt to hand ops to
@@ -358,14 +359,9 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     }).catch(() => { dialing = false; setTimeout(connect, 5000); });
   };
   connect();
-  if (typeof addEventListener === "function") {
-    addEventListener("online", () => { connect(); scheduleRecover(); });
-  }
-  if (typeof document !== "undefined") {
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") { connect(); scheduleRecover(); }
-    });
-  }
+  const wakeup = () => { connect(); scheduleRecover(); };
+  if (typeof addEventListener === "function") onOnline(wakeup);
+  if (typeof document !== "undefined") onVisible(wakeup);
 
   /** A live message (013 § 4): sealed under the current epoch key and
    *  sent up the ws — the relay broadcasts it, nothing is stored. The
