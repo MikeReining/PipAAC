@@ -170,9 +170,8 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
    * An entry leaves only after the relay holds the bytes (or held them
    * already), so an offline or killed upload retries on every recover. */
   const BLOBQ = `blobq/${user.id}`;
-  // Entries are {sha, fails}: a sha whose local copy is gone and that
-  // the relay never got can never be recovered — after BLOB_MAX_FAILS
-  // drains it drops out instead of wedging "Saving…" forever.
+  // Entries hold {sha, fails, retries}; only proven missing bytes count
+  // toward BLOB_MAX_FAILS. Retry pacing never drops available bytes.
   const BLOB_MAX_FAILS = 10;
   const queueGet = async () => (await store.get(BLOBQ)) ?? [];
   /* Every read-modify-write of the durable queue runs under this lock
@@ -195,6 +194,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
   const drainBlobs = () => queueMutate(async () => {
     const q = await queueGet();
     const kept = [];
+    let error = null;
     for (const e of q) {
       let hadBytes = false;
       try {
@@ -207,9 +207,10 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
           const env = await client.getBlob(e.sha);
           await saveBlobBytes(e.sha, await openBlob(await keyFor(env.e ?? 1), { sha: e.sha, env }));
         }
-        mediaError = null;
       } catch (err) {
-        mediaError = String(err?.message ?? err);
+        error = String(err?.message ?? err);
+        // Pace transient retries separately from proven-loss counting.
+        e.retries = Math.min((e.retries ?? 0) + 1, 10);
         // Only bytes nobody still has may count toward the drop cap:
         // the local copy is gone AND the relay says it never got them
         // (audit F10). A reachable local copy or a transient network
@@ -220,10 +221,9 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     }
     await store.put(BLOBQ, kept);
     mediaPending = kept.length;
-    // A failed drain re-arms: the entry may be a blob whose uploader
-    // hasn't landed yet or a transient network miss — without this an
-    // idle device would wait for the next socket event to retry.
-    if (kept.length) scheduleDrain(Math.min(30000 * kept[0].fails, 300000));
+    mediaError = error;
+    // Retry idle media obligations without waiting for socket traffic.
+    if (kept.length) scheduleDrain(30000 * kept[0].retries);
   });
   let drainTimer = null;
   const scheduleDrain = (ms) => {
@@ -234,7 +234,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
   /* Media saved before linking (or queued on another path): every blob:
    * ref in the synced tables belongs in the queue — a sha the relay
    * already holds costs one open+heal, not an upload. */
-  const reconcileBlobs = async () => {
+  const reconcileBlobs = () => queueMutate(async () => {
     const refs = db.prepare(
       `SELECT photo_key AS k FROM personal_entity WHERE photo_key LIKE 'blob:%'
        UNION SELECT photo_key FROM image_override WHERE photo_key LIKE 'blob:%'
@@ -248,7 +248,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
       if (!q.some((e) => e.sha === sha)) { q.push({ sha, fails: 0 }); dirty = true; }
     }
     if (dirty) await store.put(BLOBQ, q);
-  };
+  });
 
   /* The outbox flushes in bounded batches (audit: unbounded work), and
    * the flush itself is serialized — a timer flush, a socket-triggered
@@ -323,10 +323,12 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
       ingestError = null;
       onApplied();
       const saved = await persist?.();
-      if (!fetched || saved === false) return;
-      const applied = appliedSeqOf(db);
-      if (applied > (cfg.cursor ?? 0)) {
-        cfg.cursor = applied;
+      if (saved === false) throw new Error("sync: database save failed; catch-up paused");
+      if (!fetched) return;
+      // Cap fetched coverage at this page, even after a later push/ack.
+      const covered = Math.min(appliedSeqOf(db), Math.max(...plain.map((op) => op.relay_seq)));
+      if (covered > (cfg.cursor ?? 0)) {
+        cfg.cursor = covered;
         await saveUser({ sync: cfg });
       }
     }
@@ -464,7 +466,11 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
         console.warn(ingestError);
         return;
       }
+      const before = cfg.cursor ?? 0;
       await ingest(rows ?? [], { fetched: true });
+      if (rows?.length && (cfg.cursor ?? 0) <= before) {
+        throw new Error("sync: catch-up made no durable progress");
+      }
       if ((rows?.length ?? 0) === OPS_PAGE) continue; // next page
       break;
     }

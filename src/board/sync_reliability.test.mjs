@@ -1,13 +1,7 @@
 /**
- * 043 Slice 4 Works Tests — retry honesty + join recovery (audit
- * F10/F11/F12).
- *
- * Drives the real sync.mjs with stubbed imports (module.registerHooks):
- * the ops layer and crypto stay real; the relay client, blob bridge,
- * and platform hooks are replaced with in-memory stands. The tests
- * assert the durable queue contents and the submitted ops — what the
- * relay would actually hold — not what the runtime reported.
- *
+ * 043 retry, coverage and join proofs (F10/F11/F12): real ops + crypto,
+ * stub relay/blob/platform imports via module.registerHooks.
+ * Assert queue contents, received rows and submitted ops.
  * Run: scripts/test.sh src/board/sync_reliability.test.mjs
  */
 import { test } from "node:test";
@@ -133,6 +127,7 @@ async function runtime({
   submit = null,
   putBlob = null,
   getBlob = null,
+  persist = async () => true,
   epoch = 1,
   userKey = null,
 } = {}) {
@@ -176,7 +171,7 @@ async function runtime({
     "https://test.invalid",
     () => {},
     null,
-    async () => true,
+    persist,
   );
   await settle();
   return { db, store, key, user, submits, uploads, fetches, handle, syncHealth };
@@ -345,7 +340,6 @@ test("F12: import marks an unjoined user pendingJoin — keys present, relay acc
     "a proven link was downgraded by a later failed import");
 });
 
-
 test("bounded work: a timer flush and a recovery flush share one in-flight submit", async () => {
   const r = await runtime({
     // The second submit (the user's edit) takes long enough that a
@@ -426,4 +420,86 @@ test("bounded work: recovery fetches the backlog in pages and walks past a full 
   assert.equal(
     r.db.prepare("SELECT COUNT(*) AS n FROM personal_entity WHERE id LIKE 'ent_page_%'").all()[0].n,
     210, "paged backlog ops never applied");
+});
+
+test("paged coverage: a later live push cannot skip the next fetched page", async () => {
+  const key = await newUserKey();
+  const backlog = [];
+  for (let i = 1; i <= 210; i++) {
+    backlog.push({ relay_seq: i, epoch: 1, env: await sealOp(key, {
+      op_id: `op_coverage_${i}`, device_id: "d0", kind: "create_entity",
+      args: { id: `ent_coverage_${i}`, name: `Coverage ${i}` }, created_at: i,
+    }) });
+  }
+  let catchingUp = false;
+  const r = await runtime({ userKey: key,
+    submit: async (ops) => ({ ops: ops.map((o, i) => ({ op_id: o.op_id, relay_seq: 211 + i })) }),
+    fetchOps: async (after, limit) => ({
+      ops: catchingUp ? backlog.filter((o) => o.relay_seq > after).slice(0, limit) : [],
+      snap_seq: 0,
+    }),
+  });
+  const socket = sockets.at(-1);
+  socket.push({ t: "ops", ops: [{ relay_seq: 250, epoch: 1,
+    env: await sealOp(key, { op_id: "op_coverage_push", device_id: "d0",
+      kind: "create_entity", args: { id: "ent_coverage_push", name: "Push" }, created_at: 250 }) }] });
+  await settle();
+  assert.ok(r.db.prepare("SELECT 1 FROM personal_entity WHERE id = 'ent_coverage_push'").get());
+  catchingUp = true;
+  socket.onopen();
+  const deadline = Date.now() + 15000;
+  while (r.user.sync.cursor < 210 && Date.now() < deadline) await sleep(100);
+  assert.ok(r.fetches.some((f) => f.after === 200), "catch-up skipped the second page");
+  assert.equal(r.db.prepare(
+    "SELECT COUNT(*) AS n FROM personal_entity WHERE id LIKE 'ent_coverage_%' AND id <> 'ent_coverage_push'",
+  ).get().n, 210, "unseen edits were skipped after the pushed watermark");
+  assert.equal(r.user.sync.cursor, 210, "cursor claimed more than fetched coverage");
+});
+
+test("paged coverage: a failed database save stops catch-up instead of refetching a full page", async () => {
+  const key = await newUserKey();
+  const rows = [];
+  for (let i = 1; i <= 200; i++) {
+    rows.push({ relay_seq: i, epoch: 1, env: await sealOp(key, {
+      op_id: `op_save_${i}`, device_id: "d0", kind: "create_entity",
+      args: { id: `ent_save_${i}`, name: `Save ${i}` }, created_at: i,
+    }) });
+  }
+  let fetched = 0, persisted = 0;
+  const r = await runtime({ userKey: key,
+    fetchOps: async () => {
+      if (++fetched > 1) throw new Error("unexpected duplicate page fetch");
+      return { ops: rows, snap_seq: 0 };
+    },
+    persist: async () => { persisted++; return false; },
+  });
+  // The 200-op ingest takes real time — wait for the save attempt or
+  // the surfaced failure instead of a fixed settle.
+  const deadline = Date.now() + 15000;
+  while (!persisted && !r.syncHealth().ingestError && Date.now() < deadline) {
+    await sleep(100);
+  }
+  assert.equal(persisted, 1);
+  assert.equal(fetched, 1, "failed save caused another fetch of the same full page");
+  assert.equal(r.user.sync.cursor, 0);
+  assert.match(r.syncHealth().ingestError, /database save failed/);
+});
+
+test("media backoff: transient failures wait before retrying without counting as permanent loss", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  let attempts = 0;
+  const r = await runtime({ putBlob: async () => { attempts++; throw new Error("offline"); } });
+  shared.loadBlobBytes = async () => new TextEncoder().encode("offline photo");
+  await r.handle.queueBlob("sha_backoff");
+  await settle();
+  assert.equal(attempts, 1);
+  t.mock.timers.tick(29999);
+  await settle();
+  assert.equal(attempts, 1, "transient failure retried with no backoff");
+  t.mock.timers.tick(1);
+  await settle();
+  assert.equal(attempts, 2, "the durable media obligation was never retried");
+  const q = await r.store.get("blobq/u1");
+  assert.equal(q.length, 1);
+  assert.equal(q[0].fails, 0, "transient failures counted toward permanent loss");
 });

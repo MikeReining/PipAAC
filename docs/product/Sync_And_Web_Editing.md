@@ -267,15 +267,22 @@ same page). When they happen, one item lands in the next free slot. That
 is the only case where a merge can put an item somewhere its adult did not
 choose, and it never moves an item that was already placed.
 
-**Ordered replay under any delivery order (2026-10-04, repaired).**
+**Delivery-order repair (2026-10-05 review: incomplete).**
 Per-op `applied` flags dedupe but do not order: a live push or own-ack
 can fold a later op before an earlier fetch delivers its predecessors.
 `drainOps` detects an unapplied op below an applied one and replays the
-whole confirmed log in relay order over the baseline; `adoptSnapshot`
-unflags applied ops above its coverage so they replay over adopted
-state. `scripts/probes/sync_delivery_order.mjs` proves later-push-first,
-own-ack-first, snapshot-then-tail and ordered delivery all converge, and
-that pending edits survive the re-replay.
+whole confirmed log over the advancing baseline. The delivered rename
+probe covers later-push-first, own-ack-first and snapshot-tail renames;
+it does not prove convergence for swaps, which replay over their own
+results. Snapshot coverage and flag rollback also have unresolved code
+paths. Follow-up owner and quarantined, unrun regressions:
+`docs/operations/debugger/SYNC_REPLAY_ANCHOR.md`.
+
+**Pending review fixes (not verified or deployed):** fetched coverage is
+capped at the last row in the current page, rather than a higher pushed
+watermark; a failed DB save stops that catch-up pass. Media uses a
+separate retry counter (30 seconds up to 5 minutes), retains transient
+obligations and serializes reconciliation with queue appends/drains.
 
 **Snapshots.** `maybeSnapshot` waits until the fetch-verified cursor is
 at least 500 sequences beyond the previous upload and equals

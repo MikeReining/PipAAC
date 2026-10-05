@@ -28,7 +28,12 @@ device journal + atomic guarded relay replacement + removal
 obligations), the delivery-order repair (whole-log ordered re-replay on
 a detected violation; probe `scripts/probes/sync_delivery_order.mjs`),
 and the retention-destroy coverage (versioned snapshots + proof index)
-are committed; retention fix deploy pending wrangler re-auth.
+are committed. Founder confirmed Wrangler authentication restored on
+2026-10-05; the retention fix's production deployment still needs proof.
+The 2026-10-05 source review reopened delivery-order correctness:
+`docs/operations/debugger/SYNC_REPLAY_ANCHOR.md`. Narrow cursor/save/media
+fixes and their regressions are in the working tree, untested and
+undeployed; verification and commits are delegated by founder request.
 
 **Verdict on the stack:** keep it. Plain JS, SQLite WASM, Workers +
 Durable Objects + R2, and the meanings/labels/voices separation are all

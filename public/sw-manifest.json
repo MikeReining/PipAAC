@@ -1,10 +1,10 @@
 {
-  "buildId": "1.1.0-1063bf83a27b",
+  "buildId": "1.1.0-8f7dc2babc90",
   "files": [
     {
       "path": "/board.js",
-      "bytes": 67675,
-      "sha256": "b572b19f42515da202768b8d28f508d6c22261a4f14e2c9fc3d1fdac5be6d22e"
+      "bytes": 67754,
+      "sha256": "3a10a51b697751602c12649075708615eb9b154d629465c155b2d3aad0275aa2"
     },
     {
       "path": "/board/add-flow.css",
@@ -238,13 +238,13 @@
     },
     {
       "path": "/board/settings-ui.css",
-      "bytes": 23172,
-      "sha256": "d3dcb94560186be24ad712104c206cc93e52208d4dbf2772e53caa2d8a116981"
+      "bytes": 23494,
+      "sha256": "827098e1579cc97a603e7a845b5868a6ae31428339e2713a816da171be550e4d"
     },
     {
       "path": "/board/settings-ui.js",
-      "bytes": 17793,
-      "sha256": "11f3a313d21b106d4c360c78d89d50bfe74ff997df53734597a12ef5382803d2"
+      "bytes": 18612,
+      "sha256": "84520340ac3581a47faf111378640648065d1de07ac0d9161afc1ba477334dba"
     },
     {
       "path": "/board/setup-ui.css",
@@ -303,8 +303,8 @@
     },
     {
       "path": "/board/version.js",
-      "bytes": 9304,
-      "sha256": "e5c2e9542eba422e0b9d449f821f393aecbdcb673e39f21fe35925c461a9d18e"
+      "bytes": 10919,
+      "sha256": "c00970ccdd7a46c79ab483637bcc62630b472fcb869e427ec366982d22bee745"
     },
     {
       "path": "/board/viewport.js",
@@ -748,8 +748,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 69326,
-      "sha256": "308b1be4ca8542d8e3702b61faeb00f88fe570d52e31fe3e8f7b3b2499fb80a6"
+      "bytes": 69852,
+      "sha256": "631448e3cfc947680c16cc83decb995f9efb7cf0b4b61eb35b835e3927bbd63f"
     },
     {
       "path": "/manifest.webmanifest",
