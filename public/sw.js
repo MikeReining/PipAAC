@@ -20,20 +20,32 @@
  * a page with a retry instead of Safari's permanent error. Install
  * retries failed files once: a blip must not strand the worker.
  *
- * Update path: no reload prompts. A new build precaches fully, then
+ * Update path: no surprise reloads. A new build precaches fully, then
  * skipWaiting()s and swaps the shell wholesale; open tabs are never
- * reloaded (a mid-session reload can lose a half-built sentence) — they
- * pick the new shell up on their next navigation. Waiting for every tab
- * to close stranded a device on a stale shell (2026-10-03: old `.png`
- * art keys after the WebP switch).
- * `self.SW_BUILD` comes from generated sw-build.js; bumping the manifest
- * bytes is what triggers the browser's update check (importScripts
- * resources are byte-compared).
+ * reloaded on their own (a mid-session reload can lose a half-built
+ * sentence) — they pick the new shell up on their next navigation, or
+ * when an adult taps "Update now" in Settings (board/version.js does a
+ * guarded reload). Waiting for every tab to close stranded a device on
+ * a stale shell (2026-10-03: old `.png` art keys after the WebP switch).
+ * `self.SW_BUILD` (`<version>-<content hash>`) and `self.SW_VERSION`
+ * come from generated sw-build.js; bumping the manifest bytes is what
+ * triggers the browser's update check (importScripts resources are
+ * byte-compared).
+ *
+ * Install is differential: every shell cache stores a manifest sentinel
+ * (`.pip-shell-manifest`) mapping path → sha256, so a new worker copies
+ * unchanged files across instead of re-fetching ~900 files. That storm
+ * is what let iOS suspend the worker mid-install and left Settings
+ * saying "downloading" forever (2026-10-05); a diff install lands in
+ * seconds. Each fetch also carries a timeout — one stalled request must
+ * not wedge the whole install.
  */
 importScripts("/sw-build.js");
 if (!self.SW_BUILD) throw new Error("sw-build.js missing SW_BUILD");
 
 const SHELL = `pip-shell-${self.SW_BUILD}`;
+const SHELL_META = `${location.origin}/.pip-shell-manifest`; // sentinel inside each shell cache
+const FETCH_TIMEOUT_MS = 20000;
 const IMG_CACHE = "pip-img-v1";
 const AUDIO_PREFIX = "pip-audio-"; // + <voice>-<clip-list-hash>
 const CHUNK = 6; // install/fill fetches per parallel batch (041 A1)
@@ -47,7 +59,14 @@ const CHUNK = 6; // install/fill fetches per parallel batch (041 A1)
  * revalidates 304 — baking stale assets into a fresh shell (measured live
  * 2026-10-04: deployed CSS fix, precached stale bytes, rows stayed slivers). */
 async function precachePut(cache, path) {
-  const res = await fetch(path, { cache: "no-store" });
+  const ac = new AbortController();
+  const t = setTimeout(() => ac.abort(), FETCH_TIMEOUT_MS);
+  let res;
+  try {
+    res = await fetch(path, { cache: "no-store", signal: ac.signal });
+  } finally {
+    clearTimeout(t);
+  }
   if (!res.ok) throw new Error(`precache ${path}: HTTP ${res.status}`);
   if (!res.headers.has("content-encoding")) return cache.put(path, res);
   const body = await res.arrayBuffer();
@@ -63,6 +82,30 @@ self.addEventListener("install", (e) => {
     if (!res.ok) throw new Error(`sw-manifest: HTTP ${res.status}`);
     const { files } = await res.json();
     const cache = await caches.open(SHELL);
+    /* Reusable old-shell entries: the previous workers' manifest
+     * sentinels name every file's sha256 — a matching file moves across
+     * cache-to-cache, no network. Unchanged files dominate most
+     * deploys, which is what shrinks the install inside iOS's worker-
+     * suspend window. */
+    const reusable = new Map(); // path -> old Cache
+    for (const name of (await caches.keys())
+      .filter((k) => k.startsWith("pip-shell-") && k !== SHELL)) {
+      const old = await caches.open(name);
+      try {
+        const meta = await (await old.match(SHELL_META))?.json();
+        for (const f of files) {
+          if (meta?.files?.[f.path] === f.sha256 && !reusable.has(f.path)) reusable.set(f.path, old);
+        }
+      } catch { /* corrupt sentinel — fetch those files instead */ }
+    }
+    /* Pages watch "pip-shell-progress" for an honest downloading bar —
+     * done counts copies too; they are finished either way. */
+    let done = 0;
+    const report = () => self.clients.matchAll({ includeUncontrolled: true })
+      .then((all) => all.forEach((c) => c.postMessage(
+        { type: "pip-shell-progress", build: self.SW_BUILD,
+          done: Math.min(done, files.length), total: files.length })))
+      .catch(() => {});
     /* Every shell file is required — the manifest is the offline boot
      * promise; optional payloads (audio) live outside this install.
      * A failed file gets one more pass: a network blip during install
@@ -73,8 +116,17 @@ self.addEventListener("install", (e) => {
       const failed = [];
       for (let i = 0; i < list.length; i += CHUNK) {
         await Promise.all(list.slice(i, i + CHUNK).map(async (f) => {
-          try { await precachePut(cache, f.path); } catch { failed.push(f); }
+          const src = reusable.get(f.path);
+          try {
+            if (src) {
+              const hit = await src.match(f.path);
+              if (hit) { await cache.put(f.path, hit); return; }
+            }
+            await precachePut(cache, f.path);
+          } catch { failed.push(f); }
+          finally { done++; }
         }));
+        await report();
       }
       return failed;
     };
@@ -83,6 +135,10 @@ self.addEventListener("install", (e) => {
     if (left.length) {
       throw new Error(`precache: ${left.length} file(s) failed — ${left[0].path}`);
     }
+    await cache.put(SHELL_META, new Response(JSON.stringify({
+      build: self.SW_BUILD,
+      files: Object.fromEntries(files.map((f) => [f.path, f.sha256])),
+    }), { headers: { "content-type": "application/json" } }));
     await self.skipWaiting(); // only after the whole shell is cached
   })());
 });
@@ -178,7 +234,9 @@ async function voiceReady(voice) {
 
 self.addEventListener("message", (e) => {
   // board/version.js: the page asks which shell it was served from.
-  if (e.data?.type === "pip-build") e.ports[0]?.postMessage(self.SW_BUILD);
+  // SW_VERSION is the human number; SW_BUILD still carries the hash.
+  if (e.data?.type === "pip-build") e.ports[0]?.postMessage(
+    { build: self.SW_BUILD, version: self.SW_VERSION ?? null });
   if (e.data?.type === "pip-active-voice") {
     activeVoice = e.data.voice;
     e.waitUntil?.(fillVoice(activeVoice));

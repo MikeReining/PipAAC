@@ -231,7 +231,15 @@ button { font: inherit; color: inherit; cursor: pointer; }
   padding: 0;
   display: grid;
   place-items: center;
+  position: relative;
 }
+/* Update-ready badge (version.js): the settings gear wears a dot when a
+   downloaded build is waiting — same amber as the nav attention dots. */
+.corner-dot {
+  position: absolute; top: 6px; right: 6px;
+  width: 10px; height: 10px; border-radius: 50%; background: #b07f00;
+}
+.corner-dot[hidden] { display: none; }
 .corner-btn svg { width: 26px; height: 26px; }
 .corner-btn[hidden] { display: none; }
 /* v3 spec: the settings gear is small and quiet — borderless,

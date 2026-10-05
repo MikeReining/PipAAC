@@ -74,7 +74,7 @@ import { mountGroupShows } from "./board/group-shows.js";
 import { installViewportPin } from "./board/viewport.js";
 import { mountOnramp } from "./board/onramp-ui.js";
 import { mountTour } from "./board/tour-ui.js";
-import { showVersion } from "./board/version.js";
+import { initVersionUI, showVersion } from "./board/version.js";
 import { mountVoice } from "./board/voice-ui.js";
 import { mountLifetime, mountTrialClock } from "./board/lifetime-ui.js";
 import { mountPictureFill } from "./board/picture-fill.js";
@@ -1451,6 +1451,11 @@ const tourUi = mountTour({
 });
 $("replay-tour").addEventListener("click", () => { close("menu"); tourUi.start(); });
 settingsUi.onShow((id) => { if (id === "overview") showVersion(); }); // stale shells show
+/* Settings → Overview's update row. "Update now" is a consented reload:
+ * flush the db first so a half-saved profile doesn't die with the tab. */
+initVersionUI({ reload: async () => {
+  try { await flushDb(); } finally { location.reload(); }
+} });
 // 034: the welcome's Continue navigates away (a fresh document is the only
 // proven fix for the iPad keyboard-pan residue); the flag resumes the tour
 // on that boot. Consume before starting so a mid-tour refresh can't replay.

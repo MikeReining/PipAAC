@@ -228,11 +228,15 @@ export function mountHelp({ pane, show, me, trial }) {
   more.append(moreRow);
 
   const who = () => (me.name?.trim() ? `${me.name.trim()}'s` : "your child's");
-  // The build: the Settings version line when it exists, else the
-  // service worker's shell caches (one per installed build).
-  const build = async () => $("set-version")?.textContent?.trim()
-    || (await caches?.keys().catch(() => []) ?? []).filter((k) => k.startsWith("pip-shell-")).join(", ")
-    || "unknown";
+  // The build: the Settings version line plus its exact build hash when
+  // they exist, else the service worker's shell caches (one per build).
+  const build = async () => {
+    const el = $("set-version");
+    const t = el?.textContent?.trim();
+    if (t) return el.dataset.build ? `${t} · build ${el.dataset.build}` : t;
+    return (await caches?.keys().catch(() => []) ?? [])
+      .filter((k) => k.startsWith("pip-shell-")).join(", ") || "unknown";
+  };
   async function appDetails() {
     const t = trial();
     return {

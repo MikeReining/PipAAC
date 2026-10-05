@@ -201,7 +201,14 @@ button.set-who:hover { background: var(--tray); }
 .set-sec.on { display: flex; }
 .set-sec h2 { font-size: 26px; }
 .set-intro { color: var(--muted); font-size: 15px; margin-top: -8px; }
-.set-version { color: var(--muted); font-size: 13px; margin-top: 16px; }
+.set-version { color: var(--muted); font-size: 13px; margin: 0; flex: 1; }
+.set-ver { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
+.set-ver .btn { flex: none; font-size: 14px; min-height: 40px; padding: 6px 16px; }
+.update-bar {
+  height: 6px; border-radius: 3px; background: var(--line);
+  overflow: hidden; margin-top: -6px;
+}
+.update-bar i { display: block; height: 100%; width: 0; background: var(--ink); transition: width .25s; }
 .set-sec .seg-row {
   margin: 0; background: #fff; border: 1px solid var(--line); border-radius: 14px;
   padding: 16px; display: flex; flex-direction: column; gap: 10px;

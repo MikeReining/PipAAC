@@ -1,10 +1,10 @@
 {
-  "buildId": "r1-771a7d869572",
+  "buildId": "1.1.0-1063bf83a27b",
   "files": [
     {
       "path": "/board.js",
-      "bytes": 67408,
-      "sha256": "eea74b9d72fe9a3db911190ab8c447afb1f549c132c46b7608ac62cc6906cace"
+      "bytes": 67675,
+      "sha256": "b572b19f42515da202768b8d28f508d6c22261a4f14e2c9fc3d1fdac5be6d22e"
     },
     {
       "path": "/board/add-flow.css",
@@ -23,8 +23,8 @@
     },
     {
       "path": "/board/base.css",
-      "bytes": 27781,
-      "sha256": "b36384bbcad8236790681b8fb74bb78af45af91cd366ab0ad1f533c693688633"
+      "bytes": 28121,
+      "sha256": "bce4210bbd662e3fbeab19c357bbec1e6edf81d75fd48c2921299430433b30ae"
     },
     {
       "path": "/board/cells-sheet.css",
@@ -118,8 +118,8 @@
     },
     {
       "path": "/board/help-ui.js",
-      "bytes": 12289,
-      "sha256": "0746f28ff7fe10c140044d6031490b141da93b1d00c476858ded60de80b81c8c"
+      "bytes": 12432,
+      "sha256": "016c3325e773008f6e185ebd8938e3a85c92837e9638440209fab33b130a2233"
     },
     {
       "path": "/board/inline-icons.js",
@@ -238,8 +238,8 @@
     },
     {
       "path": "/board/settings-ui.css",
-      "bytes": 22788,
-      "sha256": "32140ba06bcb53878d0bad0a2c7e0f95863accea7550ba52dab5a45237194a51"
+      "bytes": 23172,
+      "sha256": "d3dcb94560186be24ad712104c206cc93e52208d4dbf2772e53caa2d8a116981"
     },
     {
       "path": "/board/settings-ui.js",
@@ -303,8 +303,8 @@
     },
     {
       "path": "/board/version.js",
-      "bytes": 2651,
-      "sha256": "7dbe94231f380f0a5226e9283d92229e2e445763d397a19e6d844460bab5a99a"
+      "bytes": 9304,
+      "sha256": "e5c2e9542eba422e0b9d449f821f393aecbdcb673e39f21fe35925c461a9d18e"
     },
     {
       "path": "/board/viewport.js",
@@ -748,8 +748,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 68960,
-      "sha256": "78fb76cc38d74706364d1c3349370c77abbdd5ba8913d25ab360d7051cf98448"
+      "bytes": 69326,
+      "sha256": "308b1be4ca8542d8e3702b61faeb00f88fe570d52e31fe3e8f7b3b2499fb80a6"
     },
     {
       "path": "/manifest.webmanifest",
@@ -978,8 +978,8 @@
     },
     {
       "path": "/shared/sync.mjs",
-      "bytes": 25818,
-      "sha256": "a2d4b4f6d99713b10f907c0950dc645e43b8a2ca155c765ec0380e2f05ac6d98"
+      "bytes": 26132,
+      "sha256": "677ae16364f1b3b2b07f26df7371c2f2944bc1861d2c004cc3175907d7b47706"
     },
     {
       "path": "/shared/team_names.mjs",

@@ -49,7 +49,7 @@ test("install-time fetches never trust the HTTP cache", () => {
     assert.ok(m[0].includes('"no-store"'),
       `install fetch without no-store can precache stale bytes: ${m[0]}`);
   }
-  assert.ok(sw.includes('fetch(path, { cache: "no-store" })'),
+  assert.ok(sw.includes('fetch(path, { cache: "no-store", signal: ac.signal })'),
     "precachePut lost its no-store fetch");
   assert.ok(sw.includes('fetch("/sw-audio.json", { cache: "no-store" })'),
     "sw-audio.json fetch can revalidate a stale clip map");
