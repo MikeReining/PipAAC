@@ -6,13 +6,15 @@ import {
   unwrapUserKey, userRootName, wrapUserKey,
 } from "./sync_crypto.mjs";
 import { recoveryProof, ROOT_BYTES } from "./recovery.mjs";
+import { STALL_MS, withDeadline } from "./bounded.mjs";
 
 export const rotationJournalName = (id) => `rotation/${id}`;
 const locks = new Map();
 function locked(id, fn) {
-  const run = (locks.get(id) ?? Promise.resolve()).then(() =>
+  const run = withDeadline((locks.get(id) ?? Promise.resolve()).then(() =>
     globalThis.navigator?.locks?.request
-      ? navigator.locks.request(`pip-rotation:${id}`, fn) : fn());
+      ? navigator.locks.request(`pip-rotation:${id}`, fn) : fn()),
+    STALL_MS, `rotation lock ${id}`);
   const tail = run.catch(() => {});
   locks.set(id, tail);
   tail.then(() => { if (locks.get(id) === tail) locks.delete(id); });

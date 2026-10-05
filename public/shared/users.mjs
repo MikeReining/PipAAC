@@ -13,6 +13,7 @@
  * Tests inject a Map-backed store (memoryUserStore); the browser uses
  * IndexedDB. Same contract as sync_crypto's key store, plus `all()`.
  */
+import { STALL_MS, withDeadline } from "./bounded.mjs";
 
 export function memoryUserStore() {
   const m = new Map();
@@ -33,12 +34,12 @@ export function openUserStore() {
     req.onsuccess = () => res(req.result);
     req.onerror = () => rej(req.error);
   });
-  const wrap = (mode, fn) => dbp.then((idb) => new Promise((res, rej) => {
+  const wrap = (mode, fn) => withDeadline(dbp.then((idb) => new Promise((res, rej) => {
     const tx = idb.transaction("kv", mode);
     const req = fn(tx.objectStore("kv"));
     tx.oncomplete = () => res(req.result);
     tx.onerror = () => rej(tx.error);
-  }));
+  })), STALL_MS, "user store");
   return {
     get: (k) => wrap("readonly", (s) => s.get(k)),
     put: (k, v) => wrap("readwrite", (s) => s.put(v, k)),

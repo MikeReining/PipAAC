@@ -130,6 +130,7 @@ async function runtime({
   persist = async () => true,
   epoch = 1,
   userKey = null,
+  opts = {},
 } = {}) {
   const db = openReplica();
   const store = memoryKeyStore();
@@ -172,6 +173,7 @@ async function runtime({
     () => {},
     null,
     persist,
+    opts,
   );
   await settle();
   return { db, store, key, user, submits, uploads, fetches, handle, syncHealth };
@@ -200,6 +202,36 @@ test("F10: a failed submit re-arms on bounded backoff — an open socket and sil
   assert.equal(r.syncHealth().flushError, null);
   assert.ok(!listOps(r.db).some((o) => o.relay_seq === null),
     "op never confirmed after the retry");
+});
+
+test("F10: a stalled flush surfaces and frees the outbox — a hung await cannot wedge the session", async () => {
+  // The browser proof: a relay call that never settles left `flushing`
+  // non-null forever — every later edit queued behind a dead promise
+  // while syncHealth read clean. The deadline must surface the stall
+  // and the bounded retry must still carry the edit through.
+  let calls = 0;
+  let hang = false;
+  const r = await runtime({
+    opts: { flushStallMs: 60 },
+    submit: async (ops) => {
+      calls++;
+      if (hang) return new Promise(() => {}); // never settles
+      return { ops: ops.map((o, i) => ({ op_id: o.op_id, relay_seq: i + 1 })) };
+    },
+  });
+  hang = true;
+  createEntity(r.db, { id: "ent_stall", name: "Stalled edit" });
+  await sleep(600); // 300 ms debounce + 60 ms stall deadline
+  assert.match(r.syncHealth().flushError ?? "", /stalled/,
+    "a hung submit never surfaced as a flush error");
+  assert.ok(listOps(r.db).some((o) => o.relay_seq === null),
+    "edit claimed confirmed while the submit was stalled");
+  hang = false;
+  await sleep(2600); // the bounded retry (~2 s) submits the same op
+  assert.ok(calls >= 3, "the outbox never retried after the stall");
+  assert.equal(r.syncHealth().flushError, null);
+  assert.ok(!listOps(r.db).some((o) => o.relay_seq === null),
+    "edit stayed stranded after the relay recovered");
 });
 
 test("F10: concurrent queueBlob calls both land — a drain-in-flight cannot wipe an append", async () => {

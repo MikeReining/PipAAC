@@ -13,6 +13,8 @@
  * that references it carries that hash, never the bytes.
  */
 
+import { STALL_MS, withDeadline } from "./bounded.mjs";
+
 const subtle = globalThis.crypto.subtle;
 const te = new TextEncoder();
 const td = new TextDecoder();
@@ -62,12 +64,12 @@ export function openKeyStore() {
     req.onsuccess = () => res(req.result);
     req.onerror = () => rej(req.error);
   });
-  const wrap = (mode, fn) => dbp.then((idb) => new Promise((res, rej) => {
+  const wrap = (mode, fn) => withDeadline(dbp.then((idb) => new Promise((res, rej) => {
     const tx = idb.transaction("keys", mode);
     const req = fn(tx.objectStore("keys"));
     tx.oncomplete = () => res(req.result);
     tx.onerror = () => rej(tx.error);
-  }));
+  })), STALL_MS, "key store");
   return {
     get: (k) => wrap("readonly", (s) => s.get(k)),
     put: (k, v) => wrap("readwrite", (s) => s.put(v, k)),
@@ -89,10 +91,10 @@ export function openKeyStore() {
  * narrows it where the platform offers it. */
 const createLocks = new Map();
 const underLock = (name, fn) => {
-  const run = (createLocks.get(name) ?? Promise.resolve()).then(() =>
+  const run = withDeadline((createLocks.get(name) ?? Promise.resolve()).then(() =>
     (globalThis.navigator?.locks?.request
       ? navigator.locks.request(`pip-create:${name}`, fn)
-      : fn()));
+      : fn())), STALL_MS, `create lock ${name}`);
   const tail = run.catch(() => {});
   createLocks.set(name, tail);
   run.finally(() => {

@@ -19,6 +19,7 @@ import {
   putUserKey, sealOp, sealBlob, unwrapUserKey, userKeyName,
 } from "./sync_crypto.mjs";
 import { relayClient } from "./sync_client.mjs";
+import { withDeadline } from "./bounded.mjs";
 import { onOnline, onVisible } from "./platform.mjs";
 import { completeRemovalRotation, resumeRecoveryCard } from "./rotation.mjs";
 
@@ -42,19 +43,19 @@ export const syncHealth = () =>
  * `persist` (043 B) is the DB's own flush — the cursor is only durable
  * if the ops it counts are, so ingest awaits it before advancing.
  */
-export async function initSync(db, user, saveUser, baseUrl = location.origin, onApplied = () => {}, onModel = null, persist = null) {
+export async function initSync(db, user, saveUser, baseUrl = location.origin, onApplied = () => {}, onModel = null, persist = null, opts = {}) {
   if (running) return running;
   const cfg = user?.sync;
   // pendingJoin (audit F12): the account import stored keys but relay
   // registration never succeeded — this device is local-only until a
   // later join clears the flag.
   if (!cfg?.userId || cfg.pendingJoin) return null;
-  running = startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, persist)
+  running = startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, persist, opts)
     .catch((err) => { running = null; throw err; });
   return running;
 }
 
-async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, persist) {
+async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, persist, opts = {}) {
   const store = openKeyStore();
   const identity = await getDeviceIdentity(store);
   setDeviceId(identity.deviceId);
@@ -256,35 +257,45 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
    * racing the same pending set through the relay twice. */
   const FLUSH_BATCH = 200;
   const OPS_PAGE = 200;
+  const flushStallMs = opts.flushStallMs ?? 45_000;
   let flushing = null;
-  const flush = () => (flushing ??= (async () => {
-    try {
-      const ops = pendingOps(db, FLUSH_BATCH + 1);
-      if (!ops.length) { flushError = null; return; }
-      const more = ops.length > FLUSH_BATCH;
-      await resumeRecoveryCard({ store, user, client, saveUser, rekey });
-      const self = await client.selfKey();
-      if (self.current_epoch > epoch) await keyFor(self.current_epoch);
-      const { ops: assigned } = await client.submit(ops.slice(0, FLUSH_BATCH), epoch);
-      confirmOps(db, assigned);
-      await maybeSnapshot();
-      flushError = null;
-      flushFails = 0;
-      // The batch drained but the outbox didn't — keep going promptly.
-      if (more || pendingOps(db, 1).length) scheduleFlush(0);
-    } catch (err) {
-      flushError = String(err?.message ?? err);
-      // A stranded edit is silent loss (audit F10): bounded retries
-      // with linear backoff whichever caller raised the failure —
-      // recover, the debounce, or a socket event all land here.
-      if (++flushFails <= 8) {
-        scheduleFlush(Math.min(2000 * flushFails, 30000));
-      }
-      throw err;
-    } finally {
-      flushing = null;
-    }
-  })());
+  const runFlush = async () => {
+    const ops = pendingOps(db, FLUSH_BATCH + 1);
+    if (!ops.length) { flushError = null; return; }
+    const more = ops.length > FLUSH_BATCH;
+    await resumeRecoveryCard({ store, user, client, saveUser, rekey });
+    const self = await client.selfKey();
+    if (self.current_epoch > epoch) await keyFor(self.current_epoch);
+    const { ops: assigned } = await client.submit(ops.slice(0, FLUSH_BATCH), epoch);
+    confirmOps(db, assigned);
+    await maybeSnapshot();
+    flushError = null;
+    flushFails = 0;
+    // The batch drained but the outbox didn't — keep going promptly.
+    if (more || pendingOps(db, 1).length) scheduleFlush(0);
+  };
+  /* Serialization must stay live: a serialized flush whose await never
+   * settles would wedge every later edit behind a promise that never
+   * resolves — ops logging locally, nothing reaching the relay, and
+   * syncHealth reading clean. Every await above is bounded at its own
+   * seam; this deadline is the catch-all that still frees the queue,
+   * surfaces the error, and lets the bounded retry try again. */
+  const flush = () => {
+    if (flushing) return flushing;
+    flushing = withDeadline(runFlush(), flushStallMs, "sync: flush")
+      .catch((err) => {
+        flushError = String(err?.message ?? err);
+        // A stranded edit is silent loss (audit F10): bounded retries
+        // with linear backoff whichever caller raised the failure —
+        // recover, the debounce, a stall, or a socket event all land here.
+        if (++flushFails <= 8) {
+          scheduleFlush(Math.min(2000 * flushFails, 30000));
+        }
+        throw err;
+      })
+      .finally(() => { flushing = null; });
+    return flushing;
+  };
   let flushTimer = null;
   let flushFails = 0;
   const scheduleFlush = (delay = 300) => {

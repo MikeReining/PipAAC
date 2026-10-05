@@ -5,6 +5,7 @@
  * The relay sees ciphertext only; openOps happen on this side.
  */
 import { sealOp, openOp, signPayload } from "./sync_crypto.mjs";
+import { timedFetch as fetch } from "./bounded.mjs";
 
 const te = new TextEncoder();
 const hex = (buf) =>
