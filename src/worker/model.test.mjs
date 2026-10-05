@@ -38,6 +38,13 @@ const ctxWithSockets = (...sockets) => {
   };
 };
 
+// Only paired devices may relay (audit F07): register the sockets' devices.
+const pair = (ctx, ...ids) => {
+  for (const id of ids) {
+    ctx._db.prepare("INSERT INTO device(device_id,pubkey,added_at) VALUES (?,'x',1)").run(id);
+  }
+};
+
 const fakeSocket = (deviceId) => ({
   sent: [],
   send(m) { this.sent.push(m); },
@@ -48,6 +55,7 @@ test("a model tap broadcasts to the user's other sockets, stamped and unstored",
   const a = fakeSocket("dev_a"), b = fakeSocket("dev_b"), c = fakeSocket("dev_c");
   const ctx = ctxWithSockets(a, b, c);
   const relay = new UserRelay(ctx, {});
+  pair(ctx, "dev_a", "dev_b", "dev_c");
   const env = { iv: "aa", data: "bb" }; // sealOp's envelope object
   relay.webSocketMessage(a, JSON.stringify({ t: "model", e: 3, env }));
   assert.equal(a.sent.length, 0); // sender's socket is excluded
@@ -62,6 +70,7 @@ test("a model tap broadcasts to the user's other sockets, stamped and unstored",
   const tables = ctx._db.prepare(
     "SELECT name FROM sqlite_master WHERE type = 'table'").all();
   for (const t of tables) {
+    if (t.name === "device") continue; // the pairing rows above
     assert.equal(ctx._db.prepare(`SELECT COUNT(*) c FROM ${t.name}`).get().c, 0);
   }
 });
@@ -84,6 +93,7 @@ test("a client cannot forge `from` — the relay stamps the socket's device", ()
   const a = fakeSocket("dev_a"), b = fakeSocket("dev_b");
   const ctx = ctxWithSockets(a, b);
   const relay = new UserRelay(ctx, {});
+  pair(ctx, "dev_a", "dev_b");
   relay.webSocketMessage(a, JSON.stringify({ t: "model", env: { iv: "x" }, from: "dev_b" }));
   assert.equal(JSON.parse(b.sent[0]).from, "dev_a");
 });
