@@ -567,8 +567,11 @@ export function drainOps(db, confirmedOps = [], { fetched = true } = {}) {
     const mark = db.prepare(
       "UPDATE sync_op SET relay_seq = ? WHERE op_id = ? AND relay_seq IS NULL",
     );
+    // Dedupe on identity only: bare OR IGNORE swallows EVERY constraint
+    // failure — the op_* CHECK once ate whole ops while their effects
+    // applied, forking replicas silently. Anything else goes loud.
     const logForeign = db.prepare(
-      "INSERT OR IGNORE INTO sync_op (op_id, device_id, kind, args, created_at, relay_seq) VALUES (?, ?, ?, ?, ?, ?)",
+      "INSERT INTO sync_op (op_id, device_id, kind, args, created_at, relay_seq) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(op_id) DO NOTHING",
     );
     const flagCovered = db.prepare(
       "UPDATE sync_op SET applied = 1 WHERE op_id = ?",

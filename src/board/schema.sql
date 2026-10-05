@@ -577,7 +577,10 @@ CREATE TABLE IF NOT EXISTS group_seed_cell (
 -- the local placeholder until device keys land (011 slice 3).
 CREATE TABLE IF NOT EXISTS sync_op (
   seq INTEGER PRIMARY KEY AUTOINCREMENT,
-  op_id TEXT NOT NULL UNIQUE CHECK (op_id GLOB 'op_*'),
+  -- op_id is relay data once foreign ops land — another device's naming
+  -- is not our contract. A stricter shape CHECK silently forks replicas
+  -- (2026-10-06: 'probe_*' ids were IGNOREd while their effects applied).
+  op_id TEXT NOT NULL UNIQUE CHECK (length(op_id) > 0),
   device_id TEXT NOT NULL DEFAULT 'dev_local',
   kind TEXT NOT NULL,
   args TEXT NOT NULL,

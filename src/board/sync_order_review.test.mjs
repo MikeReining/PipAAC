@@ -275,3 +275,46 @@ test("a '{}' placeholder anchor written by the e5cf9708 release is not trusted",
       "rebuild-over-{} wiped the family's profile settings");
   } finally { db.close(); }
 });
+
+/** prod finding (2026-10-06): sync_op carried CHECK (op_id GLOB 'op_*')
+ * and the foreign-op insert used INSERT OR IGNORE, which swallows ANY
+ * constraint failure — a relayed op whose id didn't match applied via
+ * the push overlay while never landing in the log. The fetched fold then
+ * saw an empty tail, claimed no coverage, and the family forked with no
+ * error. Relay op_ids are foreign data — the log records them verbatim —
+ * and the dedupe targets op_id only, so every other violation is loud. */
+test("a foreign op with a non-'op_*' id is logged, applied, and folded", () => {
+  const db = replica();
+  try {
+    const pushed = { ...remote(1, "set_setting", { key: "person_name", value: "Pushed" }),
+      op_id: "probe_1" };
+    // The push channel: apply + log together — an applied op that never
+    // reaches the log is exactly the prod divergence.
+    drainOps(db, [pushed], { fetched: false });
+    assert.equal(db.prepare("SELECT person_name FROM learner_profile").get().person_name, "Pushed");
+    assert.ok(db.prepare("SELECT 1 FROM sync_op WHERE op_id = 'probe_1'").get(),
+      "the push applied an op it never logged");
+    // The fetched page carrying it folds it once — coverage advances.
+    drainOps(db, [pushed]);
+    assert.equal(db.prepare("SELECT applied AS a FROM sync_op WHERE op_id = 'probe_1'").get().a, 1,
+      "the fetched drain never folded the logged op");
+    assert.equal(appliedSeqOf(db), 1);
+  } finally { db.close(); }
+});
+
+test("a foreign op violating a real constraint fails loudly, never silently", () => {
+  const db = replica();
+  try {
+    const name = db.prepare("SELECT person_name FROM learner_profile").get()?.person_name;
+    // "" violates CHECK (length(op_id) > 0): the old INSERT OR IGNORE
+    // dropped the row, then the overlay applied its effect anyway.
+    const bad = { ...remote(1, "set_setting", { key: "person_name", value: "Bad" }),
+      op_id: "" };
+    assert.throws(() => drainOps(db, [bad], { fetched: false }),
+      "a malformed op slipped past the log");
+    assert.equal(db.prepare("SELECT person_name FROM learner_profile").get()?.person_name, name,
+      "the malformed op's effect survived the rolled-back drain");
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM sync_op WHERE op_id = ''").get().n, 0);
+    assert.equal(appliedSeqOf(db), 0, "coverage claimed a failed drain");
+  } finally { db.close(); }
+});

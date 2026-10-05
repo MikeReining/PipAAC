@@ -1,5 +1,5 @@
 {
-  "buildId": "1.1.0-a434b286d676",
+  "buildId": "1.1.0-e18ce29e9e0b",
   "files": [
     {
       "path": "/board.js",
@@ -393,8 +393,8 @@
     },
     {
       "path": "/catalog.json",
-      "bytes": 3758829,
-      "sha256": "f40de54d1ffe39dfe0c60074e17f6bec9136565bcb0367129ed03a92425cb529"
+      "bytes": 3759055,
+      "sha256": "da69430cd5d45dff7c6ef80bfac4db57aba0baa0a302c4df75180183591805f1"
     },
     {
       "path": "/db.js",
@@ -424,7 +424,7 @@
     {
       "path": "/fresh_db.sqlite",
       "bytes": 2543616,
-      "sha256": "89d6456ff51af067e62cbdea492bf2e52c032caf65a27b788eaacdd25e630c2c"
+      "sha256": "a9d69ef7b8f87ffbab8c38de85fdc029a44c779e5e8a6475960db848367dd992"
     },
     {
       "path": "/help.en.json",
@@ -908,8 +908,8 @@
     },
     {
       "path": "/shared/ops.mjs",
-      "bytes": 34152,
-      "sha256": "03a4607b4724745556f2bc49d92c507c55a070e0774512a31c120e9a66f56a3e"
+      "bytes": 34386,
+      "sha256": "2ff9a3455e528f68d1bc92bb21984ec677eb0924522cbc46b0e1ceaf71460e92"
     },
     {
       "path": "/shared/person_name.mjs",
