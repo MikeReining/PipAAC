@@ -21,13 +21,14 @@ ruling): flag + revoke land in one DO write, re-presented tokens get
 speaks on first tap (founder 2026-10-04).
 
 **Remaining:** J's device prototype and the ops-alerting verification
-noted under I. Sync follow-up: verify cleanup of versioned
-snapshots/proof indexes (the `destroy()` retention gap in
-`docs/product/Sync_And_Web_Editing.md`). The 2026-10-04 card-rotation
-slice (durable device journal + atomic guarded relay replacement +
-removal obligations) and the delivery-order repair (whole-log ordered
-re-replay on a detected violation; probe
-`scripts/probes/sync_delivery_order.mjs`) are committed and deployed.
+noted under I. Sync follow-up: the supporter-regrant resume gap —
+`docs/operations/debugger/SUPPORTER_REGRANT_RESUME.md` (P2, traced, not
+reproduced end-to-end). The 2026-10-04 card-rotation slice (durable
+device journal + atomic guarded relay replacement + removal
+obligations), the delivery-order repair (whole-log ordered re-replay on
+a detected violation; probe `scripts/probes/sync_delivery_order.mjs`),
+and the retention-destroy coverage (versioned snapshots + proof index)
+are committed; retention fix deploy pending wrangler re-auth.
 
 **Verdict on the stack:** keep it. Plain JS, SQLite WASM, Workers +
 Durable Objects + R2, and the meanings/labels/voices separation are all
