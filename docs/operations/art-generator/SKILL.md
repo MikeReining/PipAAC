@@ -29,6 +29,13 @@ The Art Generator produces vector-grade clipart symbols for Pip AAC motor-grid t
   * Past-tense verbs (`had`, `did`, `was`, `were`) **keep the exact base symbol** and deterministically composite the standardized Pip AAC past badge in the top-right corner.
   * Standard badge: white rounded pill with a thin black border containing two solid black triangles pointing backwards (`◀◀`).
   * Never send past-tense verbs to Muse for an open-ended re-roll. Always apply the past badge onto the approved base symbol.
+* **Lemmatization & Clipart Pre-Flight Gate (MANDATORY BEFORE BATCH PLANNING):**
+  * Raw gap frequency lists (such as `data/prediction/everyday_gaps.en.json`) contain surface word tokens, which mix inflected forms (`found`, `picks`, `drove`) with root lemmas (`find`, `pick`, `drive`).
+  * Before proposing or generating any art batch, every candidate word **must** be pre-flight checked against `IRREG_LEMMA` (`public/shared/txbar.mjs`), inflection tables (`data/forms/en.json`), standard morphology rules, and existing files in `assets/symbols/`.
+  * If a candidate word resolves to a lemma that already has a symbol:
+    * **Agreement / Inflection:** Map directly to the lemma symbol (`picks = pick.png`). Never roll new art.
+    * **Past-tense Verb:** Composite the standard `[ ◀◀ ]` past badge onto the existing lemma symbol (`found = find.png + badge`). Never roll new art.
+    * **Advance the queue:** The inflected candidate is resolved deterministically, and the batch queue advances to the next genuine missing root concept so that Muse generation batches strictly contain 10 true root gaps.
 
 ---
 
