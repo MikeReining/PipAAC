@@ -75,18 +75,19 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
    *  the old epoch and removed supporters keep reading new ops. */
   const rekey = async (toEpoch) => {
     if (!(toEpoch > epoch)) return epoch;
-    epoch = toEpoch;
-    cfg.epoch = epoch;
-    userKey = await getUserKey(store, user.id, epoch);
-    client = relayClient({ userId: cfg.userId, baseUrl, identity, userKey });
+    // Resolve the key BEFORE anything publishes the epoch: submit seals
+    // under the client's captured key, so epoch must never point at a
+    // key the active client doesn't hold. The second check fences a
+    // competing advance — a rekey that resolves late must not regress
+    // the triple to an older epoch/key (audit: publish as one step).
+    const key = await getUserKey(store, user.id, toEpoch);
+    if (toEpoch > epoch) {
+      epoch = toEpoch;
+      cfg.epoch = epoch;
+      userKey = key;
+      client = relayClient({ userId: cfg.userId, baseUrl, identity, userKey });
+    }
     return epoch;
-  };
-
-  /** Rebuild the relay client whenever the sealing key changes —
-   *  submit() closes over its key, so a client minted under epoch N
-   *  keeps signing epoch-N envelopes after a rotation (audit F05.1). */
-  const rebuildClient = () => {
-    client = relayClient({ userId: cfg.userId, baseUrl, identity, userKey });
   };
 
   /** Key for an op's epoch — a higher epoch means a rotation happened:
@@ -129,11 +130,20 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     if (highest < e) {
       throw new Error(`sync: no wrapped key for epoch ${e}`);
     }
-    epoch = highest;
-    userKey = await getUserKey(store, user.id, epoch);
-    cfg.epoch = epoch;
-    await saveUser({ sync: cfg });
-    rebuildClient();
+    // Same publication rule as rekey: resolve the active key first,
+    // re-check that this pass is still the newest after the await,
+    // then move epoch/key/client together — a concurrent advance that
+    // went further must not be regressed by this one's late write.
+    if (highest > epoch) {
+      const active = await getUserKey(store, user.id, highest);
+      if (highest > epoch) {
+        epoch = highest;
+        cfg.epoch = epoch;
+        userKey = active;
+        client = relayClient({ userId: cfg.userId, baseUrl, identity, userKey });
+        await saveUser({ sync: cfg });
+      }
+    }
     const key = await store.get(userKeyName(user.id, e));
     if (!key) throw new Error(`sync: no stored key for epoch ${e}`);
     return key;

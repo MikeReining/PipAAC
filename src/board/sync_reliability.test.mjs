@@ -143,10 +143,15 @@ async function runtime({
   const submits = [];
   const uploads = [];
   const fetches = [];
+  const clients = [];
   const user = { id: "u1", sync: { userId: "u-relay", epoch, cursor: 0 } };
   shared.store = store;
   shared.loadBlobBytes = async () => null;
-  shared.relayClient = () => ({
+  // Each construction captures its sealing key — the same closure the
+  // real relayClient builds — so a test can check which key sealed what.
+  shared.relayClient = (args) => {
+    clients.push(args);
+    return ({
     selfKey: async () => ({ current_epoch: epoch, wrapped_key: null, wrapped_keys: {} }),
     fetchOps: async (after, limit) => {
       fetches.push({ after, limit });
@@ -157,15 +162,17 @@ async function runtime({
     listDevices: async () => ({ devices: [] }),
     rotateKeys: async () => {},
     requestRotation: async () => {},
-    submit: async (ops) => {
+    submit: async (ops, declaredEpoch) => {
       submits.push(ops);
-      if (submit) return submit(ops, submits.length);
+      if (submit) return submit(ops, submits.length,
+        { declaredEpoch, userKey: args.userKey });
       return { ops: ops.map((o, i) => ({ op_id: o.op_id, relay_seq: i + 1 })) };
     },
     getBlob: getBlob ?? (async () => { throw Object.assign(new Error("no blob"), { status: 404 }); }),
     putBlob: putBlob ?? (async (sealed) => { uploads.push(sealed); }),
     wsUrl: async () => "wss://test.invalid/ws",
-  });
+    });
+  };
 
   const { initSync, syncHealth } = await loadSync();
   const handle = await initSync(
@@ -178,7 +185,8 @@ async function runtime({
     opts,
   );
   await settle();
-  return { db, store, key, user, submits, uploads, fetches, handle, syncHealth };
+  return { db, store, key, user, submits, uploads, fetches, clients,
+    handle, syncHealth };
 }
 
 for (const kind of ["blob", "live"]) {
@@ -617,4 +625,46 @@ test("a timed-out flush is fenced: the late ack still stamps, but cannot clear a
   await sleep(4300);
   assert.equal(r.syncHealth().flushError, null);
   assert.ok(!listOps(r.db).some((o) => o.relay_seq === null));
+});
+test("competing rekeys publish epoch, key and client as one step — a late loser cannot regress them", { timeout: 15000 }, async () => {
+  const ciphertexts = [];
+  const submit = async (ops, _n, { declaredEpoch, userKey }) => {
+    // Seal with the ACTIVE client's captured key, like the real
+    // relayClient's closure — then label with the declared epoch.
+    for (const op of ops) {
+      ciphertexts.push({ e: declaredEpoch, env: await sealOp(userKey, op) });
+    }
+    return { ops: ops.map((o, i) => ({ op_id: o.op_id, relay_seq: 100 + i })) };
+  };
+  const r = await runtime({ epoch: 1, submit });
+  const e2 = await newUserKey(), e3 = await newUserKey();
+  await putUserKey(r.store, "u1", e2, 2);
+  await putUserKey(r.store, "u1", e3, 3);
+  // Delay the epoch-2 key lookup so rekey(3) publishes first; the
+  // earlier rekey resolves late and must not roll the triple back.
+  const realGet = r.store.get;
+  let release2;
+  const gate2 = new Promise((res) => { release2 = res; });
+  let gated = false;
+  r.store.get = async (name) => {
+    if (name === "user/u1/key_e2" && !gated) { gated = true; await gate2; }
+    return realGet(name);
+  };
+  const slow = r.handle.rekey(2);   // blocked on its key lookup
+  await r.handle.rekey(3);          // completes first — epoch 3 active
+  release2();
+  await slow;
+  assert.equal(r.handle.getEpoch(), 3,
+    "the late rekey regressed the published epoch");
+  createEntity(r.db, { id: "ent_rekey", name: "Sealed after the race" });
+  await sleep(700);                // debounce → submit under epoch 3
+  const env = ciphertexts.at(-1);
+  assert.equal(env.e, 3, "submit declared a different epoch than the client seals");
+  // Actual ciphertext proof: it opens under the epoch-3 key and
+  // would NOT have opened under epoch 2 — the relay's declared epoch
+  // and the sealing key agree.
+  assert.ok((await openOp(e3, env.env))?.kind,
+    "the active client's ciphertext did not open under its declared epoch");
+  await assert.rejects(openOp(e2, env.env), /./,
+    "ciphertext labelled epoch 3 was sealed under epoch 2");
 });
