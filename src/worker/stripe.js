@@ -135,6 +135,9 @@ export async function handleCheckout(request, env, url) {
     client_reference_id: userId,
     "metadata[user_id]": userId,
     "metadata[acct_id]": acctId,
+    // 043 K — refunds/disputes arrive on the charge, which never sees
+    // session metadata; the PaymentIntent carries the user through.
+    "payment_intent_data[metadata][user_id]": userId,
     success_url: `${url.origin}/?purchased={CHECKOUT_SESSION_ID}`,
     cancel_url: `${url.origin}/`,
   });
@@ -250,9 +253,41 @@ async function fulfillCodeOrder(env, s) {
   return json({ ok: true, codes: order.codes?.length ?? 0 });
 }
 
+/** Stripe REST read — the refund/dispute path resolves the user from
+ *  the PaymentIntent a charge belongs to. Same STRIPE_FETCH seam. */
+async function stripeGet(env, path) {
+  const f = env.STRIPE_FETCH ?? fetch;
+  const res = await f(`${env.STRIPE_API_BASE ?? STRIPE_API}${path}`, {
+    headers: { authorization: `Bearer ${env.STRIPE_SECRET_KEY}` },
+  });
+  return res.json().catch(() => null);
+}
+
+/** 043 K — flag a delayed-payment failure/refund/dispute on the user's
+ *  relay; devices/self and the entitlement read carry it to the app.
+ *  Whether the grant also gets revoked is the founder call recorded in
+ *  the phase doc — the flag means the state is never invisible either
+ *  way. */
+async function paymentIssue(env, userId, issue) {
+  const secret = internalSecret(env);
+  if (!env.RELAY || !secret) return;
+  await env.RELAY.get(env.RELAY.idFromName(userId)).fetch(
+    new Request(`https://relay/users/${userId}/internal/payment_issue`, {
+      method: "POST",
+      headers: { "x-pip-internal": secret },
+      body: JSON.stringify({ issue }),
+    })).catch(() => {});
+}
+
+const uuidOf = (o) => {
+  const id = o?.client_reference_id || o?.metadata?.user_id;
+  return id && /^[0-9a-f-]{36}$/i.test(id) ? id : null;
+};
+
 /** POST /api/v1/stripe/webhook — signature-verified Stripe events.
- *  checkout.session.completed grants lifetime; everything else is a 200
- *  so Stripe stops retrying. */
+ *  checkout.session.completed + async_payment_succeeded grant lifetime;
+ *  a failed delayed payment, refund, or dispute flags the account;
+ *  everything else is a 200 so Stripe stops retrying. */
 export async function handleStripeWebhook(request, env) {
   if (!env.STRIPE_WEBHOOK_SECRET) return bad("payments_unavailable", 503);
   const payload = await request.text();
@@ -262,21 +297,49 @@ export async function handleStripeWebhook(request, env) {
   if (!ok) return bad("bad_signature", 403);
 
   const event = JSON.parse(payload);
-  if (event.type !== "checkout.session.completed") {
-    return json({ ok: true, ignored: String(event.type ?? "unknown") });
-  }
+  const type = String(event.type ?? "");
   const s = event.data?.object ?? {};
-  // payment_status "unpaid" happens with delayed methods (e.g. bank
-  // debits) — the grant waits for payment. "no_payment_required" is a
-  // fully-discounted checkout (100%-off coupon): it IS complete.
-  if (s.payment_status
-    && !["paid", "no_payment_required"].includes(s.payment_status)) {
-    return json({ ok: true, ignored: "unpaid" });
+
+  if (type === "checkout.session.completed"
+      || type === "checkout.session.async_payment_succeeded") {
+    // payment_status "unpaid" happens with delayed methods (e.g. bank
+    // debits) — the grant waits for payment. "no_payment_required" is a
+    // fully-discounted checkout (100%-off coupon): it IS complete.
+    if (s.payment_status
+      && !["paid", "no_payment_required"].includes(s.payment_status)) {
+      return json({ ok: true, ignored: "unpaid" });
+    }
+    if (s.metadata?.kind === "license_codes") {
+      return fulfillCodeOrder(env, s);
+    }
+    const userId = uuidOf(s);
+    if (!userId) return bad("no_user", 400);
+    return grantLifetime(env, userId, "stripe", String(s.id ?? ""));
   }
-  if (s.metadata?.kind === "license_codes") {
-    return fulfillCodeOrder(env, s);
+
+  // 043 K — a delayed payment that never landed (bank debit declined):
+  // flag the account — the app says the purchase didn't finish instead
+  // of leaving the family to wonder.
+  if (type === "checkout.session.async_payment_failed") {
+    const userId = uuidOf(s);
+    if (userId) await paymentIssue(env, userId, "failed");
+    return json({ ok: true });
   }
-  const userId = s.client_reference_id || s.metadata?.user_id;
-  if (!userId || !/^[0-9a-f-]{36}$/i.test(userId)) return bad("no_user", 400);
-  return grantLifetime(env, userId, "stripe", String(s.id ?? ""));
+
+  // 043 K — refunds and disputes arrive on the charge; resolve the user
+  // through the PaymentIntent (session metadata is on the PI from the
+  // checkout's payment_intent_data). Grant stays — founder call, 043 K.
+  if (type === "charge.refunded" || type.startsWith("charge.dispute.")) {
+    let userId = uuidOf(s);
+    if (!userId && s.payment_intent) {
+      const pi = await stripeGet(env, `/v1/payment_intents/${s.payment_intent}`);
+      userId = uuidOf(pi);
+    }
+    if (userId) {
+      await paymentIssue(env, userId, type === "charge.refunded" ? "refunded" : "dispute");
+    }
+    return json({ ok: true });
+  }
+
+  return json({ ok: true, ignored: type || "unknown" });
 }

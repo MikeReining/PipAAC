@@ -225,6 +225,18 @@ export function mountDevices({
    *  one is dropped so no screen claims what the relay denies. */
   async function reconcilePlan(client, store, self) {
     const key = `user/${me.id}/license`;
+    /* 043 K — the relay flags a failed/refunded/disputed payment; say
+     * it once per flag value so the nudge never nags twice. */
+    const issue = self?.payment_issue;
+    if (issue) {
+      const issueKey = `user/${me.id}/payment_issue`;
+      if (await store.get(issueKey) !== issue) {
+        await store.put(issueKey, issue);
+        toast(issue === "failed"
+          ? "Your payment didn't finish — Pip isn't unlocked yet."
+          : "There's a problem with your payment — please contact support.");
+      }
+    }
     const local = await store.get(key);
     if (self?.entitlement === "lifetime") {
       if (!local && await claimLicense(client, store, { quiet: true }).catch(() => null)) resetLicense();

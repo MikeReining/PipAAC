@@ -117,6 +117,68 @@ test("checkout.session.completed grants lifetime on the user's relay", async () 
   assert.equal(await relayEntitlement(env, UID), "lifetime");
 });
 
+test("043 K — delayed-payment success grants; failure flags the account", async () => {
+  const env = fakeEnv({ STRIPE_WEBHOOK_SECRET: WHSEC, PIP_INTERNAL_SECRET: INTERNAL });
+
+  // Bank-debit path: completed arrives "unpaid" — no grant yet.
+  let { payload, header } = await signEvent({
+    type: "checkout.session.completed",
+    data: { object: { id: "cs_delayed", payment_status: "unpaid",
+      client_reference_id: UID } } });
+  await webhook(env, payload, header);
+  assert.equal(await relayEntitlement(env, UID), "free");
+
+  // async_payment_failed flags the relay — devices/self carries it.
+  ({ payload, header } = await signEvent({
+    type: "checkout.session.async_payment_failed",
+    data: { object: { id: "cs_delayed", payment_status: "unpaid",
+      client_reference_id: UID } } }));
+  const res = await webhook(env, payload, header);
+  assert.equal(res.status, 200);
+  assert.equal(env._relay(UID).metaGet("payment_issue"), "failed");
+  assert.equal(await relayEntitlement(env, UID), "free");
+
+  // The retry succeeds: async_payment_succeeded grants AND clears the flag.
+  ({ payload, header } = await signEvent({
+    type: "checkout.session.async_payment_succeeded",
+    data: { object: { id: "cs_delayed", payment_status: "paid",
+      client_reference_id: UID } } }));
+  await webhook(env, payload, header);
+  assert.equal(await relayEntitlement(env, UID), "lifetime");
+  assert.equal(env._relay(UID).metaGet("payment_issue"), null);
+});
+
+test("043 K — refund and dispute flag the account, grant stays (founder call)", async () => {
+  // The PI lookup resolves the user — checkout writes user_id into
+  // payment_intent_data.metadata; the charge only carries the PI id.
+  const env = fakeEnv({
+    STRIPE_WEBHOOK_SECRET: WHSEC, PIP_INTERNAL_SECRET: INTERNAL,
+    STRIPE_FETCH: async (url) => new Response(JSON.stringify({
+      id: "pi_x", metadata: url.includes("/payment_intents/") ? { user_id: UID } : {},
+    })),
+  });
+
+  let { payload, header } = await signEvent({
+    type: "checkout.session.async_payment_succeeded",
+    data: { object: { id: "cs_9", payment_status: "paid", client_reference_id: UID } } });
+  await webhook(env, payload, header);
+  assert.equal(await relayEntitlement(env, UID), "lifetime");
+
+  ({ payload, header } = await signEvent({
+    type: "charge.refunded",
+    data: { object: { id: "ch_1", payment_intent: "pi_x" } } }));
+  await webhook(env, payload, header);
+  assert.equal(env._relay(UID).metaGet("payment_issue"), "refunded");
+  // The grant stays — revoke-vs-keep is the founder call in the doc.
+  assert.equal(await relayEntitlement(env, UID), "lifetime");
+
+  ({ payload, header } = await signEvent({
+    type: "charge.dispute.created",
+    data: { object: { id: "dp_1", payment_intent: "pi_x" } } }));
+  await webhook(env, payload, header);
+  assert.equal(env._relay(UID).metaGet("payment_issue"), "dispute");
+});
+
 test("webhook ignores other events, unpaid sessions, and unsigned calls", async () => {
   const env = fakeEnv({ STRIPE_WEBHOOK_SECRET: WHSEC, PIP_INTERNAL_SECRET: INTERNAL });
 

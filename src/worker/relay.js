@@ -364,7 +364,28 @@ export class UserRelay {
       this.metaSet("license_source", String(parsed?.source ?? "unknown"));
       this.metaSet("license_ref", String(parsed?.ref ?? ""));
       this.metaSet("licensed_at", Date.now());
+      // 043 K — a landed grant clears any recorded payment issue.
+      this.ctx.storage.sql.exec("DELETE FROM meta WHERE k = 'payment_issue'");
       return json({ ok: true, entitlement: "lifetime" });
+    }
+
+    // 043 K — a delayed payment that failed, a refund, or a dispute:
+    // flag the account so the app surfaces it on the next read. The
+    // revoke-vs-keep call is the founder's, recorded in phase 043.
+    if (method === "POST" && route === "internal/payment_issue") {
+      const secret = this.env.PIP_INTERNAL_SECRET ?? this.env.PIP_LICENSE_SECRET;
+      if (!secret) return bad("internal_unavailable", 503);
+      if (request.headers.get("x-pip-internal") !== secret) {
+        return bad("forbidden", 403);
+      }
+      let parsed = null;
+      try { parsed = JSON.parse(td.decode(bodyBytes)); } catch { /* fall */ }
+      if (!parsed?.issue) {
+        this.ctx.storage.sql.exec("DELETE FROM meta WHERE k = 'payment_issue'");
+      } else {
+        this.metaSet("payment_issue", String(parsed.issue).slice(0, 40));
+      }
+      return json({ ok: true });
     }
 
     const device = await this.verify(request, bodyBytes);
@@ -510,6 +531,7 @@ export class UserRelay {
         ...row, current_epoch: this.epoch(),
         entitlement: this.entitlement(),
         owner: this.isOwner(device),
+        ...(this.metaGet("payment_issue") ? { payment_issue: this.metaGet("payment_issue") } : {}),
         ...(this.metaGet("delete_at") ? { delete_at: Number(this.metaGet("delete_at")) } : {}),
         ...(idleAt - Date.now() <= IDLE_DELETE_MS - IDLE_WARN_MS ? { idle_delete_at: idleAt } : {}),
       });
@@ -554,7 +576,8 @@ export class UserRelay {
         ? await licenseFor(this.env.PIP_LICENSE_SECRET,
             this.metaGet("user_id") ?? this.metaGet("board_id") ?? url.pathname.split("/")[2])
         : null;
-      return json({ entitlement: ent, ...(license ? { license } : {}) });
+      return json({ entitlement: ent, ...(license ? { license } : {}),
+        ...(this.metaGet("payment_issue") ? { payment_issue: this.metaGet("payment_issue") } : {}) });
     }
 
     // Family-requested deletion (§ 11): a signed device schedules the

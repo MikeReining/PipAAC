@@ -317,7 +317,9 @@ never get the grant; a refund never revokes one.
 
 - Handle `async_payment_succeeded` (grant), `payment_failed` (surface
   to buyer), refunds/disputes (product decision: revoke-and-notify vs
-  keep — founder call, recorded here).
+  keep — **OPEN founder call**: shipped default records
+  `payment_issue` on the relay and surfaces it in the app while the
+  grant stays; revoke-and-notify is one flag flip away).
 - iOS IAP + restore-purchase resolve into the **same** `entitled()`
   model as web codes — one owner (`src/worker/` entitlement path), not
   two entitlement truths.

@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-7617d0b6c18f",
+  "buildId": "r1-94761a76c235",
   "files": [
     {
       "path": "/board.js",
@@ -53,8 +53,8 @@
     },
     {
       "path": "/board/devices-ui.js",
-      "bytes": 45381,
-      "sha256": "9f706ee7186205a66024278a06e65765128da3dc4d8e09d03f6e601aacb0d756"
+      "bytes": 45915,
+      "sha256": "2f1e7349ff274a398a42eab6460957efbd4e2de069e5b4da64a59f95358a766a"
     },
     {
       "path": "/board/edit-shared.js",
