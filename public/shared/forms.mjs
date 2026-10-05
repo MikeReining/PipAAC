@@ -257,15 +257,25 @@ export function pickForm(table, ctxIds, senseId, nextSenseId = null,
  * always shows the merged lemma's own text, and a tap adds the KEPT
  * sense wearing that form's label. */
 
-const labelCache = new WeakMap(); // db -> { lemma: Map, forms: Map, merged: Map }
+const labelCache = new WeakMap(); // db -> Map(locale -> {lemma, forms, merged})
 function labelsFor(db) {
-  let c = labelCache.get(db);
+  /* 043 G — every label this cache serves belongs to the profile's
+   * speaking language; the profile row is the truth owner (schema
+   * §6.1). Keying {db, lang} means a language switch can never serve
+   * the old language's rows, and a German lemma in the catalog can
+   * never surface on an English board (the "Saft" defect). */
+  const locale = db.prepare(
+    "SELECT locale AS l FROM learner_profile ORDER BY rowid LIMIT 1",
+  ).all()[0]?.l ?? "en";
+  let byLang = labelCache.get(db);
+  if (!byLang) labelCache.set(db, byLang = new Map());
+  let c = byLang.get(locale);
   if (c) return c;
   c = { lemma: new Map(), forms: new Map(), merged: new Map() };
   for (const l of db.prepare(
     `SELECT id, sense_id, kind, text, features, utterance_id FROM label
-      WHERE status = 'approved'`,
-  ).all()) {
+      WHERE status = 'approved' AND locale = ?`,
+  ).all(locale)) {
     if (l.kind === "lemma") c.lemma.set(l.sense_id, l);
     else if (l.kind === "form") {
       const key = `${l.sense_id}|${l.features}`;
@@ -294,7 +304,7 @@ function labelsFor(db) {
       WHERE r.status = 'ready' AND p.status = 'active'
       ORDER BY r.rowid ASC`,
   ).all()) c.entitySense.set(r.e, r.s);
-  labelCache.set(db, c);
+  byLang.set(locale, c);
   return c;
 }
 

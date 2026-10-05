@@ -197,14 +197,33 @@ export async function bootDb(userStore, userId) {
    * malformed answer table fails loudly, never degrades silently. */
   let langPromise = null;
   const loadLanguage = () => {
-    langPromise ??= Promise.all([
-      fetch("/suggest_answers.en.json").then((r) => r.json()).catch(() => null),
-      fetch("/form_answers.en.json").then((r) => r.json()),
-    ]).then(([phrases, formTable]) => {
+    langPromise ??= (async () => {
+      /* 043 G — the profile's speaking language names its tables; a
+       * locale with no shipped table gets none — a miss never borrows
+       * English rows onto another language's board (the "Saft" class
+       * of bug). Malformed JSON still throws loud. */
+      const loc = d.all(
+        "SELECT locale AS l FROM learner_profile ORDER BY rowid LIMIT 1",
+      )[0]?.l ?? "en";
+      // A shipped locale's tables are required — a missing one fails
+      // loudly. An unshipped locale simply has no tables (grammar
+      // falls to the lemma), never an English borrow.
+      const shipped = catalog.voices?.some(
+        (v) => v.locale === loc && v.status === "active");
+      const [phrases, formTable] = await Promise.all([
+        fetch(`/suggest_answers.${loc}.json`)
+          .then((r) => (r.ok ? r.json() : null)).catch(() => null),
+        fetch(`/form_answers.${loc}.json`).then((r) => {
+          if (!r.ok && shipped) {
+            throw new Error(`form_answers.${loc}.json ${r.status}`);
+          }
+          return r.ok ? r.json() : null;
+        }),
+      ]);
       handle.phrases = phrases;
       handle.formTable = formTable;
       return { phrases, formTable };
-    });
+    })();
     return langPromise;
   };
 
