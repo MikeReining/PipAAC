@@ -1,5 +1,7 @@
 {
   "buildId": "1.1.0-862eba3d36d5",
+  "version": "1.1.0",
+  "payloadHash": "862eba3d36d5",
   "files": [
     {
       "path": "/board.js",
