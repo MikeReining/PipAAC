@@ -1451,11 +1451,15 @@ const tourUi = mountTour({
 });
 $("replay-tour").addEventListener("click", () => { close("menu"); tourUi.start(); });
 settingsUi.onShow((id) => { if (id === "overview") showVersion(); }); // stale shells show
-/* Settings → Overview's update row. "Update now" is a consented reload:
- * flush the db first so a half-saved profile doesn't die with the tab. */
-initVersionUI({ reload: async () => {
-  try { await flushDb(); } finally { location.reload(); }
-} });
+/* Settings → Overview's update card + the sidebar badge. "Update now"
+ * is a consented reload: flush the db first so a half-saved profile
+ * doesn't die with the tab. */
+initVersionUI({
+  onPhase: (p) => settingsUi.setUpdatePhase(p),
+  reload: async () => {
+    try { await flushDb(); } finally { location.reload(); }
+  },
+});
 // 034: the welcome's Continue navigates away (a fresh document is the only
 // proven fix for the iPad keyboard-pan residue); the flag resumes the tour
 // on that boot. Consume before starting so a mid-tour refresh can't replay.

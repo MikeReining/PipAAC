@@ -265,6 +265,15 @@
 
             <section class="set-sec" data-sec="overview" data-title="Overview">
               <h2>Overview</h2>
+              <!-- The update card leads the page only when it asks for
+                   something — version.js drives it. The quiet status
+                   line stays at the bottom either way. -->
+              <div class="seg-row set-update-card" id="set-update-card" hidden>
+                <span class="seg-label" id="update-card-title"></span>
+                <p class="hint" id="update-card-sub"></p>
+                <div class="update-bar" id="update-bar" hidden><i id="update-fill"></i></div>
+                <div class="row"><button class="btn" id="update-card-btn"></button></div>
+              </div>
               <div class="seg-row set-person">
                 <span class="set-avatar" id="person-avatar" aria-hidden="true"></span>
                 <div class="set-person-fields">
@@ -293,7 +302,6 @@
                 <p class="set-version" id="set-version"></p>
                 <button class="btn secondary" id="update-btn" hidden></button>
               </div>
-              <div class="update-bar" id="update-bar" hidden><i id="update-fill"></i></div>
             </section>
 
             <section class="set-sec" data-sec="results" data-title="Search" id="set-results">

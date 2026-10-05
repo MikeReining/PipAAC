@@ -1,5 +1,5 @@
 {
-  "buildId": "1.1.0-8f7dc2babc90",
+  "buildId": "1.1.0-79a30f650751",
   "files": [
     {
       "path": "/board.js",
@@ -23,8 +23,8 @@
     },
     {
       "path": "/board/base.css",
-      "bytes": 28121,
-      "sha256": "bce4210bbd662e3fbeab19c357bbec1e6edf81d75fd48c2921299430433b30ae"
+      "bytes": 28122,
+      "sha256": "4592db78cebd807ccf44530671db5c9493dd06bef06ed0df54c53afc3fc8c864"
     },
     {
       "path": "/board/cells-sheet.css",

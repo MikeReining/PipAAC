@@ -42,6 +42,7 @@ let failed = false;  // an install attempt died redundant / never started
 let checking = false;
 let lastPhase = "boot";
 let onReload = null;
+let onPhase = null; // settings-ui sidebar badge/summary
 
 const askController = () => {
   if (!bootWorker) return Promise.resolve(null);
@@ -96,15 +97,23 @@ async function phase() {
 
 const $ = (id) => document.getElementById(id);
 
+/* Phases where the Overview card leads the page — an update wants an
+ * adult's tap. The bottom line stays the quiet status either way. */
+const CARD_PHASES = new Set(["available", "downloading", "ready", "failed"]);
+
 async function render() {
   const el = $("set-version");
   const btn = $("update-btn");
+  const card = $("set-update-card");
+  const cardTitle = $("update-card-title");
+  const cardSub = $("update-card-sub");
+  const cardBtn = $("update-card-btn");
   const bar = $("update-bar");
   const fill = $("update-fill");
   const dot = $("corner-dot");
   if (!el) return;
   const p = await phase();
-  lastPhase = p;
+  if (p !== lastPhase) { lastPhase = p; onPhase?.(p); }
   const mineName = mine ? name(mine) : name(latest);
   el.dataset.build = mine?.build ?? "";
   /* Between VERSION bumps every deploy is hash-only — "version 1.1.0 is
@@ -126,40 +135,56 @@ async function render() {
       break;
     case "offline": line += " · offline, can't check for updates"; break;
     case "current": line += " · up to date"; btnText = "Check for updates"; break;
-    case "available":
-      line += ` · ${upd} available`;
-      btnText = "Download update";
-      break;
+    case "available": line += ` · ${upd} available`; break;
     case "downloading":
       line += progress
         ? ` · downloading ${upd} — ${progress.done} of ${progress.total}`
         : ` · downloading ${upd}`;
-      btnText = "Downloading…";
       break;
-    case "ready":
-      line += ` · ${upd} is ready`;
-      btnText = "Update now";
-      break;
-    case "failed":
-      line += " · couldn't download the update";
-      btnText = "Retry update";
-      break;
+    case "ready": line += ` · ${upd} is ready`; break;
+    case "failed": line += " · couldn't download the update"; break;
   }
   el.textContent = line;
+  /* The quiet check button hides while the card owns the action. */
   if (btn) {
-    btn.hidden = !btnText;
+    btn.hidden = !btnText || CARD_PHASES.has(p);
     btn.textContent = btnText ?? "";
-    btn.disabled = p === "downloading" || checking;
-    btn.classList.toggle("secondary", p !== "ready");
+    btn.disabled = checking;
   }
-  if (bar) {
-    bar.hidden = !(p === "downloading" || (p === "first" && progress));
-    if (fill && progress) {
-      fill.style.width = `${Math.round((progress.done / progress.total) * 100)}%`;
+  /* The card: title, a one-line explainer, live progress, one action. */
+  const cardOn = CARD_PHASES.has(p);
+  if (card) card.hidden = !cardOn;
+  if (cardOn) {
+    const [title, sub, act] = {
+      available: [`${upd[0].toUpperCase() + upd.slice(1)} available`,
+        "Pip downloads it on its own — or get it now.", "Download update"],
+      downloading: ["Downloading update",
+        progress ? `${progress.done} of ${progress.total} files` : "Starting…",
+        "Downloading…"],
+      ready: ["Update ready",
+        `${upd[0].toUpperCase() + upd.slice(1)} is downloaded — it also applies next time Pip opens.`,
+        "Update now"],
+      failed: ["Couldn't update",
+        "The download didn't finish. Check the connection and try again.",
+        "Retry update"],
+    }[p] ?? [];
+    if (cardTitle) cardTitle.textContent = title ?? "";
+    if (cardSub) cardSub.textContent = sub ?? "";
+    if (cardBtn) {
+      cardBtn.textContent = act ?? "";
+      cardBtn.disabled = p === "downloading";
+      cardBtn.classList.toggle("secondary", p !== "ready");
+    }
+    if (bar) {
+      bar.hidden = p !== "downloading";
+      if (fill && progress) {
+        fill.style.width = `${Math.round((progress.done / progress.total) * 100)}%`;
+      }
     }
   }
-  // macOS-style badge: the gear wears a dot when an update is ready.
-  if (dot) dot.hidden = p !== "ready";
+  /* macOS-style badge: the gear wears a dot when an update wants a
+   * tap — available, ready, or failed (downloading resolves itself). */
+  if (dot) dot.hidden = !["available", "ready", "failed"].includes(p);
 }
 
 /** Refresh the facts, then start the download when a diff is real. */
@@ -212,8 +237,9 @@ async function wireRegistration() {
  * reload (flush the db first — a half-saved profile must not die with
  * the tab).
  */
-export function initVersionUI({ reload } = {}) {
+export function initVersionUI({ reload, onPhase: onPhaseCb } = {}) {
   onReload = reload ?? null;
+  onPhase = onPhaseCb ?? null;
   if (!swSupported) { render(); return; }
   wireRegistration();
   navigator.serviceWorker.addEventListener("controllerchange", () => {
@@ -233,11 +259,13 @@ export function initVersionUI({ reload } = {}) {
     if (!document.hidden) check();
   });
   setInterval(check, 30 * 60 * 1000);
-  $("update-btn")?.addEventListener("click", () => {
+  const act = () => {
     if (lastPhase === "ready" && onReload) { onReload(); return; }
     if (lastPhase === "failed") failed = false;
     check();
-  });
+  };
+  $("update-btn")?.addEventListener("click", act);
+  $("update-card-btn")?.addEventListener("click", act);
   check();
 }
 

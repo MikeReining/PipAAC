@@ -209,6 +209,11 @@ button.set-who:hover { background: var(--tray); }
   overflow: hidden; margin-top: -6px;
 }
 .update-bar i { display: block; height: 100%; width: 0; background: var(--ink); transition: width .25s; }
+/* The update card leads Overview while a download wants a tap — warm
+   like the Lifetime accent, never the stop/no red. */
+.set-update-card { background: #fdf0c8; box-shadow: inset 0 0 0 2px var(--glow); }
+.set-update-card .hint { color: #8a5a00; }
+.set-update-card .update-bar { background: #e8d894; margin-top: 0; }
 .set-sec .seg-row {
   margin: 0; background: #fff; border: 1px solid var(--line); border-radius: 14px;
   padding: 16px; display: flex; flex-direction: column; gap: 10px;
