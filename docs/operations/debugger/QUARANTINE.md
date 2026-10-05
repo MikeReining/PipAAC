@@ -5,10 +5,9 @@ owner, expiry, and proof path back to green.
 
 | Item | Owner | Expiry | Proof to clear |
 | --- | --- | --- | --- |
-| Ordered replay under later-push-first delivery (`src/board/sync_delivery_order.test.mjs`, explicit TODO) | Sync developer taking the next slice | expiry 2026-10-07 | Repair `SYNC_DELIVERY_ORDER.md`, remove TODO and prove identical state for push-first/own-ack-first/ordered delivery; direct probe must exit 0 |
 
 ## Cleared
 
 | Item | Cleared | Proof |
 | --- | --- | --- |
-| — | — | — |
+| Ordered replay under later-push-first delivery (`src/board/sync_delivery_order.test.mjs`) | 2026-10-04 | `drainOps` re-replays the whole confirmed log in relay order when an unapplied op sits below an applied one; `adoptSnapshot` unflags ops above its coverage. Probe exits 0 for push-first/own-ack-first/snapshot-tail/ordered; test is a real assertion in the wall. |

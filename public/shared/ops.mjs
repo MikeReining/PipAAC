@@ -437,6 +437,12 @@ export function adoptSnapshot(db, tables, seq = 0) {
     db.prepare(
       "UPDATE sync_op SET applied = 1 WHERE relay_seq IS NOT NULL AND relay_seq <= ?",
     ).run(seq);
+    // Ops already applied ABOVE the snapshot's coverage — a push folded
+    // them before adoption wiped their effect — replay over the adopted
+    // state on the next drain.
+    db.prepare(
+      "UPDATE sync_op SET applied = 0 WHERE relay_seq IS NOT NULL AND relay_seq > ?",
+    ).run(seq);
     saveBaseline(db, seq);
     const pending = db.prepare(
       "SELECT op_id, device_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NULL ORDER BY seq",
@@ -510,6 +516,19 @@ export function drainOps(db, confirmedOps = []) {
     logForeign.run(op.op_id, op.device_id ?? "dev_remote", op.kind,
       typeof op.args === "string" ? op.args : JSON.stringify(op.args),
       op.created_at ?? Date.now(), op.relay_seq);
+  }
+  /* Delivery order is not relay order: a live push or own-ack can fold a
+   * later op before an earlier fetch delivers its predecessors. The
+   * applied flag dedupes but does not order — an unapplied op sitting
+   * below an applied one means the applied set is out of relay order.
+   * The only convergent repair is replaying the whole confirmed log in
+   * relay order over the baseline (SYNC_DELIVERY_ORDER). */
+  const unordered = db.prepare(
+    `SELECT (SELECT MIN(relay_seq) FROM sync_op WHERE relay_seq IS NOT NULL AND applied = 0) AS lo,
+            (SELECT MAX(relay_seq) FROM sync_op WHERE applied = 1) AS hi`,
+  ).all()[0];
+  if (unordered.lo != null && unordered.hi != null && unordered.lo < unordered.hi) {
+    db.prepare("UPDATE sync_op SET applied = 0 WHERE relay_seq IS NOT NULL").run();
   }
   const pending = db.prepare(
     "SELECT op_id, device_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NULL ORDER BY seq",

@@ -21,13 +21,13 @@ ruling): flag + revoke land in one DO write, re-presented tokens get
 speaks on first tap (founder 2026-10-04).
 
 **Remaining:** J's device prototype and the ops-alerting verification
-noted under I. Sync follow-up: repair delivery-order divergence and verify
-cleanup of versioned snapshots/proof indexes; packet and deterministic
-probe: `docs/operations/debugger/SYNC_DELIVERY_ORDER.md`. The 2026-10-04
-card-rotation slice adds a durable device journal + atomic guarded relay
-replacement and removal obligations; it is implemented in the working tree, awaiting delegated verification,
-commit and deployment. Current proof and the exact file allowlist are in
-`scratch/sync-audit-2026-10-04/TAKEOVER-HANDOFF.md`.
+noted under I. Sync follow-up: verify cleanup of versioned
+snapshots/proof indexes (the `destroy()` retention gap in
+`docs/product/Sync_And_Web_Editing.md`). The 2026-10-04 card-rotation
+slice (durable device journal + atomic guarded relay replacement +
+removal obligations) and the delivery-order repair (whole-log ordered
+re-replay on a detected violation; probe
+`scripts/probes/sync_delivery_order.mjs`) are committed and deployed.
 
 **Verdict on the stack:** keep it. Plain JS, SQLite WASM, Workers +
 Durable Objects + R2, and the meanings/labels/voices separation are all

@@ -206,3 +206,13 @@ Limits: older clients retain the split protocol until updated; competing card re
 ## 2026-10-04 ordered-replay-follow-up
 Tier: T3. Truth owner: relay-ordered confirmed state. Per-op dedupe leaves delivery-order divergence after the prior watermark repair: later rename seq 4 folds into the advancing baseline, earlier rename seq 3 later applies, seq 4 is skipped as already applied. Ordered delivery ends at Newer; push-first/catch-up ends at Older.
 Proof: node --test src/board/sync_delivery_order.test.mjs — the real-owner assertion fails as an explicit TODO, quarantined to 2026-10-07 with an owner; the direct node scripts/probes/sync_delivery_order.mjs command exits 1 and prints the diverged persisted names. Repair packet: docs/operations/debugger/SYNC_DELIVERY_ORDER.md. Missing proof: wall-reachable permutations of ordered, later-push-first and own-ack-first delivery, plus old-state repair. This is a separate slice, not discharged by rotation or doc corrections.
+
+## 2026-10-04 sync-delivery-order (P1, Codex-found)
+
+Tier: T3
+Truth owner: relay sequence order applied to the persisted confirmed board.
+Lie-prone layer: per-op `applied` flags dedupe but do not order — a live push (or own-submit ack) folded a later op into the baseline before a catch-up fetch delivered the earlier one; the later drain applied the earlier op on top, diverging the final name ("Older" vs "Newer").
+Proof: node --test src/board/sync_delivery_order.test.mjs — green after (quarantine cleared 2026-10-04); the underlying probe `node scripts/probes/sync_delivery_order.mjs` was red pre-fix (push-first/ack-first/snapshot-tail all "Older") and exits 0 after.
+Fix: (1) `drainOps` detects an unapplied op below an applied one (the only shape out-of-order delivery can leave) and unflags the whole confirmed log — the existing rebase replays it in `relay_seq` order inside the same transaction as flags+baseline, so every delivery order converges to one state. (2) `adoptSnapshot` unflags applied ops above its coverage — a push folded ahead of adoption was being wiped by the restore while staying flagged, losing its effect for good.
+Pattern candidate: an "applied" set is a set, not a sequence — any fold that can run ahead of an earlier sibling (push vs fetch, push vs snapshot) must be re-queued, not skipped.
+Residual: a device that folded a later op and never receives the earlier one (relay no longer serves it, no snapshot) stays diverged — unreceivable input cannot be repaired; the sync-audit retention gap (versioned snapshot objects and proof-index entries in `destroy()`) remains open.

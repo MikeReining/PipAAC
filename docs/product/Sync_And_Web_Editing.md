@@ -267,12 +267,15 @@ same page). When they happen, one item lands in the next free slot. That
 is the only case where a merge can put an item somewhere its adult did not
 choose, and it never moves an item that was already placed.
 
-**Outstanding ordering defect (2026-10-04).** Per-op deduplication does
-not yet prove delivery-order-independent convergence: a later WebSocket
-rename folded before an earlier catch-up rename can leave the older name.
-Reproduction and the repair boundary are in
-`docs/operations/debugger/SYNC_DELIVERY_ORDER.md`. Existing green proofs
-cover repeated and sparse delivery, not this out-of-order noncommutative case.
+**Ordered replay under any delivery order (2026-10-04, repaired).**
+Per-op `applied` flags dedupe but do not order: a live push or own-ack
+can fold a later op before an earlier fetch delivers its predecessors.
+`drainOps` detects an unapplied op below an applied one and replays the
+whole confirmed log in relay order over the baseline; `adoptSnapshot`
+unflags applied ops above its coverage so they replay over adopted
+state. `scripts/probes/sync_delivery_order.mjs` proves later-push-first,
+own-ack-first, snapshot-then-tail and ordered delivery all converge, and
+that pending edits survive the re-replay.
 
 **Snapshots.** `maybeSnapshot` waits until the fetch-verified cursor is
 at least 500 sequences beyond the previous upload and equals
