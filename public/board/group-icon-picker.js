@@ -40,7 +40,7 @@ export function mountGroupIconPicker({ db, locale, loadPhotoURL, changed, toast,
     return el;
   }
 
-  function apply(state, glyph) {
+  function apply(state, glyph, usedBy = "") {
     if (active !== state) return;
     const row = db.prepare("SELECT * FROM board_group WHERE id = ?").all(state.group.id)[0];
     if (!row) { close(); return; }
@@ -49,7 +49,7 @@ export function mountGroupIconPicker({ db, locale, loadPhotoURL, changed, toast,
     setGroupGlyph(db, row.id, glyph);
     changed();
     close();
-    toast(`New icon for ${state.name}`, () => {
+    toast(usedBy ? `${state.name} now looks like ${usedBy}` : `New icon for ${state.name}`, () => {
       if (!db.prepare("SELECT id FROM board_group WHERE id = ?").all(row.id).length) return;
       setGroupGlyph(db, row.id, before);
       changed();
@@ -77,11 +77,10 @@ export function mountGroupIconPicker({ db, locale, loadPhotoURL, changed, toast,
     }
     state.category.value = selectedCategory;
     const results = icons.filter((icon) => matches(icon, state.search.value)
-      && (!selectedCategory || icon.category === selectedCategory)
-      && (!state.unused || !uses.has(icon.name)));
+      && (!selectedCategory || icon.category === selectedCategory));
     state.results.replaceChildren();
     state.count.textContent = `${results.length} icons`;
-    if (!results.length) state.results.appendChild(node("p", "gip-empty", "No icons found. Try another search or All icons."));
+    if (!results.length) state.results.appendChild(node("p", "gip-empty", "No icons found. Try another search or category."));
     for (const category of categories) {
       const members = results.filter((icon) => icon.category === category);
       if (!members.length) continue;
@@ -92,25 +91,26 @@ export function mountGroupIconPicker({ db, locale, loadPhotoURL, changed, toast,
         const others = uses.get(icon.name) ?? [];
         const usedBy = others.map((row) => `${groupDisplayName(db, row, locale)}${row.hidden ? " (hidden)" : ""}`).join(", ");
         const current = groupIconName(state.group) === icon.name;
-        const choice = button("", () => apply(state, `icon:${icon.name}`), "gip-choice");
+        const choice = button("", () => apply(state, `icon:${icon.name}`, usedBy), "gip-choice");
         choice.dataset.icon = icon.name;
         choice.setAttribute("aria-label", `${icon.label}${current ? ", current icon" : ""}${usedBy ? `, used by ${usedBy}` : ""}`);
         choice.setAttribute("aria-pressed", String(current));
-        choice.title = usedBy ? `Used by ${usedBy}` : icon.label;
+        choice.title = usedBy ? `${icon.label} · used by ${usedBy}` : icon.label;
         const img = node("img");
         img.src = icon.svg ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(icon.svg)}` : iconUrl(icon.name);
         img.alt = "";
         img.addEventListener("error", () => { choice.disabled = true; choice.title = "Icon unavailable"; });
-        choice.append(img, node("span", "gip-label", icon.label));
+        choice.appendChild(img);
         if (current) choice.appendChild(node("span", "gip-mark", "✓"));
-        if (others.length) choice.appendChild(node("span", "gip-used", `Used by ${usedBy}`));
+        if (others.length) {
+          choice.classList.add("used");
+          choice.appendChild(node("span", "gip-dot"));
+        }
         grid.appendChild(choice);
       }
       section.appendChild(grid);
       state.results.appendChild(section);
     }
-    state.all.setAttribute("aria-pressed", String(!state.unused));
-    state.notUsed.setAttribute("aria-pressed", String(state.unused));
   }
 
   async function load(state) {
@@ -155,9 +155,9 @@ export function mountGroupIconPicker({ db, locale, loadPhotoURL, changed, toast,
       const choice = button("", () => apply(state, glyph), "gip-choice");
       choice.dataset.picture = picture.key;
       choice.setAttribute("aria-label", picture.label);
+      choice.title = picture.label;
       choice.setAttribute("aria-pressed", String(state.group.glyph === glyph));
-      choice.append(groupGlyph({ ...state.group, glyph }, { db, locale, loadPhotoURL }),
-        node("span", "gip-label", picture.label));
+      choice.append(groupGlyph({ ...state.group, glyph }, { db, locale, loadPhotoURL }));
       grid.appendChild(choice);
     }
     section.appendChild(grid);
@@ -165,6 +165,7 @@ export function mountGroupIconPicker({ db, locale, loadPhotoURL, changed, toast,
     state.count.textContent = `${pictures.length} pictures`;
     state.filters.hidden = true;
     state.status.hidden = true;
+    state.legend.hidden = true;
     state.iconsTab.setAttribute("aria-pressed", "false");
     state.picturesTab.setAttribute("aria-pressed", "true");
   }
@@ -173,7 +174,7 @@ export function mountGroupIconPicker({ db, locale, loadPhotoURL, changed, toast,
     close();
     const dialog = node("dialog", "group-icon-picker");
     const state = { group, name: groupDisplayName(db, group, locale), dialog,
-      abort: new AbortController(), unused: false };
+      abort: new AbortController() };
     active = state;
     dialog.setAttribute("aria-labelledby", "gip-title");
     const header = node("div", "gip-header");
@@ -196,13 +197,11 @@ export function mountGroupIconPicker({ db, locale, loadPhotoURL, changed, toast,
     state.category = node("select", "gip-category");
     state.category.setAttribute("aria-label", "Icon category");
     state.category.addEventListener("change", () => render(state));
-    const availability = node("div", "gip-availability");
-    state.all = button("All icons", () => { state.unused = false; render(state); });
-    state.notUsed = button("Not used", () => { state.unused = true; render(state); });
-    availability.append(state.all, state.notUsed);
+    state.legend = node("p", "gip-legend");
+    state.legend.append(node("span", "gip-dot"), node("span", "", "Used by another group"));
     state.count = node("span", "gip-count");
     state.count.setAttribute("aria-live", "polite");
-    state.filters.append(state.search, state.category, availability);
+    state.filters.append(state.search, state.category);
     state.status = node("div", "gip-status");
     state.status.setAttribute("role", "status");
     state.results = node("div", "gip-results");
@@ -213,6 +212,7 @@ export function mountGroupIconPicker({ db, locale, loadPhotoURL, changed, toast,
         state.mode = "icons";
         state.filters.hidden = false;
         state.status.hidden = false;
+        state.legend.hidden = false;
         state.iconsTab.setAttribute("aria-pressed", "true");
         state.picturesTab.setAttribute("aria-pressed", "false");
         render(state);
@@ -223,7 +223,7 @@ export function mountGroupIconPicker({ db, locale, loadPhotoURL, changed, toast,
       tabs.append(state.iconsTab, state.picturesTab);
       dialog.appendChild(tabs);
     }
-    dialog.append(state.filters, state.status, state.count, state.results);
+    dialog.append(state.filters, state.legend, state.status, state.count, state.results);
     dialog.addEventListener("cancel", (e) => { e.preventDefault(); close(); });
     dialog.addEventListener("keydown", (e) => e.stopPropagation());
     dialog.addEventListener("click", (e) => {

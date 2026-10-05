@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.9-f79239e87c2a",
-  "version": "1.1.9",
-  "payloadHash": "f79239e87c2a",
+  "buildId": "1.1.10-5e541db32a34",
+  "version": "1.1.10",
+  "payloadHash": "5e541db32a34",
   "files": [
     {
       "path": "/board.js",
@@ -100,13 +100,13 @@
     },
     {
       "path": "/board/group-icon-picker.css",
-      "bytes": 4879,
-      "sha256": "17077a208f5cce3902836f8a4453038b38b462cc0aec067c275cfeeab45cf56b"
+      "bytes": 4983,
+      "sha256": "b29da557ca26b216703a059ceef1ab2c75fc1fae96d729fdf8510866992816a0"
     },
     {
       "path": "/board/group-icon-picker.js",
-      "bytes": 11224,
-      "sha256": "63f895c6954fff6bc69decf19761bd9614c5eb0d1f9aa4394a741c7b9148811e"
+      "bytes": 11029,
+      "sha256": "efdcae76d0c0fd9ec3a047fe8594d7a82e73ba432e8b9c72c65a43fe1ae990e6"
     },
     {
       "path": "/board/group-shows.js",

@@ -56,7 +56,7 @@ function harness({ fetchLibrary = async () => ({ ok: true, json: async () => lib
   return { db, picker, requests, toasts, focused: () => focused };
 }
 
-test("open → search swim → Not used → choose: only that group's face changes, persists and undoes", async () => {
+test("open → search swim → choose an unused icon: only that group's face changes, persists and undoes", async () => {
   const h = harness();
   assert.equal(h.requests.length, 0, "the board never downloads the extra library on mount");
   setGroupGlyph(h.db, "grp_swim", "icon:vehicles");
@@ -69,14 +69,18 @@ test("open → search swim → Not used → choose: only that group's face chang
   const search = byClass("gip-search");
   search.value = "swim";
   await search.fire("input");
-  await namedButton("Not used").click();
+  assert.equal(namedButton("Not used"), undefined, "the used dot replaces the filter");
   const swimming = choice("extra_waves_ladder");
-  assert.ok(swimming, "a curated unused Swimming icon is discoverable by swim");
+  assert.ok(swimming, "a curated Swimming icon is discoverable by swim");
+  assert.ok(!swimming.classList.contains("used"), "a free icon carries no used mark");
+  assert.equal(allNodes((n) => n.classList.contains("gip-label")).length, 0, "tiles are icon-only");
+  assert.equal(swimming.title, "Swimming", "the name moves to the tooltip");
   await swimming.click();
   assert.equal(row(h.db).glyph, "icon:extra_waves_ladder");
   assert.equal(row(h.db, "grp_other").glyph, "icon:home", "the second group is untouched");
   assert.equal(byClass("group-icon-picker"), undefined, "selection closes the sheet");
   assert.equal(h.focused(), 1);
+  assert.equal(h.toasts.at(-1).text, "New icon for Swimming");
   assert.equal(images(groupGlyph(row(h.db), { db: h.db, locale: "en" }))[0].src,
     "/group-icons/extra_waves_ladder.svg");
   const replica = dbAt();
@@ -101,11 +105,13 @@ test("used means resolved defaults plus hidden groups; reusing stays explicit an
   h.picker.open(row(h.db));
   const candy = choice("treats");
   assert.match(candy.getAttribute("aria-label"), /used by Treats \(hidden\)/);
-  await namedButton("Not used").click();
-  assert.equal(choice("treats"), undefined);
-  await namedButton("All icons").click();
-  await choice("treats").click();
+  assert.ok(candy.classList.contains("used"), "a used icon is marked");
+  assert.ok(findAll(candy, (n) => n.classList.contains("gip-dot")).length === 1);
+  assert.match(candy.title, /· used by Treats \(hidden\)$/, "who uses it lives in the tooltip");
+  assert.ok(byClass("gip-legend"), "the dot is explained once");
+  await candy.click();
   assert.equal(row(h.db).glyph, "icon:treats");
+  assert.equal(h.toasts.at(-1).text, "Swimming now looks like Treats (hidden)");
   assert.equal(row(h.db, "grp_treats").glyph, null, "default owner is never swapped");
   assert.equal(groupIconName(row(h.db, "grp_treats")), "treats");
   h.db.close();

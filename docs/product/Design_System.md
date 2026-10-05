@@ -232,10 +232,13 @@ phones), never a grid inside the sidebar. Surface owner:
 `public/board/group-icon-picker.js`. One selection changes only that group;
 another group's face is always a separate action. Selection closes with Undo.
 
-- The current face previews above the library, with Use default. Icons have
-  visible labels, category browsing and plain tag search. All icons / Not used
-  filters help find a distinct face. Current icons are checked; reused icons
-  name the other groups, including hidden groups. Reuse is allowed.
+- The current face previews above the library, with Use default. Tiles are
+  icon-only squares (founder 2026-10-05: you pick by look; the group's name is
+  the only label, in the header). Category browsing and tag search find icons
+  by their hidden names. A used icon gets a grey tile and an ink dot, explained
+  once by a legend; who uses it lives in the tooltip, the spoken label, and the
+  Undo toast ("Treats now looks like Snacks"). The current icon is checked.
+  No All / Not used filter — the dot does that job. Reuse is allowed.
 - Library intent lives in `data/group-icons/curation.json`: 32 existing ink
   icons stay offline; 169 curated Lucide additions download as one library
   request when the picker opens. The additional `/group-icons/` assets are
