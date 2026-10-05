@@ -226,3 +226,76 @@ test("adoptSnapshot stamps its watermark and keeps pending edits applied", () =>
     "an op covered by the adopted watermark must not re-apply",
   );
 });
+
+test("atomic rebase: a throwing pending op rolls back flags, baseline and live replay together", () => {
+  const a = openReplica();
+  const b = openReplica();
+  createEntity(b, { id: "ent_confirmed", name: "Confirmed" });
+  const stream = relay(b, 1);
+  // One honest pending edit plus an op this build cannot apply — the
+  // future-protocol case the audit names.
+  createEntity(a, { id: "ent_pending", name: "Pending" });
+  a.prepare(
+    "INSERT INTO sync_op (op_id, device_id, kind, args, created_at, relay_seq, applied) VALUES ('op_bogus', 'd0', 'bogus_future_op', '{}', 999, NULL, 0)",
+  ).run();
+
+  assert.throws(() => drainOps(a, stream), /unknown op kind/);
+
+  // Nothing the rebase touched may be claimed: the confirmed op stays
+  // unflagged and the baseline keeps its pre-drain watermark.
+  assert.equal(
+    a.prepare("SELECT COUNT(*) AS n FROM sync_op WHERE applied = 1").all()[0].n,
+    0,
+    "a rolled-back replay left its ops flagged",
+  );
+  assert.equal(appliedSeqOf(a), 0, "baseline claims coverage of a failed replay");
+  // Live state is the restored baseline with pending edits back on
+  // top: the confirmed edit is NOT shown as applied, the family's own
+  // pending word is preserved.
+  assert.ok(
+    !a.prepare("SELECT 1 AS x FROM personal_entity WHERE id = 'ent_confirmed'").all()[0],
+    "an uncommitted replay leaked into live state",
+  );
+  assert.ok(
+    a.prepare("SELECT 1 AS x FROM personal_entity WHERE id = 'ent_pending'").all()[0],
+    "the family's pending edit was lost by the failed rebase",
+  );
+});
+
+test("atomic adoption: an unsupported pending op rolls back the flag and baseline claim", () => {
+  const a = openReplica();
+  const donor = openReplica();
+  createEntity(donor, { id: "ent_donor", name: "Donor" });
+  const snap = snapshotSynced(donor);
+
+  // A confirmed op the snapshot claims, a good pending edit, and the
+  // unsupported op.
+  a.prepare(
+    "INSERT INTO sync_op (op_id, device_id, kind, args, created_at, relay_seq, applied) VALUES ('op_ghost', 'd0', 'create_entity', ?, 1, 3, 0)",
+  ).run(JSON.stringify({ id: "ent_ghost", name: "Ghost" }));
+  createEntity(a, { id: "ent_pending", name: "Pending" });
+  a.prepare(
+    "INSERT INTO sync_op (op_id, device_id, kind, args, created_at, relay_seq, applied) VALUES ('op_bogus', 'd0', 'bogus_future_op', '{}', 999, NULL, 0)",
+  ).run();
+
+  assert.throws(() => adoptSnapshot(a, snap, 5), /unknown op kind/);
+
+  // The claimed ops stay unflagged and the watermark is not adopted —
+  // a retry or re-adoption still gets its chance.
+  assert.equal(
+    a.prepare("SELECT applied FROM sync_op WHERE relay_seq = 3").all()[0].applied,
+    0,
+    "a rolled-back adoption flagged ops it could not finish",
+  );
+  assert.equal(appliedSeqOf(a), 0, "adoption claimed its watermark despite the rollback");
+  // Live state: the adopted tables committed (restore is the first
+  // safe step) with pending edits re-applied on top.
+  assert.ok(
+    a.prepare("SELECT 1 AS x FROM personal_entity WHERE id = 'ent_donor'").all()[0],
+    "adopted state missing after the rollback",
+  );
+  assert.ok(
+    a.prepare("SELECT 1 AS x FROM personal_entity WHERE id = 'ent_pending'").all()[0],
+    "pending edits lost by the failed adoption",
+  );
+});

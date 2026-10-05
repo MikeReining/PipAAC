@@ -412,23 +412,35 @@ export function adoptSnapshot(db, tables, seq = 0) {
   restoreSynced(db, tables);
   // Everything at or below the snapshot's seq is claimed inside it —
   // flag it so a later drain doesn't re-run ops over adopted state
-  // (a swap logged before adoption would otherwise undo itself). Flags
-  // and baseline commit together or not at all.
+  // (a swap logged before adoption would otherwise undo itself). The
+  // flags, the baseline, and the pending-edit reapplication commit
+  // together (audit: non-atomic rebase): an unsupported pending op
+  // rolls the whole claim back instead of leaving adopted state marked
+  // under edits that never landed.
   db.exec("BEGIN");
   try {
     db.prepare(
       "UPDATE sync_op SET applied = 1 WHERE relay_seq IS NOT NULL AND relay_seq <= ?",
     ).run(seq);
     saveBaseline(db, seq);
+    const pending = db.prepare(
+      "SELECT op_id, device_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NULL ORDER BY seq",
+    ).all();
+    for (const op of pending) applyOp(db, op);
     db.exec("COMMIT");
   } catch (err) {
     db.exec("ROLLBACK");
+    // Adopted tables already committed; pending edits re-apply
+    // best-effort so the board still shows them, then fail loudly —
+    // the uncommitted flag/baseline claim leaves the cursor honest.
+    const pending = db.prepare(
+      "SELECT op_id, device_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NULL ORDER BY seq",
+    ).all();
+    for (const op of pending) {
+      try { applyOp(db, op); } catch { /* the next adoption retries */ }
+    }
     throw err;
   }
-  const pending = db.prepare(
-    "SELECT op_id, device_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NULL ORDER BY seq",
-  ).all();
-  for (const op of pending) applyOp(db, op);
 }
 
 /**
@@ -495,22 +507,26 @@ export function drainOps(db, confirmedOps = []) {
     "SELECT op_id, device_id, kind, args, created_at, relay_seq FROM sync_op WHERE relay_seq IS NOT NULL AND applied = 0 ORDER BY relay_seq",
   ).all();
   restoreSynced(db, baseTables);
-  // A device whose log carries no confirmed install — the 095302a3
-  // starter artifact shipped applied groups with the op deleted — still
-  // rebuilds its boards: its own recorded install runs as the device's
-  // foundation, ahead of the confirmed replay.
-  if (!unapplied.some((o) => o.kind === "seed_install")
-      && !db.prepare("SELECT 1 AS x FROM group_seed_install LIMIT 1").all()[0]) {
-    for (const op of pending) {
-      if (op.kind === "seed_install") applyOp(db, op);
-    }
-  }
-  // The replay, the per-op flags, and the baseline watermark commit
-  // together: a failing op rolls all three back and fails loudly,
+  // The replay, the per-op flags, the baseline watermark, and the
+  // pending-edit reapplication commit together (audit: non-atomic
+  // rebase): a failing op rolls all of it back and fails loudly,
   // instead of a half-applied state saved under a cursor that says it
-  // worked.
+  // worked. Order inside the transaction: the device's pending install
+  // is the foundation first, then confirmed ops, then the baseline
+  // snapshot (it must not contain pending non-seed edits), then the
+  // pending reapply that puts the live board back on top.
   db.exec("BEGIN");
   try {
+    // A device whose log carries no confirmed install — the 095302a3
+    // starter artifact shipped applied groups with the op deleted —
+    // still rebuilds its boards: its own recorded install runs as the
+    // device's foundation, ahead of the confirmed replay.
+    if (!unapplied.some((o) => o.kind === "seed_install")
+        && !db.prepare("SELECT 1 AS x FROM group_seed_install LIMIT 1").all()[0]) {
+      for (const op of pending) {
+        if (op.kind === "seed_install") applyOp(db, op);
+      }
+    }
     const flag = db.prepare("UPDATE sync_op SET applied = 1 WHERE op_id = ?");
     for (const op of unapplied.filter((o) => o.kind === "seed_install")) {
       applyOp(db, op);
@@ -522,6 +538,9 @@ export function drainOps(db, confirmedOps = []) {
       flag.run(op.op_id);
     }
     saveBaseline(db, watermarkOf(db));
+    for (const op of pending) {
+      if (op.kind !== "seed_install") applyOp(db, op);
+    }
     db.exec("COMMIT");
   } catch (err) {
     db.exec("ROLLBACK");
@@ -532,7 +551,6 @@ export function drainOps(db, confirmedOps = []) {
     }
     throw err;
   }
-  for (const op of pending) applyOp(db, op);
 }
 
 /**
