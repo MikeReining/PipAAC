@@ -340,15 +340,47 @@ export function renameGroup(db, groupId, name) {
   recordOp(db, "rename_group", { groupId, name: clean });
 }
 
-/** A group's face from our ink icon set (031 § 7): `icon:<name>` names
- *  /icons/groups/<name>.svg; null goes back to the default face. */
+/** A fixed picture key, never an arbitrary URL or traversable path. */
+export function isGroupPictureKey(key) {
+  return typeof key === "string" && (
+    /^blob:[a-f0-9]{64}$/.test(key)
+    || /^symbols\/[a-zA-Z0-9_-]+\.(?:png|webp|svg|jpe?g)$/.test(key)
+    || /^\/?api\/v1\/pictures\/img\/[a-zA-Z0-9_-]+$/.test(key)
+  );
+}
+
+/** Pictured members from every page; choosing pins the asset, not the word. */
+export function groupPictureChoices(db, groupId, locale) {
+  requireLocale(locale);
+  const rows = all(db,
+    `SELECT COALESCE(l.text, e.spoken_name) AS label, e.photo_key,
+            ${SENSE_ART_SQL} AS art
+     FROM group_membership gm
+     LEFT JOIN sense s ON gm.item_kind = 'sense' AND s.id = gm.item_id
+     LEFT JOIN label l ON l.sense_id = s.id AND l.kind = 'lemma'
+       AND l.status = 'approved' AND l.locale = ?
+     LEFT JOIN personal_entity e ON gm.item_kind = 'entity' AND e.id = gm.item_id
+     WHERE gm.group_id = ? AND (gm.item_kind = 'sense' OR e.status = 'active')
+     ORDER BY gm.added_at, gm.item_id`, [locale, groupId]);
+  const seen = new Set();
+  return rows.flatMap((r) => {
+    const key = r.photo_key ?? r.art;
+    if (!r.label || !isGroupPictureKey(key) || seen.has(key)) return [];
+    seen.add(key);
+    return [{ key, label: r.label }];
+  });
+}
+
+/** `icon:<name>` or a pinned `picture:<key>`; null restores the default. */
 export function setGroupGlyph(db, groupId, glyph) {
-  if (glyph != null && !/^icon:[a-z0-9_]+$/.test(glyph)) {
+  const picture = typeof glyph === "string" && glyph.startsWith("picture:");
+  if (glyph != null && !/^icon:[a-z0-9_]+$/.test(glyph)
+      && !(picture && isGroupPictureKey(glyph.slice(8)))) {
     throw new Error(`setGroupGlyph: bad glyph ${glyph}`);
   }
-  if (!one(db, "SELECT 1 AS x FROM board_group WHERE id = ?", [groupId])) {
-    throw new Error(`no group ${groupId}`);
-  }
+  const row = one(db, "SELECT kind FROM board_group WHERE id = ?", [groupId]);
+  if (!row) throw new Error(`no group ${groupId}`);
+  if (picture && row.kind !== "custom") throw new Error("group pictures are for custom groups");
   db.prepare("UPDATE board_group SET glyph = ? WHERE id = ?").run(glyph, groupId);
   recordOp(db, "set_group_glyph", { groupId, glyph });
 }
@@ -376,7 +408,7 @@ export function deleteGroupUndoable(db, groupId) {
       done = true;
       const slotFree = !one(db, "SELECT 1 AS x FROM board_group WHERE index_slot = ?", [g.index_slot]);
       createGroup(db, { id: g.id, name: g.name, photoKey: g.photo_key, indexSlot: slotFree ? g.index_slot : null });
-      if (g.glyph?.startsWith("icon:")) setGroupGlyph(db, g.id, g.glyph);
+      if (g.glyph?.startsWith("icon:") || g.glyph?.startsWith("picture:")) setGroupGlyph(db, g.id, g.glyph);
       if (g.hidden) setGroupHidden(db, g.id, true);
       for (const m of members) {
         const cell = m.page == null ? null : { page: m.page, slot_index: m.slot_index };

@@ -64,6 +64,7 @@ const PRECACHE_DIRS = [
  *  the board appears — sw-audio.json below is the map. */
 const EXCLUDE_DIRS = new Set([
   "audio",
+  "group-icons", // 2026-10-05: online picker library, fetched only when opened.
 ]);
 /** Named exclusions — SW machinery. */
 const EXCLUDE_FILES = new Set([

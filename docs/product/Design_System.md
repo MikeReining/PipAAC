@@ -224,6 +224,42 @@ of every word the learner sees: tile labels, strip cards, sentence words,
 keycaps, anchors. Parent Corner sheets stay on the system font — adult
 chrome.
 
+## Choosing a group's icon
+
+**Shipped 2026-10-05.** Settings →
+Edit the board → group → Change icon opens a contained dialog (full screen on
+phones), never a grid inside the sidebar. Surface owner:
+`public/board/group-icon-picker.js`. One selection changes only that group;
+another group's face is always a separate action. Selection closes with Undo.
+
+- The current face previews above the library, with Use default. Icons have
+  visible labels, category browsing and plain tag search. All icons / Not used
+  filters help find a distinct face. Current icons are checked; reused icons
+  name the other groups, including hidden groups. Reuse is allowed.
+- Library intent lives in `data/group-icons/curation.json`: 32 existing ink
+  icons stay offline; 169 curated Lucide additions download as one library
+  request when the picker opens. The additional `/group-icons/` assets are
+  excluded from the service-worker precache (founder: online v1). A download
+  failure leaves existing icons usable and offers Try again. No generation.
+- `scripts/group-icons/build.mjs` generates the base metadata, extended bundle,
+  stable SVG files and licence copy from the curated manifest and pinned
+  `assets/group-icons/` sources. `--check` detects drift in check:fast.
+- Saved `icon:<name>` faces resolve directly without fetching the library;
+  `extra_` names resolve in `/group-icons/`. A missing image shows the group's
+  initial rather than a broken image. Once a door shows an extra, the service
+  worker keeps it in the runtime image cache (`pip-img-v1`), so a chosen face
+  survives offline; the picker library itself stays online-only.
+- Only custom groups have Group pictures. Choosing one pins its current asset
+  as `picture:<key>` in `board_group.glyph`, not a link to the source word.
+  Rearranging, replacing or removing that word cannot change the chosen face.
+  The existing first-word fallback still applies to unconfigured custom groups.
+  `groups.mjs` validates supported asset paths/blob keys and custom-group scope;
+  existing `set_group_glyph` ops sync selections. `sync.mjs` reconciles pinned
+  photo blobs even after their source word changes.
+- `group-glyph.js` remains the effective-face owner for doors, editor rows,
+  add-sheet rows and word-card group chips. Used-state resolves through that
+  same owner, including built-in defaults. Group order never changes.
+
 ## Adult-facing copy
 
 **DECIDED 2026-09-24** (018 D10, moved here at closeout). Edit-mode
@@ -244,7 +280,7 @@ keeps its id and its owner module's wiring — Settings owns navigation only.
   communicators. It is "Settings" with the Settings PIN, never "Parent
   corner". Copy names the person (their name, else "this person"),
   never a role ("your child"). Edit-mode chrome keeps its own no-name
-  rule above; this amendment is Settings only.
+rule above; this amendment is Settings only.
 - **Layout.** Full screen. Header: the person (tap to switch), search,
   Done. A section list beside one page; under 760px the list, then the
   page with Back. Pages: Overview · Words · Spotlight · Board · Talking ·

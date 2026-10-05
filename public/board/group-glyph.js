@@ -57,15 +57,20 @@ export const GROUP_ICONS = {
 };
 
 
-/** Our ink icon set — what a family may pick for a group's face (031 § 7).
- *  Mirrors public/icons/groups/*.svg. */
-export const ICON_SET = [
-  "people", "my_words", "social", "home", "things", "school", "places", "vehicles",
-  "animals", "outside", "weather", "body", "bathroom", "clothes", "feelings",
-  "play", "screens", "art_music", "numbers", "time", "food", "breakfast", "lunch",
-  "snack", "treats", "fruit", "drinks", "describing", "shapes", "actions", "moving",
-];
-export const iconUrl = (name) => `/icons/groups/${name}.svg`;
+/** Stable asset URLs resolve saved choices without loading the picker library. */
+export const iconUrl = (name) => name.startsWith("extra_")
+  ? `/group-icons/${name}.svg` : `/icons/groups/${name}.svg`;
+
+function groupIconUrl(row) {
+  if (row.glyph?.startsWith("picture:")) return null;
+  if (row.glyph?.startsWith("icon:")) return iconUrl(row.glyph.slice(5));
+  return GROUP_ICONS[row.id] ?? null;
+}
+
+/** The effective ink icon, including built-in defaults, for picker usage. */
+export function groupIconName(row) {
+  return groupIconUrl(row)?.split("/").at(-1).replace(".svg", "") ?? null;
+}
 
 /** The face's first-word fallback: slot order on page 1. */
 function firstPicture(db, groupId, locale) {
@@ -80,16 +85,29 @@ function firstPicture(db, groupId, locale) {
 export function groupGlyph(row, { db, locale, loadPhotoURL }) {
   const g = document.createElement("span");
   g.className = "glyph";
-  // A family's pick from our set wins; else the seed group's own icon.
-  const picked = row.glyph?.startsWith("icon:") ? iconUrl(row.glyph.slice(5)) : null;
-  const icon = picked ?? GROUP_ICONS[row.id];
+  const icon = groupIconUrl(row);
   const img = (src, cls = "") => {
     const i = document.createElement("img");
     if (cls) i.className = cls;
     i.src = src;
     i.alt = "";
+    i.addEventListener("error", () => {
+      g.replaceChildren();
+      g.textContent = row.name?.trim()[0]?.toUpperCase() ?? "•";
+      g.title = "Picture unavailable. Connect to the internet to load it.";
+    });
     return i;
   };
+  const photo = (key) => loadPhotoURL(key).then((url) => {
+    if (url) g.replaceChildren(img(url));
+  }).catch(() => { g.title = "Picture unavailable"; });
+  const pinned = row.glyph?.startsWith("picture:") ? row.glyph.slice(8) : null;
+  if (pinned) {
+    g.textContent = row.name?.trim()[0]?.toUpperCase() ?? "•";
+    if (pinned.startsWith("blob:")) photo(pinned);
+    else g.replaceChildren(img(pinned.startsWith("/") ? pinned : `/${pinned}`));
+    return g;
+  }
   if (icon) {
     g.appendChild(img(icon, "gicon"));
     return g;
@@ -102,7 +120,7 @@ export function groupGlyph(row, { db, locale, loadPhotoURL }) {
   const blobKey = row.photo_key ?? first?.photo_key
     ?? (first?.art?.startsWith("blob:") ? first.art : null);
   if (blobKey) {
-    loadPhotoURL(blobKey).then((url) => { if (url) g.replaceChildren(img(url)); });
+    photo(blobKey);
   } else if (first?.art) {
     g.replaceChildren(img(`/${first.art}`)); // our art: a static symbol
   }

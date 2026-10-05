@@ -1,0 +1,1531 @@
+{
+  "version": 1,
+  "upstream": "lucide-static@1.52.0",
+  "base": [
+    {
+      "name": "people",
+      "label": "People",
+      "category": "People & family",
+      "tags": []
+    },
+    {
+      "name": "my_words",
+      "label": "My words",
+      "category": "People & family",
+      "tags": []
+    },
+    {
+      "name": "home",
+      "label": "Home",
+      "category": "Places",
+      "tags": []
+    },
+    {
+      "name": "school",
+      "label": "School",
+      "category": "Places",
+      "tags": []
+    },
+    {
+      "name": "places",
+      "label": "Places",
+      "category": "Places",
+      "tags": [
+        "out",
+        "outside",
+        "going out",
+        "visit"
+      ]
+    },
+    {
+      "name": "food",
+      "label": "Meal",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "breakfast",
+      "label": "Breakfast",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "lunch",
+      "label": "Lunch",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "snack",
+      "label": "Snack",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "treats",
+      "label": "Treats",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "fruit",
+      "label": "Fruit",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "drinks",
+      "label": "Drink",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "play",
+      "label": "Ball",
+      "category": "Play & sport",
+      "tags": []
+    },
+    {
+      "name": "moving",
+      "label": "Running",
+      "category": "Play & sport",
+      "tags": []
+    },
+    {
+      "name": "animals",
+      "label": "Animals",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "outside",
+      "label": "Tree",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "weather",
+      "label": "Weather",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "vehicles",
+      "label": "Car",
+      "category": "Travel",
+      "tags": [
+        "car",
+        "driving"
+      ]
+    },
+    {
+      "name": "body",
+      "label": "Body",
+      "category": "Body & care",
+      "tags": []
+    },
+    {
+      "name": "bathroom",
+      "label": "Bathroom",
+      "category": "Body & care",
+      "tags": []
+    },
+    {
+      "name": "clothes",
+      "label": "Clothes",
+      "category": "Body & care",
+      "tags": []
+    },
+    {
+      "name": "actions",
+      "label": "Touch",
+      "category": "Body & care",
+      "tags": []
+    },
+    {
+      "name": "feelings",
+      "label": "Heart",
+      "category": "Feelings & communication",
+      "tags": []
+    },
+    {
+      "name": "social",
+      "label": "Conversation",
+      "category": "Feelings & communication",
+      "tags": []
+    },
+    {
+      "name": "little_words",
+      "label": "Joining words",
+      "category": "Feelings & communication",
+      "tags": []
+    },
+    {
+      "name": "art_music",
+      "label": "Art",
+      "category": "Music & art",
+      "tags": [
+        "paint",
+        "painting",
+        "draw",
+        "drawing"
+      ]
+    },
+    {
+      "name": "describing",
+      "label": "Colours",
+      "category": "Music & art",
+      "tags": []
+    },
+    {
+      "name": "things",
+      "label": "Things",
+      "category": "Home things",
+      "tags": []
+    },
+    {
+      "name": "screens",
+      "label": "Screen",
+      "category": "Home things",
+      "tags": []
+    },
+    {
+      "name": "numbers",
+      "label": "Numbers",
+      "category": "Time & learning",
+      "tags": []
+    },
+    {
+      "name": "time",
+      "label": "Time",
+      "category": "Time & learning",
+      "tags": []
+    },
+    {
+      "name": "shapes",
+      "label": "Shapes",
+      "category": "Time & learning",
+      "tags": []
+    }
+  ],
+  "extra": [
+    {
+      "name": "extra_baby",
+      "source": "baby",
+      "label": "Baby",
+      "category": "People & family",
+      "tags": [
+        "family",
+        "sibling"
+      ]
+    },
+    {
+      "name": "extra_bone",
+      "source": "bone",
+      "label": "Bone",
+      "category": "Animals & nature",
+      "tags": [
+        "dog",
+        "pet"
+      ]
+    },
+    {
+      "name": "extra_hand_heart",
+      "source": "hand-heart",
+      "label": "Caring",
+      "category": "People & family",
+      "tags": []
+    },
+    {
+      "name": "extra_handshake",
+      "source": "handshake",
+      "label": "Handshake",
+      "category": "People & family",
+      "tags": []
+    },
+    {
+      "name": "extra_chef_hat",
+      "source": "chef-hat",
+      "label": "Chef",
+      "category": "People & family",
+      "tags": [
+        "cook",
+        "cooking",
+        "kitchen"
+      ]
+    },
+    {
+      "name": "extra_contact_round",
+      "source": "contact-round",
+      "label": "Person card",
+      "category": "People & family",
+      "tags": []
+    },
+    {
+      "name": "extra_shopping_basket",
+      "source": "shopping-basket",
+      "label": "Shopping basket",
+      "category": "Home things",
+      "tags": [
+        "shop",
+        "shopping",
+        "store"
+      ]
+    },
+    {
+      "name": "extra_user_round",
+      "source": "user-round",
+      "label": "One person",
+      "category": "People & family",
+      "tags": []
+    },
+    {
+      "name": "extra_footprints",
+      "source": "footprints",
+      "label": "Footprints",
+      "category": "People & family",
+      "tags": []
+    },
+    {
+      "name": "extra_building",
+      "source": "building",
+      "label": "Building",
+      "category": "Places",
+      "tags": []
+    },
+    {
+      "name": "extra_hospital",
+      "source": "hospital",
+      "label": "Hospital",
+      "category": "Places",
+      "tags": []
+    },
+    {
+      "name": "extra_store",
+      "source": "store",
+      "label": "Shop",
+      "category": "Places",
+      "tags": []
+    },
+    {
+      "name": "extra_church",
+      "source": "church",
+      "label": "Church",
+      "category": "Places",
+      "tags": []
+    },
+    {
+      "name": "extra_school",
+      "source": "school",
+      "label": "School",
+      "category": "Places",
+      "tags": []
+    },
+    {
+      "name": "extra_tent",
+      "source": "tent",
+      "label": "Camping",
+      "category": "Places",
+      "tags": [
+        "camp",
+        "camping",
+        "holiday"
+      ]
+    },
+    {
+      "name": "extra_castle",
+      "source": "castle",
+      "label": "Castle",
+      "category": "Places",
+      "tags": []
+    },
+    {
+      "name": "extra_warehouse",
+      "source": "warehouse",
+      "label": "Warehouse",
+      "category": "Places",
+      "tags": []
+    },
+    {
+      "name": "extra_fence",
+      "source": "fence",
+      "label": "Fence",
+      "category": "Places",
+      "tags": []
+    },
+    {
+      "name": "extra_map",
+      "source": "map",
+      "label": "Map",
+      "category": "Places",
+      "tags": []
+    },
+    {
+      "name": "extra_door_open",
+      "source": "door-open",
+      "label": "Door",
+      "category": "Places",
+      "tags": []
+    },
+    {
+      "name": "extra_cake",
+      "source": "cake",
+      "label": "Birthday cake",
+      "category": "Food & drink",
+      "tags": [
+        "birthday",
+        "party",
+        "treats",
+        "celebration"
+      ]
+    },
+    {
+      "name": "extra_cake_slice",
+      "source": "cake-slice",
+      "label": "Cake slice",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_ice_cream_cone",
+      "source": "ice-cream-cone",
+      "label": "Ice cream",
+      "category": "Food & drink",
+      "tags": [
+        "treats",
+        "dessert"
+      ]
+    },
+    {
+      "name": "extra_cookie",
+      "source": "cookie",
+      "label": "Cookie",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_donut",
+      "source": "donut",
+      "label": "Doughnut",
+      "category": "Food & drink",
+      "tags": [
+        "donut",
+        "sweet",
+        "treats"
+      ]
+    },
+    {
+      "name": "extra_lollipop",
+      "source": "lollipop",
+      "label": "Lollipop",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_pizza",
+      "source": "pizza",
+      "label": "Pizza",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_sandwich",
+      "source": "sandwich",
+      "label": "Sandwich",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_hamburger",
+      "source": "hamburger",
+      "label": "Burger",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_soup",
+      "source": "soup",
+      "label": "Soup",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_salad",
+      "source": "salad",
+      "label": "Salad",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_carrot",
+      "source": "carrot",
+      "label": "Carrot",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_cherry",
+      "source": "cherry",
+      "label": "Cherries",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_banana",
+      "source": "banana",
+      "label": "Banana",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_grape",
+      "source": "grape",
+      "label": "Grapes",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_citrus",
+      "source": "citrus",
+      "label": "Citrus",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_dessert",
+      "source": "dessert",
+      "label": "Dessert",
+      "category": "Food & drink",
+      "tags": [
+        "sweet",
+        "treats"
+      ]
+    },
+    {
+      "name": "extra_egg",
+      "source": "egg",
+      "label": "Egg",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_fish",
+      "source": "fish",
+      "label": "Fish food",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_beef",
+      "source": "beef",
+      "label": "Meat",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_drumstick",
+      "source": "drumstick",
+      "label": "Chicken",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_croissant",
+      "source": "croissant",
+      "label": "Croissant",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_popcorn",
+      "source": "popcorn",
+      "label": "Popcorn",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_coffee",
+      "source": "coffee",
+      "label": "Hot drink",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_milk",
+      "source": "milk",
+      "label": "Milk",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_glass_water",
+      "source": "glass-water",
+      "label": "Glass of water",
+      "category": "Food & drink",
+      "tags": [
+        "drink",
+        "water"
+      ]
+    },
+    {
+      "name": "extra_cooking_pot",
+      "source": "cooking-pot",
+      "label": "Cooking pot",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_utensils_crossed",
+      "source": "utensils-crossed",
+      "label": "Tableware",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_wheat",
+      "source": "wheat",
+      "label": "Wheat",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_bean",
+      "source": "bean",
+      "label": "Beans",
+      "category": "Food & drink",
+      "tags": []
+    },
+    {
+      "name": "extra_puzzle",
+      "source": "puzzle",
+      "label": "Puzzle",
+      "category": "Play & sport",
+      "tags": [
+        "jigsaw",
+        "toys"
+      ]
+    },
+    {
+      "name": "extra_blocks",
+      "source": "blocks",
+      "label": "Blocks",
+      "category": "Play & sport",
+      "tags": []
+    },
+    {
+      "name": "extra_toy_brick",
+      "source": "toy-brick",
+      "label": "Building brick",
+      "category": "Play & sport",
+      "tags": []
+    },
+    {
+      "name": "extra_gamepad_2",
+      "source": "gamepad-2",
+      "label": "Games",
+      "category": "Play & sport",
+      "tags": []
+    },
+    {
+      "name": "extra_dices",
+      "source": "dices",
+      "label": "Dice",
+      "category": "Play & sport",
+      "tags": []
+    },
+    {
+      "name": "extra_balloon",
+      "source": "balloon",
+      "label": "Balloon",
+      "category": "Play & sport",
+      "tags": [
+        "party",
+        "birthday"
+      ]
+    },
+    {
+      "name": "extra_bubbles",
+      "source": "bubbles",
+      "label": "Bubbles",
+      "category": "Play & sport",
+      "tags": []
+    },
+    {
+      "name": "extra_bike",
+      "source": "bike",
+      "label": "Bicycle",
+      "category": "Play & sport",
+      "tags": [
+        "cycling",
+        "biking"
+      ]
+    },
+    {
+      "name": "extra_volleyball",
+      "source": "volleyball",
+      "label": "Volleyball",
+      "category": "Play & sport",
+      "tags": []
+    },
+    {
+      "name": "extra_goal",
+      "source": "goal",
+      "label": "Goal",
+      "category": "Play & sport",
+      "tags": []
+    },
+    {
+      "name": "extra_trophy",
+      "source": "trophy",
+      "label": "Trophy",
+      "category": "Play & sport",
+      "tags": []
+    },
+    {
+      "name": "extra_medal",
+      "source": "medal",
+      "label": "Medal",
+      "category": "Play & sport",
+      "tags": []
+    },
+    {
+      "name": "extra_dumbbell",
+      "source": "dumbbell",
+      "label": "Weights",
+      "category": "Play & sport",
+      "tags": [
+        "gym",
+        "exercise"
+      ]
+    },
+    {
+      "name": "extra_waves_ladder",
+      "source": "waves-ladder",
+      "label": "Swimming",
+      "category": "Play & sport",
+      "tags": [
+        "swim",
+        "swimming",
+        "pool",
+        "water",
+        "lesson"
+      ]
+    },
+    {
+      "name": "extra_roller_coaster",
+      "source": "roller-coaster",
+      "label": "Fairground",
+      "category": "Play & sport",
+      "tags": []
+    },
+    {
+      "name": "extra_ferris_wheel",
+      "source": "ferris-wheel",
+      "label": "Ferris wheel",
+      "category": "Play & sport",
+      "tags": []
+    },
+    {
+      "name": "extra_dog",
+      "source": "dog",
+      "label": "Dog",
+      "category": "Animals & nature",
+      "tags": [
+        "pet",
+        "puppy"
+      ]
+    },
+    {
+      "name": "extra_cat",
+      "source": "cat",
+      "label": "Cat",
+      "category": "Animals & nature",
+      "tags": [
+        "pet",
+        "kitten"
+      ]
+    },
+    {
+      "name": "extra_rabbit",
+      "source": "rabbit",
+      "label": "Rabbit",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_bird",
+      "source": "bird",
+      "label": "Bird",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_turtle",
+      "source": "turtle",
+      "label": "Turtle",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_snail",
+      "source": "snail",
+      "label": "Snail",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_squirrel",
+      "source": "squirrel",
+      "label": "Squirrel",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_bug",
+      "source": "bug",
+      "label": "Bug",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_rat",
+      "source": "rat",
+      "label": "Mouse",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_worm",
+      "source": "worm",
+      "label": "Worm",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_shell",
+      "source": "shell",
+      "label": "Shell",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_flower",
+      "source": "flower",
+      "label": "Flower",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_flower_2",
+      "source": "flower-2",
+      "label": "Flower petals",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_leaf",
+      "source": "leaf",
+      "label": "Leaf",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_sprout",
+      "source": "sprout",
+      "label": "Seedling",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_trees",
+      "source": "trees",
+      "label": "Trees",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_tree_palm",
+      "source": "tree-palm",
+      "label": "Palm tree",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_mountain",
+      "source": "mountain",
+      "label": "Mountain",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_mountain_snow",
+      "source": "mountain-snow",
+      "label": "Snowy mountain",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_waves",
+      "source": "waves",
+      "label": "Water",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_flame",
+      "source": "flame",
+      "label": "Fire",
+      "category": "Animals & nature",
+      "tags": []
+    },
+    {
+      "name": "extra_sun",
+      "source": "sun",
+      "label": "Sun",
+      "category": "Weather & sky",
+      "tags": []
+    },
+    {
+      "name": "extra_moon",
+      "source": "moon",
+      "label": "Moon",
+      "category": "Weather & sky",
+      "tags": []
+    },
+    {
+      "name": "extra_cloud",
+      "source": "cloud",
+      "label": "Cloud",
+      "category": "Weather & sky",
+      "tags": []
+    },
+    {
+      "name": "extra_cloud_rain",
+      "source": "cloud-rain",
+      "label": "Rain",
+      "category": "Weather & sky",
+      "tags": []
+    },
+    {
+      "name": "extra_cloud_snow",
+      "source": "cloud-snow",
+      "label": "Snow",
+      "category": "Weather & sky",
+      "tags": []
+    },
+    {
+      "name": "extra_cloud_lightning",
+      "source": "cloud-lightning",
+      "label": "Storm",
+      "category": "Weather & sky",
+      "tags": []
+    },
+    {
+      "name": "extra_rainbow",
+      "source": "rainbow",
+      "label": "Rainbow",
+      "category": "Weather & sky",
+      "tags": []
+    },
+    {
+      "name": "extra_snowflake",
+      "source": "snowflake",
+      "label": "Snowflake",
+      "category": "Weather & sky",
+      "tags": []
+    },
+    {
+      "name": "extra_wind",
+      "source": "wind",
+      "label": "Wind",
+      "category": "Weather & sky",
+      "tags": []
+    },
+    {
+      "name": "extra_umbrella",
+      "source": "umbrella",
+      "label": "Umbrella",
+      "category": "Weather & sky",
+      "tags": []
+    },
+    {
+      "name": "extra_tornado",
+      "source": "tornado",
+      "label": "Tornado",
+      "category": "Weather & sky",
+      "tags": [
+        "storm",
+        "weather"
+      ]
+    },
+    {
+      "name": "extra_sunrise",
+      "source": "sunrise",
+      "label": "Sunrise",
+      "category": "Weather & sky",
+      "tags": []
+    },
+    {
+      "name": "extra_sunset",
+      "source": "sunset",
+      "label": "Sunset",
+      "category": "Weather & sky",
+      "tags": []
+    },
+    {
+      "name": "extra_bus",
+      "source": "bus",
+      "label": "Bus",
+      "category": "Travel",
+      "tags": [
+        "school bus",
+        "travel",
+        "transport"
+      ]
+    },
+    {
+      "name": "extra_train_front",
+      "source": "train-front",
+      "label": "Train",
+      "category": "Travel",
+      "tags": [
+        "trains",
+        "transport",
+        "travel"
+      ]
+    },
+    {
+      "name": "extra_plane",
+      "source": "plane",
+      "label": "Plane",
+      "category": "Travel",
+      "tags": []
+    },
+    {
+      "name": "extra_sailboat",
+      "source": "sailboat",
+      "label": "Sailboat",
+      "category": "Travel",
+      "tags": [
+        "boat",
+        "water"
+      ]
+    },
+    {
+      "name": "extra_ship",
+      "source": "ship",
+      "label": "Ship",
+      "category": "Travel",
+      "tags": []
+    },
+    {
+      "name": "extra_truck",
+      "source": "truck",
+      "label": "Truck",
+      "category": "Travel",
+      "tags": []
+    },
+    {
+      "name": "extra_tractor",
+      "source": "tractor",
+      "label": "Tractor",
+      "category": "Travel",
+      "tags": []
+    },
+    {
+      "name": "extra_ambulance",
+      "source": "ambulance",
+      "label": "Ambulance",
+      "category": "Travel",
+      "tags": []
+    },
+    {
+      "name": "extra_rocket",
+      "source": "rocket",
+      "label": "Rocket",
+      "category": "Travel",
+      "tags": []
+    },
+    {
+      "name": "extra_tram_front",
+      "source": "tram-front",
+      "label": "Tram",
+      "category": "Travel",
+      "tags": [
+        "transport",
+        "travel"
+      ]
+    },
+    {
+      "name": "extra_hand_helping",
+      "source": "hand-helping",
+      "label": "Helping",
+      "category": "Body & care",
+      "tags": [
+        "help",
+        "care"
+      ]
+    },
+    {
+      "name": "extra_ear",
+      "source": "ear",
+      "label": "Ear",
+      "category": "Body & care",
+      "tags": []
+    },
+    {
+      "name": "extra_eye",
+      "source": "eye",
+      "label": "Eye",
+      "category": "Body & care",
+      "tags": []
+    },
+    {
+      "name": "extra_glasses",
+      "source": "glasses",
+      "label": "Glasses",
+      "category": "Body & care",
+      "tags": []
+    },
+    {
+      "name": "extra_heart_pulse",
+      "source": "heart-pulse",
+      "label": "Heartbeat",
+      "category": "Body & care",
+      "tags": []
+    },
+    {
+      "name": "extra_stethoscope",
+      "source": "stethoscope",
+      "label": "Doctor",
+      "category": "Body & care",
+      "tags": [
+        "health",
+        "doctor",
+        "nurse",
+        "appointment"
+      ]
+    },
+    {
+      "name": "extra_pill",
+      "source": "pill",
+      "label": "Medicine",
+      "category": "Body & care",
+      "tags": []
+    },
+    {
+      "name": "extra_bandage",
+      "source": "bandage",
+      "label": "Bandage",
+      "category": "Body & care",
+      "tags": []
+    },
+    {
+      "name": "extra_bath",
+      "source": "bath",
+      "label": "Bath",
+      "category": "Body & care",
+      "tags": [
+        "bathing",
+        "wash",
+        "washing"
+      ]
+    },
+    {
+      "name": "extra_shower_head",
+      "source": "shower-head",
+      "label": "Shower",
+      "category": "Body & care",
+      "tags": [
+        "wash",
+        "washing",
+        "bathroom"
+      ]
+    },
+    {
+      "name": "extra_toilet",
+      "source": "toilet",
+      "label": "Toilet",
+      "category": "Body & care",
+      "tags": []
+    },
+    {
+      "name": "extra_soap_dispenser_droplet",
+      "source": "soap-dispenser-droplet",
+      "label": "Soap",
+      "category": "Body & care",
+      "tags": [
+        "wash",
+        "washing",
+        "hands",
+        "clean"
+      ]
+    },
+    {
+      "name": "extra_brush_cleaning",
+      "source": "brush-cleaning",
+      "label": "Cleaning brush",
+      "category": "Body & care",
+      "tags": []
+    },
+    {
+      "name": "extra_scissors",
+      "source": "scissors",
+      "label": "Scissors",
+      "category": "Body & care",
+      "tags": []
+    },
+    {
+      "name": "extra_crown",
+      "source": "crown",
+      "label": "Crown",
+      "category": "Holidays & occasions",
+      "tags": [
+        "royal",
+        "dress up"
+      ]
+    },
+    {
+      "name": "extra_smile",
+      "source": "smile",
+      "label": "Happy",
+      "category": "Feelings & communication",
+      "tags": [
+        "feelings",
+        "happy",
+        "happiness"
+      ]
+    },
+    {
+      "name": "extra_frown",
+      "source": "frown",
+      "label": "Sad",
+      "category": "Feelings & communication",
+      "tags": [
+        "feelings",
+        "sad",
+        "sadness"
+      ]
+    },
+    {
+      "name": "extra_angry",
+      "source": "angry",
+      "label": "Angry",
+      "category": "Feelings & communication",
+      "tags": []
+    },
+    {
+      "name": "extra_laugh",
+      "source": "laugh",
+      "label": "Laughing",
+      "category": "Feelings & communication",
+      "tags": []
+    },
+    {
+      "name": "extra_meh",
+      "source": "meh",
+      "label": "Neutral",
+      "category": "Feelings & communication",
+      "tags": []
+    },
+    {
+      "name": "extra_thumbs_up",
+      "source": "thumbs-up",
+      "label": "Yes",
+      "category": "Feelings & communication",
+      "tags": []
+    },
+    {
+      "name": "extra_thumbs_down",
+      "source": "thumbs-down",
+      "label": "No",
+      "category": "Feelings & communication",
+      "tags": []
+    },
+    {
+      "name": "extra_message_circle",
+      "source": "message-circle",
+      "label": "Message",
+      "category": "Feelings & communication",
+      "tags": []
+    },
+    {
+      "name": "extra_megaphone",
+      "source": "megaphone",
+      "label": "Megaphone",
+      "category": "Feelings & communication",
+      "tags": [
+        "talk",
+        "loud",
+        "sound"
+      ]
+    },
+    {
+      "name": "extra_volume_2",
+      "source": "volume-2",
+      "label": "Sound",
+      "category": "Feelings & communication",
+      "tags": []
+    },
+    {
+      "name": "extra_music",
+      "source": "music",
+      "label": "Music",
+      "category": "Music & art",
+      "tags": []
+    },
+    {
+      "name": "extra_guitar",
+      "source": "guitar",
+      "label": "Guitar",
+      "category": "Music & art",
+      "tags": []
+    },
+    {
+      "name": "extra_drum",
+      "source": "drum",
+      "label": "Drum",
+      "category": "Music & art",
+      "tags": []
+    },
+    {
+      "name": "extra_piano",
+      "source": "piano",
+      "label": "Piano",
+      "category": "Music & art",
+      "tags": []
+    },
+    {
+      "name": "extra_headphones",
+      "source": "headphones",
+      "label": "Headphones",
+      "category": "Music & art",
+      "tags": []
+    },
+    {
+      "name": "extra_paintbrush",
+      "source": "paintbrush",
+      "label": "Paintbrush",
+      "category": "Music & art",
+      "tags": [
+        "art",
+        "paint",
+        "painting",
+        "draw",
+        "drawing"
+      ]
+    },
+    {
+      "name": "extra_paint_bucket",
+      "source": "paint-bucket",
+      "label": "Paint",
+      "category": "Music & art",
+      "tags": []
+    },
+    {
+      "name": "extra_camera",
+      "source": "camera",
+      "label": "Camera",
+      "category": "Music & art",
+      "tags": []
+    },
+    {
+      "name": "extra_clapperboard",
+      "source": "clapperboard",
+      "label": "Film",
+      "category": "Music & art",
+      "tags": []
+    },
+    {
+      "name": "extra_bed_single",
+      "source": "bed-single",
+      "label": "Bed",
+      "category": "Home things",
+      "tags": []
+    },
+    {
+      "name": "extra_sofa",
+      "source": "sofa",
+      "label": "Sofa",
+      "category": "Home things",
+      "tags": []
+    },
+    {
+      "name": "extra_armchair",
+      "source": "armchair",
+      "label": "Chair",
+      "category": "Home things",
+      "tags": []
+    },
+    {
+      "name": "extra_lamp_desk",
+      "source": "lamp-desk",
+      "label": "Lamp",
+      "category": "Home things",
+      "tags": []
+    },
+    {
+      "name": "extra_washing_machine",
+      "source": "washing-machine",
+      "label": "Washing machine",
+      "category": "Home things",
+      "tags": []
+    },
+    {
+      "name": "extra_refrigerator",
+      "source": "refrigerator",
+      "label": "Fridge",
+      "category": "Home things",
+      "tags": []
+    },
+    {
+      "name": "extra_microwave",
+      "source": "microwave",
+      "label": "Microwave",
+      "category": "Home things",
+      "tags": []
+    },
+    {
+      "name": "extra_key_round",
+      "source": "key-round",
+      "label": "Key",
+      "category": "Home things",
+      "tags": []
+    },
+    {
+      "name": "extra_lightbulb",
+      "source": "lightbulb",
+      "label": "Light bulb",
+      "category": "Home things",
+      "tags": []
+    },
+    {
+      "name": "extra_plug",
+      "source": "plug",
+      "label": "Plug",
+      "category": "Home things",
+      "tags": []
+    },
+    {
+      "name": "extra_hammer",
+      "source": "hammer",
+      "label": "Hammer",
+      "category": "Home things",
+      "tags": []
+    },
+    {
+      "name": "extra_wrench",
+      "source": "wrench",
+      "label": "Wrench",
+      "category": "Home things",
+      "tags": []
+    },
+    {
+      "name": "extra_phone",
+      "source": "phone",
+      "label": "Phone",
+      "category": "Home things",
+      "tags": []
+    },
+    {
+      "name": "extra_calendar_days",
+      "source": "calendar-days",
+      "label": "Calendar",
+      "category": "Time & learning",
+      "tags": []
+    },
+    {
+      "name": "extra_alarm_clock",
+      "source": "alarm-clock",
+      "label": "Alarm",
+      "category": "Time & learning",
+      "tags": [
+        "wake",
+        "morning"
+      ]
+    },
+    {
+      "name": "extra_hourglass",
+      "source": "hourglass",
+      "label": "Hourglass",
+      "category": "Time & learning",
+      "tags": []
+    },
+    {
+      "name": "extra_timer",
+      "source": "timer",
+      "label": "Timer",
+      "category": "Time & learning",
+      "tags": []
+    },
+    {
+      "name": "extra_book_open",
+      "source": "book-open",
+      "label": "Book",
+      "category": "Time & learning",
+      "tags": [
+        "read",
+        "reading",
+        "story",
+        "stories"
+      ]
+    },
+    {
+      "name": "extra_notebook_pen",
+      "source": "notebook-pen",
+      "label": "Writing",
+      "category": "Time & learning",
+      "tags": []
+    },
+    {
+      "name": "extra_pencil",
+      "source": "pencil",
+      "label": "Pencil",
+      "category": "Time & learning",
+      "tags": []
+    },
+    {
+      "name": "extra_ruler",
+      "source": "ruler",
+      "label": "Ruler",
+      "category": "Time & learning",
+      "tags": []
+    },
+    {
+      "name": "extra_calculator",
+      "source": "calculator",
+      "label": "Calculator",
+      "category": "Time & learning",
+      "tags": []
+    },
+    {
+      "name": "extra_ticket",
+      "source": "ticket",
+      "label": "Ticket",
+      "category": "Holidays & occasions",
+      "tags": [
+        "outing",
+        "cinema",
+        "concert"
+      ]
+    },
+    {
+      "name": "extra_party_popper",
+      "source": "party-popper",
+      "label": "Party",
+      "category": "Holidays & occasions",
+      "tags": [
+        "party",
+        "birthday",
+        "celebration"
+      ]
+    },
+    {
+      "name": "extra_flag",
+      "source": "flag",
+      "label": "Flag",
+      "category": "Holidays & occasions",
+      "tags": []
+    }
+  ]
+}

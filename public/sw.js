@@ -326,7 +326,10 @@ self.addEventListener("fetch", (e) => {
   if (url.origin !== location.origin) return;
   if (req.headers.get("upgrade") === "websocket") return;
 
-  if (url.pathname.startsWith("/api/v1/pictures/img/")) {
+  /* A picked library icon is a door face: keep it once seen, so the
+   * child's board shows it offline though the library isn't precached. */
+  if (url.pathname.startsWith("/api/v1/pictures/img/")
+      || /^\/group-icons\/extra_[a-z0-9_]+\.svg$/.test(url.pathname)) {
     e.respondWith(imgCacheFirst(req));
     return;
   }

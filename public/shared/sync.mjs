@@ -253,12 +253,12 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
    * ref in the synced tables belongs in the queue — a sha the relay
    * already holds costs one open+heal, not an upload. */
   const reconcileBlobs = () => queueMutate(async () => {
-    const refs = db.prepare(
-      `SELECT photo_key AS k FROM personal_entity WHERE photo_key LIKE 'blob:%'
+    const refs = db.prepare(`SELECT photo_key AS k FROM personal_entity WHERE photo_key LIKE 'blob:%'
        UNION SELECT photo_key FROM image_override WHERE photo_key LIKE 'blob:%'
+       UNION SELECT photo_key FROM board_group WHERE photo_key LIKE 'blob:%'
+       UNION SELECT substr(glyph, 9) FROM board_group WHERE glyph LIKE 'picture:blob:%'
        UNION SELECT key FROM clip_override WHERE key LIKE 'blob:%'
-       UNION SELECT person_photo FROM learner_profile WHERE person_photo LIKE 'blob:%'`,
-    ).all();
+       UNION SELECT person_photo FROM learner_profile WHERE person_photo LIKE 'blob:%'`).all();
     const q = await queueGet();
     let dirty = false;
     for (const r of refs) {

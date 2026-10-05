@@ -85,6 +85,32 @@ test("opens on the main board, painted by the board's own painter", async () => 
   assert.equal(h.rowsNamed().at(-1), "All words");
 });
 
+test("Change icon opens a separate modal rather than a grid inside the sidebar", async () => {
+  const h = harness();
+  const create = document.createElement;
+  document.createElement = (tag) => {
+    const node = create(tag);
+    if (tag === "dialog") {
+      node.showModal = () => { node.open = true; };
+      node.close = () => { node.open = false; };
+    }
+    return node;
+  };
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => ({ ok: false });
+  try {
+    h.editor.renderEditor();
+    const group = findAll(h.$("ed-groups"), (n) => n.dataset.group === "grp_food")[0].parentElement;
+    await findAll(group, (n) => n.className === "ed-gmore")[0].click();
+    await findAll(group, (n) => n.textContent === "Change icon")[0].click();
+    const dialog = findAll(document.body, (n) => n.tagName === "DIALOG")[0];
+    assert.ok(dialog?.open, "Change icon opens the modal dialog");
+    assert.equal(findAll(group, (n) => n.className === "ed-icons").length, 0);
+    assert.ok(findAll(dialog, (n) => n.textContent === "Icon for Food").length);
+    await dialog.fire("cancel");
+  } finally { globalThis.fetch = originalFetch; }
+});
+
 test("a group paints into the stage through the group painter, gestures on", async () => {
   const h = harness();
   h.editor.renderEditor();

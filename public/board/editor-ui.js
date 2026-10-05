@@ -12,7 +12,7 @@
 import {
   activeLayout, createEntity, createGroup, deleteGroupUndoable, groupDisplayName,
   groupIndex, pageCount, placeItem, removeItemUndoable, renameGroup,
-  setGroupGlyph, setGroupHidden, swapGroups,
+  setGroupHidden, swapGroups,
 } from "../shared/groups.mjs";
 import { placeOnBoard } from "../shared/coremove.mjs";
 import { nameFromFile } from "../shared/bulk.mjs";
@@ -22,7 +22,8 @@ import {
 import { normalizeV1 } from "../shared/normalize.mjs";
 import { listUsers } from "../shared/users.mjs";
 import { overrideFor } from "../shared/voice.mjs";
-import { ICON_SET, groupGlyph, iconUrl } from "./group-glyph.js";
+import { groupGlyph } from "./group-glyph.js";
+import { mountGroupIconPicker } from "./group-icon-picker.js";
 import { editorStatus, findSections, isList } from "./editor-find.js";
 import { kv } from "../shared/platform.mjs";
 
@@ -64,6 +65,11 @@ export function mountEditor({
   const addTarget = () => (where.kind === "group" ? where.id : "grp_my_words");
   const homeKeys = () => new Set((homeCells?.() ?? [])
     .map((c) => (c.kind === "entity" ? `entity:${c.entity_id}` : `sense:${c.sense_id}`)));
+  const iconPicker = mountGroupIconPicker({
+    db, locale, loadPhotoURL, changed, toast,
+    returnFocus: (id) => [...document.querySelectorAll(".ed-grow")]
+      .find((row) => row.dataset.group === id) ?? $("ed-q"),
+  });
 
   /* ------------------------------ top bar ------------------------------ */
 
@@ -203,7 +209,7 @@ export function mountEditor({
       menu.appendChild(b);
     };
     item("Rename", () => renameInline(g, wrap));
-    item("Change icon", () => iconPicker(g, wrap));
+    item("Change icon", () => iconPicker.open(g));
     item(g.hidden ? "Show" : "Hide", () => {
       setGroupHidden(db, g.id, !g.hidden);
       changed();
@@ -253,31 +259,8 @@ export function mountEditor({
     input.select?.();
   }
 
-  function iconPicker(g, wrap) {
-    const pick = document.createElement("div");
-    pick.className = "ed-icons";
-    for (const nm of ICON_SET) {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.setAttribute("aria-label", nm.replaceAll("_", " "));
-      const img = document.createElement("img");
-      img.src = iconUrl(nm);
-      img.alt = "";
-      b.appendChild(img);
-      b.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const before = g.glyph?.startsWith("icon:") ? g.glyph : null;
-        setGroupGlyph(db, g.id, `icon:${nm}`);
-        changed();
-        toast(`New icon for ${groupName(g.id)}`, () => { setGroupGlyph(db, g.id, before); changed(); });
-      });
-      pick.appendChild(b);
-    }
-    wrap.appendChild(pick);
-  }
-
   function closeMenus() {
-    for (const m of document.querySelectorAll(".ed-gmenu, .ed-icons")) m.remove();
+    for (const m of document.querySelectorAll(".ed-gmenu")) m.remove();
   }
 
   function renderGroups() {
@@ -1083,6 +1066,7 @@ export function mountEditor({
     lastPointerAdds = e.shiftKey || e.metaKey || e.ctrlKey;
   }, true);
   document.addEventListener("keydown", (e) => {
+    if (document.querySelector(".group-icon-picker[open]")) return;
     if (!document.body.classList.contains("editor")) {
       if (e.key === "Escape" && !$("ed-previewbar").hidden) { e.preventDefault(); endPreview(true); }
       return;
@@ -1156,6 +1140,7 @@ export function mountEditor({
    *  — its cells still carry the editor's edit gestures, so a tap on the
    *  child's board would open the placement sheet. */
   function leave() {
+    iconPicker.close();
     placeGrid(false);
     renderMainBoard();
     clearInterval(statusTimer);
