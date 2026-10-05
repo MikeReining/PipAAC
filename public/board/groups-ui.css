@@ -25,7 +25,7 @@ body.groups #groupgrid { display: grid; }
   text-align: center;
 }
 /* The face takes the height the label leaves; sizing it by width alone
-   let a wide cell's icon push the label out the bottom (iPad). */
+   let a wide cell's icon push the label out the bottom on iPad. */
 .gcell .glyph { flex: 1 1 0; min-height: 0; width: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(18px, 3.2vmin, 32px); line-height: 1; }
 .gcell .glyph img { height: 100%; max-width: 70%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
 .gcell .glyph img.gicon { object-fit: contain; border-radius: 0; }
