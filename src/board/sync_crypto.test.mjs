@@ -15,6 +15,7 @@ import { createDatabase, importCatalog } from "./catalog.mjs";
 import { createEntity, placeItem, setEntityPhoto } from "../../public/shared/groups.mjs";
 import { listOps, setDeviceId } from "../../public/shared/ops.mjs";
 import {
+  ensureRecoveryRoot,
   genAccountKeys,
   getUserKey,
   getDeviceIdentity,
@@ -232,4 +233,38 @@ test("account keys: PRF seals the private key; wrapped user keys round-trip", as
   // A wrong PRF output opens nothing — the sealed key is opaque.
   const wrong = globalThis.crypto.getRandomValues(new Uint8Array(32));
   await assert.rejects(openAccountPriv(sealed, wrong));
+});
+
+test("concurrent one-shot creation returns one identity, one key, one root — never three", async () => {
+  // The audit reproduced three concurrent getDeviceIdentity calls
+  // minting three keypairs while only one stored — the caller that
+  // lost kept signing under an identity the relay never saw.
+  const store = memoryKeyStore();
+  const [a, b, c] = await Promise.all([
+    getDeviceIdentity(store), getDeviceIdentity(store), getDeviceIdentity(store),
+  ]);
+  assert.equal(a.deviceId, b.deviceId);
+  assert.equal(b.deviceId, c.deviceId);
+  // All three callers must hold the STORED key, not just the same id.
+  const stored = await store.get("device");
+  assert.equal(a.verify, stored.sig.publicKey);
+  assert.equal(c.sign, stored.sig.privateKey);
+
+  const store2 = memoryKeyStore();
+  const [k1, k2, k3] = await Promise.all([
+    getUserKey(store2, "u1"), getUserKey(store2, "u1"), getUserKey(store2, "u1"),
+  ]);
+  assert.equal(k1, k2);
+  assert.equal(k2, k3);
+  assert.equal(k1, await store2.get("user/u1/key_e1"));
+
+  const store3 = memoryKeyStore();
+  const [r1, r2, r3] = await Promise.all([
+    ensureRecoveryRoot(store3, "u1"),
+    ensureRecoveryRoot(store3, "u1"),
+    ensureRecoveryRoot(store3, "u1"),
+  ]);
+  assert.deepEqual(r1, r2);
+  assert.deepEqual(r2, r3);
+  assert.deepEqual(r1, await store3.get("user/u1/root"));
 });

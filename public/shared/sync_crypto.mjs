@@ -79,21 +79,46 @@ export function openKeyStore() {
  * Device identity + user key
  * ------------------------------------------------------------------ */
 
+/* One-shot creation (device identity, epoch keys, recovery roots) is
+ * read→generate→put: without a lock, two concurrent callers both miss,
+ * generate different values, and the later put wins while the loser
+ * keeps using a value nothing stored (audit: three concurrent
+ * getDeviceIdentity calls returned three identities). underLock
+ * serializes per name — the loser re-reads and adopts the stored
+ * winner. Cross-tab, IndexedDB races the same way; navigator.locks
+ * narrows it where the platform offers it. */
+const createLocks = new Map();
+const underLock = (name, fn) => {
+  const run = (createLocks.get(name) ?? Promise.resolve()).then(() =>
+    (globalThis.navigator?.locks?.request
+      ? navigator.locks.request(`pip-create:${name}`, fn)
+      : fn()));
+  const tail = run.catch(() => {});
+  createLocks.set(name, tail);
+  run.finally(() => {
+    if (createLocks.get(name) === tail) createLocks.delete(name);
+  });
+  return run;
+};
+
 /**
  * The device's key pairs, generated once and kept. Returns
  * { deviceId, sign, verify, dh } where deviceId is the SHA-256
  * fingerprint of the signing public key — the name ops carry.
  */
 export async function getDeviceIdentity(store = openKeyStore()) {
-  let keys = await store.get("device");
-  if (!keys) {
-    const sig = await subtle.generateKey(
-      { name: "ECDSA", namedCurve: "P-256" }, false, ["sign", "verify"]);
-    const dh = await subtle.generateKey(
-      { name: "ECDH", namedCurve: "P-256" }, false, ["deriveKey", "deriveBits"]);
-    keys = { sig, dh };
-    await store.put("device", keys);
-  }
+  const keys = await underLock("device", async () => {
+    const existing = await store.get("device");
+    if (existing) return existing;
+    const created = {
+      sig: await subtle.generateKey(
+        { name: "ECDSA", namedCurve: "P-256" }, false, ["sign", "verify"]),
+      dh: await subtle.generateKey(
+        { name: "ECDH", namedCurve: "P-256" }, false, ["deriveKey", "deriveBits"]),
+    };
+    await store.put("device", created);
+    return created;
+  });
   const raw = await subtle.exportKey("raw", keys.sig.publicKey);
   const fp = hex(await subtle.digest("SHA-256", raw)).slice(0, 16);
   return {
@@ -122,11 +147,14 @@ export const userRootName = (userId) => `user/${userId}/root`;
 
 export async function ensureRecoveryRoot(store = openKeyStore(), userId) {
   const name = userRootName(userId);
-  let root = await store.get(name);
-  if (!root) {
-    root = globalThis.crypto.getRandomValues(new Uint8Array(16)); // 12 recovery words
-    await store.put(name, root);
-  }
+  const root = await underLock(name, async () => {
+    let r = await store.get(name);
+    if (!r) {
+      r = globalThis.crypto.getRandomValues(new Uint8Array(16)); // 12 recovery words
+      await store.put(name, r);
+    }
+    return r;
+  });
   return root instanceof Uint8Array ? root : new Uint8Array(root);
 }
 /** Epoch key = HKDF(root, salt "pip-board-key", info "epoch:<n>"). */
@@ -141,16 +169,18 @@ export async function deriveEpochKey(rootBytes, epoch) {
 
 export async function getUserKey(store = openKeyStore(), userId, epoch = 1) {
   const name = userKeyName(userId, epoch);
-  let key = await store.get(name);
-  if (!key) {
-    const root = await store.get(userRootName(userId));
-    key = root
-      ? await deriveEpochKey(root instanceof Uint8Array ? root : new Uint8Array(root), epoch)
-      : await subtle.generateKey({ name: "AES-GCM", length: 256 }, true,
-          ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
-    await store.put(name, key);
-  }
-  return key;
+  return underLock(name, async () => {
+    let key = await store.get(name);
+    if (!key) {
+      const root = await store.get(userRootName(userId));
+      key = root
+        ? await deriveEpochKey(root instanceof Uint8Array ? root : new Uint8Array(root), epoch)
+        : await subtle.generateKey({ name: "AES-GCM", length: 256 }, true,
+            ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
+      await store.put(name, key);
+    }
+    return key;
+  });
 }
 export const putUserKey = (store, userId, key, epoch = 1) =>
   store.put(userKeyName(userId, epoch), key);
