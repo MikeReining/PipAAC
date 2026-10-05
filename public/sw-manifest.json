@@ -1,5 +1,5 @@
 {
-  "buildId": "1.1.0-e18ce29e9e0b",
+  "buildId": "1.1.0-f13a373139b3",
   "files": [
     {
       "path": "/board.js",
@@ -8,8 +8,8 @@
     },
     {
       "path": "/board/add-flow.css",
-      "bytes": 6229,
-      "sha256": "059f76906967085d40a6522f751a3946b0fe48f9bab891f70d05b5407f2ec1b2"
+      "bytes": 6292,
+      "sha256": "f2373d4f472442e31e9be58d63a9ba6b32964af2a53cca121bb7b5a323738ee6"
     },
     {
       "path": "/board/add-flow.js",
@@ -23,8 +23,8 @@
     },
     {
       "path": "/board/base.css",
-      "bytes": 28122,
-      "sha256": "4592db78cebd807ccf44530671db5c9493dd06bef06ed0df54c53afc3fc8c864"
+      "bytes": 28541,
+      "sha256": "11d506d0e7f5019bf0d4ab8a397fd3cc3b5ac80b88fd2ccef3b5afe82e9d73ee"
     },
     {
       "path": "/board/cells-sheet.css",
@@ -68,8 +68,8 @@
     },
     {
       "path": "/board/editor-ui.css",
-      "bytes": 14430,
-      "sha256": "22cb7ef7488c128cb04348530fe3b040a173bfc412abc96a5eb6e229dd8f7326"
+      "bytes": 14530,
+      "sha256": "74caf4ed8f9d970d5abb4d2568f57543f823a3801dee08e3e7035dfe14fffa2a"
     },
     {
       "path": "/board/editor-ui.js",
@@ -203,8 +203,8 @@
     },
     {
       "path": "/board/progress-ui.css",
-      "bytes": 10742,
-      "sha256": "4cd5bfdabe4563b5cf34c3f77ceff8bdfaea120b4993da3556546e16321b8f1e"
+      "bytes": 10872,
+      "sha256": "05e7dcf6d8cf7384e3a712b44f498a66abb9429f4e586a0ed6687fb89ba5c7c1"
     },
     {
       "path": "/board/progress-ui.js",
@@ -338,13 +338,13 @@
     },
     {
       "path": "/board/word-card.css",
-      "bytes": 8387,
-      "sha256": "fd790c8f25af571f502a76ab47e55712462847fd5e77c1799b4dcc9e448660ee"
+      "bytes": 9142,
+      "sha256": "16ccc29274246e5c49fbe7457fc667c2d637aad347fde212e6133687862928ff"
     },
     {
       "path": "/board/word-card.js",
-      "bytes": 12517,
-      "sha256": "58d1714e4ff9dcce4b27cdfa2640678d91a0dba8c59d75e3b613166b783a9cba"
+      "bytes": 13555,
+      "sha256": "cb326ddab626d2f0a32eb8cc0365fc1b02d725fd87ab4ff4947c99079ee82932"
     },
     {
       "path": "/brand/favicon-32.png",
@@ -398,8 +398,8 @@
     },
     {
       "path": "/db.js",
-      "bytes": 13474,
-      "sha256": "710b010a3aa0318da36f8276cd346ed80e55806ff267d65742a8f85a38ca88f8"
+      "bytes": 13468,
+      "sha256": "f92d03eb1a2c849fe3af08c07c2002705a1a79a04ac15cca065d410f78e20dba"
     },
     {
       "path": "/feeling_voice.json",
@@ -758,8 +758,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 70194,
-      "sha256": "1d19e9e447e51358b677cd48d9663af44726c7554a3516173d20318e35cc9cc4"
+      "bytes": 70248,
+      "sha256": "1c11254316d3c8e11b82bd4a8faa05b606b1a6d1556796a438bfc780d6b4ef3e"
     },
     {
       "path": "/manifest.webmanifest",
@@ -878,8 +878,8 @@
     },
     {
       "path": "/shared/mediatype.mjs",
-      "bytes": 1478,
-      "sha256": "c70a68b67834754ef6a259f378bf4794507a02e8ce0c8594a71c62dd88be6400"
+      "bytes": 2113,
+      "sha256": "f0c5943864d97ce4a0deb4c0b66c491d45442db54840c83680d893e85ca22a42"
     },
     {
       "path": "/shared/migrate.mjs",
