@@ -31,6 +31,8 @@ function adapt(db, onWrite) {
           st.finalize();
         }
         onWrite();
+        // node:sqlite's shape — callers (drainOps) read `changes`.
+        return { changes: db.changes() };
       },
       all: (...params) =>
         db.exec({ sql, bind: params, rowMode: "object", returnValue: "resultRows" }),
