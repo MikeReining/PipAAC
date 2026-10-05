@@ -32,7 +32,9 @@ import {
   verifyPayload,
   wrapUserKey,
   openData,
+  openKeyStore,
 } from "../../public/shared/sync_crypto.mjs";
+import { _setStallMs } from "../../public/shared/bounded.mjs";
 import { listUsers, memoryUserStore, migrateLegacy } from "../../public/shared/users.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
@@ -283,4 +285,166 @@ test("a handled creation failure leaves no unhandled cleanup rejection and the n
   await new Promise((resolve) => setImmediate(resolve));
   const key = await getUserKey(store, "u_cleanup");
   assert.equal(await store.get("user/u_cleanup/key_e1"), key);
+});
+
+test("a stalled creator keeps its slot — the retry waits for the work, then adopts the stored winner", { timeout: 10000 }, async (t) => {
+  _setStallMs(60);
+  t.after(() => _setStallMs(30_000));
+  const store = memoryKeyStore();
+  const realGet = store.get;
+  let gated = true, release;
+  const gate = new Promise((r) => { release = r; });
+  store.get = async (k) => {
+    if (k === "device" && gated) { gated = false; await gate; }
+    return realGet(k);
+  };
+  // Attempt A is inside the lock, stalled past its deadline in the
+  // creator's read — the caller hears "stalled" but the WORK still
+  // owns the slot.
+  await assert.rejects(getDeviceIdentity(store), /device stalled/);
+  // B queues behind A's still-running work; release A's gate so its
+  // put lands before B's deadline — B must adopt, never regenerate.
+  const bPromise = getDeviceIdentity(store);
+  release();
+  const b = await bPromise;
+  const stored = await store.get("device");
+  assert.ok(stored, "A's continuation never stored its winner");
+  assert.equal(b.verify, stored.sig.publicKey,
+    "the retry kept an identity nothing stored — the stalled creator's value must win");
+});
+
+/** A minimal Web Locks stand-in: serialized grants, `signal` aborts a
+ *  queued request, and a held lock blocks until its callback settles. */
+function fakeLockManager() {
+  let held = false;
+  const queue = [];
+  const pump = () => {
+    if (held) return;
+    const e = queue.shift();
+    if (!e) return;
+    if (e.aborted) return pump();
+    held = true;
+    Promise.resolve().then(() => e.cb())
+      .then(e.resolve, e.reject)
+      .finally(() => { held = false; pump(); });
+  };
+  return {
+    request(name, opts, cb) {
+      if (typeof opts === "function") { cb = opts; opts = {}; }
+      const e = { cb };
+      const p = new Promise((res, rej) => {
+        e.resolve = res; e.reject = rej;
+        opts?.signal?.addEventListener("abort", () => {
+          if (e.started) return;
+          e.aborted = true;
+          rej(new DOMException("The operation was aborted.", "AbortError"));
+        }, { once: true });
+      });
+      queue.push(e); pump();
+      return p;
+    },
+  };
+}
+
+test("an expired queued Web Lock request is cancelled — releasing the holder must not run it", { timeout: 10000 }, async (t) => {
+  _setStallMs(50);
+  t.after(() => _setStallMs(30_000));
+  const navDesc = Object.getOwnPropertyDescriptor(globalThis, "navigator");
+  const locks = fakeLockManager();
+  Object.defineProperty(globalThis, "navigator",
+    { value: { locks }, configurable: true });
+  t.after(() => Object.defineProperty(globalThis, "navigator", navDesc));
+  // An unrelated holder occupies the lock — a queued request can only wait.
+  let releaseHolder;
+  const holderOut = new Promise((r) => { releaseHolder = r; });
+  const holderDone = locks.request("pip-create:device", () => holderOut);
+  const store = memoryKeyStore();
+  await assert.rejects(getDeviceIdentity(store), /device stalled/);
+  releaseHolder();                       // holder leaves — the expired
+  await holderDone;                      // request must have been dropped
+  await new Promise((r) => setImmediate(r));
+  assert.equal(await store.get("device"), undefined,
+    "the expired queued request ran its callback anyway");
+  // The lock still works for a live caller.
+  const id = await getDeviceIdentity(store);
+  assert.ok(id.deviceId.startsWith("dev_"));
+});
+
+/** A minimal IndexedDB stand-in: explicit open grant, transactions the
+ *  test completes or aborts by hand. */
+function fakeIndexedDb() {
+  const rows = new Map();
+  const openReqs = [];
+  const txs = [];
+  const idb = {
+    createObjectStore: () => ({}),
+    transaction(name, mode) {
+      const tx = { name, mode, aborted: false, completed: false, ops: [] };
+      // Reads see committed state; writes stage and apply at commit —
+      // like a real transaction, an aborted tx's writes never land.
+      tx.objectStore = () => ({
+        get: (k) => ({ result: rows.get(k) }),
+        put: (v, k) => { tx.ops.push(() => rows.set(k, v)); return { result: undefined }; },
+        delete: (k) => { tx.ops.push(() => rows.delete(k)); return { result: undefined }; },
+        getAllKeys: () => ({ result: [...rows.keys()] }),
+      });
+      tx.commit = () => {
+        if (!tx.aborted && !tx.completed) {
+          tx.ops.forEach((fn) => fn());
+          tx.completed = true; tx.oncomplete?.();
+        }
+      };
+      tx.abort = () => {
+        if (!tx.aborted && !tx.completed) { tx.aborted = true; tx.onabort?.(); }
+      };
+      txs.push(tx);
+      return tx;
+    },
+  };
+  const open = () => { const req = { result: idb }; openReqs.push(req); return req; };
+  const grantOpen = () => openReqs.forEach((r) => { r.onupgradeneeded?.(); r.onsuccess?.(); });
+  return { open, grantOpen, txs, rows };
+}
+
+test("a store write whose db never opens starts no transaction after its deadline", { timeout: 10000 }, async (t) => {
+  _setStallMs(50);
+  t.after(() => _setStallMs(30_000));
+  const fake = fakeIndexedDb();
+  globalThis.indexedDB = { open: fake.open };
+  t.after(() => { delete globalThis.indexedDB; });
+  const store = openKeyStore();
+  await assert.rejects(store.put("k", "v"), /key store stalled/);
+  fake.grantOpen();                      // the db resolves AFTER expiry
+  await new Promise((r) => setImmediate(r));
+  assert.equal(fake.txs.length, 0,
+    "a transaction started after the caller's deadline");
+  const live = store.put("k", "later");  // a live caller works fine
+  await new Promise((r) => setImmediate(r));
+  fake.txs.at(-1).commit();
+  await live;
+  assert.equal(fake.rows.get("k"), "later");
+});
+
+test("an open transaction is aborted at the deadline — a newer write wins", { timeout: 10000 }, async (t) => {
+  _setStallMs(50);
+  t.after(() => _setStallMs(30_000));
+  const fake = fakeIndexedDb();
+  globalThis.indexedDB = { open: fake.open };
+  t.after(() => { delete globalThis.indexedDB; });
+  const store = openKeyStore();
+  const stalled = store.put("k", "stale");
+  fake.grantOpen();
+  await new Promise((r) => setImmediate(r));   // tx created, never completes
+  assert.equal(fake.txs.length, 1);
+  await assert.rejects(stalled, /key store stalled/);
+  await new Promise((r) => setImmediate(r));
+  const staleTx = fake.txs.at(-1);
+  assert.equal(staleTx.aborted, true, "the timed-out transaction was not aborted");
+  // The retry's write commits — the aborted one cannot resurrect it.
+  const retry = store.put("k", "fresh");
+  await new Promise((r) => setImmediate(r));
+  fake.txs.at(-1).commit();
+  await retry;
+  staleTx.commit();                      // too late — already aborted
+  assert.equal(fake.rows.get("k"), "fresh");
 });

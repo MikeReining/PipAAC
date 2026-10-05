@@ -34,12 +34,24 @@ export function openUserStore() {
     req.onsuccess = () => res(req.result);
     req.onerror = () => rej(req.error);
   });
-  const wrap = (mode, fn) => withDeadline(dbp.then((idb) => new Promise((res, rej) => {
-    const tx = idb.transaction("kv", mode);
-    const req = fn(tx.objectStore("kv"));
-    tx.oncomplete = () => res(req.result);
-    tx.onerror = () => rej(tx.error);
-  })), STALL_MS, "user store");
+  /* Same fencing as the key store: a dead ticket stops the tx before it
+   * starts, an open tx is aborted so a late commit cannot land after
+   * the caller retried, and onabort settles promptly. */
+  const wrap = (mode, fn) => {
+    const ticket = { dead: false };
+    let tx = null;
+    const work = dbp.then((idb) => new Promise((res, rej) => {
+      if (ticket.dead) return rej(new Error("user store tx after deadline"));
+      tx = idb.transaction("kv", mode);
+      const req = fn(tx.objectStore("kv"));
+      tx.oncomplete = () => res(req.result);
+      tx.onerror = () => rej(tx.error);
+      tx.onabort = () => rej(tx.error ?? new Error("user store tx aborted"));
+    }));
+    const run = withDeadline(work, STALL_MS, "user store", ticket);
+    run.catch(() => { try { tx?.abort(); } catch { /* already ended */ } });
+    return run;
+  };
   return {
     get: (k) => wrap("readonly", (s) => s.get(k)),
     put: (k, v) => wrap("readwrite", (s) => s.put(v, k)),

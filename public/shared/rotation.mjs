@@ -6,20 +6,12 @@ import {
   unwrapUserKey, userRootName, wrapUserKey,
 } from "./sync_crypto.mjs";
 import { recoveryProof, ROOT_BYTES } from "./recovery.mjs";
-import { STALL_MS, withDeadline } from "./bounded.mjs";
+import { serialized } from "./bounded.mjs";
 
 export const rotationJournalName = (id) => `rotation/${id}`;
 const locks = new Map();
-function locked(id, fn) {
-  const run = withDeadline((locks.get(id) ?? Promise.resolve()).then(() =>
-    globalThis.navigator?.locks?.request
-      ? navigator.locks.request(`pip-rotation:${id}`, fn) : fn()),
-    STALL_MS, `rotation lock ${id}`);
-  const tail = run.catch(() => {});
-  locks.set(id, tail);
-  tail.then(() => { if (locks.get(id) === tail) locks.delete(id); });
-  return run;
-}
+const locked = (id, fn) =>
+  serialized(locks, (n) => `pip-rotation:${n}`, id, fn);
 const bytes = (root) => root instanceof Uint8Array ? root : new Uint8Array(root);
 export const rootRecoveryId = async (root) =>
   [...new Uint8Array(await crypto.subtle.digest("SHA-256",

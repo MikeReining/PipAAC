@@ -13,7 +13,7 @@
  * that references it carries that hash, never the bytes.
  */
 
-import { STALL_MS, withDeadline } from "./bounded.mjs";
+import { STALL_MS, serialized, withDeadline } from "./bounded.mjs";
 
 const subtle = globalThis.crypto.subtle;
 const te = new TextEncoder();
@@ -64,12 +64,26 @@ export function openKeyStore() {
     req.onsuccess = () => res(req.result);
     req.onerror = () => rej(req.error);
   });
-  const wrap = (mode, fn) => withDeadline(dbp.then((idb) => new Promise((res, rej) => {
-    const tx = idb.transaction("keys", mode);
-    const req = fn(tx.objectStore("keys"));
-    tx.oncomplete = () => res(req.result);
-    tx.onerror = () => rej(tx.error);
-  })), STALL_MS, "key store");
+  /* The deadline fences the CALLER, not the transaction: a dead ticket
+   * stops a tx from ever starting (a dbp that resolves late), and an
+   * already-open tx is aborted so it cannot commit after the caller
+   * believed it failed and moved on. onabort settles the work promise
+   * promptly — an explicit abort is a normal ending, not a hang. */
+  const wrap = (mode, fn) => {
+    const ticket = { dead: false };
+    let tx = null;
+    const work = dbp.then((idb) => new Promise((res, rej) => {
+      if (ticket.dead) return rej(new Error("key store tx after deadline"));
+      tx = idb.transaction("keys", mode);
+      const req = fn(tx.objectStore("keys"));
+      tx.oncomplete = () => res(req.result);
+      tx.onerror = () => rej(tx.error);
+      tx.onabort = () => rej(tx.error ?? new Error("key store tx aborted"));
+    }));
+    const run = withDeadline(work, STALL_MS, "key store", ticket);
+    run.catch(() => { try { tx?.abort(); } catch { /* already ended */ } });
+    return run;
+  };
   return {
     get: (k) => wrap("readonly", (s) => s.get(k)),
     put: (k, v) => wrap("readwrite", (s) => s.put(v, k)),
@@ -90,18 +104,8 @@ export function openKeyStore() {
  * winner. Cross-tab, IndexedDB races the same way; navigator.locks
  * narrows it where the platform offers it. */
 const createLocks = new Map();
-const underLock = (name, fn) => {
-  const run = withDeadline((createLocks.get(name) ?? Promise.resolve()).then(() =>
-    (globalThis.navigator?.locks?.request
-      ? navigator.locks.request(`pip-create:${name}`, fn)
-      : fn())), STALL_MS, `create lock ${name}`);
-  const tail = run.catch(() => {});
-  createLocks.set(name, tail);
-  tail.then(() => {
-    if (createLocks.get(name) === tail) createLocks.delete(name);
-  });
-  return run;
-};
+const underLock = (name, fn) =>
+  serialized(createLocks, (n) => `pip-create:${n}`, name, fn);
 
 /**
  * The device's key pairs, generated once and kept. Returns
