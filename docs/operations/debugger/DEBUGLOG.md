@@ -216,3 +216,12 @@ Proof: node --test src/board/sync_delivery_order.test.mjs — green after (quara
 Fix: (1) `drainOps` detects an unapplied op below an applied one (the only shape out-of-order delivery can leave) and unflags the whole confirmed log — the existing rebase replays it in `relay_seq` order inside the same transaction as flags+baseline, so every delivery order converges to one state. (2) `adoptSnapshot` unflags applied ops above its coverage — a push folded ahead of adoption was being wiped by the restore while staying flagged, losing its effect for good.
 Pattern candidate: an "applied" set is a set, not a sequence — any fold that can run ahead of an earlier sibling (push vs fetch, push vs snapshot) must be re-queued, not skipped.
 Residual: a device that folded a later op and never receives the earlier one (relay no longer serves it, no snapshot) stays diverged — unreceivable input cannot be repaired; the sync-audit retention gap (versioned snapshot objects and proof-index entries in `destroy()`) remains open.
+
+## 2026-10-04 retention-destroy-coverage (Codex-traced, unreproduced-live)
+
+Tier: T2
+Truth owner: R2 object keys under the user namespaces + the `ri/` proof index — erasure means the keys are gone, not that the DO forgot them.
+Lie-prone layer: `destroy()` deleted `b/<user>/*` and only the LEGACY `s/<user>` snapshot — every immutable `s/<user>/<seq>` backup (F08) and the card's `ri/<sha256(proof)>` entry survived a 3-year idle destroy, so "complete erasure" was a claim the code could not keep.
+Proof: node --test src/worker/entitlement.test.mjs — the retention test plants `b/`, legacy `s/`, versioned `s/<user>/9` and the real `ri/` entry and asserts each is gone after `retentionSweep` destroys; red pre-fix (`s/<user>/9` and the index survived), green after. Also fixed in the same file: fakeCtx gained `transactionSync` and fake BLOBS gained `head` — both were missing seams that broke the suite, not logic.
+Fix: `destroy()` lists `s/<user>/` alongside `b/<user>/` (paged like blobs) and deletes `proofIndexKey(recovery_proof)` — the only ri/ entry destroy can name; orphaned index keys from interrupted writes are hash-keyed and unlistable per user, so they can dangle but never resolve post-destroy (the DO itself is gone).
+Pattern candidate: retention must be asserted per key namespace, not per store — every new R2 prefix added by a feature needs its destroy() line in the same commit.

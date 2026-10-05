@@ -13,6 +13,7 @@ import { DatabaseSync } from "node:sqlite";
 
 import { UserRelay } from "./relay.js";
 import { licenseFor } from "./license.mjs";
+import { proofIndexKey } from "./restore.js";
 import { recoveryProof } from "../../public/shared/recovery.mjs";
 import {
   ensureRecoveryRoot, exportDhPublic, exportPublicKey,
@@ -46,6 +47,11 @@ function fakeCtx() {
       deleteAll: async () => {
         db.exec("DELETE FROM device; DELETE FROM op; DELETE FROM meta;");
       },
+      transactionSync: (fn) => {
+        db.exec("BEGIN");
+        try { const out = fn(); db.exec("COMMIT"); return out; }
+        catch (err) { db.exec("ROLLBACK"); throw err; }
+      },
       getAlarm: async () => alarm,
       setAlarm: async (t) => { alarm = t; },
       deleteAlarm: async () => { alarm = null; },
@@ -69,6 +75,7 @@ function fakeEnv() {
     BLOBS: {
       put: async (k, v) => void blobs.set(k, v),
       get: async (k) => (blobs.has(k) ? { body: blobs.get(k) } : null),
+      head: async (k) => (blobs.has(k) ? { key: k } : null),
       delete: async (k) => void blobs.delete(k),
       list: async ({ prefix }) => ({
         objects: [...blobs.keys()].filter((k) => k.startsWith(prefix)).map((k) => ({ key: k })),
@@ -266,7 +273,7 @@ test("restore on a free user moves the user; lifetime keeps every device", async
 
 test("retention: nothing deletes a user but the two § 11 causes", async () => {
   const userId = "user-retention";
-  const { relay, ctx, env, dev } = await userAt(userId);
+  const { relay, ctx, env, dev, proof } = await userAt(userId);
   const setSeen = (msAgo) => ctx._db.prepare(
     "UPDATE meta SET v = ? WHERE k = 'last_seen'").run(String(Date.now() - msAgo));
   const boardRows = () =>
@@ -274,9 +281,14 @@ test("retention: nothing deletes a user but the two § 11 causes", async () => {
     ctx._db.prepare("SELECT COUNT(*) AS n FROM meta").get().n;
 
   // A user whose entitlement never existed keeps its blobs — the sweep
-  // only looks at timestamps, never at payment.
+  // only looks at timestamps, never at payment. Bootstrap wrote the
+  // card's proof-index entry; the versioned snapshot objects imitate
+  // the immutable per-seq backups.
   await env.BLOBS.put(`b/${userId}/abc`, te.encode("x"));
   await env.BLOBS.put(`s/${userId}`, te.encode("snap"));
+  await env.BLOBS.put(`s/${userId}/9`, te.encode("snap-v9"));
+  assert.ok(env._blobs.has(await proofIndexKey(proof)),
+    "bootstrap should have indexed the card's proof");
 
   // 2 years 11 months: survives — inside the warning window.
   setSeen(2 * 365 * DAY + 11 * 30 * DAY);
@@ -330,6 +342,10 @@ test("retention: nothing deletes a user but the two § 11 causes", async () => {
   assert.equal(boardRows(), 0);
   assert.equal(env._blobs.has(`b/${userId}/abc`), false);
   assert.equal(env._blobs.has(`s/${userId}`), false);
+  assert.equal(env._blobs.has(`s/${userId}/9`), false,
+    "versioned snapshots survived destroy");
+  assert.equal(env._blobs.has(await proofIndexKey(proof)), false,
+    "a destroyed user's card still resolves in the proof index");
 });
 
 test("requested deletion: 30-day undo window, then gone", async () => {

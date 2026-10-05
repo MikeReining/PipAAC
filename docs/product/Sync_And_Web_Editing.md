@@ -360,11 +360,13 @@ people with special needs takes a ton of time"; § 11):
 **BUILT** (2026-09-23): all four rules run on the relay. `last_seen` is
 stamped on every signed request; a daily Durable-Object alarm runs
 `retentionSweep(now)`, which destroys a board only for the two causes
-above (`destroy()` currently deletes R2 `b/<user>/*`, legacy `s/<user>`
-and the DO's own storage — nothing about entitlement ever reaches it).
-**Outstanding retention gap:** immutable `s/<user>/<seq>` objects and
-proof-index entries are not enumerated by that deletion path; they need
-explicit cleanup and a retention proof before claiming complete erasure.
+above (`destroy()` deletes R2 `b/<user>/*`, legacy `s/<user>`, every
+immutable `s/<user>/<seq>` backup, the current card's `ri/` proof-index
+entry, and the DO's own storage — nothing about entitlement ever reaches
+it). Proof: `entitlement.test.mjs` plants each namespace and asserts its
+removal. A proof-index entry orphaned by an interrupted index write is
+keyed by hash and unlistable per user — it can only dangle; destroy
+cannot enumerate it.
 The warning rides `GET /devices/self` as `idle_delete_at`, computed from
 the previous `last_seen` so a returning device still sees it once.
 Pruning applies only to ops covered by `snapshot_seq` and older than 30

@@ -16,7 +16,7 @@
  * the worker graph without cloudflare:workers.
  */
 import { checkLicense, licenseFor } from "./license.mjs";
-import { indexProof } from "./restore.js";
+import { indexProof, proofIndexKey } from "./restore.js";
 import { recoveryId, replaceRecovery, requestRotation, revokeDevice, revokeSupporter, rotateKeys } from "./rotation.mjs";
 
 const te = new TextEncoder();
@@ -805,19 +805,24 @@ export class UserRelay {
     return bad("not_found", 404);
   }
 
-  /** Physical deletion: every blob + snapshot under the user prefix,
-   *  then the DO's own storage. Only retentionSweep reaches here —
-   *  nothing about entitlement ever deletes data. */
+  /** Physical deletion: every blob + snapshot under the user prefixes
+   *  (immutable `s/<user>/<seq>` backups included), the card's
+   *  proof-index entry, then the DO's own storage. Only retentionSweep
+   *  reaches here — nothing about entitlement ever deletes data. */
   async destroy() {
     const userId = this.metaGet("user_id") ?? this.metaGet("board_id");
     if (userId) {
-      let cursor;
-      do {
-        const listing = await this.env.BLOBS.list({ prefix: `b/${userId}/`, cursor });
-        for (const obj of listing.objects ?? []) await this.env.BLOBS.delete(obj.key);
-        cursor = listing.truncated ? listing.cursor : undefined;
-      } while (cursor);
-      await this.env.BLOBS.delete(`s/${userId}`);
+      for (const prefix of [`b/${userId}/`, `s/${userId}/`]) {
+        let cursor;
+        do {
+          const listing = await this.env.BLOBS.list({ prefix, cursor });
+          for (const obj of listing.objects ?? []) await this.env.BLOBS.delete(obj.key);
+          cursor = listing.truncated ? listing.cursor : undefined;
+        } while (cursor);
+      }
+      await this.env.BLOBS.delete(`s/${userId}`); // pre-versioned object
+      const proof = this.metaGet("recovery_proof");
+      if (proof) await this.env.BLOBS.delete(await proofIndexKey(proof));
     }
     await this.ctx.storage.deleteAll();
     await this.ctx.storage.deleteAlarm();
