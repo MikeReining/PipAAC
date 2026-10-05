@@ -1,0 +1,21 @@
+Replay the confirmed log in relay order on a delivery-order violation
+
+A live push or own-ack could fold a later op into the baseline before
+a catch-up fetch delivered the earlier one; applied flags deduped but
+never ordered, so the earlier op then applied on top and the replicas
+diverged ("Older" vs "Newer" for the same relay log).
+
+- drainOps detects an unapplied op below an applied one and unflags the
+  confirmed log — the existing rebase replays it in relay order inside
+  the same atomic transaction, so every delivery order converges.
+- adoptSnapshot unflags ops applied above the snapshot's coverage; a
+  push folded before adoption was wiped by the restore while staying
+  flagged, losing its effect permanently.
+- Probe now proves push-first, own-ack-first, snapshot-then-tail and
+  ordered delivery all converge and pending edits survive the re-replay;
+  the quarantined TODO is a real wall assertion. Clears QUARANTINE row;
+  SYNC_DELIVERY_ORDER.md retired (git history is the archive).
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

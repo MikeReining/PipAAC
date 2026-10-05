@@ -1,0 +1,43 @@
+[
+  {
+    "case": "revoked-open-socket",
+    "deviceStillRegistered": false,
+    "removedSocketReceived": [
+      "ops"
+    ],
+    "modeledMessageRebroadcast": [
+      "model"
+    ]
+  },
+  {
+    "case": "websocket-sender-identity",
+    "authenticatedDevice": "dev_3647f258a9674c34",
+    "attachmentJson": "{}",
+    "nodeUpgradeLimitation": "init[\"status\"] must be in the range of 200 to 599, inclusive."
+  },
+  {
+    "case": "pairing-epoch-dropped",
+    "sentEpoch": 3,
+    "returnedGrant": {
+      "user_id": "audit-user",
+      "eph": "eph",
+      "iv": "iv",
+      "wrapped": "wrapped",
+      "by_device": "dev_owner"
+    },
+    "newClientDefaultEpoch": 1
+  },
+  {
+    "case": "snapshot-overlap-regression",
+    "afterNew": 600,
+    "afterOlderCompletes": 500,
+    "storedTag": "old"
+  },
+  {
+    "case": "bootstrap-response-loss",
+    "sameDeviceRetryStatus": 409,
+    "body": {
+      "error": "conflict"
+    }
+  }
+]

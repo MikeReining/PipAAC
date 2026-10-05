@@ -1,0 +1,18 @@
+Enumerate versioned snapshots and the proof index in destroy()
+
+destroy() deleted b/<user>/* and only the legacy s/<user> snapshot —
+every immutable s/<user>/<seq> backup (F08) and the card's
+ri/<sha256(proof)> entry survived a retention destroy, so complete
+erasure was a claim the code could not keep. destroy() now lists the
+s/<user>/ prefix (paged like blobs) and deletes the current card's
+proof-index key. Orphaned ri/ keys from interrupted index writes are
+hash-keyed and unlistable — they can dangle but never resolve once
+the DO is gone.
+
+The entitlement fakes also caught up to seams added earlier:
+storage.transactionSync (rotation module) and BLOBS.head (immutable
+snapshot PUTs) — missing mocks broke two tests, not logic.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

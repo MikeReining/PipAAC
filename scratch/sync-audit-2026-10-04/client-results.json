@@ -1,0 +1,105 @@
+[
+  {
+    "case": "persist-false-cursor",
+    "persistResult": false,
+    "cursor": 2,
+    "registrySaved": {
+      "sync": {
+        "userId": "audit-user",
+        "epoch": 1,
+        "cursor": 2
+      }
+    },
+    "entityInMemory": true
+  },
+  {
+    "case": "stale-client-after-rotation",
+    "localEpoch": 2,
+    "opensWithEpoch1": true,
+    "opensWithEpoch2": false
+  },
+  {
+    "case": "missed-intermediate-epoch",
+    "epoch": 3,
+    "cursor": 1,
+    "entityPresent": false,
+    "health": {
+      "running": true,
+      "flushError": null,
+      "ingestError": "OperationError: The operation failed for an operation-specific reason\n    at AESCipherJob.onDone (node:internal/crypto/util:663:19)",
+      "mediaPending": 0,
+      "mediaError": null
+    },
+    "warnings": [
+      "OperationError: The operation failed for an operation-specific reason"
+    ]
+  },
+  {
+    "case": "snapshot-incomplete-prefix",
+    "cursor": 1,
+    "snapshotSeq": 501,
+    "knownSeqs": [
+      1,
+      501
+    ],
+    "snapshotEntityIds": [
+      "ent_audit_local"
+    ]
+  },
+  {
+    "case": "snapshot-cursor-without-persist",
+    "cursor": 500,
+    "persistCalls": 0,
+    "registrySaves": [
+      {
+        "sync": {
+          "userId": "audit-user",
+          "epoch": 1,
+          "cursor": 500
+        }
+      }
+    ]
+  },
+  {
+    "case": "submit-retry-missing",
+    "submitAttempts": 1,
+    "pendingOps": 1,
+    "remainingTimerDurations": [],
+    "flushError": "temporary failure"
+  },
+  {
+    "case": "ingest-error-saved-status",
+    "ingestError": "Error: applyOp: unknown op kind new_kind_from_newer_version",
+    "pending": 0,
+    "status": {
+      "text": "✓ Saved",
+      "tone": "ok"
+    }
+  },
+  {
+    "case": "transient-media-drop",
+    "attempts": 10,
+    "localBytesStillPresent": true,
+    "queue": [],
+    "health": {
+      "running": true,
+      "flushError": null,
+      "ingestError": null,
+      "mediaPending": 0,
+      "mediaError": "temporary blob failure"
+    }
+  },
+  {
+    "case": "snapshot-erases-pending-with-no-tail",
+    "pendingOpNowConfirmedAt": 501,
+    "entityPresent": false,
+    "publishedSnapshotSeq": 501,
+    "publishedEntityPresent": false
+  },
+  {
+    "case": "pruned-backlog-empty-tail",
+    "cursor": 1,
+    "availableSnapshotSeq": 500,
+    "snapshotEntityPresent": false
+  }
+]

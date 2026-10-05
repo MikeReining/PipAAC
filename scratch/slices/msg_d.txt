@@ -1,0 +1,11 @@
+Rotate to the relay's epoch, not stale UI state (audit follow-up)
+
+rotateAfterRemoval and the recovery-card swap computed the new epoch
+as me.sync.epoch + 1. A device behind a parallel owner's rotation
+posted an epoch the relay refuses wholesale (bad_epoch), silently
+skipping the post-removal re-key. Both paths now read current_epoch
+from listDevices and rotate to max(local, relay) + 1.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

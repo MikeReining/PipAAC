@@ -1,0 +1,21 @@
+Cap cursor at fetched coverage and pace media retries (review fixes)
+
+Codex's reviewed working-tree fixes, verified and committed per the
+2026-10-05 review handoff:
+
+- Fetched coverage now caps at the page's max seq after a successful
+  DB save — a live push folded ahead of a paged fetch can no longer
+  skip unseen middle pages; a failed save throws instead of refetching
+  the same full page forever.
+- Media retries keep a separate `retries` counter (30 s → 5 min pacing,
+  capped at 10); `fails` counts only proven-missing bytes; reconcile
+  now shares the queue lock; a later success no longer clears an
+  earlier transient error.
+- Review packet: quarantined order/snapshot TODO tests
+  (sync_order_review.test.mjs, expiry 2026-10-08) and
+  SYNC_REPLAY_ANCHOR.md — the P1 replay-anchor repair is the next slice;
+  the TODOs intentionally fail until it lands.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

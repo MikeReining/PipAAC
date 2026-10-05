@@ -1,0 +1,79 @@
+[
+  {
+    "case": "repeat-confirmed-swap",
+    "before": [
+      {
+        "id": "grp_audit_a",
+        "index_slot": 81
+      },
+      {
+        "id": "grp_audit_b",
+        "index_slot": 80
+      }
+    ],
+    "once": [
+      {
+        "id": "grp_audit_a",
+        "index_slot": 81
+      },
+      {
+        "id": "grp_audit_b",
+        "index_slot": 80
+      }
+    ],
+    "twice": [
+      {
+        "id": "grp_audit_a",
+        "index_slot": 80
+      },
+      {
+        "id": "grp_audit_b",
+        "index_slot": 81
+      }
+    ]
+  },
+  {
+    "case": "repeat-confirmed-recording",
+    "once": {
+      "id": "ovr_audit",
+      "key": "blob:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "recorded_text": "New name"
+    },
+    "twice": null,
+    "rows": [
+      {
+        "id": "ovr_audit",
+        "status": "superseded"
+      }
+    ]
+  },
+  {
+    "case": "stats-missing-snapshot",
+    "source": [
+      {
+        "day": 20000,
+        "device_id": "dev_audit",
+        "payload": "{\"words\":12}"
+      }
+    ],
+    "restored": [],
+    "snapshotHasStats": false
+  },
+  {
+    "case": "paired-owner-rotation-card",
+    "restoredFromOriginalCard": false
+  },
+  {
+    "case": "concurrent-identity-generation",
+    "returned": [
+      "dev_bc0950f828219b39",
+      "dev_331d9f70af7cfc7d",
+      "dev_f68a2cc169c4d1c1"
+    ],
+    "stored": "dev_331d9f70af7cfc7d"
+  },
+  {
+    "case": "snapshot-missing-table",
+    "error": "snap[t] is not iterable"
+  }
+]

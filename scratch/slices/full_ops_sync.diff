@@ -1,0 +1,134 @@
+diff --git a/public/shared/ops.mjs b/public/shared/ops.mjs
+index 9b2272f6..58cfd9a5 100644
+--- a/public/shared/ops.mjs
++++ b/public/shared/ops.mjs
+@@ -308,6 +308,15 @@ export function listOps(db) {
+   return db.prepare("SELECT seq, op_id, device_id, kind, args, created_at, relay_seq FROM sync_op ORDER BY seq").all();
+ }
+ 
++/** The outbox only — unconfirmed ops, oldest first, optionally capped
++ * so a flush never scans or submits the whole log at once. */
++export function pendingOps(db, limit = null) {
++  return db.prepare(
++    `SELECT seq, op_id, device_id, kind, args, created_at, relay_seq
++     FROM sync_op WHERE relay_seq IS NULL ORDER BY seq LIMIT ?`,
++  ).all(limit ?? -1);
++}
++
+ /**
+  * § 5 — one order, same functions. The synced tables, parents first for
+  * baseline restore. child history, prediction weights, the catalog and
+@@ -325,6 +334,12 @@ const SYNCED_TABLES = [
+   "stats_day",
+ ];
+ 
++/** The snapshot payload format version. v1 = { seq, snap: {table: rows} }
++ *  with every table optional on restore. A reader must refuse a higher
++ *  version loudly — a partial restore of a format it does not know is
++ *  worse than no restore (audit: versioned restore contract). */
++export const SNAPSHOT_V = 1;
++
+ /** Every synced table's rows, with rowids, oldest first. */
+ export function snapshotSynced(db) {
+   const snap = {};
+diff --git a/public/shared/sync.mjs b/public/shared/sync.mjs
+index 1f956be1..d15a9d9e 100644
+--- a/public/shared/sync.mjs
++++ b/public/shared/sync.mjs
+@@ -12,7 +12,7 @@
+  * recordOp calls the registered sink after every adult edit; sync.mjs
+  * debounces a submit so edits reach the relay without the UI knowing.
+  */
+-import { adoptSnapshot, appliedSeqOf, baselineSnapshot, confirmOps, drainOps, listOps, setDeviceId, setOpSink } from "./ops.mjs";
++import { adoptSnapshot, appliedSeqOf, baselineSnapshot, confirmOps, drainOps, listOps, pendingOps, setDeviceId, setOpSink, SNAPSHOT_V } from "./ops.mjs";
+ import { loadBlobBytes, saveBlobBytes, setBlobFetcher } from "../db.js";
+ import {
+   deriveEpochKey, getDeviceIdentity, getUserKey, openBlob, openKeyStore, openOp,
+@@ -249,16 +249,25 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
+     if (dirty) await store.put(BLOBQ, q);
+   };
+ 
+-  const pendingOps = () => listOps(db).filter((o) => o.relay_seq === null);
+-  const flush = async () => {
+-    const ops = pendingOps();
+-    if (!ops.length) { flushError = null; return; }
++  /* The outbox flushes in bounded batches (audit: unbounded work), and
++   * the flush itself is serialized — a timer flush, a socket-triggered
++   * flush, and a recover flush share one in-flight promise instead of
++   * racing the same pending set through the relay twice. */
++  const FLUSH_BATCH = 200;
++  const OPS_PAGE = 200;
++  let flushing = null;
++  const flush = () => (flushing ??= (async () => {
+     try {
+-      const { ops: assigned } = await client.submit(ops);
++      const ops = pendingOps(db, FLUSH_BATCH + 1);
++      if (!ops.length) { flushError = null; return; }
++      const more = ops.length > FLUSH_BATCH;
++      const { ops: assigned } = await client.submit(ops.slice(0, FLUSH_BATCH));
+       confirmOps(db, assigned);
+       await maybeSnapshot();
+       flushError = null;
+       flushFails = 0;
++      // The batch drained but the outbox didn't — keep going promptly.
++      if (more || pendingOps(db, 1).length) scheduleFlush(0);
+     } catch (err) {
+       flushError = String(err?.message ?? err);
+       // A stranded edit is silent loss (audit F10): bounded retries
+@@ -268,8 +277,10 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
+         scheduleFlush(Math.min(2000 * flushFails, 30000));
+       }
+       throw err;
++    } finally {
++      flushing = null;
+     }
+-  };
++  })());
+   let flushTimer = null;
+   let flushFails = 0;
+   const scheduleFlush = (delay = 300) => {
+@@ -334,7 +345,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
+         || seq - (cfg.snap_seq ?? 0) < 500) return;
+     const snap = baselineSnapshot(db);
+     try {
+-      const env = await sealOp(await keyFor(epoch), { seq, snap });
++      const env = await sealOp(await keyFor(epoch), { v: SNAPSHOT_V, seq, snap });
+       await client.putSnapshot({ e: epoch, env }, seq);
+       cfg.snap_seq = seq;
+       await saveUser({ sync: cfg });
+@@ -377,6 +388,15 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
+       ? await openOp(await keyFor(stored.e ?? 1), stored.env).catch(() => null)
+       : null;
+     if (!plain?.snap || (plain.seq ?? 0) <= (cfg.cursor ?? 0)) return cfg.cursor ?? 0;
++    // Versioned restore contract (audit): a payload newer than this
++    // build understands must fail loudly — replaying a format we half-
++    // parse claims coverage of state we never restored. Pre-versioning
++    // payloads are format 1.
++    const v = plain.v ?? 1;
++    if (v > SNAPSHOT_V) {
++      throw new Error(
++        `sync: snapshot version ${v} newer than supported ${SNAPSHOT_V}`);
++    }
+     adoptSnapshot(db, plain.snap, plain.seq);
+     const saved = await persist?.();
+     if (saved === false) return cfg.cursor ?? 0;
+@@ -418,7 +438,10 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
+    * doesn't have. */
+   const recover = async () => {
+     for (;;) {
+-      const { ops: rows, snap_seq: snapSeq = 0 } = await client.fetchOps(cfg.cursor ?? 0);
++      // Pages of OPS_PAGE — a long-offline device walks the backlog a
++      // bounded slice at a time instead of one unbounded response.
++      const { ops: rows, snap_seq: snapSeq = 0 } =
++        await client.fetchOps(cfg.cursor ?? 0, OPS_PAGE);
+       // A gap between the cursor and the first row only means lost
+       // history if the relay's prune point reaches into it: relay seqs
+       // are sparse — a deduped resubmit burns a number — so a gap
+@@ -447,6 +470,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
+         return;
+       }
+       await ingest(rows ?? [], { fetched: true });
++      if ((rows?.length ?? 0) === OPS_PAGE) continue; // next page
+       break;
+     }
+     await maybeCompleteRotation().catch((err) =>

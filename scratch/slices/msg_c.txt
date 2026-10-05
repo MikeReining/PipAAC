@@ -1,0 +1,10 @@
+Version the snapshot payload and refuse newer formats loudly (audit follow-up)
+
+Snapshots now carry v: SNAPSHOT_V (=1). On adoption a payload stamped
+newer than this build understands throws instead of partially
+restoring and claiming coverage of state it never received; missing
+v reads as format 1, so pre-versioning snapshots still restore.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

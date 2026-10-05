@@ -1,0 +1,26 @@
+Make recovery-card rotation resumable and refresh sync contracts
+
+Codex's completed rotation-interruption slice, verified and committed
+per handoff (founder instruction: Codex does not stage or commit).
+
+- Replace card journals rotation/<user> durably before any credential
+  change; a guarded relay request commits proof, sealed bundle, epoch
+  and grants atomically. Lost responses replay the same request.
+- Local resume retires the old root, installs the new root and keys,
+  saves the registry and rekeys the client; flush and recovery resume
+  an interrupted journal.
+- Device/supporter removal records the rotation obligation inside the
+  revocation transaction; root holders complete it later, deferred
+  failures surface via syncHealth().rotationError and editor status.
+- Op submits declare their sealing epoch; the relay refuses a stale
+  epoch before logging so the outbox stays retryable. The split
+  recovery/keys contract stays for legacy clients.
+- Canonical sync docs updated to the current contracts.
+
+Carries an explicit quarantined P1: out-of-order delivery (later push
+folded before earlier fetch) diverges the persisted name. Probe and
+TODO test are intentional — repaired as the next slice.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

@@ -1,0 +1,15 @@
+Document the supporter-regrant resume gap (P2, traced)
+
+The removal flow's regrant loop is the one un-durable step left by the
+rotation slice: a tab kill after the relay commit strands supporter
+bundles at the pre-rotation epoch. Failures are visible now (honest
+ingestError, bad_epoch refusals) but nothing self-heals — only an
+owner regrant rewrites a bundle and nothing retries the loop.
+
+Packet names the call path, the stranded-supporter experience, the
+repair boundary, and the proof to close. Linked from phase 043 and the
+canonical sync owner.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>
