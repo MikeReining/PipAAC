@@ -295,7 +295,12 @@ export function mountDevices({
       await client.requestRotation();
       return;
     }
-    const epoch = (me.sync?.epoch ?? 1) + 1;
+    // The relay owns the epoch — a parallel owner may have rotated
+    // since this device last synced, and a rotation to a stale epoch
+    // is refused wholesale (audit: rotation from stale UI state).
+    const { current_epoch: relayEpoch = 1 } =
+      await client.listDevices().catch(() => ({}));
+    const epoch = Math.max(me.sync?.epoch ?? 1, relayEpoch) + 1;
     const key = await getUserKey(store, me.id, epoch);
     const wrapped = {};
     for (const d of devices) {

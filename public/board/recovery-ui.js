@@ -186,7 +186,11 @@ export function mountRecovery({
         oldRoot instanceof Uint8Array ? oldRoot : new Uint8Array(oldRoot), oldEpoch);
     }
     await store.put(userRootName(me.id), newRoot);
-    const epoch = oldEpoch + 1;
+    // Relay-current epoch, not stale UI state — a parallel owner may
+    // have rotated since this device synced (audit).
+    const { current_epoch: relayEpoch = oldEpoch } =
+      await client.listDevices().catch(() => ({}));
+    const epoch = Math.max(oldEpoch, relayEpoch) + 1;
     const key = await deriveEpochKey(newRoot, epoch);
     await putUserKey(store, me.id, key, epoch);
     const { devices } = await client.listDevices();
