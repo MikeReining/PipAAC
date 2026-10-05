@@ -146,7 +146,8 @@ export function relayClient({ userId, baseUrl, identity, userKey }) {
         headers: { "content-type": "application/json", ...(await signedHeaders(identity, "PUT", p, body)) },
         body,
       });
-      if (!res.ok) throw new Error(`relay PUT blob: ${res.status}`);
+      if (!res.ok) throw Object.assign(
+        new Error(`relay PUT blob: ${res.status}`), { status: res.status });
       return res.json();
     },
     async getBlob(sha) {
@@ -154,7 +155,8 @@ export function relayClient({ userId, baseUrl, identity, userKey }) {
       const res = await fetch(`${baseUrl}${p}`, {
         headers: await signedHeaders(identity, "GET", p, null),
       });
-      if (!res.ok) throw new Error(`relay GET blob: ${res.status}`);
+      if (!res.ok) throw Object.assign(
+        new Error(`relay GET blob: ${res.status}`), { status: res.status });
       return JSON.parse(await res.text());
     },
     /** WS URL with the signature in the query (no headers on WS). */

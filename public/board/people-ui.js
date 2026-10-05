@@ -94,9 +94,11 @@ export function mountPeople({
       n.textContent = nameOf(u);
       const sub = document.createElement("small");
       const isLocked = u.id !== me.id && await locked(u);
+      const pendingJoin = u.id !== me.id && !!u.sync?.pendingJoin;
       sub.textContent = u.id === me.id ? "Open now"
         : isLocked ? "Needs an Allow or recovery card"
-          : u.home ? "Opens first" : "Tap to switch";
+          : pendingJoin ? "On this device — not linked yet"
+            : u.home ? "Opens first" : "Tap to switch";
       txt.append(n, sub);
       b.append(av, txt);
       b.disabled = isLocked;
@@ -162,10 +164,14 @@ export function mountPeople({
       };
       // Locked (015 slice 4): the account brought this user but not its
       // keys — they arrive by an Allow on another device or a QR card.
+      // pendingJoin (audit F12): the keys came but relay registration
+      // never succeeded — local-only until a later join clears it.
       const isLocked = await locked(u);
+      const pendingJoin = !!u.sync?.pendingJoin;
       const sub = document.createElement("span");
       sub.className = "usr-sub";
       sub.textContent = isLocked ? "🔒 needs an Allow or QR card"
+        : pendingJoin ? "on this device — not linked yet"
         : [u.id === me.id && "Open now", u.home && "Opens first"].filter(Boolean).join(" · ");
       row.append(av, name, sub);
       if (u.id !== me.id && !isLocked) {

@@ -36,6 +36,26 @@ test("WT 9 — status says Saving until the relay accepted the op, then Saved; o
   assert.equal(editorStatus({ linked: false, pending: 5, online: true }).text, "Saved on this device");
 });
 
+test("F11 — a failed inbound replay, a lost upload, and an unflushed save are never green", () => {
+  const clean = { linked: true, pending: 0, mediaPending: 0, online: true };
+  // Unsupported/corrupt inbound ops: pending counts were zero yet the
+  // device has NOT applied the family's state — never "✓ Saved".
+  assert.equal(editorStatus({ ...clean, ingestError: "sync: bad op" }).tone, "warn");
+  assert.match(editorStatus({ ...clean, ingestError: "x" }).text, /Couldn't apply/);
+  // A media item nobody can still save is a failure, not "Saving…".
+  assert.equal(editorStatus({ ...clean, mediaError: "relay 404" }).tone, "warn");
+  // …while the queue still owes it, it stays busy, not failed.
+  assert.equal(editorStatus({ ...clean, mediaError: "offline", mediaPending: 1 }).text, "Saving…");
+  // Writes not yet flushed to storage are not "Saved" — linked or not.
+  assert.equal(editorStatus({ ...clean, dirty: true }).text, "Saving…");
+  assert.equal(editorStatus({ linked: false, pending: 0, dirty: true }).text, "Saving…");
+  // Local persistence outranks sync failures and a green board alike.
+  assert.equal(editorStatus({ ...clean, ingestError: "x", saveBlocked: true }).text,
+    "Not saving — saved board couldn't open");
+  assert.equal(editorStatus({ ...clean, saveError: "quota" }).text,
+    "Couldn't save — keep this open");
+});
+
 test("WT 4 — a word Maya has lands in 'on the board' with where it lives; ours don't", () => {
   const db = openDb();
   createGroup(db, { id: "grp_food", name: "Food" });

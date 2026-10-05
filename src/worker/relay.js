@@ -246,14 +246,20 @@ export class UserRelay {
     // SHA-256 of the recovery root, which a restore presents in place
     // of a device signature. The relay stores the proof, never the key.
     if (method === "POST" && route === "bootstrap") {
-      // 015 slice 2: clients choose the user id (their registry id), so
-      // a DO may already be initialized — refuse rather than graft a
-      // stranger's device onto someone else's user.
-      if (this.metaGet("user_id") ?? this.metaGet("board_id")) {
-        return bad("conflict", 409);
-      }
       const { device_id, pubkey, dh_pub, wrapped_key, recovery_proof, label } =
         await request.json().catch(() => ({}));
+      if (this.metaGet("user_id") ?? this.metaGet("board_id")) {
+        // Idempotent for the rightful signer only (audit F12): a
+        // bootstrap whose response was lost retries safely — the same
+        // user id, device id and key gets ok, never a stranger.
+        const existing = this.ctx.storage.sql.exec(
+          "SELECT pubkey FROM device WHERE device_id = ?", device_id).toArray()[0];
+        if (existing && pubkey && existing.pubkey === pubkey) {
+          return json({ ok: true, already_registered: true,
+            user_id: this.metaGet("user_id") ?? this.metaGet("board_id") });
+        }
+        return bad("conflict", 409);
+      }
       if (!device_id || !pubkey) return bad("bad_bootstrap");
       this.ctx.storage.sql.exec(
         `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at, label)
@@ -331,23 +337,34 @@ export class UserRelay {
       if (peek?.join_token) {
         const { device_id, pubkey, dh_pub } = peek;
         if (!device_id || !pubkey) return bad("bad_device");
+        // Audit F12: a join whose response was lost retries with a
+        // spent token — the already-registered device matching its own
+        // pubkey gets ok without burning another token; a different
+        // pubkey under the same id is a conflict, never admission.
+        const existingKey = this.devicePubkey(device_id);
+        if (existingKey !== null) {
+          return existingKey === pubkey
+            ? json({ ok: true, already_registered: true })
+            : bad("conflict", 409);
+        }
         const hash = b64u(await crypto.subtle.digest(
           "SHA-256", te.encode(peek.join_token)));
         const row = this.ctx.storage.sql.exec(
           "SELECT token_hash, expires, for_acct FROM join_token WHERE token_hash = ?",
           hash).toArray()[0];
         if (!row || row.expires < Date.now()) return bad("forbidden", 403);
-        this.ctx.storage.sql.exec(
-          "DELETE FROM join_token WHERE token_hash = ?", hash);
         if (this.entitlement() !== "lifetime") {
           const known = this.ctx.storage.sql.exec(
             "SELECT COUNT(*) AS n FROM device").toArray()[0].n;
-          const present = this.devicePubkey(device_id) !== null;
-          if (!present && known >= 1) {
+          if (known >= 1) {
             return json({ error: "upgrade_required",
               message: "Pip Lifetime unlocks more than one linked device." }, { status: 403 });
           }
         }
+        // Consume only after every check that can still reject —
+        // a refused join must not spend the family's token.
+        this.ctx.storage.sql.exec(
+          "DELETE FROM join_token WHERE token_hash = ?", hash);
         this.ctx.storage.sql.exec(
           `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at, via_acct)
            VALUES (?, ?, ?, NULL, ?, ?, ?)`,

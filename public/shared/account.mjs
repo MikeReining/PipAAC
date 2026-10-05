@@ -17,6 +17,7 @@ import {
   sealBlob, openBlob, wrapUserKey, unwrapUserKey,
 } from "./sync_crypto.mjs";
 import { kv } from "./platform.mjs";
+import { getUser } from "./users.mjs";
 
 const te = new TextEncoder();
 const td = new TextDecoder();
@@ -206,18 +207,6 @@ export async function importAccountUsers({
         } catch { /* a grant this account can't open stays locked */ }
       }
     }
-    // sync.userId is set from the grants even when none unwrapped —
-    // renderUsers marks such a user locked ("needs an Allow or QR
-    // card") and hides the Switch button until keys arrive.
-    const grantEpochs = (u.keys ?? []).map((k) => k.epoch);
-    const sync = grantEpochs.length
-      ? { userId: u.user_id, epoch: Math.max(...grantEpochs), cursor: 0 }
-      : null;
-    await addUser(userStore, {
-      id: u.user_id,
-      name: profile?.name ?? "",
-      photo: profile?.photo ?? null,
-      sync, role: "partner" });
     // Keys are not enough — this device must also register on the user's
     // relay before ops will pull. Single-use join tokens carried in the
     // bundle open that door; try each until one redeems.
@@ -228,6 +217,27 @@ export async function importAccountUsers({
         catch { /* consumed or expired — try the next */ }
       }
     }
+    // sync.userId claims proven relay access (audit F12): sync.userId
+    // is set from the grants even when none unwrapped — renderUsers
+    // marks such a user locked ("needs an Allow or QR card") and hides
+    // the Switch button until keys arrive. An unlocked user whose
+    // tokens were all dead is marked pendingJoin instead — it works
+    // locally but never presents as linked. A later sign-in retries
+    // with tokens another device refreshed; an already-linked row is
+    // never downgraded by a failed re-import.
+    const grantEpochs = (u.keys ?? []).map((k) => k.epoch);
+    const prev = await getUser(userStore, u.user_id);
+    const alreadyLinked = !!prev?.sync?.userId && !prev.sync.pendingJoin;
+    const sync = grantEpochs.length
+      ? { userId: u.user_id, epoch: Math.max(...grantEpochs),
+          cursor: prev?.sync?.cursor ?? 0,
+          ...(joined || alreadyLinked ? {} : { pendingJoin: true }) }
+      : null;
+    await addUser(userStore, {
+      id: u.user_id,
+      name: profile?.name ?? "",
+      photo: profile?.photo ?? null,
+      sync, role: "partner" });
     out.push({ id: u.user_id, unlocked: epochs.length > 0, joined });
   }
   return out;

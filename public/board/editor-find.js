@@ -11,12 +11,20 @@ import { normalizeV1 } from "../shared/normalize.mjs";
  *  attachments). Never "on Maya's iPad": nothing tells us a device
  *  received it. 043 A: a board that cannot persist (blocked or last
  *  save failed) outranks the sync states — losing the local copy is
- *  worse than missing the relay. */
-export function editorStatus({ linked, pending, mediaPending = 0, online, flushError, saveBlocked, saveError }) {
+ *  worse than missing the relay. Audit F11: a failed inbound replay, a
+ *  media failure, and edits not yet flushed to storage are all failure
+ *  states, not "Saved". */
+export function editorStatus({ linked, pending, mediaPending = 0, online, flushError, saveBlocked, saveError, ingestError, mediaError, dirty = false }) {
   if (saveBlocked) return { text: "Not saving — saved board couldn't open", tone: "warn" };
   if (saveError) return { text: "Couldn't save — keep this open", tone: "warn" };
-  if (!linked) return { text: "Saved on this device", tone: "ok" };
-  if (pending === 0 && mediaPending === 0) return { text: "✓ Saved", tone: "ok" };
+  if (ingestError) return { text: "Couldn't apply an update — keep this open", tone: "warn" };
+  if (mediaError && mediaPending === 0) return { text: "Couldn't save a photo or recording", tone: "warn" };
+  if (!linked) {
+    return dirty
+      ? { text: "Saving…", tone: "busy" }
+      : { text: "Saved on this device", tone: "ok" };
+  }
+  if (pending === 0 && mediaPending === 0 && !dirty) return { text: "✓ Saved", tone: "ok" };
   if (!online || flushError) return { text: "Offline — will sync", tone: "warn" };
   return { text: "Saving…", tone: "busy" };
 }

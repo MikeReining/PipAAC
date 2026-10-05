@@ -403,9 +403,12 @@ export function mountDevices({
           // each unlocked user's relay with a bundle join token.
           joinDevice: joinWithToken });
         const locked = imported.filter((u) => !u.unlocked).length;
-        say(locked
-          ? `${imported.length} user(s) added — ${locked} locked until an Allow or QR card brings their keys.`
-          : `${imported.length} user(s) added.`);
+        const unjoined = imported.filter((u) => u.unlocked && !u.joined).length;
+        const notes = [];
+        if (locked) notes.push(`${locked} locked until an Allow or QR card brings their keys`);
+        if (unjoined) notes.push(`${unjoined} couldn't reach their relay — sign in again after a linked device refreshes their access`);
+        say(`${imported.length} user(s) added`
+          + (notes.length ? ` — ${notes.join("; ")}.` : "."));
       } else {
         say("Create your passkey…");
         const r = await registerAccount({

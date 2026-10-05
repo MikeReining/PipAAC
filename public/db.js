@@ -227,7 +227,7 @@ export async function bootDb(userStore, userId) {
     // status line and the recovery path; onSaveIssue fires on a failed
     // flush so the UI can say it.
     dbHealth: () => ({ readFailed, readError, restoredFromPrev, corrupt,
-      saveBlocked, saveError, savedAt }),
+      saveBlocked, saveError, savedAt, dirty: !!saveTimer }),
     onSaveIssue: null };
   return handle;
 }

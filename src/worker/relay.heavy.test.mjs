@@ -467,3 +467,139 @@ test("snapshots: sealed state round-trips; the watermark only advances", async (
       ?.some((e) => e.spoken_name === "SnapDog"),
     "same-seq PUT replaced the published object");
 });
+
+test("F12: bootstrap is idempotent for the rightful device, closed to strangers", async () => {
+  const aStore = memoryKeyStore();
+  const a = await getDeviceIdentity(aStore);
+  const userId = crypto.randomUUID();
+  const body = JSON.stringify({
+    user_id: userId, device_id: a.deviceId,
+    pubkey: await exportPublicKey(a.verify),
+  });
+  const post = () => fetch(`${BASE}/users`, {
+    method: "POST", headers: { "content-type": "application/json" }, body });
+
+  const first = await post();
+  assert.equal(first.status, 200);
+  // The first response was lost on the wire — the same device's retry
+  // must get ok, not a conflict it can never resolve.
+  const retry = await post();
+  assert.equal(retry.status, 200, "rightful retry rejected");
+  const again = await retry.json();
+  assert.equal(again.user_id, userId, "idempotent reply dropped the user id");
+
+  // A stranger grafting onto the same user is still a conflict — the
+  // idempotency fix must not widen admission.
+  const stranger = await getDeviceIdentity(memoryKeyStore());
+  const graft = await fetch(`${BASE}/users`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      user_id: userId, device_id: stranger.deviceId,
+      pubkey: await exportPublicKey(stranger.verify),
+    }),
+  });
+  assert.equal(graft.status, 409, "stranger admitted by the idempotent path");
+});
+
+test("F12: a join-token join retries after a lost response; spent tokens stay spent for strangers", async () => {
+  // Owner bootstraps the user and mints one join token.
+  const aStore = memoryKeyStore();
+  const a = await getDeviceIdentity(aStore);
+  const userId = crypto.randomUUID();
+  const userKey = await getUserKey(aStore, userId);
+  await fetch(`${BASE}/users`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      user_id: userId, device_id: a.deviceId,
+      pubkey: await exportPublicKey(a.verify),
+    }),
+  }).then((r) => r.json());
+  const clientA = relayClient({ userId, baseUrl: BASE, identity: a, userKey });
+  await makeLifetime(clientA, userId);
+  const { tokens } = await clientA.mintJoinTokens(2);
+
+  // B joins with the first token, then its "ok" is lost — the retry
+  // re-sends the same (now spent) token and must still get ok.
+  const bStore = memoryKeyStore();
+  const b = await getDeviceIdentity(bStore);
+  const join = {
+    token: tokens[0], device_id: b.deviceId,
+    pubkey: await exportPublicKey(b.verify),
+    dh_pub: await exportDhPublic(b.dh.publicKey),
+  };
+  await joinDeviceWithToken(BASE, userId, join);
+  const retry = await joinDeviceWithToken(BASE, userId, join);
+  assert.equal(retry.ok, true, "spent-token retry of the same device rejected");
+
+  // A different key under B's device id is a conflict, not admission —
+  // the idempotent path authenticates by pubkey, not just device id.
+  const impostor = await getDeviceIdentity(memoryKeyStore());
+  const graft = await fetch(`${BASE}/users/${userId}/devices`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      device_id: b.deviceId,
+      pubkey: await exportPublicKey(impostor.verify),
+      join_token: tokens[0],
+    }),
+  });
+  assert.equal(graft.status, 409, "key swap under a known device id admitted");
+
+  // The remaining token is genuinely spent only by use — a stranger
+  // presenting the first (spent) token still gets forbidden.
+  const stranger = await getDeviceIdentity(memoryKeyStore());
+  const spent = await fetch(`${BASE}/users/${userId}/devices`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      device_id: stranger.deviceId,
+      pubkey: await exportPublicKey(stranger.verify),
+      join_token: tokens[0],
+    }),
+  });
+  assert.equal(spent.status, 403, "a spent token admitted a stranger");
+});
+
+test("F12: a rejected join never spends the family's token", async () => {
+  // Free user: one device is the cap. The second-device join is refused
+  // on entitlement — but the token must NOT be consumed, or a retry
+  // after upgrading would have nothing to redeem.
+  const aStore = memoryKeyStore();
+  const a = await getDeviceIdentity(aStore);
+  const userId = crypto.randomUUID();
+  const userKey = await getUserKey(aStore, userId);
+  await fetch(`${BASE}/users`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      user_id: userId, device_id: a.deviceId,
+      pubkey: await exportPublicKey(a.verify),
+    }),
+  }).then((r) => r.json());
+  const clientA = relayClient({ userId, baseUrl: BASE, identity: a, userKey });
+  // No makeLifetime — this user is on the free tier.
+  const { tokens } = await clientA.mintJoinTokens(1);
+
+  const bStore = memoryKeyStore();
+  const b = await getDeviceIdentity(bStore);
+  const joinBody = JSON.stringify({
+    device_id: b.deviceId,
+    pubkey: await exportPublicKey(b.verify),
+    join_token: tokens[0],
+  });
+  const join = () => fetch(`${BASE}/users/${userId}/devices`, {
+    method: "POST", headers: { "content-type": "application/json" }, body: joinBody })
+    .then(async (r) => ({ status: r.status, body: await r.json() }));
+
+  const first = await join();
+  assert.equal(first.status, 403);
+  assert.equal(first.body.error, "upgrade_required");
+  // If the first refusal had burned the token this second attempt would
+  // read "forbidden" — it must stay "upgrade_required".
+  const second = await join();
+  assert.equal(second.status, 403);
+  assert.equal(second.body.error, "upgrade_required",
+    "the refused join consumed the token anyway");
+
+  // After the upgrade the same token redeems cleanly — recovery path.
+  await makeLifetime(clientA, userId);
+  const third = await join();
+  assert.equal(third.status, 200, "a live token refused after the upgrade");
+});

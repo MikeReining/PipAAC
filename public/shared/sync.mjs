@@ -44,7 +44,10 @@ export const syncHealth = () =>
 export async function initSync(db, user, saveUser, baseUrl = location.origin, onApplied = () => {}, onModel = null, persist = null) {
   if (running) return running;
   const cfg = user?.sync;
-  if (!cfg?.userId) return null;
+  // pendingJoin (audit F12): the account import stored keys but relay
+  // registration never succeeded — this device is local-only until a
+  // later join clears the flag.
+  if (!cfg?.userId || cfg.pendingJoin) return null;
   running = startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, persist)
     .catch((err) => { running = null; throw err; });
   return running;
@@ -171,18 +174,31 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
   // drains it drops out instead of wedging "Saving…" forever.
   const BLOB_MAX_FAILS = 10;
   const queueGet = async () => (await store.get(BLOBQ)) ?? [];
+  /* Every read-modify-write of the durable queue runs under this lock
+   * (audit F10): an interleaved queueBlob/put pair can otherwise drop a
+   * just-added entry, and two drains can replay the same upload. */
+  let queueLock = Promise.resolve();
+  const queueMutate = (fn) => {
+    const p = queueLock.then(fn);
+    queueLock = p.catch(() => {});
+    return p;
+  };
   const queueBlob = async (sha) => {
-    const q = await queueGet();
-    if (!q.some((e) => e.sha === sha)) { q.push({ sha, fails: 0 }); await store.put(BLOBQ, q); }
-    mediaPending = q.length;
+    await queueMutate(async () => {
+      const q = await queueGet();
+      if (!q.some((e) => e.sha === sha)) { q.push({ sha, fails: 0 }); await store.put(BLOBQ, q); }
+      mediaPending = q.length;
+    });
     enqueue(drainBlobs);
   };
-  const drainBlobs = async () => {
+  const drainBlobs = () => queueMutate(async () => {
     const q = await queueGet();
     const kept = [];
     for (const e of q) {
+      let hadBytes = false;
       try {
         const bytes = await loadBlobBytes(e.sha);
+        hadBytes = !!bytes;
         if (bytes) await uploadBlob(bytes);
         else {
           // Local copy gone — if the relay already has it, heal the
@@ -193,7 +209,12 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
         mediaError = null;
       } catch (err) {
         mediaError = String(err?.message ?? err);
-        if (++e.fails < BLOB_MAX_FAILS) kept.push(e);
+        // Only bytes nobody still has may count toward the drop cap:
+        // the local copy is gone AND the relay says it never got them
+        // (audit F10). A reachable local copy or a transient network
+        // miss keeps the obligation and retries with backoff.
+        const unrecoverable = !hadBytes && err?.status === 404;
+        if (!unrecoverable || ++e.fails < BLOB_MAX_FAILS) kept.push(e);
       }
     }
     await store.put(BLOBQ, kept);
@@ -202,11 +223,12 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     // hasn't landed yet or a transient network miss — without this an
     // idle device would wait for the next socket event to retry.
     if (kept.length) scheduleDrain(Math.min(30000 * kept[0].fails, 300000));
-  };
+  });
   let drainTimer = null;
   const scheduleDrain = (ms) => {
     clearTimeout(drainTimer);
     drainTimer = setTimeout(() => enqueue(drainBlobs), ms);
+    drainTimer.unref?.(); // same — re-arm only, never a keep-alive
   };
   /* Media saved before linking (or queued on another path): every blob:
    * ref in the synced tables belongs in the queue — a sha the relay
@@ -236,15 +258,24 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
       confirmOps(db, assigned);
       await maybeSnapshot();
       flushError = null;
+      flushFails = 0;
     } catch (err) {
       flushError = String(err?.message ?? err);
+      // A stranded edit is silent loss (audit F10): bounded retries
+      // with linear backoff whichever caller raised the failure —
+      // recover, the debounce, or a socket event all land here.
+      if (++flushFails <= 8) {
+        scheduleFlush(Math.min(2000 * flushFails, 30000));
+      }
       throw err;
     }
   };
   let flushTimer = null;
-  const scheduleFlush = () => {
+  let flushFails = 0;
+  const scheduleFlush = (delay = 300) => {
     clearTimeout(flushTimer);
-    flushTimer = setTimeout(() => flush().catch(() => {}), 300);
+    flushTimer = setTimeout(() => flush().catch(() => {}), delay);
+    flushTimer.unref?.(); // a retry timer must not hold a process open
   };
   setOpSink(scheduleFlush);
 
