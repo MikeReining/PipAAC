@@ -79,6 +79,7 @@ body.editor #editor { display: flex; flex-direction: column; flex: 1; min-height
 }
 .ed-drow .pic img, .ed-wrow .pic img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
 .ed-drow .pic.photo img, .ed-wrow .pic.photo img { object-fit: cover; }
+.ed-drow .pic.photo img[src$="#art"], .ed-wrow .pic.photo img[src$="#art"] { object-fit: contain; }
 .ed-drow .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .ed-drow .lb { font-family: var(--word-font); font-weight: 700; font-size: 17px; color: var(--ink-text); }
 .ed-drow .sub, .ed-wrow .sub {

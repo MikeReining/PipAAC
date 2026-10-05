@@ -32,6 +32,8 @@
 .prog-tile.pic img { width: 100%; height: 100%; }
 .prog-tile.pic.photo .pt-a { padding: 0; }
 .prog-tile.pic.photo img { object-fit: cover; }
+.prog-tile.pic.photo .pt-a:has(img[src$="#art"]) { padding: 4px; }
+.prog-tile.pic.photo img[src$="#art"] { object-fit: contain; }
 .prog-btn-tile { font-family: inherit; }
 .prog-btn-tile svg { width: 16px; height: 16px; }
 

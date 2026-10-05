@@ -28,3 +28,15 @@ export const typedBlob = async (data) => {
   const type = sniffType(new Uint8Array(await blob.slice(0, 16).arrayBuffer()));
   return type ? new Blob([blob], { type }) : blob;
 };
+
+/** Pictures saved as bytes are either a family photo (camera: JPEG/HEIC)
+ *  or art — a drawing or one of our library pictures (PNG/WebP). A photo
+ *  fills the tile edge to edge; art fits whole, like catalog art. The
+ *  blob URL carries the answer as a fragment (ignored when fetching) so
+ *  every tile style can tell with one CSS selector: img[src$="#art"]. */
+export const ART_MARK = "#art";
+const ART_TYPES = new Set(["image/png", "image/webp", "image/gif"]);
+
+/** A blob: URL for `blob`, marked when it is art. */
+export const pictureURL = (blob) =>
+  URL.createObjectURL(blob) + (ART_TYPES.has(blob.type) ? ART_MARK : "");

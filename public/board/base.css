@@ -327,6 +327,7 @@ body.groups #corner .g-home { display: block; }
   display: block;
 }
 .pred.photo .part { padding: 0; }
+.pred.photo .part:has(img[src$="#art"]) { padding: 4px; }
 .pred.photo .part img { object-fit: cover; }
 .pred .plabel {
   flex: 1;
@@ -502,9 +503,14 @@ body.groups #corner .g-home { display: block; }
 .words-only .cell .tlabel { height: 100%; flex: 1; padding: 0 8%; }
 .words-only .chip { justify-content: center; }
 .words-only .chip .clabel { height: auto; font-size: 28px; line-height: 1.15; }
-/* Photos fill the art area edge to edge. */
+/* Photos fill the art area edge to edge. A drawing or library picture
+   saved as bytes is art (its URL ends "#art", mediatype.mjs): it keeps
+   the art padding and fits whole, like catalog art. */
 .cell.photo .tart { padding: 0; }
 .cell.photo .tart img { width: 100%; height: 100%; object-fit: cover; }
+.cell.photo .tart:has(img[src$="#art"]) { padding: 3%; }
+.cell.photo .tart img[src$="#art"], .pred.photo .part img[src$="#art"],
+.chip.photo .cart img[src$="#art"] { object-fit: contain; border-radius: 0; }
 /* Pressed — border goes to ink, art area to warm fill. No scale,
    no movement. */
 .cell:active { border-color: var(--ink-text); background: var(--press-f); }

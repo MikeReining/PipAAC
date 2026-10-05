@@ -80,6 +80,7 @@ html.kb-up .add-grouplist { max-height: none; }
 }
 .addmatch .pic img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
 .addmatch .pic.photo img { object-fit: cover; }
+.addmatch .pic.photo img[src$="#art"] { object-fit: contain; }
 .addmatch .pic.plus { font-size: 26px; background: #fff; }
 .addmatch .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .addmatch .lb {

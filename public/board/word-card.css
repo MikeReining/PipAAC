@@ -23,11 +23,13 @@
   background: #fff; overflow: hidden; cursor: pointer;
   display: flex; flex-direction: column;
 }
+/* The label strip matches the board tile's (base.css .cell .tlabel: 33%);
+   a textarea can't centre vertically, so fitLabel sets its top padding. */
 .wc-tile .wc-label {
-  flex: none; height: 38%; width: 100%; resize: none; overflow: hidden;
+  flex: none; height: 33%; width: 100%; resize: none; overflow: hidden;
   background: var(--rf, var(--press-f)); color: var(--ink-text);
-  border: none; border-radius: 0; padding: 6px 8px 0; text-align: center;
-  font-family: var(--word-font); font-weight: 700; font-size: 18px; line-height: 1.1;
+  border: none; border-radius: 0; padding: 0 8px; text-align: center;
+  font-family: var(--word-font); font-weight: 700; font-size: 20px; line-height: 1.1;
   hyphens: auto; overflow-wrap: break-word;
 }
 .wc-tile .wc-label:not(:disabled) { cursor: text; }
@@ -36,7 +38,7 @@
 .wc-tile .wc-label:disabled { color: var(--ink-text); opacity: 1; cursor: pointer; pointer-events: none; }
 .wc-play {
   position: absolute; right: 6px; bottom: 6px;
-  width: 34px; height: 34px; border-radius: 50%; padding: 0;
+  width: 30px; height: 30px; border-radius: 50%; padding: 0;
   border: none; background: var(--ink); color: var(--cream);
   font-size: 13px; line-height: 1; cursor: pointer;
   box-shadow: 0 0 0 3px #fff;
@@ -50,6 +52,9 @@
 #wc-pic img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
 #wc-pic.photo { padding: 0; }
 #wc-pic.photo img { width: 100%; height: 100%; object-fit: cover; }
+/* Art saved as bytes fits whole (base.css § Photos). */
+#wc-pic.photo:has(img[src$="#art"]) { padding: 6%; }
+#wc-pic.photo img[src$="#art"] { object-fit: contain; }
 #wc-pic.drawing {
   background: linear-gradient(100deg, #fff 30%, var(--tray) 50%, #fff 70%);
   background-size: 300% 100%;
@@ -58,8 +63,17 @@
 @keyframes wc-shimmer { from { background-position: 100% 0; } to { background-position: -200% 0; } }
 @media (prefers-reduced-motion: reduce) { #wc-pic.drawing { animation: none; background: var(--tray); } }
 
-.wc-herohint { flex: 1; min-width: 90px; padding-right: 44px; font-size: 14px; color: var(--muted); }
+.wc-heroside {
+  flex: 1; min-width: 110px; padding-right: 44px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+}
+.wc-herohint { font-size: 14px; color: var(--muted); }
 .wc-herohint:empty { display: none; }
+.wc-showbtn:not([hidden]) {
+  border: 2px solid var(--line); border-radius: 999px; background: #fff;
+  font: inherit; font-size: 15px; font-weight: 700; color: var(--ink);
+  padding: 7px 14px; cursor: pointer;
+}
 .wc-swap:not([hidden]) {
   flex-basis: 100%; display: inline-flex; align-items: center;
   justify-content: center; gap: 10px; font-size: 17px; padding: 12px 18px;
@@ -95,6 +109,8 @@
 .wc-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .wc-thumb.photo { padding: 0; overflow: hidden; }
 .wc-thumb.photo img { object-fit: cover; border-radius: 10px; }
+.wc-thumb.photo:has(img[src$="#art"]) { padding: 5px; }
+.wc-thumb.photo img[src$="#art"] { object-fit: contain; border-radius: 0; }
 .wc-thumb.wc-add { flex-direction: column; gap: 1px; font-size: 11px; text-align: center; line-height: 1.1; padding: 3px; }
 .wc-thumb.wc-add i { font-style: normal; font-size: 18px; line-height: 1; }
 .wc-thumb.wc-add.lead { border-style: solid; border-color: var(--ink); color: var(--ink); }

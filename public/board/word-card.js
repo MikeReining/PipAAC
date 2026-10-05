@@ -59,6 +59,7 @@ export function mountWordCard({
     tile?.ensure(name, { source: "user_typed" }).catch(() => {});
     cardItem.label = name;
     $("wc-name").value = name;
+    fitLabel();
     invalidateIndex(); // completions index the old spelling
     rerenderView();
     renderStrip();
@@ -169,6 +170,31 @@ export function mountWordCard({
     }
   }
 
+  /** Fit the name to its strip as the board's label does (grid.js
+   *  fitLabels): shrink a name that can't fit, then centre it — a
+   *  textarea can't centre vertically, so measure the text and pad. */
+  function fitLabel() {
+    const t = $("wc-name");
+    if (!t?.style || !t.clientHeight) return;
+    t.style.paddingTop = "0px";
+    t.style.fontSize = "";
+    const strip = t.clientHeight;
+    const textHeight = () => {
+      t.style.height = "0px"; // scrollHeight is now the text's own height
+      const h = t.scrollHeight;
+      t.style.height = "";
+      return h;
+    };
+    let px = parseFloat(getComputedStyle(t).fontSize) || 20;
+    let h = textHeight();
+    while (h > strip && px > 11) {
+      px -= 1;
+      t.style.fontSize = `${px}px`;
+      h = textHeight();
+    }
+    t.style.paddingTop = `${Math.max(0, Math.floor((strip - h) / 2))}px`;
+  }
+
   /* ------------------------------- open ------------------------------- */
 
   /** On a wide screen the card lives docked in the editor's right pane;
@@ -216,6 +242,8 @@ export function mountWordCard({
     dock();
     open("wordcard");
     pics.open(cardItem);
+    globalThis.requestAnimationFrame?.(fitLabel);
+    document.fonts?.ready?.then(fitLabel);
   }
 
   /* ------------------------------ writes ------------------------------ */
@@ -228,6 +256,7 @@ export function mountWordCard({
   });
 
   // The label wraps like a real tile; Return finishes the rename.
+  $("wc-name").addEventListener("input", () => fitLabel());
   $("wc-name").addEventListener("keydown", (e) => {
     if (e.key === "Enter") { e.preventDefault?.(); $("wc-name").blur?.(); }
   });
