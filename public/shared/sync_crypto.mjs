@@ -97,7 +97,7 @@ const underLock = (name, fn) => {
       : fn())), STALL_MS, `create lock ${name}`);
   const tail = run.catch(() => {});
   createLocks.set(name, tail);
-  run.finally(() => {
+  tail.then(() => {
     if (createLocks.get(name) === tail) createLocks.delete(name);
   });
   return run;

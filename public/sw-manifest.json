@@ -1,5 +1,5 @@
 {
-  "buildId": "1.1.0-f13a373139b3",
+  "buildId": "1.1.0-862eba3d36d5",
   "files": [
     {
       "path": "/board.js",
@@ -993,13 +993,13 @@
     },
     {
       "path": "/shared/sync_crypto.mjs",
-      "bytes": 18777,
-      "sha256": "97e6e722dd03648176c1585d986446f9d961cd30218adbc9afe918ebf6411623"
+      "bytes": 18775,
+      "sha256": "d9ae2ea99476500639db66a03efceb527b1e52fdea30971b756ee71c813b93b8"
     },
     {
       "path": "/shared/sync.mjs",
-      "bytes": 27756,
-      "sha256": "3e89f8f4fe146144601c821b77fe664ed92c1a5c9f3c3039da286beefdad2425"
+      "bytes": 27896,
+      "sha256": "8a8808f9ebfb1e2da7eea10d34d49669eb37f60999312077c7fe5fc6f73663aa"
     },
     {
       "path": "/shared/team_names.mjs",

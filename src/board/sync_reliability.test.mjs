@@ -20,6 +20,8 @@ import {
   getUserKey,
   importAccountPriv,
   memoryKeyStore,
+  openBlob,
+  openOp,
   putUserKey,
   sealOp,
   wrapUserKey,
@@ -92,7 +94,7 @@ class QuietSocket {
     this.readyState = QuietSocket.OPEN;
     sockets.push(this);
   }
-  send() {}
+  send(frame) { (this.frames ??= []).push(JSON.parse(frame)); }
   close() { this.readyState = 3; this.onclose?.(); }
   /** Deliver a relay frame as if it arrived on the wire. */
   push(msg) { this.onmessage?.({ data: JSON.stringify(msg) }); }
@@ -177,6 +179,41 @@ async function runtime({
   );
   await settle();
   return { db, store, key, user, submits, uploads, fetches, handle, syncHealth };
+}
+
+for (const kind of ["blob", "live"]) {
+  test(`${kind} envelope keeps its sealing epoch when rotation interrupts key lookup`, { timeout: 5000 }, async () => {
+    const r = await runtime();
+    const socket = sockets.at(-1);
+    await putUserKey(r.store, "u1", await newUserKey(), 2);
+    const get = r.store.get;
+    let enter, release;
+    const entered = new Promise((resolve) => { enter = resolve; });
+    const gate = new Promise((resolve) => { release = resolve; });
+    let paused = false;
+    r.store.get = async (name) => {
+      if (name === "user/u1/key_e1" && !paused) {
+        paused = true;
+        enter();
+        await gate;
+      }
+      return get(name);
+    };
+    const payload = kind === "blob"
+      ? new TextEncoder().encode("photo during rotation")
+      : { k: "model", target: "ent_dog", word: "dog" };
+    const sending = kind === "blob"
+      ? r.handle.uploadBlob(payload) : r.handle.sendLive(payload);
+    await entered;
+    try { await r.handle.rekey(2); } finally { release(); }
+    await sending;
+    const sealed = kind === "blob" ? r.uploads.at(-1) : socket.frames.at(-1);
+    assert.equal(kind === "blob" ? sealed.env.e : sealed.e, 1);
+    // Check actual ciphertext with the independently held epoch-1 key.
+    const opened = kind === "blob"
+      ? await openBlob(r.key, sealed) : await openOp(r.key, sealed.env);
+    assert.deepEqual(opened, payload);
+  });
 }
 
 test("F10: a failed submit re-arms on bounded backoff — an open socket and silence do not strand the edit", async () => {

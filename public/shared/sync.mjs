@@ -159,7 +159,8 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
 
   /** Seal + upload a photo/recording blob; no-op when unlinked. */
   const uploadBlob = async (bytes) => {
-    const sealed = await sealBlob(await keyFor(epoch), bytes, epoch);
+    const sealingEpoch = epoch;
+    const sealed = await sealBlob(await keyFor(sealingEpoch), bytes, sealingEpoch);
     await client.putBlob(sealed);
     return sealed.sha;
   };
@@ -362,8 +363,9 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
         || seq - (cfg.snap_seq ?? 0) < 500) return;
     const snap = baselineSnapshot(db);
     try {
-      const env = await sealOp(await keyFor(epoch), { v: SNAPSHOT_V, seq, snap });
-      await client.putSnapshot({ e: epoch, env }, seq);
+      const sealingEpoch = epoch;
+      const env = await sealOp(await keyFor(sealingEpoch), { v: SNAPSHOT_V, seq, snap });
+      await client.putSnapshot({ e: sealingEpoch, env }, seq);
       cfg.snap_seq = seq;
       await saveUser({ sync: cfg });
     } catch { /* the next drain retries */ }
@@ -574,8 +576,9 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
    *  spotlight (`tap`, spotlight-layer.js). */
   const sendLive = async (plain) => {
     if (!live || live.readyState !== WebSocket.OPEN) return false;
-    const env = await sealOp(await keyFor(epoch), plain);
-    live.send(JSON.stringify({ t: "model", e: epoch, env }));
+    const sealingEpoch = epoch;
+    const env = await sealOp(await keyFor(sealingEpoch), plain);
+    live.send(JSON.stringify({ t: "model", e: sealingEpoch, env }));
     return true;
   };
   return { get client() { return client; }, identity,

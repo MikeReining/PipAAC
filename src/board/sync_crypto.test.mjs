@@ -268,3 +268,19 @@ test("concurrent one-shot creation returns one identity, one key, one root — n
   assert.deepEqual(r2, r3);
   assert.deepEqual(r1, await store3.get("user/u1/root"));
 });
+
+test("a handled creation failure leaves no unhandled cleanup rejection and the next call can retry", async () => {
+  const store = memoryKeyStore();
+  const get = store.get;
+  let fail = true;
+  store.get = async (name) => {
+    if (fail) { fail = false; throw new Error("keystore unavailable"); }
+    return get(name);
+  };
+  await assert.rejects(getUserKey(store, "u_cleanup"), /keystore unavailable/);
+  // Let Node deliver any unhandled rejection from the cleanup branch;
+  // the test runner treats one as a failure even though the caller caught it.
+  await new Promise((resolve) => setImmediate(resolve));
+  const key = await getUserKey(store, "u_cleanup");
+  assert.equal(await store.get("user/u_cleanup/key_e1"), key);
+});
