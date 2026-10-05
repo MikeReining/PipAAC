@@ -274,10 +274,10 @@
                 <div class="update-bar" id="update-bar" hidden><i id="update-fill"></i></div>
                 <div class="row"><button class="btn" id="update-card-btn"></button></div>
               </div>
-              <div class="seg-row set-person">
+              <div class="set-person">
                 <span class="set-avatar" id="person-avatar" aria-hidden="true"></span>
                 <div class="set-person-fields">
-                  <label class="seg-label" for="person-name">Name</label>
+                  <label class="seg-label sr-only" for="person-name">Name</label>
                   <input type="text" class="set-name-input" id="person-name" maxlength="80" autocomplete="off" placeholder="Their name" />
                   <div class="row">
                     <label class="btn secondary" id="person-photo-btn">Add a photo<input type="file" id="person-photo" accept="image/*" hidden /></label>
@@ -286,13 +286,19 @@
                 </div>
               </div>
               <div class="seg-row set-spot-now" id="set-spot-now" hidden></div>
-              <div class="seg-row set-protect" id="set-protect" hidden></div>
+              <!-- The board card leads Overview: editing is what adults
+                   come here for most. The mini is inert; a tap on it is
+                   the Edit button (data-click proxy). -->
+              <div class="seg-row set-board">
+                <div class="set-mini-wrap" data-click="edit-groups" aria-hidden="true"><div class="set-mini" id="set-mini" inert></div></div>
+                <div class="set-quick">
+                  <button class="btn" id="edit-groups">Edit the board</button>
+                  <button class="btn secondary" id="add-mywords">Add a word</button>
+                </div>
+              </div>
+              <button class="set-check-item warn set-protect" id="set-protect" data-show="backup" hidden></button>
               <div class="seg-row set-check" id="set-check" hidden></div>
               <div id="wincard" class="wincard" hidden></div>
-              <div class="set-quick">
-                <button class="btn" id="add-mywords">Add a word</button>
-                <button class="btn secondary" id="edit-groups">Edit the board</button>
-              </div>
               <div class="row"><button class="btn secondary" id="replay-tour">Replay the tour</button></div>
               <div class="seg-row">
                 <span class="seg-label">How it's set up</span>

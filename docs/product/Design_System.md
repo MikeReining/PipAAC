@@ -250,15 +250,19 @@ keeps its id and its owner module's wiring — Settings owns navigation only.
   page with Back. Pages: Overview · Words · Spotlight · Board · Talking ·
   Language help · Progress · Team & devices · Backup & privacy, then
   *You* → Your account. A page whose every row is hidden drops out of the list.
-- **Overview.** While a spotlight runs, a card leads the page: its
-  name, "until tonight", End (032). A setup checklist of measurable facts only (named;
-  people & places exist), gone when done. **Protect** card once the
-  board is invested (first customization: people, words, groups,
+- **Overview.** Order is most-used first. The person's name and photo
+  as one plain line. While a spotlight runs, a card: its name, "until
+  tonight", End (032). Then the **board card** (founder 2026-10-05:
+  editing is the most-wanted job): a still copy of the main board in
+  real tiles (`miniGrid`, inert; a tap edits), Edit the board (primary)
+  and Add a word. A one-line **Protect** door to Backup & privacy once
+  the board is invested (first customization: people, words, groups,
   pictures, hidden or moved words, saved practice lists — `sync_op`
-  kinds; settings flips and the demo don't count): Lock Settings with a
-  PIN and Make the recovery card, whichever is missing, owners only.
-  Quick actions: Add a word, Edit the board, Replay the tour. "How it's set up": one line per page, read from the
-  live controls.
+  kinds; settings flips and the demo don't count), naming the missing
+  PIN and/or recovery card, owners only — the controls live on Backup.
+  A setup checklist of measurable facts only (named; people & places
+  exist), gone when done. Progress, Replay the tour, then "How it's set
+  up": one line per page, read from the live controls.
 - **Controls.** On/off is a switch, On on the right (`.seg[data-switch]`;
   the hidden buttons still carry the write). Real choices stay labelled
   options. Risky actions sit in a red-bordered block at the bottom of

@@ -440,7 +440,7 @@ const { open, close, gatePin, renderPinRow } = pin;
 
 /* Grid render, tile primitives, likely-next halo — public/board/grid.js. */
 const {
-  renderGrid, boardGeom, wordTile, artInto, fitLabels,
+  renderGrid, boardGeom, wordTile, artInto, fitLabels, miniGrid,
   homeTile, tileForSense, applyLikely, showGroupHint,
 } = mountGrid({
   db, locale, catalog, sentence, live, cellEls,
@@ -855,6 +855,8 @@ const settingsUi = mountSettings({
   trial: () => ({ licensed: trialLicensed, endsAt: trialEndsAt }),
 });
 settingsUi.onOpen(renderPinRow);
+// Overview leads with a still copy of the main board — the door to the editor.
+settingsUi.onOpen(() => miniGrid($("set-mini")));
 // 040: refresh the trial state on open, then repaint the summaries —
 // the fetch lands after renderNav's first paint.
 settingsUi.onOpen(() => {

@@ -79,3 +79,16 @@ test("Dim the other words: A lot is the lowest opacity", () => {
   assert.ok(v("A little") > v("Medium") && v("Medium") > v("A lot"),
     `A little ${v("A little")}, Medium ${v("Medium")}, A lot ${v("A lot")}`);
 });
+
+// 2026-10-05: editing is the most-wanted job — the board card (mini board
+// + Edit the board) leads Overview, ahead of protect, setup and progress.
+test("Overview leads with the board card", () => {
+  const block = menuBlock();
+  const a = block.indexOf('data-sec="overview"');
+  const ov = block.slice(a, block.indexOf("</section>", a));
+  const at = (id) => ov.indexOf(`id="${id}"`);
+  assert.ok(at("set-mini") > 0 && at("edit-groups") > at("set-mini"), "mini board then Edit the board");
+  for (const later of ["set-protect", "set-check", "wincard", "replay-tour"]) {
+    assert.ok(at(later) > at("edit-groups"), `#${later} comes before Edit the board`);
+  }
+});

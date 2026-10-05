@@ -97,6 +97,11 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
       if (session) return `On · ${session.name} · ${untilText(session)}`;
       return lists ? `Off · ${lists} list${lists === 1 ? "" : "s"}` : "Off";
     },
+    overview: () => ({
+      available: "Update available",
+      ready: "Update ready",
+      failed: "Update needs a retry",
+    })[updatePhase] ?? "",
   };
   // The recovery card is an owner's job: a Team device (me.owner false,
   // set from the relay by devices-ui) is never nagged about it.
@@ -104,11 +109,18 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
   // Protection is offered once the board is worth protecting (founder
   // 2026-09-28): `invested` = something was customized, never before.
   const needsCard = () => !team() && !cardMade() && !!facts().invested;
-  const WARN = { backup: needsCard };
+  /* The update phase arrives from board/version.js (setUpdatePhase):
+   * the Overview nav item wears the attention dot and a summary while a
+   * pending update wants an adult — available, ready, or failed.
+   * "downloading" doesn't badge: it's resolving itself. */
+  let updatePhase = null;
+  const updateAttention = () =>
+    ["available", "ready", "failed"].includes(updatePhase);
+  const WARN = { backup: needsCard, overview: updateAttention };
 
   /* The setup checklist: only facts Pip can measure. It leaves once
    * both are done. The PIN and the recovery card are not setup — they
-   * arrive on the Protect card after the first customization. */
+   * arrive on the Protect line after the first customization. */
   function checklist() {
     const f = facts();
     return [
@@ -117,33 +129,32 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
     ];
   }
 
-  /* Protect: after the first customization, one card with whatever is
-   * still missing — a PIN, the recovery card. Owners only. */
+  /* Protect: after the first customization, one line naming whatever
+   * is still missing — a PIN, the recovery card. Owners only. The
+   * controls live on Backup & privacy; the line is its door. */
   function renderProtect() {
     const box = $("set-protect");
     const f = facts();
-    const wants = [];
-    if (!f.pinOn) wants.push(["Lock Settings with a PIN", () => $("pin-change").click()]);
-    if (!cardMade()) wants.push(["Make the recovery card", () => $("dev-sheet").click()]);
-    box.hidden = team() || !f.invested || !wants.length;
+    const pinOff = !f.pinOn, noCard = !cardMade();
+    box.hidden = team() || !f.invested || !(pinOff || noCard);
     if (box.hidden) return;
-    box.replaceChildren();
-    const h = document.createElement("span");
-    h.className = "seg-label";
-    h.textContent = `Protect ${personWords(me.name).inline === "this person" ? "this person's words" : `${me.name.trim()}'s words`}`;
-    const p = document.createElement("p");
-    p.className = "hint";
-    p.textContent = "You've made Pip yours. A PIN keeps curious hands out of Settings, and the recovery card brings everything back if this device is lost.";
-    const row = document.createElement("div");
-    row.className = "row";
-    for (const [label, go] of wants) {
-      const b = document.createElement("button");
-      b.className = "btn secondary";
-      b.textContent = label;
-      b.onclick = go;
-      row.append(b);
-    }
-    box.append(h, p, row);
+    const mark = document.createElement("span");
+    mark.className = "set-check-mark";
+    mark.textContent = "!";
+    const txt = document.createElement("span");
+    txt.className = "set-navtext";
+    const t = document.createElement("b");
+    const w = personWords(me.name);
+    t.textContent = `Protect ${w.unnamed ? "this person's" : `${w.inline}'s`} words`;
+    const s = document.createElement("span");
+    s.className = "set-sum";
+    s.textContent = pinOff && noCard ? "Add a Settings PIN and make the recovery card"
+      : pinOff ? "Add a Settings PIN" : "Make the recovery card";
+    const go = document.createElement("span");
+    go.className = "set-chev";
+    go.textContent = "›";
+    txt.append(t, s);
+    box.replaceChildren(mark, txt, go);
   }
 
   /* A running spotlight leads Overview: what is on, and one tap to end
@@ -328,7 +339,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
   let queued = false;
   new MutationObserver((muts) => {
     if (queued || !$("menu").classList.contains("open")) return;
-    if (muts.every((m) => m.target.closest?.("#set-check, #set-glance, #set-protect, #set-spot-now, #prog-page"))) return;
+    if (muts.every((m) => m.target.closest?.("#set-check, #set-glance, #set-protect, #set-spot-now, #set-mini, #prog-page"))) return;
     queued = true;
     queueMicrotask(() => { queued = false; renderNav(); });
   }).observe(pane, { subtree: true, attributes: true, attributeFilter: ["hidden", "class"] });
@@ -392,5 +403,12 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
     current: () => current,
     onOpen: (fn) => onOpen.push(fn),
     onShow: (fn) => onShow.push(fn),
+    /* version.js pushes the update phase; the nav re-renders only on a
+     * real change (renders can repeat while downloading). */
+    setUpdatePhase: (p) => {
+      if (p === updatePhase) return;
+      updatePhase = p;
+      renderNav();
+    },
   };
 }

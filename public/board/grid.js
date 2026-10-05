@@ -444,8 +444,35 @@ export function mountGrid({
     return wordTile({ label: w?.label ?? "", role: w?.fitzgerald_role, art: metaFor(senseId).art });
   }
 
+  /** A still copy of the main board for Settings › Overview: the same
+   *  coreCells and tiles as renderGrid, drawn small and inert. The
+   *  caller owns the tap (it opens the editor). */
+  function miniGrid(box) {
+    const geom = boardGeom();
+    const bySlot = new Map(coreCells(db, geom.name, locale).map((c) => [c.slot_index, c]));
+    const masked = maskedSenseIds(db);
+    box.style.gridTemplateColumns = `repeat(${geom.cols}, minmax(0, 1fr))`;
+    box.style.setProperty("--mini-ratio", String((geom.cols * 1.15) / geom.rows));
+    box.replaceChildren();
+    for (let slot = 0; slot < geom.cells; slot++) {
+      const anchor = geom.anchors.get(slot);
+      const look = anchor?.kind === "family" && FAMILY_TILE[anchor.family];
+      let el;
+      if (look) el = wordTile({ label: familyRow(db, anchor.family)?.name ?? "?", role: look.role, art: look.art });
+      else if (anchor) {
+        el = document.createElement("span");
+        el.className = "cell anchor-cell";
+      } else if (bySlot.has(slot)) el = homeTile(bySlot.get(slot), masked).el;
+      else {
+        el = document.createElement("span");
+        el.className = "cell empty";
+      }
+      box.append(el);
+    }
+  }
+
   return {
-    renderGrid, boardGeom, wordTile, artInto, fitLabels,
+    renderGrid, boardGeom, wordTile, artInto, fitLabels, miniGrid,
     homeTile, tileForSense, applyLikely, showGroupHint,
   };
 }
