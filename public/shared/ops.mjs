@@ -563,14 +563,19 @@ export function drainOps(db, confirmedOps = [], { fetched = true } = {}) {
     const flagCovered = db.prepare(
       "UPDATE sync_op SET applied = 1 WHERE op_id = ?",
     );
+    // Newness is a SELECT, never run()'s return — the WASM facade and
+    // node:sqlite disagree on what run() gives back (the facade's used
+    // to be undefined), and misreading it throws or loses the overlay.
+    const seen = db.prepare("SELECT 1 AS x FROM sync_op WHERE op_id = ?");
     for (const op of ordered) {
       mark.run(op.relay_seq, op.op_id);
-      const ins = logForeign.run(op.op_id, op.device_id ?? "dev_remote", op.kind,
+      const fresh = !seen.all(op.op_id)[0];
+      logForeign.run(op.op_id, op.device_id ?? "dev_remote", op.kind,
         typeof op.args === "string" ? op.args : JSON.stringify(op.args),
         op.created_at ?? Date.now(), op.relay_seq);
-      if (ins.changes > 0) freshIds.add(op.op_id);
+      if (fresh) freshIds.add(op.op_id);
       if (op.relay_seq <= floor) flagCovered.run(op.op_id);
-      else if (!fetched && ins.changes > 0) overlay.push(op);
+      else if (!fetched && fresh) overlay.push(op);
     }
     for (const op of overlay) applyOp(db, op);
     db.exec("COMMIT");

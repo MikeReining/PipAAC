@@ -24,7 +24,9 @@ function adapt(db, onWrite) {
       run: (...params) => {
         const st = db.prepare(sql);
         try {
-          st.bind(params);
+          // bind([]) throws on a parameterless statement; node:sqlite's
+          // run() doesn't — the seam must match or callers die on boot.
+          if (params.length) st.bind(params);
           while (st.step()) {
             // drain
           }
@@ -36,10 +38,12 @@ function adapt(db, onWrite) {
         return { changes: db.changes() };
       },
       all: (...params) =>
-        db.exec({ sql, bind: params, rowMode: "object", returnValue: "resultRows" }),
+        db.exec({ sql, bind: params.length ? params : undefined,
+          rowMode: "object", returnValue: "resultRows" }),
     }),
     all: (sql, params = []) =>
-      db.exec({ sql, bind: params, rowMode: "object", returnValue: "resultRows" }),
+      db.exec({ sql, bind: params.length ? params : undefined,
+        rowMode: "object", returnValue: "resultRows" }),
   };
 }
 

@@ -10,7 +10,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createDatabase, importCatalog } from "./catalog.mjs";
-import { createGroup, swapGroups } from "../../public/shared/groups.mjs";
+import { createEntity, createGroup, swapGroups } from "../../public/shared/groups.mjs";
 import { adoptSnapshot, appliedSeqOf, drainOps, ensureBaseline, listOps, snapshotSynced } from "../../public/shared/ops.mjs";
 
 const catalog = JSON.parse(readFileSync(new URL("../../public/catalog.json", import.meta.url), "utf8"));
@@ -144,3 +144,54 @@ test("a wounded database with no stored anchor refuses until adoption installs o
     assert.equal(appliedSeqOf(db), 4);
   } finally { db.close(); donor.close(); }
 });
+
+/** The shipped WASM facade's prepare().run() returned undefined for
+ * years — drainOps read ins.changes and threw on every nonempty batch,
+ * rolling back every incoming sync page in the browser while Node tests
+ * (node:sqlite returns {changes}) stayed green. The ordering logic must
+ * not depend on run()'s return at all: this facade hides it on purpose
+ * and every delivery shape must still converge. */
+const voidRunFacade = (inner) => ({
+  exec: (sql) => inner.exec(sql),
+  prepare: (sql) => ({
+    run: (...p) => { inner.prepare(sql).run(...p); },
+    all: (...p) => inner.prepare(sql).all(...p),
+    get: (...p) => inner.prepare(sql).get(...p),
+  }),
+  all: (sql, p = []) => inner.prepare(sql).all(...p),
+});
+
+test("drainOps works against a facade whose run() returns nothing", () => {
+  const inner = createDatabase(":memory:");
+  const db = voidRunFacade(inner);
+  try {
+    importCatalog(db, catalog);
+    ensureBaseline(db);
+    // A fetched foreign batch: logged, applied, flagged.
+    drainOps(db, [
+      remote(1, "create_group", { id: "grp_facade", name: "Facade", indexSlot: 86 }),
+      remote(2, "set_setting", { key: "person_name", value: "Fetched" }),
+    ]);
+    assert.equal(slot(inner, "grp_facade"), 86);
+    assert.equal(db.prepare("SELECT applied AS a FROM sync_op WHERE relay_seq = 1").get().a, 1);
+    // A duplicate delivery of the same op: no re-apply, no crash.
+    drainOps(db, [remote(2, "set_setting", { key: "person_name", value: "Dup" })]);
+    assert.equal(db.prepare("SELECT person_name FROM learner_profile").get().person_name,
+      "Fetched", "a duplicate delivery replayed the op");
+    // A live push overlays onto live state without moving coverage.
+    drainOps(db, [remote(3, "set_setting", { key: "person_name", value: "Pushed" })],
+      { fetched: false });
+    assert.equal(db.prepare("SELECT person_name FROM learner_profile").get().person_name, "Pushed");
+    // Our own echo stamps relay_seq; the fetched fold flags it once.
+    createEntity(db, { id: "ent_facade_own", name: "Mine" });
+    const own = listOps(inner).at(-1);
+    drainOps(db, [{ ...own, relay_seq: 4 }, remote(3, "set_setting", { key: "person_name", value: "Pushed" })]);
+    assert.equal(db.prepare("SELECT applied AS a FROM sync_op WHERE op_id = ?").get(own.op_id).a, 1,
+      "the own-echo was never folded");
+    assert.equal(appliedSeqOf(db), 4);
+  } finally { inner.close(); }
+});
+
+/** Build the bytes an old release actually saved: the pre-anchor schema
+ * (sync_baseline CHECK (id = 1)), confirmed+applied ops, a nonzero
+ * derived baseline, a family edit, a pending op — and a persisted
