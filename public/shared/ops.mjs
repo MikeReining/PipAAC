@@ -320,6 +320,9 @@ const SYNCED_TABLES = [
   "sense_mask", "spotlight_list", "spotlight_item", "spotlight_session",
   "core_override", "move_mark", "bar_family", "bar_family_item",
   "supporter_name",
+  // Progress totals sync (put_stats_day ops) so a recovering device gets
+  // the family's counts back — the raw tap log stays device-local.
+  "stats_day",
 ];
 
 /** Every synced table's rows, with rowids, oldest first. */
@@ -338,7 +341,9 @@ function restoreSynced(db, snap) {
   try {
     for (const t of [...SYNCED_TABLES].reverse()) db.exec(`DELETE FROM ${t}`);
     for (const t of SYNCED_TABLES) {
-      for (const row of snap[t]) {
+      // Baselines/snapshots written before a table joined the synced set
+      // carry no key for it — treat as empty, never crash the restore.
+      for (const row of snap[t] ?? []) {
         const { _r, ...cols } = row;
         const names = Object.keys(cols);
         db.prepare(
@@ -353,6 +358,13 @@ function restoreSynced(db, snap) {
   } finally {
     db.exec("PRAGMA foreign_keys = ON");
   }
+}
+
+/** The stored baseline's tables — exactly the applied confirmed state,
+ *  no pending-edit contamination. The payload a snapshot may ship. */
+export function baselineSnapshot(db) {
+  const row = db.prepare("SELECT tables FROM sync_baseline WHERE id = 1").all()[0];
+  return row ? JSON.parse(row.tables) : null;
 }
 
 /** Persist the snapshot as the last-confirmed baseline at its watermark. */

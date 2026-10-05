@@ -12,7 +12,7 @@
  * recordOp calls the registered sink after every adult edit; sync.mjs
  * debounces a submit so edits reach the relay without the UI knowing.
  */
-import { adoptSnapshot, appliedSeqOf, confirmOps, drainOps, listOps, setDeviceId, setOpSink, snapshotSynced } from "./ops.mjs";
+import { adoptSnapshot, appliedSeqOf, baselineSnapshot, confirmOps, drainOps, listOps, setDeviceId, setOpSink } from "./ops.mjs";
 import { loadBlobBytes, saveBlobBytes, setBlobFetcher } from "../db.js";
 import {
   getDeviceIdentity, getUserKey, openBlob, openKeyStore, openOp, putUserKey, sealOp,
@@ -252,13 +252,15 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
    *  so we wait for a quiet log. Best-effort — a failure retries on the
    *  next drain. */
   const maybeSnapshot = async () => {
-    // The cursor, not the applied watermark: the snapshot claim is used
-    // to prune the relay log, so it may only cover ops we provably
-    // received and folded — the fetch-verified coverage, not the sparse
-    // max of whatever happened to be logged.
+    // A snapshot may claim only the contiguous applied prefix the
+    // fetch-verified cursor covers, and it may only CONTAIN that state:
+    // the payload is the stored baseline itself, so pending edits and
+    // ops applied past the cursor can never bake into a backup that
+    // disowns them.
     const seq = cfg.cursor ?? 0;
-    if (!seq || seq - (cfg.snap_seq ?? 0) < 500 || pendingOps().length) return;
-    const snap = snapshotSynced(db);
+    if (!seq || seq !== appliedSeqOf(db)
+        || seq - (cfg.snap_seq ?? 0) < 500) return;
+    const snap = baselineSnapshot(db);
     try {
       const env = await sealOp(await keyFor(epoch), { seq, snap });
       await client.putSnapshot({ e: epoch, env }, seq);
@@ -329,6 +331,19 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
         if ((await adoptRemoteSnapshot()) > before) continue;
         ingestError =
           `sync: relay pruned ops ${(cfg.cursor ?? 0) + 1}–${rows[0].relay_seq - 1} with no bridging snapshot`;
+        console.warn(ingestError);
+        return;
+      }
+      // An empty tail is not "nothing to do" when the relay's prune
+      // point is ahead: everything we missed was folded into the
+      // snapshot — adopt it, then fetch whatever came after. If no
+      // stored snapshot can bridge us, stop loudly rather than claim
+      // coverage of pruned history we never saw.
+      if (!rows?.length && (cfg.cursor ?? 0) < snapSeq) {
+        const before = cfg.cursor ?? 0;
+        if ((await adoptRemoteSnapshot()) > before) continue;
+        ingestError =
+          `sync: relay pruned ops ${(cfg.cursor ?? 0) + 1}–${snapSeq} with no bridging snapshot`;
         console.warn(ingestError);
         return;
       }

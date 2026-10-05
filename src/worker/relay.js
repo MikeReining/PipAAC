@@ -704,21 +704,35 @@ export class UserRelay {
       const userId = url.pathname.split("/")[2];
       if (method === "PUT") {
         // ?seq=N marks how much of the op log the snapshot covers —
-        // the retention sweep prunes only ops it has folded away. The
-        // pair (file, watermark) only ever advances: a stale device's
-        // PUT must not overwrite a newer snapshot or regress the seq
-        // under it — a file behind the watermark would leave a gap in
-        // the log a bootstrap can't bridge.
+        // the retention sweep prunes only ops it has folded away.
+        // Objects are immutable per seq and the pointer only moves
+        // forward: the R2 write and the meta check-set must be
+        // interleaving-safe (requests can interleave across awaited
+        // external I/O, so an older upload resolving late must not
+        // overwrite the file or regress the watermark under it).
         const seq = Number(url.searchParams.get("seq") ?? 0);
         if (seq > Number(this.metaGet("snapshot_seq") ?? 0)) {
-          await this.env.BLOBS.put(`s/${userId}`, bodyBytes);
-          this.metaSet("snapshot_at", Date.now());
-          this.metaSet("snapshot_seq", seq);
+          const key = `s/${userId}/${seq}`;
+          // Published objects are immutable: a same-seq PUT with
+          // different bytes never replaces what a reader may already
+          // have adopted under that seq.
+          if (!(await this.env.BLOBS.head(key))) {
+            await this.env.BLOBS.put(key, bodyBytes);
+          }
+          // No await between this check and the set — the DO runs the
+          // pair atomically, so a stale PUT that resumed late drops out
+          // here instead of re-pointing the watermark backwards.
+          if (seq > Number(this.metaGet("snapshot_seq") ?? 0)) {
+            this.metaSet("snapshot_at", Date.now());
+            this.metaSet("snapshot_seq", seq);
+          }
         }
         return json({ ok: true });
       }
       if (method === "GET") {
-        const obj = await this.env.BLOBS.get(`s/${userId}`);
+        const seq = Number(this.metaGet("snapshot_seq") ?? 0);
+        const obj = (seq && await this.env.BLOBS.get(`s/${userId}/${seq}`))
+          || await this.env.BLOBS.get(`s/${userId}`); // pre-versioned objects
         if (!obj) return bad("not_found", 404);
         return new Response(obj.body, { headers: { "content-type": "application/octet-stream" } });
       }

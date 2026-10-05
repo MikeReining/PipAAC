@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-addc33b522a2",
+  "buildId": "r1-95d189fb935a",
   "files": [
     {
       "path": "/board.js",
@@ -888,8 +888,8 @@
     },
     {
       "path": "/shared/ops.mjs",
-      "bytes": 23208,
-      "sha256": "854f1659aa2761e8437d6009a6a32bd2114ae9a5894e23761d01844ed2063ab0"
+      "bytes": 23838,
+      "sha256": "704858afc2bdf20fbe13e440b9e590870fa83e878ccaa2ff3f55e0be7fc9bcb8"
     },
     {
       "path": "/shared/person_name.mjs",
@@ -973,8 +973,8 @@
     },
     {
       "path": "/shared/sync.mjs",
-      "bytes": 19232,
-      "sha256": "bcfe5b204cab88dc0912ccfd761ddb1b5f4540cafe38dbbd372a4427f9e76146"
+      "bytes": 19954,
+      "sha256": "975f7e8a913128180632bef1e7ca8e214a1f652a6437f7330981446f8a07f640"
     },
     {
       "path": "/shared/team_names.mjs",

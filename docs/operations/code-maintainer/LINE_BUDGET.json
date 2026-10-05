@@ -11,7 +11,7 @@
     "public/board/word-card.js": 805,
     "public/index.html": 1151,
     "public/shared/funnel.mjs": 673,
-    "public/shared/ops.mjs": 573,
+    "public/shared/ops.mjs": 585,
     "public/sw-manifest.json": 4595,
     "scripts/art/batch52.mjs": 513,
     "scripts/catalog/audio_review_dev.mjs": 1056,
@@ -26,13 +26,13 @@
     "site/public/index.html": 585,
     "site/public/styles.css": 1337,
     "src/board/groups.test.mjs": 660,
-    "src/board/schema.sql": 872,
+    "src/board/schema.sql": 873,
     "src/worker/accounts.heavy.test.mjs": 513,
     "src/worker/accounts.js": 625,
     "src/worker/index.js": 576,
     "src/worker/pictures.test.mjs": 795,
     "src/worker/pictures_draw.test.mjs": 634,
-    "src/worker/relay.js": 837,
+    "src/worker/relay.js": 851,
     "src/worker/tile.js": 779
   }
 }

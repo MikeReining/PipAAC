@@ -296,8 +296,9 @@ CREATE INDEX IF NOT EXISTS event_log_sentence ON learner_event_log(sentence_id, 
 -- bar with words — the move a Spotlight teaches, counted whether or not
 -- the network answered (she still made the move). spotlit: the
 -- button glowed when pressed (on their own vs with the glow). Counts only
--- reach stats_day; device-local, never synced. The first-run tour and
--- Try it never write here.
+-- reach stats_day; the raw events stay device-local, the day totals
+-- sync via put_stats_day ops. The first-run tour and Try it never
+-- write here.
 CREATE TABLE IF NOT EXISTS transform_event (
   id INTEGER PRIMARY KEY,
   mode TEXT NOT NULL CHECK (mode IN ('fix', 'question', 'past', 'future')),

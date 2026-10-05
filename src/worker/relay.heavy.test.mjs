@@ -446,8 +446,24 @@ test("snapshots: sealed state round-trips; the watermark only advances", async (
   assert.deepEqual(snapshotSynced(dbC), snapshotSynced(dbA));
 
   // The watermark only advances: a stale PUT behind it is dropped, the
-  // stored snapshot still opens at the newer seq.
+  // stored snapshot still opens at the newer seq — and its object bytes
+  // are still the ones published at that seq (versioned + immutable).
   await clientA.putSnapshot({ e: 1, env: await sealOp(userKey, { seq: 1, snap: {} }) }, 1);
   const still = await clientC.getSnapshot();
-  assert.equal((await openOp(userKey, still.env)).seq, head);
+  const plainStill = await openOp(userKey, still.env);
+  assert.equal(plainStill.seq, head);
+  assert.ok(
+    plainStill.snap.personal_entity?.some((e) => e.spoken_name === "SnapDog"),
+    "snapshot object regressed under a stale pointer");
+
+  // A same-seq PUT carrying different bytes is refused: the published
+  // object for a seq is immutable once written.
+  await clientA.putSnapshot(
+    { e: 1, env: await sealOp(userKey, { seq: head, snap: { personal_entity: [] } }) },
+    head);
+  const again = await clientC.getSnapshot();
+  assert.ok(
+    (await openOp(userKey, again.env)).snap.personal_entity
+      ?.some((e) => e.spoken_name === "SnapDog"),
+    "same-seq PUT replaced the published object");
 });
