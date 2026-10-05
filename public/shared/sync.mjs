@@ -12,15 +12,15 @@
  * recordOp calls the registered sink after every adult edit; sync.mjs
  * debounces a submit so edits reach the relay without the UI knowing.
  */
-import { adoptSnapshot, appliedSeqOf, baselineSnapshot, confirmOps, drainOps, listOps, pendingOps, setDeviceId, setOpSink, SNAPSHOT_V } from "./ops.mjs";
+import { adoptSnapshot, appliedSeqOf, baselineSnapshot, confirmOps, drainOps, pendingOps, setDeviceId, setOpSink, SNAPSHOT_V } from "./ops.mjs";
 import { loadBlobBytes, saveBlobBytes, setBlobFetcher } from "../db.js";
 import {
-  deriveEpochKey, getDeviceIdentity, getUserKey, openBlob, openKeyStore, openOp,
-  putUserKey, sealOp, sealBlob, unwrapUserKey, userKeyName, userRootName,
-  wrapUserKey,
+  getDeviceIdentity, getUserKey, openBlob, openKeyStore, openOp,
+  putUserKey, sealOp, sealBlob, unwrapUserKey, userKeyName,
 } from "./sync_crypto.mjs";
 import { relayClient } from "./sync_client.mjs";
 import { onOnline, onVisible } from "./platform.mjs";
+import { completeRemovalRotation, resumeRecoveryCard } from "./rotation.mjs";
 
 let running = null;
 /** 031 § 8 — honest save status: did the last attempt to hand ops to
@@ -30,11 +30,12 @@ let flushError = null;
 /** 043 B — a drain that threw leaves ops logged but unapplied and the
  *  cursor behind; surface it instead of wedging silently. */
 let ingestError = null;
+let rotationError = null;
 /** 043 C — shas this device still owes the relay (photos/recordings). */
 let mediaPending = 0;
 let mediaError = null;
 export const syncHealth = () =>
-  ({ running: !!running, flushError, ingestError, mediaPending, mediaError });
+  ({ running: !!running, flushError, ingestError, rotationError, mediaPending, mediaError });
 /**
  * `user` is the registry row (id, sync). `saveUser(patch)` persists
  * sync-state changes back to the row (epoch bumps on rotation).
@@ -261,7 +262,10 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
       const ops = pendingOps(db, FLUSH_BATCH + 1);
       if (!ops.length) { flushError = null; return; }
       const more = ops.length > FLUSH_BATCH;
-      const { ops: assigned } = await client.submit(ops.slice(0, FLUSH_BATCH));
+      await resumeRecoveryCard({ store, user, client, saveUser, rekey });
+      const self = await client.selfKey();
+      if (self.current_epoch > epoch) await keyFor(self.current_epoch);
+      const { ops: assigned } = await client.submit(ops.slice(0, FLUSH_BATCH), epoch);
       confirmOps(db, assigned);
       await maybeSnapshot();
       flushError = null;
@@ -358,25 +362,13 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
    *  rotation: derive the epoch key, wrap it for every remaining
    *  device, post it, rekey the running client (audit F05.3). */
   const maybeCompleteRotation = async () => {
-    const root = await store.get(userRootName(user.id));
-    if (!root) return;
-    const self = await client.selfKey().catch(() => null);
-    const need = Number(self?.rotate_min_epoch ?? 0);
-    if (!(need > epoch)) return;
-    const key = await deriveEpochKey(
-      root instanceof Uint8Array ? root : new Uint8Array(root), need);
-    const { devices } = await client.listDevices();
-    const wrapped = {};
-    for (const d of devices) {
-      if (d.dh_pub) wrapped[d.device_id] = await wrapUserKey(key, d.dh_pub);
+    try {
+      await completeRemovalRotation({ store, user, client, saveUser, rekey });
+      rotationError = null;
+    } catch (err) {
+      rotationError = String(err?.message ?? err);
+      console.warn("sync: deferred rotation failed", err);
     }
-    await client.rotateKeys(need, wrapped);
-    await putUserKey(store, user.id, key, need);
-    epoch = need;
-    userKey = key;
-    cfg.epoch = epoch;
-    await saveUser({ sync: cfg });
-    rebuildClient();
   };
 
   /** Adopt the relay snapshot, durably: the cursor only moves to its
@@ -437,6 +429,9 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
    * loudly: replaying over pruned history would claim coverage it
    * doesn't have. */
   const recover = async () => {
+    await resumeRecoveryCard({ store, user, client, saveUser, rekey });
+    const self = await client.selfKey();
+    if (self.current_epoch > epoch) await keyFor(self.current_epoch);
     for (;;) {
       // Pages of OPS_PAGE — a long-offline device walks the backlog a
       // bounded slice at a time instead of one unbounded response.
@@ -473,8 +468,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
       if ((rows?.length ?? 0) === OPS_PAGE) continue; // next page
       break;
     }
-    await maybeCompleteRotation().catch((err) =>
-      console.warn("sync: deferred rotation failed", err));
+    await maybeCompleteRotation();
     await maybeSnapshot().catch(() => {});
     await flush();
     // Ops applied above may carry new blob: refs, and the queue may

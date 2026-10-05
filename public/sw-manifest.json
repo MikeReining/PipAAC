@@ -1,10 +1,10 @@
 {
-  "buildId": "r1-4c2cebab97f5",
+  "buildId": "r1-9b3f93d48ca0",
   "files": [
     {
       "path": "/board.js",
-      "bytes": 67557,
-      "sha256": "445403d2720acd3ccc7845fd0ffcac667a75d61e7827f745cc27a2a8e123c1b1"
+      "bytes": 67408,
+      "sha256": "eea74b9d72fe9a3db911190ab8c447afb1f549c132c46b7608ac62cc6906cace"
     },
     {
       "path": "/board/add-flow.css",
@@ -53,8 +53,8 @@
     },
     {
       "path": "/board/devices-ui.js",
-      "bytes": 47708,
-      "sha256": "130d39a1d01adc2a8c4b9fde3c53f242f3d5d3cf045295cd82c839ef33384aab"
+      "bytes": 46722,
+      "sha256": "0347e08563b4412b1a1ea62a74637550ea3a399a5dcf020e9c2b555a42a8c9e7"
     },
     {
       "path": "/board/edit-shared.js",
@@ -63,8 +63,8 @@
     },
     {
       "path": "/board/editor-find.js",
-      "bytes": 4261,
-      "sha256": "0d2e70f0998a8d60d4391f272116a05283d8149c26fb886353c43e611046e954"
+      "bytes": 4382,
+      "sha256": "3b5fec07666188a4b75908867c095aa2f37a91a71b809830dc26ad9957eee928"
     },
     {
       "path": "/board/editor-ui.css",
@@ -218,8 +218,8 @@
     },
     {
       "path": "/board/recovery-ui.js",
-      "bytes": 15710,
-      "sha256": "2b5da5265ec02856e65e64f97705ea131d94dd243a40c16462c6f62902884de5"
+      "bytes": 15143,
+      "sha256": "f27c31c9de8bc5d34dacacc33bf9ffb94f1c4c81a33152855e2ae132f593e1b0"
     },
     {
       "path": "/board/report-art.js",
@@ -937,6 +937,11 @@
       "sha256": "5b07ae3aba06d758ed12487f0cf5691612b267ad1fc59a24442d28722c8444e0"
     },
     {
+      "path": "/shared/rotation.mjs",
+      "bytes": 5945,
+      "sha256": "dac0258d0ecb8a9c9388506b5d9782b57e5c7bb66af3519c59a0f0ef2e648361"
+    },
+    {
       "path": "/shared/setup.mjs",
       "bytes": 3007,
       "sha256": "62dd1b8f35b8dd0c1f501830bd7b219c34a7637c3f12d2382f77904f760f9975"
@@ -963,18 +968,18 @@
     },
     {
       "path": "/shared/sync_client.mjs",
-      "bytes": 11460,
-      "sha256": "0cec54ba5d03d4caa34ffaa6b1974f317f0aca6be3f4f046c50e209a5b052ca9"
+      "bytes": 11560,
+      "sha256": "1f0fe7a261d38ca77406e27106b9252783cf1782247962960db639c3d935b198"
     },
     {
       "path": "/shared/sync_crypto.mjs",
-      "bytes": 18546,
-      "sha256": "ff7268975946b35b34f448570dc82e8e5c787310c15703f0d5eda83b9e172f72"
+      "bytes": 18636,
+      "sha256": "275dab899fd38697a781b4ef430b252d08d3dbd4fa13c2191b5068da10e31e5d"
     },
     {
       "path": "/shared/sync.mjs",
-      "bytes": 25929,
-      "sha256": "5b9fa2357521cab3438135341d0b74cd26d278e39bd1c00e49f8a40cbc42b128"
+      "bytes": 25818,
+      "sha256": "a2d4b4f6d99713b10f907c0950dc645e43b8a2ca155c765ec0380e2f05ac6d98"
     },
     {
       "path": "/shared/team_names.mjs",

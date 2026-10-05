@@ -89,7 +89,7 @@ export function relayClient({ userId, baseUrl, identity, userKey }) {
     setSupporterOwner: (for_acct, owner) =>
       call("POST", `/supporters/${encodeURIComponent(for_acct)}/owner`, { owner: !!owner }),
     /** Post a new key epoch: { epoch, wrapped: { device_id: grant } }. */
-    rotateKeys: (epoch, wrapped) => call("POST", "/keys", { epoch, wrapped }),
+    rotateKeys: (epoch, wrapped, extra = {}) => call("POST", "/keys", { epoch, wrapped, ...extra }),
     /** A paired owner (no recovery root) can't mint a card-derivable
      *  epoch key — it flags the rotation and a root holder finishes it. */
     requestRotation: () => call("POST", "/keys", { request_rotation: true }),
@@ -100,16 +100,16 @@ export function relayClient({ userId, baseUrl, identity, userKey }) {
     entitlement: () => call("GET", "/entitlement"),
     /** Replace the QR card: new proof + the epoch-key bundle sealed to
      *  the new root — old cards stop restoring (015/3). */
-    replaceRecovery: (proof, bundle) =>
-      call("POST", "/recovery", { recovery_proof: proof, recovery_bundle: bundle }),
+    replaceRecovery: (proof, bundle, rotation = {}) =>
+      call("POST", "/recovery", { recovery_proof: proof, recovery_bundle: bundle, ...rotation }),
     /** Schedule user deletion — 30-day undo; undelete cancels. */
     deleteUser: () => call("DELETE", ""),
     undeleteUser: () => call("POST", "/undelete"),
     /** Seal and submit pending ops; returns their relay_seqs. */
-    async submit(ops) {
+    async submit(ops, epoch) {
       const sealed = [];
       for (const op of ops) sealed.push({ op_id: op.op_id, env: await sealOp(userKey, op) });
-      return call("POST", "/ops", { ops: sealed });
+      return call("POST", "/ops", { ops: sealed, ...(epoch === undefined ? {} : { epoch }) });
     },
     /** Catch-up: ops after a relay_seq. Envelopes stay sealed — caller decrypts. */
     fetchOps: (after, limit) =>

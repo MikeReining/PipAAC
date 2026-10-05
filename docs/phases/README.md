@@ -57,7 +57,7 @@ Executing phases only. Each row names the **next** slice.
 | [040 — Trial and the Lifetime page](040_Trial_And_Upgrade_Page.md) | Built 2026-10-04: 7-day trial replaces 039's pool (`trial.mjs`, one `entitled()` gate); the Lifetime page tops Settings; Buy is a no-account code checkout that auto-redeems in-app; site audited to the § 3 table. Owed: founder sign-off on page/toast strings + a listen of `demo-sentence`, then `--ship` + deploy + Works Test |
 | [042 — Help](042_Help.md) | **Deployed 2026-10-04**: Help page in Settings, one search by meaning over answers + Settings rows (37/39 probe), Write to us → hello@pipaac.org, site FAQ generated from the same answers with search. Open: founder read of "Is this normal?" + inbox check of the smoke message |
 | [034 — Leave the panned document after the welcome](034_Welcome_Page.md) | Reviewed; ready to build: `location.replace` after Continue + one-shot tour flag |
-| [043 — Foundation hardening](043_Foundation_Hardening.md) | External stack audit, 12 findings re-verified in code 2026-10-04 — saves, sync recovery, media backup, transform freshness, voice-pack swaps, reproducible checks, language boundary, privacy, limits, iOS seams, entitlement, docs. Proposed order: F → A–E → H → I → G → J → K → L |
+| [043 — Foundation hardening](043_Foundation_Hardening.md) | Foundation slices built. Open: device prototype + ops-alerting verification; sync delivery-order repair and versioned-backup cleanup. Resumable rotation is implemented in the working tree; testing, commit and deployment handed to the other developer (founder, 2026-10-04). |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

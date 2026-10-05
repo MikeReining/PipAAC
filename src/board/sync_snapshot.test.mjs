@@ -158,7 +158,7 @@ async function runtime({
   if (withRoot) await ensureRecoveryRoot(store, "u1");
   setupDb?.(db);
 
-  const backend = { fetchResult, snapshot, devices: { devices: [] } };
+  const backend = { fetchResult, snapshot, devices: { devices: [], current_epoch: epoch } };
   const saved = [];
   const puts = [];
   const submits = [];

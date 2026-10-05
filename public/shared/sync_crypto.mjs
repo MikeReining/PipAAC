@@ -216,6 +216,7 @@ const importRaw = (b64) =>
 /** Retire the outgoing root into the coverage list before replacing it. */
 export async function retireRoot(store, userId, oldRootBytes, uptoEpoch) {
   const retired = JSON.parse((await store.get(retiredRootsName(userId))) ?? "[]");
+  if (retired.some((r) => r.root === b64u(oldRootBytes) && r.upto === uptoEpoch)) return;
   const from = retired.length ? retired[retired.length - 1].upto + 1 : 1;
   retired.push({ from, upto: uptoEpoch, root: b64u(oldRootBytes) });
   await store.put(retiredRootsName(userId), JSON.stringify(retired));

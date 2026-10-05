@@ -21,7 +21,13 @@ ruling): flag + revoke land in one DO write, re-presented tokens get
 speaks on first tap (founder 2026-10-04).
 
 **Remaining:** J's device prototype and the ops-alerting verification
-noted under I.
+noted under I. Sync follow-up: repair delivery-order divergence and verify
+cleanup of versioned snapshots/proof indexes; packet and deterministic
+probe: `docs/operations/debugger/SYNC_DELIVERY_ORDER.md`. The 2026-10-04
+card-rotation slice adds a durable device journal + atomic guarded relay
+replacement and removal obligations; it is implemented in the working tree, awaiting delegated verification,
+commit and deployment. Current proof and the exact file allowlist are in
+`scratch/sync-audit-2026-10-04/TAKEOVER-HANDOFF.md`.
 
 **Verdict on the stack:** keep it. Plain JS, SQLite WASM, Workers +
 Durable Objects + R2, and the meanings/labels/voices separation are all
@@ -81,66 +87,38 @@ a database exported by an older build boots on current.
 
 ## B — One sync recovery flow
 
-**Finding.** Three verified gaps in `public/shared/sync.mjs`:
+**Built.** One recovery flow owns boot, socket reconnect, online and
+visibility: paged fetch → decrypt → replay → DB persist → cursor advance
+→ flush → media reconciliation. `sync_op.applied` and
+`sync_baseline.applied_seq` live in the database; registry coverage never
+moves ahead of a failed save. Snapshot restore covers pruned/empty tails,
+preserves pending edits and refuses newer formats. Submits serialize and
+use 200-op batches; sequence gaps alone are not pruning evidence.
+The current contract and call paths belong to
+`docs/product/Sync_And_Web_Editing.md` §§ 3–6 and 9.
 
-1. `ingest` saves the cursor (`saveUser({sync: cfg})`) **before**
-   `drainOps` applies and persists the ops (lines 139–143). A kill in
-   between = the relay thinks we've seen ops we never applied.
-2. `ws.onclose` reconnects the socket but never re-runs
-   `client.fetchOps` (lines 186–203) — everything missed while
-   disconnected only arrives if another live op happens to replay it
-   (it doesn't; the WS only pushes new ops).
-3. `startSync` runs `fetchOps`/`flush` before `connect()` (lines
-   181–204); an offline boot throws, `initSync`'s catch nulls
-   `running`, and nothing retries until reload.
-
-**Work.** One recovery flow, entered from every path that can fall
-behind: reconnect → `fetchOps(cursor)` → decrypt → `drainOps` →
-*persist* → advance cursor → flush pending. Concretely:
-
-- Cursor advances only after the drain lands — order inside `ingest`
-  is apply-then-record, ideally inside one registry write.
-- `onclose`/`onopen` runs the catch-up before resuming live ingest; the
-  reconnect loop is established first so an offline boot retries sync
-  itself, not just the socket.
-- Devices returning after relay pruning: `fetchOps` from a pruned
-  cursor must fall back to snapshot-then-tail (`getSnapshot` path
-  already exists at line 169) instead of wedging on a gap.
-- `visibilitychange`/`online` events kick the same flow.
-
-**Proof.** Two devices converge after: offline edits both ways, a
-SIGKILL mid-`ingest`, and a cursor older than the relay's retained
-log — no manual refresh, no test-only catch-up call. A scripted
-two-context probe (two IndexedDB/user-registry instances against a dev
-relay) joins `scripts/test.sh`.
+**Proof.** `src/board/sync_watermark.test.mjs`,
+`src/board/sync_snapshot.test.mjs`, `src/board/sync_reliability.test.mjs`,
+`src/worker/relay.heavy.test.mjs`. Rotation interruption adds
+`src/worker/rotation.test.mjs` and the real local-runtime replacement in
+`src/worker/recovery.heavy.test.mjs`. Real iPad process-kill/reconnect
+remains hardware proof; synthetic interruptions are not that claim.
 
 ## C — Photos and recordings inside the backup promise
 
-**Finding.** `savePhoto` + `syncUploadBlob` is fire-and-forget
-(`word-card.js:661,674` — `.catch(() => {})`), and `syncUploadBlob`
-returns `null` when sync isn't running (`sync.mjs:239`). Enabling
-sync later never reconciles blobs saved before linking. Result: a
-restored board can get a word's row back with its picture/recording
-gone — "backed up" currently means *some ops*, not *the family's
-board*.
+**Built.** `syncUploadBlob` stores a sha obligation at `blobq/<user>` in
+the device keystore. Recovery reconciles all referenced `blob:` media,
+including media created before linking, and drains from local OPFS bytes
+or heals a missing local copy from the relay. Queue read/modify/write
+serializes within the sync handle. Transient failures retain the
+obligation; only ten proven misses (no local copy and relay 404) may drop
+an unrecoverable entry. `syncHealth` and the editor status surface failed
+or unfinished media separately from operation acknowledgments.
 
-**Work.**
-
-- Persistent upload queue: a `sync_blob` outbox row (sha, bytes or OPFS
-  ref, epoch, attempts) written atomically with the op that references
-  it; the sync loop drains it with retry/backoff, deletes on confirmed
-  `putBlob`.
-- On link (pairing/enable), sweep: every local blob referenced by the
-  DB and absent remotely enters the queue — this is what makes
-  "turn on backup later" honest.
-- Restore verification: after `adoptSnapshot`/drain on an empty device,
-  every `photo_key`/recording sha either resolves via `getBlob` or is
-  visibly pending — the tile's name+color fallback is a *loading*
-  state, not the end state.
-
-**Proof.** Restore onto an empty second device and compare rendered
-pictures and playable recordings, including media created *before*
-linking and *while* offline.
+**Proof.** `src/board/sync_reliability.test.mjs` exercises concurrent queue
+appends, retry and proven-loss distinctions. A real empty-device restore
+with rendered photos and audible recordings, including pre-link and
+offline additions, remains a device-level check.
 
 ## D — Transforms can't overwrite newer words
 

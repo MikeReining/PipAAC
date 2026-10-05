@@ -4,10 +4,11 @@
  */
 import {
   ensureRecoveryRoot, exportDhPublic, exportPublicKey, getDeviceIdentity,
-  getUserKey, openKeyStore, putUserKey, sealBlob, unwrapUserKey, userRootName,
+  getUserKey, openKeyStore, putUserKey, sealBlob, unwrapUserKey,
   wrapUserKey,
 } from "../shared/sync_crypto.mjs";
 import { recoveryProof } from "../shared/recovery.mjs";
+import { completeRemovalRotation } from "../shared/rotation.mjs";
 import { joinDeviceWithToken, pairClient, relayClient } from "../shared/sync_client.mjs";
 import {
   accountPub, accountState, claimInvite, claimToken, createInvite,
@@ -289,38 +290,16 @@ export function mountDevices({
    *  key the card could never derive (audit F05.3), so it flags the
    *  rotation at the relay and the next root holder completes it. The
    *  removed party is already unauthorized in the meantime. */
-  async function rotateAfterRemoval(client, store, devices) {
-    const root = await store.get(userRootName(me.id));
-    if (!root) {
-      await client.requestRotation();
-      return;
-    }
-    // The relay owns the epoch — a parallel owner may have rotated
-    // since this device last synced, and a rotation to a stale epoch
-    // is refused wholesale (audit: rotation from stale UI state).
-    const { current_epoch: relayEpoch = 1 } =
-      await client.listDevices().catch(() => ({}));
-    const epoch = Math.max(me.sync?.epoch ?? 1, relayEpoch) + 1;
-    const key = await getUserKey(store, me.id, epoch);
-    const wrapped = {};
-    for (const d of devices) {
-      if (d.dh_pub) wrapped[d.device_id] = await wrapUserKey(key, d.dh_pub);
-    }
-    await client.rotateKeys(epoch, wrapped);
-    await saveUser({ sync: { ...me.sync, epoch } });
-    // The running sync client still seals under the old epoch — tell it
-    // now so the next edit is sealed under the new key.
-    await syncRekey(epoch);
+  async function rotateAfterRemoval(client, store) {
+    await completeRemovalRotation({ store, user: me, client, saveUser, rekey: syncRekey });
   }
 
   /** Remove locks the door; rotating the user key means the removed
    *  device cannot read anything written after. */
   async function removeDeviceFlow(client, store, identity, targetId) {
     if (!confirm(`Remove ${targetId}? It keeps what it already saw.`)) return;
-    const { devices } = await client.listDevices();
     await client.removeDevice(targetId);
-    await rotateAfterRemoval(client, store,
-      devices.filter((d) => d.device_id !== targetId));
+    await rotateAfterRemoval(client, store);
     await renderDevices();
   }
 
@@ -618,9 +597,8 @@ export function mountDevices({
       const { client, store } = await userClient();
       await client.removeSupporter(sup.acct_id);
       if (sup.token && st) await revokeInvite(sup.token, st.session);
-      const { devices } = await client.listDevices();
       const { supporters } = await client.listSupporters();
-      await rotateAfterRemoval(client, store, devices);
+      await rotateAfterRemoval(client, store);
       // Regrant remaining supporters so their next sign-in unwraps the
       // new epoch — their bundle rows replace wholesale.
       if (st) {

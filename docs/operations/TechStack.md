@@ -1,8 +1,7 @@
 # Tech Stack
 
-Status: harness bootstrap slice 1 complete (2026-09-21). Worker ships a health
-stub until product routes land. Founder brief → live phase doc is next
-(`docs/phases/README.md` § Next).
+Status: web app and sync relay are live at `app.pipaac.org`. Current work
+and device-proof gaps are routed by `docs/phases/README.md`.
 
 ## Product direction
 
@@ -12,7 +11,7 @@ stub until product routes land. Founder brief → live phase doc is next
 **DECIDED 2026-09-22** (not built). An iOS App Store app plus the web app in
 this repo, sharing one SQLite schema; the iOS build approach is open
 (`docs/product/Platforms_iOS_And_Web.md`). Sync relay on Cloudflare Workers —
-Durable Objects (`RELAY` per board, `TILE_LEDGER` per-day mint counters,
+Durable Objects (`RELAY` per user, `TILE_LEDGER` per-day mint counters,
 `USAGE` fair-use reservations) and R2 (`BLOBS`, `VOICE`) are built and live
 (`docs/product/Sync_And_Web_Editing.md`, `wrangler.jsonc`).
 
@@ -20,7 +19,7 @@ Durable Objects (`RELAY` per board, `TILE_LEDGER` per-day mint counters,
 
 - Package manager: npm with `package-lock.json`
 - Node: see `.nvmrc` (24 — `node:sqlite` drives tests and scripts)
-- Harness runtime stub: Cloudflare Workers (`wrangler.jsonc`, `src/worker/index.js`)
+- Runtime: Cloudflare Workers (`wrangler.jsonc`, `src/worker/index.js`)
 - Test runner: `scripts/test.sh` + `node --test`
 - Closeout gates: `npm run check` / `npm run check:fast`
 - Commit handoff queue: `scripts/commit_handoff_queue.py` + `.wmd/commit-queue.jsonl`

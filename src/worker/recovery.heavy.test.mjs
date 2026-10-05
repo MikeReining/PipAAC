@@ -29,9 +29,10 @@ import { RECOVERY_WORDS } from "../../public/shared/recovery_words.mjs";
 import {
   deriveEpochKey, ensureRecoveryRoot, exportDhPublic, exportPublicKey,
   getUserKey, getDeviceIdentity, memoryKeyStore, openEpochBundle, openOp,
-  putUserKey, retireRoot, sealEpochBundle, userRootName, wrapUserKey,
+  putUserKey, userRootName, wrapUserKey,
 } from "../../public/shared/sync_crypto.mjs";
 import { licenseFor } from "./license.mjs";
+import { replaceRecoveryCard } from "../../public/shared/rotation.mjs";
 import { relayClient, restoreByProof, restoreDevice } from "../../public/shared/sync_client.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
@@ -203,22 +204,13 @@ test("replace card: the old proof dies at the relay, the new card restores", asy
   createEntity(dbA, { name: "Before the swap" });
   await clientA.submit(listOps(dbA));
 
-  // Replace card — what board.js's replaceCard does: seal the old
-  // era's keys to the new root, post the new proof + bundle, retire
-  // the old root, and rotate to a new-root epoch.
-  const newRoot = crypto.getRandomValues(new Uint8Array(16));
-  const bundle = await sealEpochBundle(aStore, user.user_id, newRoot, 1);
-  await clientA.replaceRecovery(await recoveryProof(newRoot), bundle);
-  await retireRoot(aStore, user.user_id, root, 1);
-  await aStore.put(userRootName(user.user_id), newRoot);
-  const key2 = await deriveEpochKey(newRoot, 2);
-  await putUserKey(aStore, user.user_id, key2, 2);
-  const { devices } = await clientA.listDevices();
-  const wrapped = {};
-  for (const d of devices) {
-    if (d.dh_pub) wrapped[d.device_id] = await wrapUserKey(key2, d.dh_pub);
-  }
-  await clientA.rotateKeys(2, wrapped);
+  // Drive the same journal + atomic relay contract the card UI uses.
+  const row = { id: userId, sync: { userId, epoch: 1, cursor: 0 } };
+  await replaceRecoveryCard({ store: aStore, user: row, client: clientA,
+    async saveUser(patch) { Object.assign(row, patch); }, async rekey() {} });
+  const newRoot = await aStore.get(userRootName(userId));
+  const key2 = await getUserKey(aStore, userId, 2);
+  assert.equal(row.sync.epoch, 2);
   createEntity(dbA, { name: "After the swap" });
   await relayClient({ userId: user.user_id, baseUrl: BASE, identity: a, userKey: key2 })
     .submit(listOps(dbA).filter((o) => o.relay_seq === null));

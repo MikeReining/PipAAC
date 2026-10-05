@@ -17,6 +17,7 @@
  */
 import { checkLicense, licenseFor } from "./license.mjs";
 import { indexProof } from "./restore.js";
+import { recoveryId, replaceRecovery, requestRotation, revokeDevice, revokeSupporter, rotateKeys } from "./rotation.mjs";
 
 const te = new TextEncoder();
 const td = new TextDecoder();
@@ -389,12 +390,7 @@ export class UserRelay {
       try { parsed = JSON.parse(td.decode(bodyBytes)); } catch { /* fall */ }
       const acct = parsed?.acct_id ? String(parsed.acct_id) : null;
       if (!acct) return bad("bad_request");
-      this.ctx.storage.sql.exec("DELETE FROM supporter WHERE acct_id = ?", acct);
-      this.ctx.storage.sql.exec("DELETE FROM device WHERE via_acct = ?", acct);
-      this.ctx.storage.sql.exec(
-        "DELETE FROM device_key WHERE device_id NOT IN (SELECT device_id FROM device)");
-      this.ctx.storage.sql.exec("DELETE FROM join_token WHERE for_acct = ?", acct);
-      this.dropRevokedSockets();
+      revokeSupporter(this, acct);
       return json({ ok: true });
     }
 
@@ -584,15 +580,7 @@ export class UserRelay {
     if (method === "DELETE" && route.startsWith("supporters/")) {
       const target = route.slice("supporters/".length);
       if (this.ownersWithout(target) === 0) return bad("last_owner", 409);
-      this.ctx.storage.sql.exec(
-        "DELETE FROM supporter WHERE acct_id = ?", target);
-      this.ctx.storage.sql.exec(
-        "DELETE FROM device WHERE via_acct = ?", target);
-      this.ctx.storage.sql.exec(
-        "DELETE FROM device_key WHERE device_id NOT IN (SELECT device_id FROM device)");
-      this.ctx.storage.sql.exec(
-        "DELETE FROM join_token WHERE for_acct = ?", target);
-      this.dropRevokedSockets();
+      revokeSupporter(this, target);
       return json({ ok: true });
     }
 
@@ -618,6 +606,7 @@ export class UserRelay {
       return json({
         ...row, current_epoch: this.epoch(), wrapped_keys: wrappedKeys,
         rotate_min_epoch: Number(this.metaGet("rotate_min_epoch") ?? 0),
+        recovery_id: await recoveryId(this),
         entitlement: this.entitlement(),
         owner: this.isOwner(device),
         ...(this.metaGet("payment_issue") ? { payment_issue: this.metaGet("payment_issue") } : {}),
@@ -630,13 +619,7 @@ export class UserRelay {
     // root's proof plus the epoch-key bundle sealed to that root; the
     // old card's restore stops working at once.
     if (method === "POST" && route === "recovery") {
-      const { recovery_proof, recovery_bundle } = JSON.parse(td.decode(bodyBytes));
-      if (!recovery_proof) return bad("bad_recovery");
-      await indexProof(this.env, url.pathname.split("/")[2],
-        this.metaGet("recovery_proof"), recovery_proof);
-      this.metaSet("recovery_proof", recovery_proof);
-      if (recovery_bundle) this.metaSet("recovery_bundle", recovery_bundle);
-      return json({ ok: true });
+      return replaceRecovery(this, url.pathname.split("/")[2], JSON.parse(td.decode(bodyBytes)));
     }
 
     // Dev-path activation (011/9): a signed device presents a license
@@ -708,43 +691,22 @@ export class UserRelay {
     if (method === "POST" && route === "keys") {
       const parsed = JSON.parse(td.decode(bodyBytes));
       if (parsed?.request_rotation === true) {
-        this.metaSet("rotate_min_epoch", String(this.epoch() + 1));
-        return json({ ok: true, rotate_min_epoch: this.epoch() + 1 });
+        return json({ ok: true, rotate_min_epoch: requestRotation(this) });
       }
-      const { epoch, wrapped } = parsed;
-      if (!epoch || !wrapped || epoch <= this.epoch()) return bad("bad_epoch");
-      const allowed = new Set(
-        this.ctx.storage.sql.exec("SELECT device_id FROM device").toArray()
-          .map((r) => r.device_id));
-      for (const [dev, wk] of Object.entries(wrapped)) {
-        if (!allowed.has(dev)) continue;
-        this.ctx.storage.sql.exec(
-          "UPDATE device SET wrapped_key = ?, epoch = ? WHERE device_id = ?",
-          JSON.stringify(wk), epoch, dev);
-        this.ctx.storage.sql.exec(
-          "INSERT OR REPLACE INTO device_key (device_id, epoch, wrapped_key) VALUES (?, ?, ?)",
-          dev, epoch, JSON.stringify(wk));
-      }
-      this.ctx.storage.sql.exec(
-        "INSERT OR REPLACE INTO meta (k, v) VALUES ('key_epoch', ?)", String(epoch));
-      if (epoch >= Number(this.metaGet("rotate_min_epoch") ?? 0)) {
-        this.ctx.storage.sql.exec("DELETE FROM meta WHERE k = 'rotate_min_epoch'");
-      }
-      return json({ ok: true, epoch });
+      return rotateKeys(this, parsed);
     }
 
     if (method === "DELETE" && route.startsWith("devices/")) {
       const target = route.slice("devices/".length);
-      this.ctx.storage.sql.exec("DELETE FROM device WHERE device_id = ?", target);
-      this.ctx.storage.sql.exec("DELETE FROM device_key WHERE device_id = ?", target);
-      this.dropRevokedSockets();
+      revokeDevice(this, target);
       return json({ ok: true });
     }
 
     if (method === "POST" && route === "ops") {
-      const { ops } = JSON.parse(td.decode(bodyBytes));
+      const { ops, epoch: sealedEpoch } = JSON.parse(td.decode(bodyBytes));
       if (!Array.isArray(ops) || !ops.length) return bad("no_ops");
       const epoch = this.epoch();
+      if (sealedEpoch !== undefined && sealedEpoch !== epoch) return bad("bad_epoch", 409);
       const assigned = [];
       const fresh = [];
       for (const op of ops) {

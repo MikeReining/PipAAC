@@ -42,6 +42,8 @@ test("F11 — a failed inbound replay, a lost upload, and an unflushed save are 
   // device has NOT applied the family's state — never "✓ Saved".
   assert.equal(editorStatus({ ...clean, ingestError: "sync: bad op" }).tone, "warn");
   assert.match(editorStatus({ ...clean, ingestError: "x" }).text, /Couldn't apply/);
+  assert.equal(editorStatus({ ...clean, rotationError: "stale card" }).tone, "warn");
+  assert.match(editorStatus({ ...clean, rotationError: "stale card" }).text, /updating access/);
   // A media item nobody can still save is a failure, not "Saving…".
   assert.equal(editorStatus({ ...clean, mediaError: "relay 404" }).tone, "warn");
   // …while the queue still owes it, it stays busy, not failed.

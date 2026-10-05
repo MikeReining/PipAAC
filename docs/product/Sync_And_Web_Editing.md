@@ -2,8 +2,15 @@
 
 **Direction DECIDED 2026-09-22** (founder: "a user can create and edit
 things on a computer and then have them also on their iPad"). **Rulings
-DECIDED 2026-09-22** (§ 11). The mechanics in § 3–§ 6 are the proposed
-engineering design, confirmed or changed by the 011 slices. Not built.
+DECIDED 2026-09-22** (§ 11). The web sync relay, encrypted backups, pairing and recovery are built and live.
+The current contracts below include the 2026-10-04 reliability audit fixes.
+Native iOS integration remains a separate platform slice.
+
+**Working-tree amendment, awaiting delegated verification and deployment:**
+the resumable card journal, atomic guarded card/epoch publication, relay-side
+removal obligation and explicit submit-epoch checks described below are
+implemented but have not shipped from this session. The prior deployed
+reliability fixes remain live. The current handoff names the verification gate.
 Intake: `docs/founder/2026-09-22_Customization_Library_Sync.md`.
 Execution: phase 011 (in git history).
 
@@ -43,8 +50,8 @@ iPad speaks everything it has
 
 ## 2. What syncs and what never does
 
-The unit of sync is **one board**: one learner profile and everything the
-adults authored for it.
+The unit of sync is **one user**: one learner profile and everything the
+adults authored for that person. Pages belong to that user.
 
 | Syncs (adult-authored) | Never syncs |
 | --- | --- |
@@ -62,21 +69,19 @@ what the child said never leaves the device.
 
 ## 3. A board, devices and keys
 
-*No-accounts framing superseded 2026-09-23 by § 12; the keys and
-pairing below stay.*
-
-- A **board** has a random id and a random **board key** (256-bit,
-  symmetric). The board key encrypts everything that leaves a device.
-  **BUILT** (011 slice 3): AES-256-GCM via `getBoardKey` in
-  `public/shared/sync_crypto.mjs`, created once and kept in the keystore.
-- Each **device** has its own key pair, kept in the platform's secure
-  store (iOS Keychain; a non-extractable WebCrypto key in the browser).
-  **BUILT**: an ECDSA pair (signs ops/requests) and an ECDH pair (board-
-  key transport in pairing) in IndexedDB `pip-keys`; private keys are
-  non-extractable. `device_id` = SHA-256 fingerprint of the signing
-  public key, recorded on every op via `setDeviceId`/`recordOp`.
-- The server knows board ids and device public keys. It never holds the
-  board key, a name, a photo or a recording in the clear.
+- A **user** has a random id and an AES-256-GCM **user key** for each
+  epoch. On a device holding the 128-bit recovery root, `getUserKey`
+  derives an epoch key through HKDF (`deriveEpochKey`). A paired device
+  receives wrapped epoch keys and holds no root. Missing historical
+  keys fail explicitly; sync must never invent replacements for them.
+- Each **device** has an ECDSA signing pair and an ECDH transport pair
+  in IndexedDB `pip-keys`; private keys are non-extractable.
+  `getDeviceIdentity` fingerprints the signing public key for `device_id`.
+  Identity, root and epoch-key creation are coordinated by named locks
+  (`navigator.locks` across tabs, in-process serialization otherwise).
+- The server knows user ids and public keys. It never holds a user key,
+  recovery root, name, photo or recording in the clear. The native iOS
+  secure-store adapter is planned; the browser implementation ships today.
 
 ### Pairing (adding a device) — **BUILT** (011 slice 5; flipped 2026-10-04)
 
@@ -107,18 +112,24 @@ device has nothing to show yet (founder 2026-10-04).
 
 ### Linked devices and revoke — **BUILT** (011 slice 5)
 
-Parent Corner → **Linked devices** lists each device's name and when it was
-last seen. **Remove** makes the relay reject that device, and rotates the
-board key: a remaining device makes a new key, encrypts it to each
-remaining device, and new ops use it. A removed device keeps what it had
-already downloaded. That is stated honestly in the UI, not hidden.
+Settings → Team & devices lists each device. **Remove** deletes its
+relay registration and closes its live sockets immediately. The same
+relay mutation records `rotate_min_epoch`, so an interrupted client
+cannot forget that encryption still needs rotating. A removed device
+keeps what it already downloaded.
 
-**BUILT**: `DELETE /users/:id/devices/:id` + `POST /keys {epoch,
-wrapped:{device:grant}}` bumps `key_epoch` and stores a wrapped key per
-remaining device; each op carries the epoch it was sealed under, and a
-device seeing a higher epoch picks up its new wrapped key via
-`GET /devices/self`. User keys live per-user per-epoch in the keystore
-(`user/<id>/key_e<n>`; 015 slice 2).
+A remaining owner holding the **current** recovery root derives the next
+key and wraps it for every remaining device (`completeRemovalRotation`,
+`public/shared/rotation.mjs`). A paired owner has no root and leaves the
+relay obligation for a root holder. Signed `POST /keys` validates the
+root's proof when supplied; an owner holding a retired root cannot
+silently rotate under the wrong card. `GET /devices/self` returns every
+historical device grant (`wrapped_keys`) and `current_epoch`, so a device
+that missed several rotations opens each era and catches its outgoing
+client up even if no new op arrives. Keys stay at `user/<id>/key_e<n>`.
+
+Proof: `src/worker/rotation.test.mjs`,
+`src/board/sync_snapshot.test.mjs`, `src/worker/relay.heavy.test.mjs`.
 
 ## 4. What travels: an encrypted op log
 
@@ -139,7 +150,7 @@ an **op** in `sync_op` via `recordOp` (`public/shared/ops.mjs`):
   and `applyOp` replays them through the same write owners, suppressing
   re-recording. Placement ops land at their slot if free, else the next
   free slot; an op never displaces an item already placed.
-- Ops are encrypted with the board key before they leave the device.
+- Ops are encrypted with the epoch's user key before they leave the device.
   **BUILT**: `sealOp`/`openOp` — AES-256-GCM, random 12-byte IV per op,
   wire format `{v:1, alg:"A256GCM", iv, ct}` base64url.
 - A photo or recording is a separate encrypted **blob**. The op carries
@@ -162,9 +173,12 @@ an **op** in `sync_op` via `recordOp` (`public/shared/ops.mjs`):
   **043 C amendment (built):** uploads are durable — `syncUploadBlob`
   queues the sha in the device keystore (`blobq/<user>`) so a kill,
   an offline edit, or a pre-link add never loses it; `drainBlobs` runs
-  at boot and every recover, dropping an entry only after the relay
-  holds the bytes, and a locally missing sha heals *from* the relay
-  instead of re-uploading. Failed drains re-arm with bounded backoff;
+  at boot and every recover, removing an entry after the relay holds the bytes; a locally missing
+  sha heals *from* the relay
+  instead of re-uploading. Only ten proven misses (local bytes absent
+  and relay 404) may drop an unrecoverable entry; available local bytes
+  and transient network errors retain the obligation. Queue mutations
+  serialize within the running sync handle. Failed drains re-arm;
   `syncHealth().mediaPending`/`mediaError` surface the queue.
 - Retire, never delete, fits: a removal is an op, and the retired row
   keeps its bytes (`docs/product/Vocabulary_Masking_And_Safety.md` § 3.2).
@@ -180,9 +194,10 @@ stay that way after import and replay. The seed-install op carries the installed
 memberships and positions, so replay never re-derives them from a newer catalog.
 A Cells change is one op that writes the new size's missing positions.
 
-**Clean break:** there are no users, so no migration of live DBs, persisted
-`sync_baseline` JSON, or old op payloads — a pre-change DB resets to the fresh
-seed.
+**Compatibility:** the 027 schema break originally reset pre-change databases.
+Current releases preserve family edits. Legacy NULL-watermark baselines
+and the damaged 095302a3 starter artifact have explicit repair paths in
+`ops.mjs`; they must not be repaired by indiscriminate reseeding.
 
 Local group edits never target other groups. Multi-board add carries explicit
 selected destination IDs and chosen positions as one operation; replay resolves
@@ -200,31 +215,36 @@ skipped on every replica. `SYNCED_TABLES` adds `group_membership` and
 
 ## 5. Ordering and merging: one order, same functions
 
-**The rule:** every device applies the same ops, in the same order,
-through the same functions. Identical input gives identical state, so the
-devices converge by construction, not by a merge heuristic. **BUILT**
-(011 slice 2) as a local mechanism in `public/shared/ops.mjs`; the relay
-itself is still PROPOSED.
+The relay assigns the intended order; every replica uses the same write
+owners to replay operations (`public/shared/ops.mjs`). The relay is built.
 
-- **The relay orders.** A Cloudflare Durable Object per board gives each
-  op it accepts the next sequence number. It cannot read the ops. It only
-  orders and stores ciphertext. **PROPOSED** — slice 4.
-- **Local edits apply at once** (optimistic) and are marked pending:
-  **BUILT** — `sync_op.relay_seq` stays NULL until the relay confirms.
-- **When confirmed ops arrive**, the device undoes its pending ops,
-  applies the confirmed ones in sequence order, then re-applies its
-  pending ops on top (a rebase), and sends them. **BUILT** —
-  `drainOps` restores the `sync_baseline` snapshot (captured at boot by
-  `ensureBaseline`, before the first local edit), applies the confirmed
-  stream in `relay_seq` order, saves that as the new baseline, then
-  re-applies the still-pending local ops.
-  **043 B amendment (built):** recovery is one flow — `recover()` runs
-  at boot, on socket (re)open, on `online`, and on visibility: fetch
-  ops after cursor → apply → persist → advance cursor. A live push
-  never moves the cursor (it proves nothing about earlier ops); a seq
-  hole — relay-pruned history — rebases on the sealed snapshot. Drain
-  failures surface as `syncHealth().ingestError` instead of wedging
-  silently.
+- **Sequence numbers are sparse.** Deduplicated submissions can consume
+  AUTOINCREMENT values. A numerical gap alone is not evidence of lost
+  operations. `GET /ops` supplies `snap_seq` so recovery can distinguish
+  snapshot-covered/pruned history from numbers that never existed.
+- **Local edits apply immediately.** `recordOp` appends to `sync_op`;
+  `relay_seq IS NULL` means pending. A relay acknowledgment assigns a
+  sequence; it does not prove the corresponding state was applied or saved.
+- **Replay checkpoints live in the DB.** `drainOps` restores
+  `sync_baseline`, applies confirmed ops whose `sync_op.applied` flag is
+  still zero in sequence order (seed installs first), then re-applies
+  pending edits. The replay, flags, new baseline and pending reapplication
+  commit together. `sync_baseline.applied_seq` describes applied coverage;
+  already applied operations must never re-run over the advancing baseline.
+- **Fetch coverage has a separate owner.** The registry's `sync.cursor`
+  advances only after a fetched batch applies and the DB flush succeeds.
+  WebSocket pushes apply and persist without moving that cursor. Boot
+  lowers an overclaiming cursor to the DB checkpoint; it never raises one
+  merely because the DB saw a later push. Save failures leave coverage
+  behind and surface through `syncHealth().ingestError`.
+- **One recovery flow.** Boot, socket open/reopen, `online` and visibility
+  all enter `recover`: fetch → decrypt → apply → persist → advance cursor
+  → flush → reconcile/drain media. Fetch and submit batches are 200 ops;
+  submits share one in-flight promise. Failed submits retry automatically
+  with bounded backoff (eight retries), then await the next wake or edit.
+  A raised snapshot watermark with a missing tail, including an empty
+  tail, adopts the bridging snapshot or reports a named failure.
+
 - **Ops carry intent, not results.** "Place Cooper in People" means "the
   next free slot when applied". "Move `cup` to page 0 slot 12" means
   "slot 12 if free; if another item took it, the next free slot". An
@@ -247,19 +267,34 @@ same page). When they happen, one item lands in the next free slot. That
 is the only case where a merge can put an item somewhere its adult did not
 choose, and it never moves an item that was already placed.
 
-**Snapshots.** Every N ops (starting value 500) a device uploads an
-encrypted snapshot of the synced tables and their sequence number. A new
-device loads the latest snapshot, then the ops after it.
+**Outstanding ordering defect (2026-10-04).** Per-op deduplication does
+not yet prove delivery-order-independent convergence: a later WebSocket
+rename folded before an earlier catch-up rename can leave the older name.
+Reproduction and the repair boundary are in
+`docs/operations/debugger/SYNC_DELIVERY_ORDER.md`. Existing green proofs
+cover repeated and sparse delivery, not this out-of-order noncommutative case.
 
-**BUILT** (2026-12-16): `snapshotSynced`/`adoptSnapshot` in
-`public/shared/ops.mjs` (the payload is the `sync_baseline` format —
-confirmed state only, never pending edits); transport
-`putSnapshot`/`getSnapshot` on `relayClient`; the sync loop uploads
-when the confirmed log grew 500 seqs past the last upload, and a
-never-synced device (`cursor` unset) adopts the snapshot before
-replaying the tail. The relay stores the pair `(file, snapshot_seq)`
-monotonically — a stale device can't regress the prune watermark.
-Proof: `src/worker/relay.heavy.test.mjs` snapshot round-trip.
+**Snapshots.** `maybeSnapshot` waits until the fetch-verified cursor is
+at least 500 sequences beyond the previous upload and equals
+`appliedSeqOf(db)`. It seals **the stored baseline**, never live tables
+with pending edits. The inner payload is `{v: SNAPSHOT_V, seq, snap}`;
+format 1 is current, a missing version means legacy format 1, and a
+newer format must fail without claiming coverage.
+
+`adoptSnapshot(tables, seq)` flags covered ops, stamps the DB watermark,
+and reapplies pending edits. Registry coverage moves only after that DB
+persists. `stats_day` counts travel with the other synced tables; raw
+sentence and tap history stay local.
+
+The relay writes immutable `s/<user>/<seq>` objects and advances its
+committed `(snapshot_key, snapshot_seq)` pointer after external I/O and
+rechecking sequence coverage. Same-seq uploads cannot rewrite published
+bytes. Pruning uses the committed pointer, not an in-flight upload.
+Legacy `s/<user>` snapshots remain readable.
+
+Proof: `src/board/sync_watermark.test.mjs`,
+`src/board/sync_snapshot.test.mjs`, `src/board/sync_reliability.test.mjs`,
+`src/worker/relay.heavy.test.mjs`.
 
 ## 6. The relay (Cloudflare)
 
@@ -275,7 +310,7 @@ Proof: `src/worker/relay.heavy.test.mjs` snapshot round-trip.
 device; `POST /devices` adds a device (signed by an allowed one);
 `POST /ops` assigns `relay_seq`, stores the sealed envelope, fans it out
 over the WebSocket (`GET /ws`, signed via query params — browsers cannot
-set WS headers); `GET /ops?after=N` is the offline catch-up; `PUT/GET
+set WS headers); `GET /ops?after=N&limit=200` is the paged offline catch-up; `PUT/GET
 /blobs/:sha` and `PUT/GET /snapshot` stream sealed bytes to/from R2.
 Auth: ECDSA P-256 signature over `method\npath\nts\nsha256(body)` in
 `x-pip-*` headers, 10-minute freshness window, verified against the
@@ -322,8 +357,11 @@ people with special needs takes a ton of time"; § 11):
 **BUILT** (2026-09-23): all four rules run on the relay. `last_seen` is
 stamped on every signed request; a daily Durable-Object alarm runs
 `retentionSweep(now)`, which destroys a board only for the two causes
-above (`destroy()` deletes the R2 `b/<user>/*` + `s/<user>` objects
+above (`destroy()` currently deletes R2 `b/<user>/*`, legacy `s/<user>`
 and the DO's own storage — nothing about entitlement ever reaches it).
+**Outstanding retention gap:** immutable `s/<user>/<seq>` objects and
+proof-index entries are not enumerated by that deletion path; they need
+explicit cleanup and a retention proof before claiming complete erasure.
 The warning rides `GET /devices/self` as `idle_delete_at`, computed from
 the previous `last_seen` so a returning device still sees it once.
 Pruning applies only to ops covered by `snapshot_seq` and older than 30
@@ -363,18 +401,21 @@ as single adds. Live sync rides the op log built in slices 1–6. Record
 my own from the laptop lands with 009 slice 4 (the recorder). The iPad's
 own paste box and multi-photo picker remain with 009 slices 7–8.
 
-In the browser, the synced copy on the relay is the durable one. The
-browser's local database is a cache that can be rebuilt from snapshot plus
-log, because browsers may evict site storage. If the browser's device key
-is lost, the adult links the browser again. Nothing on the board is lost.
+In the browser, SQLite edits persist through the per-user IndexedDB
+export (`public/db.js`, `public/shared/users.mjs`); the previous export
+is kept for recovery. Pending operations and media are obligations still
+held locally, not proof of a completed relay backup. Browser eviction can
+lose unuploaded edits. Relay-accepted state restores from snapshot plus
+log; a lost device identity needs pairing, an account join or the card.
+"Saved" depends on local persistence, inbound health and media as well
+as pending op counts (`editorStatus`, `public/board/editor-find.js`).
 
 ## 8. Many boards (SLPs)
 
 *Superseded 2026-09-23: DECIDED, § 12.4.*
 
-**PROPOSED, later.** An SLP's laptop links to many boards and switches
-between them. Each board has its own key. The SLP's device is one allowed
-device on each board, and the family can remove it.
+**BUILT.** One device holds a registry and separate SQLite database/key scope
+per user (§ 12.4). Sharing one user does not share another.
 
 ## 9. Recovery: when every device is gone
 
@@ -386,8 +427,7 @@ card (§ 12.3). The recovery root and its derivation stay.*
 `docs/strategy/Vision.md` § 4.4 without accounts.
 
 - **QR card, free for every user.** When backup is turned on, the
-  Parent Corner shows a printable QR card that holds the user id and
-  the recovery root. On a new device, **Restore a user** downloads and
+  Parent Corner shows a printable QR card that carries the recovery root. On a new device, **Restore a user** downloads and
   decrypts the user. The app reminds the family to print or save it,
   and they can show it again from any linked device that holds the
   recovery root (see the amendment below).
@@ -422,41 +462,44 @@ epoch's user key derives from the root by HKDF (`deriveEpochKey`).
   `public/shared/sync_client.mjs`). The relay never sees a key.
 - Restore UI: Parent corner → Backup → Restore a user → **Scan the
   card** (camera, `BarcodeDetector`), **Choose a photo** of the card,
-  or paste the code (`restoreFlow`, `scanBitmap` in `public/board.js`).
+  or paste the code (`restoreFlow`, `scanBitmap` in `public/board/recovery-ui.js`).
   The dialog warns that a free-user restore unlinks the other devices.
-- **Replace card:** a linked device posts the new root's proof plus an
-  epoch-key **bundle** — every epoch key it can reach, sealed under
-  `HKDF(root, "recovery-bundle")` — via signed `POST /users/:id/recovery`
-  (`sealEpochBundle`/`openEpochBundle`, `retireRoot` in
-  `public/shared/sync_crypto.mjs`; `replaceRecovery` in
-  `public/shared/sync_client.mjs`). The old proof dies at once;
-  remaining devices get the new epoch's key wrapped to them, and a
-  restore unpacks the bundle so the whole backlog stays readable.
-  Retired roots stay in the keystore (`user/<id>/roots`) so repeated
-  replacements cover every era. Old epochs stay readable where a
-  device holds their keys.
+- **Replace card:** `replaceRecoveryCard` first persists
+  `rotation/<user>` in the device keystore: old/new roots, target epoch,
+  wrapped device grants and the historical-key bundle sealed to the new
+  root. It imports held relay grants before building that bundle, so a
+  stale UI epoch does not truncate history. Signed `POST /recovery`
+  checks the expected old proof and next epoch, then commits proof,
+  bundle and device grants/epoch together in one relay SQL transaction
+  (`src/worker/rotation.mjs`). The proof index is external R2: it is
+  repaired by an idempotent replay of the same staged request after a
+  lost response or interrupted write. The relay still validates the
+  proof itself; an obsolete index entry confers no restore authority.
+- `resumeRecoveryCard` retries the same card on boot/reconnect, before
+  submitting edits and before displaying the card. After acknowledgment
+  it retires the old root idempotently, installs the new root/key,
+  saves the registry epoch and rekeys the live client. Only then does
+  it delete the journal. Competing replacements fail `recovery_conflict`
+  instead of overwriting another owner's card. A competing removal
+  rotation restages the same new root at the current epoch for retry.
+- Updated clients explicitly submit their sealing epoch. The relay
+  rejects a stale epoch before inserting an operation, preserving the
+  outbox for retry. Legacy clients that omit that field or use split
+  card replacement remain compatible; the stronger guarantees require
+  the updated client. No root or plaintext key leaves the device.
 - **Amendment to "any linked device can show it":** only a device
   holding the recovery root can print the card — the device that set
   up sync, or a device restored from a card. If every paired device
   held the root, it could re-derive every future epoch key and
   removing a device would be cosmetic. A paired device sees an honest
   "print it on the device that set up sync" instead.
-- Proof: `src/board/recovery.test.mjs` (card payload round-trips the
-  root as a 43-char code — scanned, bare, and grouped forms; pre-card
-  word payloads still parse; wordlist integrity, checksum/word
-  rejection, proof stability, a fresh keystore holding only the root
-  opening every epoch's ops); `src/worker/recovery.heavy.test.mjs`
-  (real relay: card restore after a rotation — synced tables
-  byte-identical, history tables empty, wrong proof → 403; replace
-  card — old proof → 403, new card restores epoch 2 with the bundle
-  and reads the full backlog); `scripts/probes/qrcard_probe.mjs`
-  (live two-profile proof: card shows QR + code with no words;
-  destroyed client, fresh profile restores from the pasted code —
-  synced rows back, history empty, the free-user move notice on
-  screen; Replace card mints a new code at epoch 2, old proof 403,
-  new proof restores). Camera/photo scanning is feature-gated on
-  `BarcodeDetector` and unproven headless — the pasted code runs the
-  same `recoverFromText` a scan decodes to (waiver).
+- Proof: `src/board/recovery.test.mjs` (12-word round-trip, checksum,
+  root/epoch derivation); `src/worker/rotation.test.mjs` (interruption
+  after each durable step, lost responses, competing proofs, stale
+  sealing epoch, fresh-root decryption of both eras);
+  `src/worker/recovery.heavy.test.mjs` (local Cloudflare runtime,
+  old card denied, new card restores the full backlog).
+  Real iPad kill/relaunch and camera/photo scanning remain device proof.
 - **The iPad's own backup counts too.** On the iOS app, Apple's device
   backup (iCloud or computer) restores the app's data and the Keychain
   user key. That is Apple's backup, not our sync, and it is a second path.
@@ -583,7 +626,10 @@ never shares a sibling.
   `POST /users/:id/devices` with `join_token`; relay stores SHA-256
   only; `src/worker/relay.js`). Locked imports carry `sync.userId` but
   no key — the user list marks them "needs an Allow or QR card" with no
-  Switch. Live-proven: `scripts/probes/account_probe.mjs` (virtual
+  Switch. An unlocked import whose token join fails carries
+  `sync.pendingJoin`; it remains local-only until a successful join
+  clears that marker. A failed re-import cannot downgrade an existing
+  proven link. Live-proven: `scripts/probes/account_probe.mjs` (virtual
   authenticators, real wrangler dev — restore-with-keys, no-PRF lock,
   payload scan).
 - **BUILT** (015 slice 5, 2026-09-23): supporters **on a user**. The

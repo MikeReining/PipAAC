@@ -14,10 +14,11 @@ import { normalizeV1 } from "../shared/normalize.mjs";
  *  worse than missing the relay. Audit F11: a failed inbound replay, a
  *  media failure, and edits not yet flushed to storage are all failure
  *  states, not "Saved". */
-export function editorStatus({ linked, pending, mediaPending = 0, online, flushError, saveBlocked, saveError, ingestError, mediaError, dirty = false }) {
+export function editorStatus({ linked, pending, mediaPending = 0, online, flushError, saveBlocked, saveError, ingestError, rotationError, mediaError, dirty = false }) {
   if (saveBlocked) return { text: "Not saving — saved board couldn't open", tone: "warn" };
   if (saveError) return { text: "Couldn't save — keep this open", tone: "warn" };
   if (ingestError) return { text: "Couldn't apply an update — keep this open", tone: "warn" };
+  if (rotationError) return { text: "Couldn't finish updating access — keep this open", tone: "warn" };
   if (mediaError && mediaPending === 0) return { text: "Couldn't save a photo or recording", tone: "warn" };
   if (!linked) {
     return dirty

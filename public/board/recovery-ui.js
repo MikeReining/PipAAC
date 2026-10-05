@@ -3,16 +3,16 @@
  * root can show it, and a fresh device can restore from it.
  */
 import {
-  deriveEpochKey, exportDhPublic, exportPublicKey, getDeviceIdentity,
-  getUserKey, openEpochBundle, openKeyStore, putUserKey, retireRoot,
-  sealEpochBundle, userRootName, wrapUserKey,
+  exportDhPublic, exportPublicKey, getDeviceIdentity,
+  getUserKey, openEpochBundle, openKeyStore, putUserKey, userRootName,
 } from "../shared/sync_crypto.mjs";
 import {
-  cardLink, keyToWords, recoverFromText, recoveryProof, ROOT_BYTES, wordsFromHash,
+  cardLink, keyToWords, recoverFromText, recoveryProof, wordsFromHash,
 } from "../shared/recovery.mjs";
 import { RECOVERY_WORDS } from "../shared/recovery_words.mjs";
 import { restoreByProof } from "../shared/sync_client.mjs";
 import { addUser, putUser } from "../shared/users.mjs";
+import { currentRecoveryRoot, replaceRecoveryCard, resumeRecoveryCard } from "../shared/rotation.mjs";
 
 const $ = (id) => document.getElementById(id);
 
@@ -96,8 +96,17 @@ export function mountRecovery({
         return;
       }
     }
-    const cfg = me.sync;
-    const root = await openKeyStore().get(userRootName(me.id));
+    const store = openKeyStore();
+    let root = await store.get(userRootName(me.id));
+    if (root) {
+      const { client } = await userClient();
+      await resumeRecoveryCard({ store, user: me, client, saveUser, rekey: syncRekey });
+      // An already stored card can still be printed offline. A staged
+      // replacement must finish above before any card is shown.
+      root = navigator.onLine === false
+        ? await store.get(userRootName(me.id))
+        : await currentRecoveryRoot(store, me.id, client);
+    }
     if (!root) {
       openRec("Recovery card");
       recBody.innerHTML =
@@ -124,6 +133,9 @@ export function mountRecovery({
     const warn = document.createElement("p");
     warn.className = "hint";
     warn.textContent = "Anyone with this link can open your user.";
+    if (navigator.onLine === false) {
+      warn.textContent += " Connect to check whether another device replaced this card.";
+    }
     const btn = (label, onclick) => Object.assign(document.createElement("button"),
       { className: "btn secondary", textContent: label, onclick });
     const emailBody = `Open this link on the device you want Pip on:\n\n${payload}\n`;
@@ -156,7 +168,8 @@ export function mountRecovery({
       }),
       btn("Replace card…", async () => {
         if (!confirm("Replace this card? Every link and print so far stops working.")) return;
-        await replaceCard();
+        try { await replaceCard(); }
+        catch (err) { toast(`Card replacement is unfinished: ${err.message}. Connect and try again.`); }
       }),
     );
     more.append(moreRow);
@@ -174,33 +187,7 @@ export function mountRecovery({
   async function replaceCard() {
     const { client } = await userClient();
     const store = openKeyStore();
-    const oldRoot = await store.get(userRootName(me.id));
-    const oldEpoch = me.sync?.epoch ?? 1;
-    const newRoot = crypto.getRandomValues(new Uint8Array(ROOT_BYTES));
-    // Seal the old era's keys to the new root BEFORE swapping roots — the
-    // bundle is what a new-card restore opens the whole backlog with.
-    const bundle = await sealEpochBundle(store, me.id, newRoot, oldEpoch);
-    await client.replaceRecovery(await recoveryProof(newRoot), bundle);
-    if (oldRoot) {
-      await retireRoot(store, me.id,
-        oldRoot instanceof Uint8Array ? oldRoot : new Uint8Array(oldRoot), oldEpoch);
-    }
-    await store.put(userRootName(me.id), newRoot);
-    // Relay-current epoch, not stale UI state — a parallel owner may
-    // have rotated since this device synced (audit).
-    const { current_epoch: relayEpoch = oldEpoch } =
-      await client.listDevices().catch(() => ({}));
-    const epoch = Math.max(oldEpoch, relayEpoch) + 1;
-    const key = await deriveEpochKey(newRoot, epoch);
-    await putUserKey(store, me.id, key, epoch);
-    const { devices } = await client.listDevices();
-    const wrapped = {};
-    for (const d of devices) {
-      if (d.dh_pub) wrapped[d.device_id] = await wrapUserKey(key, d.dh_pub);
-    }
-    await client.rotateKeys(epoch, wrapped);
-    await saveUser({ sync: { ...me.sync, epoch } });
-    await syncRekey(epoch);
+    await replaceRecoveryCard({ store, user: me, client, saveUser, rekey: syncRekey });
     await showCard();
   }
 
