@@ -355,21 +355,68 @@ function restoreSynced(db, snap) {
   }
 }
 
-/** Persist the snapshot as the last-confirmed baseline. */
-function saveBaseline(db) {
-  db.prepare("INSERT OR REPLACE INTO sync_baseline (id, tables) VALUES (1, ?)")
-    .run(JSON.stringify(snapshotSynced(db)));
+/** Persist the snapshot as the last-confirmed baseline at its watermark. */
+function saveBaseline(db, appliedSeq) {
+  db.prepare(
+    "INSERT OR REPLACE INTO sync_baseline (id, tables, applied_seq) VALUES (1, ?, ?)",
+  ).run(JSON.stringify(snapshotSynced(db)), appliedSeq);
 }
 
 /**
- * A relay snapshot lands on a device that never synced: the synced
- * tables adopt it wholesale and it becomes the rebase baseline, so the
- * op tail after it replays on top (§ 5). Pending local ops are
- * untouched — the next drainOps rebases them over the snapshot.
+ * The durable checkpoint: the relay_seq the stored baseline provably
+ * contains. This is the number a cursor may claim — it lives inside the
+ * database bytes, so saved state and claimed coverage travel together.
+ * A pre-watermark baseline (applied_seq NULL, written by older code) is
+ * derived from its contents: one holding installed boards is a completed
+ * post-drain/post-adopt snapshot — old saveBaseline only ever wrote
+ * post-state — so it covers every confirmed op in the log. One without
+ * boards covers nothing actionable: the shipped artifact's baseline
+ * holds catalog rows (labels, the bar family) but no group or install
+ * state, and that is exactly the 095302a3 damage signature — replaying
+ * the whole log rebuilds the boards and re-lands the skipped writes,
+ * while a family's legit deletions replay with them.
  */
-export function adoptSnapshot(db, tables) {
+export function appliedSeqOf(db) {
+  const row = db.prepare(
+    "SELECT tables, applied_seq FROM sync_baseline WHERE id = 1").all()[0];
+  if (!row) return 0;
+  if (row.applied_seq != null) return row.applied_seq;
+  const tables = JSON.parse(row.tables);
+  return ((tables.board_group?.length ?? 0) > 0
+      || (tables.group_seed_install?.length ?? 0) > 0)
+    ? (db.prepare(
+        "SELECT MAX(relay_seq) AS m FROM sync_op WHERE relay_seq IS NOT NULL",
+      ).all()[0].m ?? 0)
+    : 0;
+}
+
+/**
+ * A relay snapshot lands as the rebase baseline at its own watermark:
+ * the op tail after `seq` replays on top (§ 5). Pending local ops are
+ * re-applied immediately — adoption wipes their effects from the synced
+ * tables, and they must not sit missing until the next drain.
+ */
+export function adoptSnapshot(db, tables, seq = 0) {
   restoreSynced(db, tables);
-  saveBaseline(db);
+  // Everything at or below the snapshot's seq is claimed inside it —
+  // flag it so a later drain doesn't re-run ops over adopted state
+  // (a swap logged before adoption would otherwise undo itself). Flags
+  // and baseline commit together or not at all.
+  db.exec("BEGIN");
+  try {
+    db.prepare(
+      "UPDATE sync_op SET applied = 1 WHERE relay_seq IS NOT NULL AND relay_seq <= ?",
+    ).run(seq);
+    saveBaseline(db, seq);
+    db.exec("COMMIT");
+  } catch (err) {
+    db.exec("ROLLBACK");
+    throw err;
+  }
+  const pending = db.prepare(
+    "SELECT op_id, device_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NULL ORDER BY seq",
+  ).all();
+  for (const op of pending) applyOp(db, op);
 }
 
 /**
@@ -379,20 +426,43 @@ export function adoptSnapshot(db, tables) {
  */
 export function ensureBaseline(db) {
   if (!db.prepare("SELECT 1 AS x FROM sync_baseline WHERE id = 1").all()[0]) {
-    saveBaseline(db);
+    saveBaseline(db, 0);
   }
 }
 
 /**
  * Confirmed ops arrive with relay_seq, ordered by it. The device undoes
  * its pending ops by restoring the baseline, applies the confirmed
- * stream in relay order (the new baseline), then re-applies its still-
- * pending ops on top — a rebase (§ 5). Foreign ops join the local log
- * so the stream is recorded; echoes of our own ops just take their seq.
+ * suffix after the baseline's watermark in relay order (the new
+ * baseline), then re-applies its still-pending ops on top — a rebase
+ * (§ 5). Foreign ops join the local log so the stream is recorded;
+ * echoes of our own ops just take their seq.
+ *
+ * The watermark is what makes repeated delivery safe: an op applies to
+ * confirmed state exactly once. A hole in the log stops the suffix at
+ * the first missing seq — applying past it would claim coverage the
+ * device doesn't have; catch-up or a snapshot fills it later.
  */
 export function drainOps(db, confirmedOps = []) {
+  // The legacy upgrade is decided BEFORE marking anything new: a
+  // NULL-stamped baseline holding boards is old post-drain state — every
+  // op confirmed before this call is already inside it, so their flags
+  // are set rather than replayed (a swap re-run would undo itself). One
+  // without boards is the 095302a3 damage — its ops stay unapplied and
+  // replay below, which is what rebuilds them.
+  const base = db.prepare(
+    "SELECT tables, applied_seq FROM sync_baseline WHERE id = 1").all()[0];
+  if (!base) throw new Error("drainOps: no baseline — ensureBaseline must run at boot");
+  const baseTables = JSON.parse(base.tables);
+  if (base.applied_seq == null
+      && ((baseTables.board_group?.length ?? 0) > 0
+          || (baseTables.group_seed_install?.length ?? 0) > 0)) {
+    db.prepare("UPDATE sync_op SET applied = 1 WHERE relay_seq IS NOT NULL").run();
+  }
   const ordered = [...confirmedOps].sort((x, y) => x.relay_seq - y.relay_seq);
-  const mark = db.prepare("UPDATE sync_op SET relay_seq = ? WHERE op_id = ?");
+  const mark = db.prepare(
+    "UPDATE sync_op SET relay_seq = ? WHERE op_id = ? AND relay_seq IS NULL",
+  );
   const logForeign = db.prepare(
     "INSERT OR IGNORE INTO sync_op (op_id, device_id, kind, args, created_at, relay_seq) VALUES (?, ?, ?, ?, ?, ?)",
   );
@@ -405,36 +475,65 @@ export function drainOps(db, confirmedOps = []) {
   const pending = db.prepare(
     "SELECT op_id, device_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NULL ORDER BY seq",
   ).all();
-  // Apply the whole confirmed stream — newly arrived ops are only the
-  // tail; the log holds the rest.
-  const confirmed = db.prepare(
-    "SELECT op_id, device_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NOT NULL ORDER BY relay_seq",
+  // Relay seqs are sparse — a deduped resubmit burns a number — so the
+  // replay set is "every confirmed op not yet folded into the baseline",
+  // not a dense suffix. Each applies exactly once, flagged in the same
+  // transaction as the baseline that records it.
+  const unapplied = db.prepare(
+    "SELECT op_id, device_id, kind, args, created_at, relay_seq FROM sync_op WHERE relay_seq IS NOT NULL AND applied = 0 ORDER BY relay_seq",
   ).all();
-  const base = db.prepare("SELECT tables FROM sync_baseline WHERE id = 1").all()[0];
-  if (!base) throw new Error("drainOps: no baseline — ensureBaseline must run at boot");
-  restoreSynced(db, JSON.parse(base.tables));
-  // A seed install is a precondition, not an ordinary edit: every write
-  // into a group needs the install applied first, wherever the relay
-  // placed it. Install ops keep relay order among themselves (first
-  // confirmed still wins) but run ahead of the rest of the stream.
-  const seeds = confirmed.filter((o) => o.kind === "seed_install");
-  for (const op of seeds) applyOp(db, op);
+  restoreSynced(db, baseTables);
   // A device whose log carries no confirmed install — the 095302a3
   // starter artifact shipped applied groups with the op deleted — still
-  // rebuilds its boards: its own recorded install runs ahead of the
-  // confirmed stream. Replaying it in the pending phase would come too
-  // late, after the writes it exists to make possible.
-  if (!seeds.length
+  // rebuilds its boards: its own recorded install runs as the device's
+  // foundation, ahead of the confirmed replay.
+  if (!unapplied.some((o) => o.kind === "seed_install")
       && !db.prepare("SELECT 1 AS x FROM group_seed_install LIMIT 1").all()[0]) {
     for (const op of pending) {
       if (op.kind === "seed_install") applyOp(db, op);
     }
   }
-  for (const op of confirmed) {
-    if (op.kind !== "seed_install") applyOp(db, op);
+  // The replay, the per-op flags, and the baseline watermark commit
+  // together: a failing op rolls all three back and fails loudly,
+  // instead of a half-applied state saved under a cursor that says it
+  // worked.
+  db.exec("BEGIN");
+  try {
+    const flag = db.prepare("UPDATE sync_op SET applied = 1 WHERE op_id = ?");
+    for (const op of unapplied.filter((o) => o.kind === "seed_install")) {
+      applyOp(db, op);
+      flag.run(op.op_id);
+    }
+    for (const op of unapplied) {
+      if (op.kind === "seed_install") continue;
+      applyOp(db, op);
+      flag.run(op.op_id);
+    }
+    saveBaseline(db, watermarkOf(db));
+    db.exec("COMMIT");
+  } catch (err) {
+    db.exec("ROLLBACK");
+    // Live state is the restored baseline — put pending edits back on
+    // top so the board keeps showing them, then fail loudly.
+    for (const op of pending) {
+      try { applyOp(db, op); } catch { /* the next drain retries */ }
+    }
+    throw err;
   }
-  saveBaseline(db);
   for (const op of pending) applyOp(db, op);
+}
+
+/**
+ * The seq the baseline may honestly claim: everything the log knows up
+ * to the first unapplied confirmed op — the max applied seq when the
+ * log is clean. Sparse seqs make this a coverage statement about ops,
+ * not a promise that every number below it existed.
+ */
+function watermarkOf(db) {
+  return db.prepare(`SELECT COALESCE(
+    (SELECT MIN(relay_seq) - 1 FROM sync_op WHERE relay_seq IS NOT NULL AND applied = 0),
+    (SELECT MAX(relay_seq) FROM sync_op WHERE relay_seq IS NOT NULL AND applied = 1),
+    0) AS w`).all()[0].w;
 }
 
 /**
@@ -449,11 +548,12 @@ export function drainOps(db, confirmedOps = []) {
  * so the signature never fires again.
  */
 export function repairDrainedWithoutSeeds(db) {
+  const row = db.prepare(
+    "SELECT tables, applied_seq FROM sync_baseline WHERE id = 1").all()[0];
+  if (!row || row.applied_seq != null) return false; // only legacy baselines carry the damage
   if (!db.prepare("SELECT 1 AS x FROM sync_op WHERE relay_seq IS NOT NULL LIMIT 1").all()[0]) {
     return false;
   }
-  const row = db.prepare("SELECT tables FROM sync_baseline WHERE id = 1").all()[0];
-  if (!row) return false;
   const tables = JSON.parse(row.tables);
   if ((tables.board_group?.length ?? 0) > 0
       || (tables.group_seed_install?.length ?? 0) > 0) {

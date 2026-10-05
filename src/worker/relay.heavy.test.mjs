@@ -429,7 +429,7 @@ test("snapshots: sealed state round-trips; the watermark only advances", async (
   const plain = await openOp(userKey, stored.env);
   assert.equal(plain.seq, head);
   const dbC = openDb();
-  adoptSnapshot(dbC, plain.snap);
+  adoptSnapshot(dbC, plain.snap, plain.seq);
 
   const beforeTail = listOps(dbA).length;
   const { id: cat } = createEntity(dbA, { name: "AfterSnap" });

@@ -125,7 +125,7 @@ test("a foreign stream with no seed ancestry still rebuilds the boards first", (
   const broken = bootDevice("broken-a");
   broken.exec("DELETE FROM sync_op");
   placeItem(broken, NUMBERS, "sense", AND);
-  const stream = listOps(broken).map((o, i) => ({ ...o, relay_seq: 50 + i }));
+  const stream = listOps(broken).map((o, i) => ({ ...o, relay_seq: 1 + i }));
   assert.deepEqual(stream.map((o) => o.kind), ["place_item"]);
 
   const desktop = bootDevice("desktop2");
@@ -134,7 +134,7 @@ test("a foreign stream with no seed ancestry still rebuilds the boards first", (
     "the device's own pending install must rebuild boards before the foreign write");
   assert.ok(pageLabels(desktop, NUMBERS).includes("and"));
   // Offline catch-up in two batches is the same drain twice.
-  const second = relay(broken, 60);
+  const second = relay(broken, 2);
   drainOps(desktop, stream);
   drainOps(desktop, second.length ? second : stream);
   assert.ok(member(desktop, NUMBERS, "sense", AND), "repeated replay stays healed");
@@ -153,8 +153,11 @@ test("an install damaged by the broken artifact repairs at boot — skipped writ
            DELETE FROM board_group; DELETE FROM group_seed_install; DELETE FROM sync_op`);
   db.prepare(
     `INSERT INTO sync_op (op_id, device_id, kind, args, created_at, relay_seq)
-     VALUES ('op_foreign_place', 'dev_ipad', 'place_item', ?, 1, 7)`,
+     VALUES ('op_foreign_place', 'dev_ipad', 'place_item', ?, 1, 1)`,
   ).run(JSON.stringify(foreign));
+  // The damage predates the watermark: the consumed write sits in the
+  // log under a baseline that carries no stamp and no state.
+  db.prepare("UPDATE sync_baseline SET applied_seq = NULL WHERE id = 1").run();
   assert.equal(boardCount(db), 0, "the damaged device starts with no boards");
 
   // Boot-time repair: importCatalog re-installs the seed, records the
@@ -189,7 +192,7 @@ test("legitimately deleted boards stay deleted through the repair", () => {
   // A caregiver removal from a seeded board replays over the rebuild too.
   const seeded = dbSenseIn(b, NUMBERS);
   removeItem(a, NUMBERS, "sense", seeded);
-  drainOps(b, relay(a, 200));
+  drainOps(b, relay(a));
   assert.ok(!member(b, NUMBERS, "sense", seeded),
     "a caregiver removal must survive the rebuild");
 });

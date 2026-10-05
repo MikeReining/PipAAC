@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-84bdd44ae8bf",
+  "buildId": "r1-addc33b522a2",
   "files": [
     {
       "path": "/board.js",
@@ -383,8 +383,8 @@
     },
     {
       "path": "/catalog.json",
-      "bytes": 3757663,
-      "sha256": "3acecfb2e3896d5498e73573169808f8a9dbcf43a1bc3e1ef201214c7e572006"
+      "bytes": 3758409,
+      "sha256": "7cd0a7eddb461da08902bafc0640c59af8260b1b132047f1af0ab55384a9ef97"
     },
     {
       "path": "/db.js",
@@ -413,8 +413,8 @@
     },
     {
       "path": "/fresh_db.sqlite",
-      "bytes": 2531328,
-      "sha256": "bbec150ad8bae832807b86ae0e56183915bbaea3d1e7f46641169065571fffb5"
+      "bytes": 2535424,
+      "sha256": "ffe4c948d6b131dbbf1204006c013ad217c4c0fc9251115556d311e8712f2b01"
     },
     {
       "path": "/help.en.json",
@@ -888,8 +888,8 @@
     },
     {
       "path": "/shared/ops.mjs",
-      "bytes": 18802,
-      "sha256": "b207208092bfe782ded7771cec14296a93a62acda1916d1da0409244e736ffb8"
+      "bytes": 23208,
+      "sha256": "854f1659aa2761e8437d6009a6a32bd2114ae9a5894e23761d01844ed2063ab0"
     },
     {
       "path": "/shared/person_name.mjs",
@@ -973,8 +973,8 @@
     },
     {
       "path": "/shared/sync.mjs",
-      "bytes": 17460,
-      "sha256": "e5a77f1100adefd468b9b72bce74cfe505ef3328cfdfca562c2fb6970c3adf85"
+      "bytes": 19232,
+      "sha256": "bcfe5b204cab88dc0912ccfd761ddb1b5f4540cafe38dbbd372a4427f9e76146"
     },
     {
       "path": "/shared/team_names.mjs",

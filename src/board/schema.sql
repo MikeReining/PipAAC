@@ -585,14 +585,26 @@ CREATE TABLE IF NOT EXISTS sync_op (
   -- not yet confirmed. On drain the device rebases — restores the last
   -- confirmed baseline, applies confirmed ops in relay order, re-applies
   -- its pending ops on top.
-  relay_seq INTEGER
+  relay_seq INTEGER,
+  -- 1 once this op's effects are folded into the stored baseline.
+  -- Relay sequences are sparse (a deduped resubmit burns a seq), so
+  -- replay tracks per-op application, not contiguous numbering: a drain
+  -- applies every confirmed-but-unapplied op exactly once, and the
+  -- baseline watermark is derived from the flags.
+  applied INTEGER NOT NULL DEFAULT 0
 );
 
 -- The synced tables' last confirmed state, one JSON row — the rebase
 -- point drainOps restores before replaying the ordered stream.
+-- applied_seq is the durable checkpoint: the relay_seq the stored tables
+-- provably contain. Only confirmed ops past it may apply again — a
+-- baseline already holding an op's effects must never replay it (double
+-- swaps, retired recordings). Living inside the database bytes, the
+-- checkpoint can never split from the state it describes.
 CREATE TABLE IF NOT EXISTS sync_baseline (
   id INTEGER PRIMARY KEY CHECK (id = 1),
-  tables TEXT NOT NULL
+  tables TEXT NOT NULL,
+  applied_seq INTEGER
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS label_one_row_per_sense_text

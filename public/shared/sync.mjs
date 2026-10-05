@@ -12,7 +12,7 @@
  * recordOp calls the registered sink after every adult edit; sync.mjs
  * debounces a submit so edits reach the relay without the UI knowing.
  */
-import { adoptSnapshot, confirmOps, drainOps, listOps, setDeviceId, setOpSink, snapshotSynced } from "./ops.mjs";
+import { adoptSnapshot, appliedSeqOf, confirmOps, drainOps, listOps, setDeviceId, setOpSink, snapshotSynced } from "./ops.mjs";
 import { loadBlobBytes, saveBlobBytes, setBlobFetcher } from "../db.js";
 import {
   getDeviceIdentity, getUserKey, openBlob, openKeyStore, openOp, putUserKey, sealOp,
@@ -217,29 +217,31 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     console.warn("sync: ingest failed", err);
   }));
 
-  /** Apply a batch. `markSeen` is only for catch-up fetches — the cursor
-   *  says "everything up to here was fetched and applied", so a live
-   *  push (which proves nothing about the ops before it) must not move
-   *  it. Apply first, persist, then advance the cursor: the old order
-   *  saved the cursor before the drain, so a kill in between lost the
-   *  ops it had just claimed. A failed drain leaves the cursor behind —
-   *  the next recover refetches and retries. */
-  const ingest = async (rows, markSeen = false) => {
+  /** Apply a batch. The cursor claims complete coverage — every op the
+   *  relay ever sequenced up to it is durably in the DB — so it may
+   *  only move on a FETCHED batch (the relay serves the whole tail;
+   *  gaps in it mean pruning, which the recover loop bridges via the
+   *  snapshot). A live push is applied and saved but moves nothing:
+   *  ops before it might never have been delivered. Apply, persist,
+   *  then advance — a blocked save leaves the cursor behind so the
+   *  next recover refetches (the flags dedupe) instead of skipping
+   *  edits that never reached the family's stored copy. */
+  const ingest = async (rows, { fetched = false } = {}) => {
     const plain = [];
-    let cursor = cfg.cursor ?? 0;
     for (const r of rows) {
       plain.push({ ...(await openOp(await keyFor(r.epoch ?? 1), r.env)), relay_seq: r.relay_seq });
-      if (r.relay_seq > cursor) cursor = r.relay_seq;
     }
     if (plain.length) {
       drainOps(db, plain);
       ingestError = null;
       onApplied();
-      await persist?.();
-    }
-    if (markSeen && cursor !== (cfg.cursor ?? 0)) {
-      cfg.cursor = cursor;
-      await saveUser({ sync: cfg });
+      const saved = await persist?.();
+      if (!fetched || saved === false) return;
+      const applied = appliedSeqOf(db);
+      if (applied > (cfg.cursor ?? 0)) {
+        cfg.cursor = applied;
+        await saveUser({ sync: cfg });
+      }
     }
   };
 
@@ -250,9 +252,11 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
    *  so we wait for a quiet log. Best-effort — a failure retries on the
    *  next drain. */
   const maybeSnapshot = async () => {
-    const seq = db.prepare(
-      "SELECT MAX(relay_seq) AS m FROM sync_op WHERE relay_seq IS NOT NULL",
-    ).all()[0]?.m ?? 0;
+    // The cursor, not the applied watermark: the snapshot claim is used
+    // to prune the relay log, so it may only cover ops we provably
+    // received and folded — the fetch-verified coverage, not the sparse
+    // max of whatever happened to be logged.
+    const seq = cfg.cursor ?? 0;
     if (!seq || seq - (cfg.snap_seq ?? 0) < 500 || pendingOps().length) return;
     const snap = snapshotSynced(db);
     try {
@@ -263,19 +267,44 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     } catch { /* the next drain retries */ }
   };
 
+  /** Adopt the relay snapshot, durably: the cursor only moves to its
+   *  watermark once the database bytes themselves were saved — the
+   *  same rule ingest follows. Returns the cursor it reached. */
+  const adoptRemoteSnapshot = async () => {
+    const stored = await client.getSnapshot().catch(() => null);
+    const plain = stored?.env
+      ? await openOp(await keyFor(stored.e ?? 1), stored.env).catch(() => null)
+      : null;
+    if (!plain?.snap || (plain.seq ?? 0) <= (cfg.cursor ?? 0)) return cfg.cursor ?? 0;
+    adoptSnapshot(db, plain.snap, plain.seq);
+    const saved = await persist?.();
+    if (saved === false) return cfg.cursor ?? 0;
+    cfg.cursor = appliedSeqOf(db);
+    await saveUser({ sync: cfg });
+    return cfg.cursor;
+  };
+
+  // The durable checkpoint lives in the database itself: a registry
+  // cursor that ran ahead of a failed save drops back to what the
+  // stored baseline provably contains — the skipped ops are refetched
+  // and applied. It may only be pulled DOWN: pushed ops can raise the
+  // applied watermark past the fetch-verified cursor, and claiming
+  // that higher number at boot would skip ops never delivered.
+  {
+    const durable = appliedSeqOf(db);
+    if (durable < (cfg.cursor ?? 0)) {
+      cfg.cursor = durable;
+      try { await saveUser({ sync: cfg }); }
+      catch (err) { console.warn("sync: cursor checkpoint save failed", err); }
+    }
+  }
+
   // § 5 fast path: a device that never synced boots from the sealed
   // snapshot — adopt the synced tables at their seq, then replay only
-  // the tail. Pending local edits survive: the drain rebases them.
+  // the tail. Pending local edits survive: adoption rebases them.
   if (!cfg.cursor) {
-    try {
-      const stored = await client.getSnapshot();
-      if (stored?.env) {
-        const plain = await openOp(await keyFor(stored.e ?? 1), stored.env);
-        adoptSnapshot(db, plain.snap);
-        cfg.cursor = plain.seq ?? 0;
-        await saveUser({ sync: cfg });
-      }
-    } catch { /* a snapshot is an optimization — full replay still works */ }
+    try { await adoptRemoteSnapshot(); }
+    catch { /* a snapshot is an optimization — full replay still works */ }
   }
 
   /* 043 B — the one recovery flow, entered from boot, every socket
@@ -283,24 +312,27 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
    * apply it durably, advance the cursor, resend our pending ops.
    * A hole between the cursor and the first row means the relay pruned
    * ops we never saw — rebase on the sealed snapshot and tail from its
-   * watermark (the adopt only counts when it moves the cursor forward,
-   * so a seq hole that is not pruning can't loop). */
+   * watermark. A gap the snapshot cannot bridge stops the sync loop
+   * loudly: replaying over pruned history would claim coverage it
+   * doesn't have. */
   const recover = async () => {
     for (;;) {
-      const { ops: rows } = await client.fetchOps(cfg.cursor ?? 0);
-      if (rows?.length && rows[0].relay_seq > (cfg.cursor ?? 0) + 1) {
-        const stored = await client.getSnapshot().catch(() => null);
-        const plain = stored?.env
-          ? await openOp(await keyFor(stored.e ?? 1), stored.env).catch(() => null)
-          : null;
-        if (plain?.snap && (plain.seq ?? 0) > (cfg.cursor ?? 0)) {
-          adoptSnapshot(db, plain.snap);
-          cfg.cursor = plain.seq;
-          await saveUser({ sync: cfg });
-          continue;
-        }
+      const { ops: rows, snap_seq: snapSeq = 0 } = await client.fetchOps(cfg.cursor ?? 0);
+      // A gap between the cursor and the first row only means lost
+      // history if the relay's prune point reaches into it: relay seqs
+      // are sparse — a deduped resubmit burns a number — so a gap
+      // above the snapshot watermark is just seqs that never existed.
+      if (rows?.length
+          && rows[0].relay_seq > (cfg.cursor ?? 0) + 1
+          && (cfg.cursor ?? 0) < snapSeq) {
+        const before = cfg.cursor ?? 0;
+        if ((await adoptRemoteSnapshot()) > before) continue;
+        ingestError =
+          `sync: relay pruned ops ${(cfg.cursor ?? 0) + 1}–${rows[0].relay_seq - 1} with no bridging snapshot`;
+        console.warn(ingestError);
+        return;
       }
-      await ingest(rows ?? [], true);
+      await ingest(rows ?? [], { fetched: true });
       break;
     }
     await maybeSnapshot().catch(() => {});

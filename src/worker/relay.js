@@ -677,7 +677,13 @@ export class UserRelay {
          WHERE relay_seq > ? ORDER BY relay_seq`, after).toArray();
       const latest = this.ctx.storage.sql.exec(
         "SELECT MAX(relay_seq) AS m FROM op").toArray()[0].m ?? 0;
-      return json({ ops: rows.map((r) => ({ ...r, env: JSON.parse(r.env) })), latest });
+      // The prune watermark lets a device tell "ops deleted under the
+      // snapshot" from "seqs that never existed" — relay numbering is
+      // sparse (a deduped resubmit burns a seq), so a gap alone is not
+      // proof of pruned history.
+      const snapSeq = Number(this.metaGet("snapshot_seq") ?? 0);
+      return json({ ops: rows.map((r) => ({ ...r, env: JSON.parse(r.env) })),
+        latest, snap_seq: snapSeq });
     }
 
     if (route.startsWith("blobs/")) {
