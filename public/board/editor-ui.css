@@ -130,10 +130,19 @@ body.editor #editor { display: flex; flex-direction: column; flex: 1; min-height
 .ed-gmore {
   position: absolute; right: 4px; width: 28px; height: 28px; border-radius: 8px;
   border: none; background: var(--cream); color: var(--ink); font-weight: 700;
-  opacity: 0;
 }
-.ed-gitem:hover .ed-gmore, .ed-gmore:focus-visible { opacity: 1; }
-.ed-gitem:hover .ed-gcount { visibility: hidden; }
+/* Hover reveals are pointer-hover only: on touch a :hover rule that
+   shows or hides content makes iOS spend the first tap on the hover and
+   swallow the click, so every row needed two taps. On touch the … is
+   simply there, holding the count's seat. */
+@media (hover: hover) {
+  .ed-gmore { opacity: 0; }
+  .ed-gitem:hover .ed-gmore, .ed-gmore:focus-visible { opacity: 1; }
+  .ed-gitem:hover .ed-gcount { visibility: hidden; }
+}
+@media (hover: none) {
+  .ed-gitem .ed-gcount { visibility: hidden; }
+}
 .ed-gmenu { top: 100%; right: 0; margin-top: 2px; }
 .ed-icons {
   position: absolute; z-index: 30; top: 100%; left: 0; right: 0; margin-top: 2px;
@@ -195,11 +204,13 @@ body.editor #ed-stage .empty:not(.reserved) {
   border-color: transparent; background: rgba(0, 0, 0, 0.025);
   position: relative; display: flex; align-items: center; justify-content: center;
 }
-body.editor #ed-stage .empty:not(.reserved):hover {
-  border: 2px dashed var(--line); background: #fff; cursor: pointer;
-}
-body.editor #ed-stage .empty:not(.reserved):hover::after {
-  content: "+"; font-size: 28px; font-weight: 700; color: var(--muted);
+@media (hover: hover) {
+  body.editor #ed-stage .empty:not(.reserved):hover {
+    border: 2px dashed var(--line); background: #fff; cursor: pointer;
+  }
+  body.editor #ed-stage .empty:not(.reserved):hover::after {
+    content: "+"; font-size: 28px; font-weight: 700; color: var(--muted);
+  }
 }
 body.editor #ed-stage .reserved { opacity: 0.42; }
 body.editor #ed-stage .sel {

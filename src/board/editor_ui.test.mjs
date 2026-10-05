@@ -285,6 +285,21 @@ test("group Replace takes the tapped word's exact cell; Undo puts it back", () =
   assert.equal(seat(baba), null);
 });
 
+test("hover reveals are pointer-hover only — touch taps click on the first press", () => {
+  const css = readFileSync(join(repoRoot, "public/board/editor-ui.css"), "utf8");
+  // iOS WebKit spends a tap on hover when :hover shows or hides content —
+  // the click is swallowed and every row needs a second tap (found on
+  // iPad 2026-10-05: sidebar groups only switched on the second press).
+  // The …/count swap and the empty-cell "+" must stay inside
+  // @media (hover: hover).
+  const outside = css.replace(
+    /@media[^{]*hover:\s*hover[^{]*\{(?:[^{}]|\{[^{}]*\})*\}/g, "");
+  assert.equal(/\.ed-gitem:hover/.test(outside), false,
+    "the …/count reveal is only for a real hover pointer");
+  assert.equal(/\.empty[^{]*:hover/.test(outside), false,
+    "the + reveal is only for a real hover pointer");
+});
+
 test("leaving the editor repaints the main board out of edit gestures", async () => {
   const h = harness({ db: freshDb() });
   h.editor.renderEditor();
