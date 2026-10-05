@@ -603,7 +603,12 @@ CREATE TABLE IF NOT EXISTS sync_op (
 -- swaps, retired recordings). Living inside the database bytes, the
 -- checkpoint can never split from the state it describes.
 CREATE TABLE IF NOT EXISTS sync_baseline (
-  id INTEGER PRIMARY KEY CHECK (id = 1),
+  -- 1 = the derived post-fold baseline drainOps rebuilds live state
+  -- from. 2 = the stable replay anchor (SYNC_REPLAY_ANCHOR): the
+  -- post-catalog origin, replaced by each adopted snapshot; its
+  -- applied_seq is a coverage floor — ops at or below it are claimed
+  -- inside the anchor and never replay.
+  id INTEGER PRIMARY KEY CHECK (id IN (1, 2)),
   tables TEXT NOT NULL,
   applied_seq INTEGER
 );

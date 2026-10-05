@@ -30,10 +30,16 @@ a detected violation; probe `scripts/probes/sync_delivery_order.mjs`),
 and the retention-destroy coverage (versioned snapshots + proof index)
 are committed. Founder confirmed Wrangler authentication restored on
 2026-10-05; the retention fix's production deployment still needs proof.
-The 2026-10-05 source review reopened delivery-order correctness:
-`docs/operations/debugger/SYNC_REPLAY_ANCHOR.md`. Narrow cursor/save/media
-fixes and their regressions are in the working tree, untested and
-undeployed; verification and commits are delegated by founder request.
+The 2026-10-05 source review reopened delivery-order correctness; the
+replay-anchor repair landed the same day: `sync_baseline` row 2 holds a
+stable pre-tail anchor (post-catalog origin, replaced by each adopted
+snapshot) and pushes are a live overlay that never fold, so a confirmed
+op can never replay over a baseline that already contains it. Wounded
+databases rebuild over the anchor — or refuse visibly until an adoption
+installs one. Proof: `src/board/sync_order_review.test.mjs` (six
+scenarios incl. non-idempotent swap convergence and persisted
+close/reopen) plus the delivery-order probe; the quarantined row is
+cleared.
 
 **Verdict on the stack:** keep it. Plain JS, SQLite WASM, Workers +
 Durable Objects + R2, and the meanings/labels/voices separation are all

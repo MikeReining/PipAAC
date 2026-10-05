@@ -422,16 +422,22 @@ export function appliedSeqOf(db) {
  * the op tail after `seq` replays on top (§ 5). Pending local ops are
  * re-applied immediately — adoption wipes their effects from the synced
  * tables, and they must not sit missing until the next drain.
+ *
+ * Adoption also replaces the replay anchor (sync_baseline id = 2). The
+ * anchor's applied_seq is a coverage FLOOR: ops at or below it are
+ * claimed inside the snapshot whether or not this device ever logged
+ * them, so late-arriving history below it is flagged and never replayed
+ * (a covered create must not resurrect a group the snapshot saw deleted).
  */
 export function adoptSnapshot(db, tables, seq = 0) {
   restoreSynced(db, tables);
   // Everything at or below the snapshot's seq is claimed inside it —
   // flag it so a later drain doesn't re-run ops over adopted state
   // (a swap logged before adoption would otherwise undo itself). The
-  // flags, the baseline, and the pending-edit reapplication commit
-  // together (audit: non-atomic rebase): an unsupported pending op
-  // rolls the whole claim back instead of leaving adopted state marked
-  // under edits that never landed.
+  // flags, the baseline, the anchor, and the pending-edit reapplication
+  // commit together (audit: non-atomic rebase): an unsupported pending
+  // op rolls the whole claim back instead of leaving adopted state
+  // marked under edits that never landed.
   db.exec("BEGIN");
   try {
     db.prepare(
@@ -444,6 +450,9 @@ export function adoptSnapshot(db, tables, seq = 0) {
       "UPDATE sync_op SET applied = 0 WHERE relay_seq IS NOT NULL AND relay_seq > ?",
     ).run(seq);
     saveBaseline(db, seq);
+    db.prepare(
+      "INSERT OR REPLACE INTO sync_baseline (id, tables, applied_seq) VALUES (2, ?, ?)",
+    ).run(JSON.stringify(tables), seq);
     const pending = db.prepare(
       "SELECT op_id, device_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NULL ORDER BY seq",
     ).all();
@@ -468,11 +477,30 @@ export function adoptSnapshot(db, tables, seq = 0) {
  * The rebase point is the state before the device's first local edit —
  * right after catalog import. Call once at boot; a stored baseline is
  * kept, never reset.
+ *
+ * Row 2 is the replay anchor (SYNC_REPLAY_ANCHOR): the trusted pre-tail
+ * state a rebuild restores before replaying the retained log, kept
+ * separate from row 1's derived post-fold state. A fresh database
+ * anchors at the post-catalog origin; adopted snapshots replace it.
+ * Databases written before the anchor existed get the canonical empty
+ * base — no pre-tail checkpoint survives on them, and an empty anchor
+ * rebuild replays the complete retained log honestly (catalog-owned
+ * synced rows are restored by the next catalog import).
  */
 export function ensureBaseline(db) {
   if (!db.prepare("SELECT 1 AS x FROM sync_baseline WHERE id = 1").all()[0]) {
     saveBaseline(db, 0);
   }
+  // A baseline stamped 0 is still the post-catalog origin — folds always
+  // stamp seqs ≥ 1 — so it anchors rebuilds directly. Anything else
+  // predates anchors: no pre-tail checkpoint survives on it, so it gets
+  // the canonical empty base until an adoption stores a real one.
+  const row = db.prepare(
+    "SELECT tables, applied_seq FROM sync_baseline WHERE id = 1").all()[0];
+  const origin = row.applied_seq === 0 ? row.tables : "{}";
+  db.prepare(
+    "INSERT OR IGNORE INTO sync_baseline (id, tables, applied_seq) VALUES (2, ?, 0)",
+  ).run(origin);
 }
 
 /**
@@ -488,98 +516,196 @@ export function ensureBaseline(db) {
  * the first missing seq — applying past it would claim coverage the
  * device doesn't have; catch-up or a snapshot fills it later.
  */
-export function drainOps(db, confirmedOps = []) {
-  // The legacy upgrade is decided BEFORE marking anything new: a
-  // NULL-stamped baseline holding boards is old post-drain state — every
-  // op confirmed before this call is already inside it, so their flags
-  // are set rather than replayed (a swap re-run would undo itself). One
-  // without boards is the 095302a3 damage — its ops stay unapplied and
-  // replay below, which is what rebuilds them.
+export function drainOps(db, confirmedOps = [], { fetched = true } = {}) {
   const base = db.prepare(
     "SELECT tables, applied_seq FROM sync_baseline WHERE id = 1").all()[0];
   if (!base) throw new Error("drainOps: no baseline — ensureBaseline must run at boot");
   const baseTables = JSON.parse(base.tables);
-  if (base.applied_seq == null
-      && ((baseTables.board_group?.length ?? 0) > 0
-          || (baseTables.group_seed_install?.length ?? 0) > 0)) {
+  // Row 2 is the stable replay anchor (SYNC_REPLAY_ANCHOR): its seq is a
+  // coverage floor — ops at or below it are claimed inside the anchor —
+  // and its tables are the trusted pre-tail state a rebuild restores.
+  const anchor = db.prepare(
+    "SELECT tables, applied_seq FROM sync_baseline WHERE id = 2").all()[0];
+  const floor = anchor?.applied_seq ?? 0;
+  /* The legacy upgrade is decided BEFORE marking anything new: a
+   * NULL-stamped baseline holding boards is old post-drain state —
+   * every op confirmed before this call is already inside it, so their
+   * flags are set rather than replayed (a swap re-run would undo
+   * itself). One without boards is the 095302a3 damage — its ops stay
+   * unapplied and replay below, which is what rebuilds them. */
+  const legacyNullBoards = base.applied_seq == null
+    && ((baseTables.board_group?.length ?? 0) > 0
+        || (baseTables.group_seed_install?.length ?? 0) > 0);
+  if (legacyNullBoards) {
     db.prepare("UPDATE sync_op SET applied = 1 WHERE relay_seq IS NOT NULL").run();
   }
   const ordered = [...confirmedOps].sort((x, y) => x.relay_seq - y.relay_seq);
-  const mark = db.prepare(
-    "UPDATE sync_op SET relay_seq = ? WHERE op_id = ? AND relay_seq IS NULL",
-  );
-  const logForeign = db.prepare(
-    "INSERT OR IGNORE INTO sync_op (op_id, device_id, kind, args, created_at, relay_seq) VALUES (?, ?, ?, ?, ?, ?)",
-  );
-  for (const op of ordered) {
-    mark.run(op.relay_seq, op.op_id);
-    logForeign.run(op.op_id, op.device_id ?? "dev_remote", op.kind,
-      typeof op.args === "string" ? op.args : JSON.stringify(op.args),
-      op.created_at ?? Date.now(), op.relay_seq);
+
+  /* Ingest: stamp our own confirmed rows and log foreign ones. A pushed
+   * (not fetch-verified) op only overlays onto live state — it is never
+   * folded into the baseline and never moves coverage, so a late push
+   * can never wedge coverage past an undelivered middle. Ops at or
+   * below the anchor floor are already claimed inside it: flag them
+   * without replaying (a covered create must not resurrect a group the
+   * snapshot saw deleted). Logging, covered flags, and the overlay all
+   * commit together — a poisoned push rolls the batch back instead of
+   * leaving a half-logged prefix. */
+  const freshIds = new Set();
+  const overlay = [];
+  db.exec("BEGIN");
+  try {
+    const mark = db.prepare(
+      "UPDATE sync_op SET relay_seq = ? WHERE op_id = ? AND relay_seq IS NULL",
+    );
+    const logForeign = db.prepare(
+      "INSERT OR IGNORE INTO sync_op (op_id, device_id, kind, args, created_at, relay_seq) VALUES (?, ?, ?, ?, ?, ?)",
+    );
+    const flagCovered = db.prepare(
+      "UPDATE sync_op SET applied = 1 WHERE op_id = ?",
+    );
+    for (const op of ordered) {
+      mark.run(op.relay_seq, op.op_id);
+      const ins = logForeign.run(op.op_id, op.device_id ?? "dev_remote", op.kind,
+        typeof op.args === "string" ? op.args : JSON.stringify(op.args),
+        op.created_at ?? Date.now(), op.relay_seq);
+      if (ins.changes > 0) freshIds.add(op.op_id);
+      if (op.relay_seq <= floor) flagCovered.run(op.op_id);
+      else if (!fetched && ins.changes > 0) overlay.push(op);
+    }
+    for (const op of overlay) applyOp(db, op);
+    db.exec("COMMIT");
+  } catch (err) {
+    db.exec("ROLLBACK");
+    throw err;
   }
-  /* Delivery order is not relay order: a live push or own-ack can fold a
-   * later op before an earlier fetch delivers its predecessors. The
-   * applied flag dedupes but does not order — an unapplied op sitting
-   * below an applied one means the applied set is out of relay order.
-   * The only convergent repair is replaying the whole confirmed log in
-   * relay order over the baseline (SYNC_DELIVERY_ORDER). */
-  const unordered = db.prepare(
-    `SELECT (SELECT MIN(relay_seq) FROM sync_op WHERE relay_seq IS NOT NULL AND applied = 0) AS lo,
-            (SELECT MAX(relay_seq) FROM sync_op WHERE applied = 1) AS hi`,
-  ).all()[0];
-  if (unordered.lo != null && unordered.hi != null && unordered.lo < unordered.hi) {
-    db.prepare("UPDATE sync_op SET applied = 0 WHERE relay_seq IS NOT NULL").run();
-  }
+  if (!fetched) return;
+
   const pending = db.prepare(
     "SELECT op_id, device_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NULL ORDER BY seq",
   ).all();
-  // Relay seqs are sparse — a deduped resubmit burns a number — so the
-  // replay set is "every confirmed op not yet folded into the baseline",
-  // not a dense suffix. Each applies exactly once, flagged in the same
-  // transaction as the baseline that records it.
-  const unapplied = db.prepare(
-    "SELECT op_id, device_id, kind, args, created_at, relay_seq FROM sync_op WHERE relay_seq IS NOT NULL AND applied = 0 ORDER BY relay_seq",
-  ).all();
-  restoreSynced(db, baseTables);
+
+  /* A confirmed op sitting unapplied at or below coverage the baseline
+   * already claims — or below an already-folded op — is a delivery-order
+   * wound this build cannot produce but the 6a2c5f17 repair could leave
+   * persisted. Folding it in place would apply it after ops it precedes;
+   * the sound repair is rebuilding the retained tail over the anchor:
+   * unflag everything past the floor and replay in relay order. */
+  const wound = db.prepare(
+    `SELECT (SELECT MIN(relay_seq) FROM sync_op
+             WHERE relay_seq IS NOT NULL AND applied = 0) AS lo,
+            (SELECT MAX(relay_seq) FROM sync_op WHERE applied = 1) AS hi`,
+  ).all()[0];
+  const disordered = wound.lo != null
+    && ((wound.hi != null && wound.lo < wound.hi)
+        || wound.lo <= (base.applied_seq ?? -1));
+  /* A wound with no stored anchor cannot be rebuilt honestly: the only
+   * baseline is the polluted one, and the canonical empty base would
+   * drop catalog-owned synced rows that no op re-creates (the profile
+   * row a set_setting writes into). Refuse loudly — the recovery loop
+   * rewinds the cursor to the floor, where a snapshot adoption installs
+   * a real anchor and the next drain heals. */
+  if (disordered && !anchor) {
+    throw new Error(
+      "sync: op log out of order and no replay anchor — refusing to rebuild");
+  }
+
+  // A fetched page claims coverage only through itself — ops above its
+  // max (live-push residue) stay unapplied overlay: replayed onto live
+  // after the fold but never claimed by the baseline. An empty batch is
+  // the repair/replay path — fold everything retained.
+  const cap = ordered.length ? Math.max(...ordered.map((o) => o.relay_seq)) : null;
+
+  const tailOf = () => db.prepare(
+    `SELECT op_id, device_id, kind, args, created_at, relay_seq FROM sync_op
+     WHERE relay_seq IS NOT NULL AND applied = 0 AND relay_seq > ?
+     ${cap == null ? "" : "AND relay_seq <= ?"} ORDER BY relay_seq`,
+  ).all(...(cap == null ? [floor] : [floor, cap]));
+
+  // A pending install can still be needed as foundation — the restore
+  // may wipe the live install state, so that check happens post-restore.
+  if (!disordered && !pending.some((o) => o.kind === "seed_install")
+      && tailOf().length === 0) return;
+
+  restoreSynced(db, disordered ? JSON.parse(anchor?.tables ?? "{}") : baseTables);
   // The replay, the per-op flags, the baseline watermark, and the
   // pending-edit reapplication commit together (audit: non-atomic
   // rebase): a failing op rolls all of it back and fails loudly,
   // instead of a half-applied state saved under a cursor that says it
   // worked. Order inside the transaction: the device's pending install
   // is the foundation first, then confirmed ops, then the baseline
-  // snapshot (it must not contain pending non-seed edits), then the
+  // snapshot (it must not contain pending or overlay ops), then the
+  // overlay reapply (confirmed ops above the page's coverage), then the
   // pending reapply that puts the live board back on top.
   db.exec("BEGIN");
   try {
+    if (disordered) {
+      db.prepare(
+        "UPDATE sync_op SET applied = 0 WHERE relay_seq IS NOT NULL AND relay_seq > ?",
+      ).run(floor);
+    }
+    // History at or below the anchor floor is claimed — flag stragglers
+    // that predate the anchor's arrival without replaying them.
+    db.prepare(
+      "UPDATE sync_op SET applied = 1 WHERE relay_seq IS NOT NULL AND relay_seq <= ?",
+    ).run(floor);
+    const tail = tailOf();
     // A device whose log carries no confirmed install — the 095302a3
     // starter artifact shipped applied groups with the op deleted —
     // still rebuilds its boards: its own recorded install runs as the
-    // device's foundation, ahead of the confirmed replay.
-    if (!unapplied.some((o) => o.kind === "seed_install")
-        && !db.prepare("SELECT 1 AS x FROM group_seed_install LIMIT 1").all()[0]) {
+    // device's foundation, ahead of the confirmed replay. The install
+    // state check must read the just-restored tables: a baseline without
+    // seed state wiped what live had.
+    if (pending.some((o) => o.kind === "seed_install")
+        && !db.prepare("SELECT 1 AS x FROM group_seed_install LIMIT 1").all()[0]
+        && !tail.some((o) => o.kind === "seed_install")) {
       for (const op of pending) {
         if (op.kind === "seed_install") applyOp(db, op);
       }
     }
     const flag = db.prepare("UPDATE sync_op SET applied = 1 WHERE op_id = ?");
-    for (const op of unapplied.filter((o) => o.kind === "seed_install")) {
+    for (const op of tail.filter((o) => o.kind === "seed_install")) {
       applyOp(db, op);
       flag.run(op.op_id);
     }
-    for (const op of unapplied) {
+    for (const op of tail) {
       if (op.kind === "seed_install") continue;
       applyOp(db, op);
       flag.run(op.op_id);
     }
-    saveBaseline(db, watermarkOf(db));
+    // The watermark floor never moves down: an empty tail over an
+    // adopted anchor keeps the anchor's coverage claim.
+    saveBaseline(db, Math.max(
+      disordered ? floor : (base.applied_seq ?? 0), watermarkOf(db)));
+    // Overlay: confirmed ops above this page's coverage (push residue)
+    // re-apply onto live without a flag — their claim waits for a page
+    // that reaches them.
+    const residue = db.prepare(
+      `SELECT op_id, device_id, kind, args, created_at, relay_seq FROM sync_op
+       WHERE relay_seq IS NOT NULL AND applied = 0 ORDER BY relay_seq`,
+    ).all();
+    for (const op of residue) {
+      if (op.kind !== "seed_install") applyOp(db, op);
+    }
     for (const op of pending) {
       if (op.kind !== "seed_install") applyOp(db, op);
     }
     db.exec("COMMIT");
   } catch (err) {
     db.exec("ROLLBACK");
-    // Live state is the restored baseline — put pending edits back on
-    // top so the board keeps showing them, then fail loudly.
+    // Live state is whatever restoreSynced last loaded — on a rebuild
+    // that is the anchor, which regresses the board to the origin.
+    // Restore the derived baseline so live keeps the pre-drain state,
+    // then put back what was live before this batch (every previously
+    // known unapplied op plus pending edits) and fail loudly. Ops first
+    // seen in this batch were never live, so they stay out until retry.
+    try { restoreSynced(db, baseTables); } catch { /* live degrades */ }
+    const residue = db.prepare(
+      `SELECT op_id, device_id, kind, args, created_at, relay_seq FROM sync_op
+       WHERE relay_seq IS NOT NULL AND applied = 0 ORDER BY relay_seq`,
+    ).all().filter((o) => !freshIds.has(o.op_id));
+    for (const op of residue) {
+      try { applyOp(db, op); } catch { /* the next drain retries */ }
+    }
     for (const op of pending) {
       try { applyOp(db, op); } catch { /* the next drain retries */ }
     }
@@ -588,16 +714,21 @@ export function drainOps(db, confirmedOps = []) {
 }
 
 /**
- * The seq the baseline may honestly claim: everything the log knows up
- * to the first unapplied confirmed op — the max applied seq when the
- * log is clean. Sparse seqs make this a coverage statement about ops,
- * not a promise that every number below it existed.
+ * The seq the baseline may honestly claim: the highest applied seq with
+ * no unapplied confirmed op below it — the max applied seq when the log
+ * is clean. Sparse seqs make this a coverage statement about ops, not a
+ * promise that every number below it existed. Live-push residue sits
+ * unapplied above the folded prefix, so the claim stops below it instead
+ * of borrowing the push's higher number.
  */
 function watermarkOf(db) {
-  return db.prepare(`SELECT COALESCE(
-    (SELECT MIN(relay_seq) - 1 FROM sync_op WHERE relay_seq IS NOT NULL AND applied = 0),
-    (SELECT MAX(relay_seq) FROM sync_op WHERE relay_seq IS NOT NULL AND applied = 1),
-    0) AS w`).all()[0].w;
+  return db.prepare(
+    `SELECT COALESCE(MAX(relay_seq), 0) AS w FROM sync_op
+     WHERE applied = 1 AND relay_seq IS NOT NULL AND relay_seq < COALESCE(
+       (SELECT MIN(relay_seq) FROM sync_op
+        WHERE relay_seq IS NOT NULL AND applied = 0),
+       9007199254740991)`,
+  ).all()[0].w;
 }
 
 /**

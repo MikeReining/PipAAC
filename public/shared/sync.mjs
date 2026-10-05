@@ -319,7 +319,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
       plain.push({ ...(await openOp(await keyFor(r.epoch ?? 1), r.env)), relay_seq: r.relay_seq });
     }
     if (plain.length) {
-      drainOps(db, plain);
+      drainOps(db, plain, { fetched });
       ingestError = null;
       onApplied();
       const saved = await persist?.();
@@ -411,6 +411,27 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
       cfg.cursor = durable;
       try { await saveUser({ sync: cfg }); }
       catch (err) { console.warn("sync: cursor checkpoint save failed", err); }
+    }
+  }
+
+  /* SYNC_REPLAY_ANCHOR — a confirmed op persisted unapplied at or below
+   * the durable coverage claim is a wound the old unflag-and-replay
+   * repair could leave behind: the baseline cannot prove what it
+   * contains. Drop the claim back to the replay anchor's floor so the
+   * catch-up refetches a complete tail window — the drain then rebuilds
+   * over the anchor instead of folding the wounded suffix in place. */
+  {
+    const floor = db.prepare(
+      "SELECT applied_seq FROM sync_baseline WHERE id = 2",
+    ).all()[0]?.applied_seq ?? 0;
+    const wounded = db.prepare(
+      `SELECT 1 AS x FROM sync_op
+       WHERE relay_seq IS NOT NULL AND applied = 0 AND relay_seq <= ?`,
+    ).all(appliedSeqOf(db))[0];
+    if (wounded && (cfg.cursor ?? 0) > floor) {
+      cfg.cursor = floor;
+      try { await saveUser({ sync: cfg }); }
+      catch (err) { console.warn("sync: anchor rewind save failed", err); }
     }
   }
 

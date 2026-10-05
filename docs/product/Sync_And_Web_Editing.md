@@ -267,22 +267,42 @@ same page). When they happen, one item lands in the next free slot. That
 is the only case where a merge can put an item somewhere its adult did not
 choose, and it never moves an item that was already placed.
 
-**Delivery-order repair (2026-10-05 review: incomplete).**
-Per-op `applied` flags dedupe but do not order: a live push or own-ack
-can fold a later op before an earlier fetch delivers its predecessors.
-`drainOps` detects an unapplied op below an applied one and replays the
-whole confirmed log over the advancing baseline. The delivered rename
-probe covers later-push-first, own-ack-first and snapshot-tail renames;
-it does not prove convergence for swaps, which replay over their own
-results. Snapshot coverage and flag rollback also have unresolved code
-paths. Follow-up owner and quarantined, unrun regressions:
-`docs/operations/debugger/SYNC_REPLAY_ANCHOR.md`.
+**Delivery order and the replay anchor (fixed 2026-10-05).**
+Per-op `applied` flags dedupe but do not order, and an applied op must
+never re-run over a baseline that already contains it (a swap replayed
+twice undoes itself). The durable split: `sync_baseline` row 1 is the
+derived post-fold baseline; row 2 is the stable replay anchor — the
+post-catalog origin, replaced by each adopted snapshot — whose
+`applied_seq` is a coverage floor.
 
-**Pending review fixes (not verified or deployed):** fetched coverage is
-capped at the last row in the current page, rather than a higher pushed
-watermark; a failed DB save stops that catch-up pass. Media uses a
-separate retry counter (30 seconds up to 5 minutes), retains transient
-obligations and serializes reconciliation with queue appends/drains.
+A pushed op only overlays onto live state; it is never folded and never
+moves coverage. A fetched page folds the retained tail above the floor
+and at or below the page's max, in relay order, into the baseline —
+push residue above the page stays overlay until a page covers it. Ops
+arriving at or below the anchor floor are claimed inside the snapshot
+and never replay, so a covered create cannot resurrect a deleted group.
+When a persisted wound survives from the pre-anchor repair (an
+unapplied op below applied coverage), the drain rebuilds the retained
+tail over the anchor instead of in place; with no anchor row it refuses
+loudly, and recovery rewinds the cursor to the floor so a snapshot
+adoption can install one. Flags, the baseline, and pending-edit
+reapplication commit in one transaction; a failing replay rolls all of
+it back.
+
+Proof: `src/board/sync_order_review.test.mjs` — non-idempotent swap
+convergence across push-first delivery, snapshot coverage surviving an
+empty drain, covered history never resurrecting, failed-repair flag
+preservation, a persisted close/reopen across the repair, and the
+anchorless wound refusing until adoption installs one — plus
+`node scripts/probes/sync_delivery_order.mjs` (later-push-first,
+own-ack-first, snapshot-tail all converge to "Newer", pending edits
+kept).
+
+**Also fixed 2026-10-05:** fetched coverage is capped at the last row in
+the current page, rather than a higher pushed watermark; a failed DB
+save stops that catch-up pass. Media uses a separate retry counter
+(30 seconds up to 5 minutes), retains transient obligations and
+serializes reconciliation with queue appends/drains.
 
 **Snapshots.** `maybeSnapshot` waits until the fetch-verified cursor is
 at least 500 sequences beyond the previous upload and equals

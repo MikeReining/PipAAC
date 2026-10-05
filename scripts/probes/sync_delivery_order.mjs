@@ -32,10 +32,11 @@ export function compareDeliveryOrder() {
     drainOps(pushed, setup);
     drainOps(ordered, setup);
     drainOps(acked, setup);
-    // A live push or an own-submit ack can fold the later op before a
-    // catch-up fetch delivers the earlier one.
-    drainOps(pushed, [renames[1]]);
-    drainOps(acked, [renames[1]]);
+    // A live push or an own-submit ack can land the later op before a
+    // catch-up fetch delivers the earlier one. Pushes overlay onto live
+    // state without folding — only fetched pages move coverage.
+    drainOps(pushed, [renames[1]], { fetched: false });
+    drainOps(acked, [renames[1]], { fetched: false });
     // A pending local edit must survive the order repair's re-replay.
     createEntity(pushed, { id: "ent_pending_probe", name: "Pending" });
     drainOps(pushed, renames);
@@ -50,7 +51,7 @@ export function compareDeliveryOrder() {
     const snapTables = snapshotSynced(snapDonor);
     const adop = replica();
     drainOps(adop, setup);
-    drainOps(adop, [renames[1]]);
+    drainOps(adop, [renames[1]], { fetched: false });
     adoptSnapshot(adop, snapTables, renames[0].relay_seq);
     drainOps(adop, []);
     const name = (db) => db.prepare(
