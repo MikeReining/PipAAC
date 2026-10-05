@@ -260,16 +260,27 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
   const OPS_PAGE = 200;
   const flushStallMs = opts.flushStallMs ?? 45_000;
   let flushing = null;
-  const runFlush = async () => {
+  const runFlush = async (ticket) => {
     const ops = pendingOps(db, FLUSH_BATCH + 1);
     if (!ops.length) { flushError = null; return; }
     const more = ops.length > FLUSH_BATCH;
     await resumeRecoveryCard({ store, user, client, saveUser, rekey });
+    if (ticket.dead) return;
     const self = await client.selfKey();
+    if (ticket.dead) return;
     if (self.current_epoch > epoch) await keyFor(self.current_epoch);
+    if (ticket.dead) return;
     const { ops: assigned } = await client.submit(ops.slice(0, FLUSH_BATCH), epoch);
+    /* A late ack is an uncertain commit turned certain: the relay did
+     * sequence these ops, so stamping the seqs is durable truth whoever
+     * owns status now. Everything downstream belongs to the retry —
+     * a dead attempt must not clear a newer failure's flushError,
+     * snapshot, or schedule work on top of it (audit: deadline expiry
+     * releases the caller, never the durable state). */
     confirmOps(db, assigned);
+    if (ticket.dead) return;
     await maybeSnapshot();
+    if (ticket.dead) return;
     flushError = null;
     flushFails = 0;
     // The batch drained but the outbox didn't — keep going promptly.
@@ -280,10 +291,13 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
    * resolves — ops logging locally, nothing reaching the relay, and
    * syncHealth reading clean. Every await above is bounded at its own
    * seam; this deadline is the catch-all that still frees the queue,
-   * surfaces the error, and lets the bounded retry try again. */
+   * surfaces the error, and lets the bounded retry try again — while
+   * the ticket keeps the abandoned attempt fenced out of every write
+   * the retry now owns. */
   const flush = () => {
     if (flushing) return flushing;
-    flushing = withDeadline(runFlush(), flushStallMs, "sync: flush")
+    const ticket = { dead: false };
+    flushing = withDeadline(runFlush(ticket), flushStallMs, "sync: flush", ticket)
       .catch((err) => {
         flushError = String(err?.message ?? err);
         // A stranded edit is silent loss (audit F10): bounded retries

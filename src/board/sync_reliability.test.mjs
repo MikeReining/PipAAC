@@ -572,3 +572,49 @@ test("media backoff: transient failures wait before retrying without counting as
   assert.equal(q.length, 1);
   assert.equal(q[0].fails, 0, "transient failures counted toward permanent loss");
 });
+
+test("a timed-out flush is fenced: the late ack still stamps, but cannot clear a newer failure", { timeout: 20000 }, async () => {
+  // Audit: deadline expiry must release the CALLER, not the durable
+  // state. Prove: stalled submit → timeout → the retry's failure is
+  // NOT erased by the original attempt's late continuation; and a late
+  // ack still stamps its relay_seqs (uncertain commit → reconciled).
+  let release1;
+  const gate1 = new Promise((r) => { release1 = r; });
+  let calls = 0;
+  const r = await runtime({
+    opts: { flushStallMs: 60 },
+    submit: async (ops) => {
+      calls++;
+      if (calls === 1) {            // boot flush — stalls past the deadline
+        await gate1;
+        return { ops: ops.map((o, i) => ({ op_id: o.op_id, relay_seq: i + 1 })) };
+      }
+      if (calls === 2) throw new Error("relay 500");  // the retry's failure
+      return { ops: ops.map((o, i) => ({ op_id: o.op_id, relay_seq: i + 50 })) };
+    },
+  });
+  await sleep(200);
+  assert.match(r.syncHealth().flushError ?? "", /stalled/);
+  assert.equal(calls, 1);
+  // The abandoned attempt's ack lands now: stamping is durable truth,
+  // but every status write past it belongs to the retry.
+  release1();
+  await settle(); await sleep(60);
+  assert.ok(listOps(r.db).every((o) => o.relay_seq !== null),
+    "the late ack did not stamp its ops");
+  assert.match(r.syncHealth().flushError, /stalled/,
+    "the late completion cleared the caller-visible stall");
+  // A fresh edit rides the next attempt — which the relay refuses.
+  createEntity(r.db, { id: "ent_late", name: "After the stall" });
+  await sleep(600);                // 300 ms debounce → submit 2 → 500
+  assert.ok(calls >= 2);
+  await sleep(100);
+  assert.match(r.syncHealth().flushError ?? "", /relay 500/,
+    "the dead attempt overwrote the retry's failure state");
+  assert.ok(listOps(r.db).some((o) => o.relay_seq === null),
+    "the refused edit was marked confirmed anyway");
+  // The bounded retry succeeds — status heals through the new owner.
+  await sleep(4300);
+  assert.equal(r.syncHealth().flushError, null);
+  assert.ok(!listOps(r.db).some((o) => o.relay_seq === null));
+});
