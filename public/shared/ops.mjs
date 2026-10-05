@@ -334,6 +334,12 @@ const SYNCED_TABLES = [
   "stats_day",
 ];
 
+/** The snapshot payload format version. v1 = { seq, snap: {table: rows} }
+ *  with every table optional on restore. A reader must refuse a higher
+ *  version loudly — a partial restore of a format it does not know is
+ *  worse than no restore (audit: versioned restore contract). */
+export const SNAPSHOT_V = 1;
+
 /** Every synced table's rows, with rowids, oldest first. */
 export function snapshotSynced(db) {
   const snap = {};

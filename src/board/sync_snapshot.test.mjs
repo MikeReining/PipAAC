@@ -442,3 +442,54 @@ test("F05.3: a paired owner without the root flags the rotation instead of minti
   // The paired device must never call getUserKey(epoch+1): a random key
   // would reach the relay while the printed card derives a different one.
 });
+
+test("F: a snapshot payload from a newer format fails loudly — never a partial restore", async () => {
+  // The relay's prune point is past the cursor, so recovery NEEDS the
+  // snapshot — and the only stored one is stamped with a version this
+  // build doesn't understand. A silent partial restore would claim
+  // coverage of state the device never actually received.
+  const donor = openReplica();
+  createEntity(donor, { id: "ent_future", name: "Future" });
+  const store0 = memoryKeyStore();
+  const donorKey = await getUserKey(store0, "u1");
+  const futureEnv = await sealOp(donorKey, {
+    v: 2, seq: 500, snap: snapshotSynced(donor) });
+
+  const r = await runtime({
+    cursor: 5,
+    fetchResult: { ops: [], snap_seq: 500 },
+    snapshot: { e: 1, env: futureEnv },
+    userKey: donorKey,
+    setupDb: (db) => adoptSnapshot(db, snapshotSynced(db), 5),
+  });
+  donor.close();
+
+  assert.equal(r.user.sync.cursor, 5,
+    "cursor claimed coverage from an unreadable format");
+  assert.ok(!r.db.prepare(
+    "SELECT id FROM personal_entity WHERE id = 'ent_future'").get(),
+    "an unreadable format was partially restored");
+  assert.match(r.syncHealth().ingestError ?? "", /snapshot version 2/);
+});
+
+test("F: a pre-versioning payload restores as format 1 — the contract is additive", async () => {
+  const donor = openReplica();
+  createEntity(donor, { id: "ent_legacy", name: "Legacy" });
+  const store0 = memoryKeyStore();
+  const donorKey = await getUserKey(store0, "u1");
+  const legacyEnv = await sealOp(donorKey, { seq: 500, snap: snapshotSynced(donor) });
+
+  const r = await runtime({
+    cursor: 5,
+    fetchResult: { ops: [], snap_seq: 500 },
+    snapshot: { e: 1, env: legacyEnv },
+    userKey: donorKey,
+    setupDb: (db) => adoptSnapshot(db, snapshotSynced(db), 5),
+  });
+  donor.close();
+
+  assert.equal(r.user.sync.cursor, 500);
+  assert.ok(r.db.prepare(
+    "SELECT id FROM personal_entity WHERE id = 'ent_legacy'").get(),
+    "a pre-versioning snapshot refused to restore");
+});

@@ -12,7 +12,7 @@
  * recordOp calls the registered sink after every adult edit; sync.mjs
  * debounces a submit so edits reach the relay without the UI knowing.
  */
-import { adoptSnapshot, appliedSeqOf, baselineSnapshot, confirmOps, drainOps, listOps, pendingOps, setDeviceId, setOpSink } from "./ops.mjs";
+import { adoptSnapshot, appliedSeqOf, baselineSnapshot, confirmOps, drainOps, listOps, pendingOps, setDeviceId, setOpSink, SNAPSHOT_V } from "./ops.mjs";
 import { loadBlobBytes, saveBlobBytes, setBlobFetcher } from "../db.js";
 import {
   deriveEpochKey, getDeviceIdentity, getUserKey, openBlob, openKeyStore, openOp,
@@ -345,7 +345,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
         || seq - (cfg.snap_seq ?? 0) < 500) return;
     const snap = baselineSnapshot(db);
     try {
-      const env = await sealOp(await keyFor(epoch), { seq, snap });
+      const env = await sealOp(await keyFor(epoch), { v: SNAPSHOT_V, seq, snap });
       await client.putSnapshot({ e: epoch, env }, seq);
       cfg.snap_seq = seq;
       await saveUser({ sync: cfg });
@@ -388,6 +388,15 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
       ? await openOp(await keyFor(stored.e ?? 1), stored.env).catch(() => null)
       : null;
     if (!plain?.snap || (plain.seq ?? 0) <= (cfg.cursor ?? 0)) return cfg.cursor ?? 0;
+    // Versioned restore contract (audit): a payload newer than this
+    // build understands must fail loudly — replaying a format we half-
+    // parse claims coverage of state we never restored. Pre-versioning
+    // payloads are format 1.
+    const v = plain.v ?? 1;
+    if (v > SNAPSHOT_V) {
+      throw new Error(
+        `sync: snapshot version ${v} newer than supported ${SNAPSHOT_V}`);
+    }
     adoptSnapshot(db, plain.snap, plain.seq);
     const saved = await persist?.();
     if (saved === false) return cfg.cursor ?? 0;
