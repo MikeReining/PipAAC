@@ -48,8 +48,8 @@ function harness() {
     openWordCard: (item, opts) => log.cards.push({ item, opts }),
   });
   const type = async (text) => {
-    $("add-name").value = text;
-    await $("add-name").fire("input");
+    $("add-word").value = text;
+    await $("add-word").fire("input");
   };
   const rows = () => findAll($("add-matches"), (n) => n.className.split(" ").includes("addmatch"));
   const hiRow = () => rows().find((r) => r.classList.contains("hi"));
@@ -62,7 +62,7 @@ test("WT2 — Make needs only the name: one Return saves, places, mints, opens t
   h.add.openAddForm("grp_mine");
   await h.type("philosopher");
   assert.equal(h.label(h.hiRow()), "“philosopher”", "no match → Make is the highlighted row");
-  await h.$("add-name").fire("keydown", { key: "Enter" });
+  await h.$("add-word").fire("keydown", { key: "Enter" });
 
   const ent = h.db.prepare(
     "SELECT id, hint, photo_key, fitzgerald_role FROM personal_entity WHERE spoken_name = 'philosopher'").get();
@@ -84,7 +84,7 @@ test("spacing folds: 'pop corn' highlights our popcorn, and Return places it", a
   h.add.openAddForm("grp_mine");
   await h.type("pop corn");
   assert.equal(h.label(h.hiRow()), "popcorn");
-  await h.$("add-name").fire("keydown", { key: "Enter" });
+  await h.$("add-word").fire("keydown", { key: "Enter" });
   const row = h.db.prepare(
     `SELECT gm.item_kind FROM group_membership gm
      JOIN label l ON l.sense_id = gm.item_id AND l.kind = 'lemma' AND l.locale = 'en'
@@ -106,12 +106,12 @@ test("a word already on this page says so and opens its card instead", async () 
   const h = harness();
   h.add.openAddForm("grp_mine");
   await h.type("popcorn");
-  await h.$("add-name").fire("keydown", { key: "Enter" });
+  await h.$("add-word").fire("keydown", { key: "Enter" });
   h.add.openAddForm("grp_mine");
   await h.type("popcorn");
   const row = h.rows().find((r) => h.label(r) === "popcorn");
   assert.ok(row.classList.contains("here"));
-  await h.$("add-name").fire("keydown", { key: "Enter" });
+  await h.$("add-word").fire("keydown", { key: "Enter" });
   assert.equal(h.log.cards.at(-1)?.item.label, "popcorn");
   const n = h.db.prepare(
     "SELECT COUNT(*) AS n FROM group_membership WHERE group_id = 'grp_mine'").get().n;
@@ -124,7 +124,7 @@ test("arrow keys move the highlight; Return takes the highlighted row", async ()
   await h.type("pop");
   const last = h.rows().length - 1;
   assert.equal(h.rows().indexOf(h.hiRow()), last);
-  await h.$("add-name").fire("keydown", { key: "ArrowUp" });
+  await h.$("add-word").fire("keydown", { key: "ArrowUp" });
   assert.equal(h.rows().indexOf(h.hiRow()), last - 1);
 });
 
@@ -142,7 +142,7 @@ test("the destination is the group the adult came from — no guess", async () =
   assert.equal(h.$("add-destname").textContent, "My Words");
   h.add.openAddForm("grp_mine");
   await h.type("pancake"); // a Breakfast word — still files into Mine
-  await h.$("add-name").fire("keydown", { key: "Enter" });
+  await h.$("add-word").fire("keydown", { key: "Enter" });
   const row = h.db.prepare(
     `SELECT gm.group_id FROM group_membership gm JOIN label l ON l.sense_id = gm.item_id
      WHERE l.text = 'pancake' AND l.kind = 'lemma' AND gm.group_id = 'grp_mine'`).get();
@@ -155,7 +155,7 @@ test("find a group: the list is the board's order; typing narrows it; Return pic
   h.add.openAddForm("grp_my_words");
   await h.$("add-dest").click();
   assert.equal(h.$("add-destlist").hidden, false);
-  assert.equal(h.$("add-name").hidden, true, "the list takes the results' place");
+  assert.equal(h.$("add-word").hidden, true, "the list takes the results' place");
   // One group order everywhere (2026-09-30): the board's index_slot,
   // read straight from the table.
   const all = groupNames(h).filter((n) => !/^(New group|Make a group)/.test(n));
@@ -168,7 +168,7 @@ test("find a group: the list is the board's order; typing narrows it; Return pic
   await h.$("add-groupq").fire("keydown", { key: "Enter" });
   assert.equal(h.$("add-destname").textContent, "Mine");
   assert.equal(h.$("add-destlist").hidden, true);
-  assert.equal(h.$("add-name").hidden, false);
+  assert.equal(h.$("add-word").hidden, false);
 });
 
 test("a name no group has makes that group, selects it, and the word lands there", async () => {
@@ -184,7 +184,7 @@ test("a name no group has makes that group, selects it, and the word lands there
   assert.equal(g?.kind, "custom");
   assert.equal(h.$("add-destname").textContent, "Grandma's house");
   await h.type("rocking chair");
-  await h.$("add-name").fire("keydown", { key: "Enter" });
+  await h.$("add-word").fire("keydown", { key: "Enter" });
   const placed = h.db.prepare(
     `SELECT 1 AS x FROM group_membership gm JOIN personal_entity e ON e.id = gm.item_id
      WHERE gm.group_id = ? AND e.spoken_name = 'rocking chair'`).get(g.id);

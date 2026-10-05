@@ -57,12 +57,36 @@ export function pinAppToVisualViewport(
   return frame;
 }
 
+/** The visible height above the iPad keyboard, or null when no keyboard
+ *  covers the page. The keyboard overlays without resizing the layout
+ *  viewport, so a centered sheet hides under it. Only trusted while a
+ *  text field holds focus (a stale vv.height after the keyboard closes
+ *  must not shrink anything) and at 1× zoom (a pinch is not a keyboard). */
+export function keyboardVisibleHeight(vv, layoutHeight, fieldFocused) {
+  if (!vv?.height || !fieldFocused) return null;
+  if (Math.abs((vv.scale ?? 1) - 1) > 0.01) return null;
+  return layoutHeight - vv.height > 120 ? Math.round(vv.height) : null;
+}
+
+const isField = (el) => !!el && (el.tagName === "TEXTAREA"
+  || (el.tagName === "INPUT" && !["button", "checkbox", "radio", "file", "range"].includes(el.type))
+  || el.isContentEditable);
+
+/** html.kb-up + --vv-h: overlays fit the space above the keyboard. */
+function markKeyboard() {
+  const h = keyboardVisibleHeight(window.visualViewport, innerHeight, isField(document.activeElement));
+  const root = document.documentElement;
+  root.classList.toggle("kb-up", h != null);
+  if (h != null) root.style.setProperty("--vv-h", `${h}px`);
+}
+
 export function installViewportPin() {
-  const pin = () => pinAppToVisualViewport();
+  const pin = () => { pinAppToVisualViewport(); markKeyboard(); };
   pin();
   window.visualViewport?.addEventListener("resize", pin);
   window.visualViewport?.addEventListener("scroll", pin);
   window.addEventListener("pageshow", pin);
   // The keyboard's closing pan arrives after focus has already left.
   window.addEventListener("focusout", () => setTimeout(pin, 350));
+  window.addEventListener("focusin", () => setTimeout(pin, 350));
 }

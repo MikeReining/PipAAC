@@ -44,10 +44,10 @@ export function mountAddFlow({
     $("add-title").textContent = "Add a word";
     $("add-destname").textContent = groupName(addTarget, "My Words");
     setPickerOpen(false);
-    $("add-name").value = "";
+    $("add-word").value = "";
     renderAddMatches();
     open("addform");
-    setTimeout(() => $("add-name").focus?.(), 0);
+    setTimeout(() => $("add-word").focus?.(), 0);
   }
 
   /* --- the group picker (029 § 3.1) ---
@@ -69,7 +69,7 @@ export function mountAddFlow({
 
   function setPickerOpen(on) {
     $("add-destlist").hidden = !on;
-    $("add-name").hidden = on;
+    $("add-word").hidden = on;
     $("add-matches").hidden = on;
     for (const el of [$("add-bulk"), $("add-photos")]) {
       if (el?.parentElement) el.parentElement.hidden = on;
@@ -81,7 +81,7 @@ export function mountAddFlow({
       renderGroups();
       setTimeout(() => $("add-groupq").focus?.(), 0);
     } else {
-      setTimeout(() => $("add-name").focus?.(), 0);
+      setTimeout(() => $("add-word").focus?.(), 0);
     }
   }
 
@@ -388,6 +388,7 @@ export function mountAddFlow({
       r.el.classList.toggle("hi", k === hi);
       r.el.setAttribute?.("aria-selected", String(k === hi));
     });
+    rows[hi]?.el.scrollIntoView?.({ block: "nearest" }); // the list scrolls
   }
 
   function picEl(role, fill) {
@@ -439,11 +440,11 @@ export function mountAddFlow({
   }
 
   function renderAddMatches() {
-    const text = $("add-name").value.trim();
+    const text = $("add-word").value.trim();
     const box = $("add-matches");
     box.innerHTML = "";
     rows = [];
-    $("add-name").setAttribute?.("aria-expanded", String(!!text));
+    $("add-word").setAttribute?.("aria-expanded", String(!!text));
     if (!text) { setHi(-1); return; }
     const seed = catalog.groups.find((g) => g.id === addTarget)?.category ?? null;
     const want = fold(text);
@@ -562,7 +563,7 @@ export function mountAddFlow({
     return id;
   }
 
-  $("add-name").addEventListener("keydown", (e) => {
+  $("add-word").addEventListener("keydown", (e) => {
     if (e.key === "ArrowDown") { e.preventDefault?.(); setHi(hi + 1); }
     else if (e.key === "ArrowUp") { e.preventDefault?.(); setHi(hi - 1); }
     else if (e.key === "Enter") {
@@ -662,7 +663,7 @@ export function mountAddFlow({
     toast(`Added ${res.saved} photo${res.saved === 1 ? "" : "s"}`);
   });
 
-  $("add-name").addEventListener("input", renderAddMatches);
+  $("add-word").addEventListener("input", renderAddMatches);
 
   /** 027 B9: after an add, an optional Add to other boards — never a
    *  silent multi-board write. */

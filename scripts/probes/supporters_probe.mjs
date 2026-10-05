@@ -271,7 +271,7 @@ out.sActiveMaya = await S.until(`window.pip?.user?.id === ${JSON.stringify(mayaI
 await S.fireJs(`(async () => {
   document.querySelector('#corner')?.click();
   document.querySelector('#add-mywords')?.click();
-  const name = document.querySelector('#add-name');
+  const name = document.querySelector('#add-word');
   name.value = 'Zebra';
   name.dispatchEvent(new Event('input', { bubbles: true }));
   await new Promise((r) => setTimeout(r, 400));
@@ -338,7 +338,7 @@ console.error("== P: post-removal op + epoch proof");
 await P.fireJs(`(async () => {
   document.querySelector('#corner')?.click();
   document.querySelector('#add-mywords')?.click();
-  const name = document.querySelector('#add-name');
+  const name = document.querySelector('#add-word');
   name.value = 'PostRemoval';
   name.dispatchEvent(new Event('input', { bubbles: true }));
   await new Promise((r) => setTimeout(r, 400));

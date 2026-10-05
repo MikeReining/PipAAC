@@ -44,8 +44,10 @@
 .add-group .ptick { font-weight: 700; color: var(--ink-text); }
 .add-newgroup .glyph { background: #fff; border: 2px dashed var(--line); font-weight: 700; color: var(--ink); }
 .add-newgroup .pname { color: var(--ink); }
-#add-name { font-size: 22px; }
-#add-matches { display: flex; flex-direction: column; gap: 8px; }
+#add-word { font-size: 22px; }
+/* The results scroll so the field above them stays in view. */
+#add-matches { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+html.kb-up .add-grouplist { max-height: none; }
 #add-matches:empty { display: none; }
 
 /* A row: the whole row adds; ▶ only plays. Rows live in capped flex

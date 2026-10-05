@@ -230,7 +230,7 @@ console.error("== A: Cooper + photo");
 // then the new word's card takes the photo.
 out.cooper = await A.evalJs(`(async () => {
   document.querySelector('#add-mywords').click();
-  const name = document.querySelector('#add-name');
+  const name = document.querySelector('#add-word');
   name.value = 'Cooper';
   name.dispatchEvent(new Event('input', { bubbles: true }));
   await new Promise((r) => setTimeout(r, 400));

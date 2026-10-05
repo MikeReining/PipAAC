@@ -631,6 +631,11 @@ body.editing #corner { font-size: 15px; }
   z-index: 10;
 }
 .overlay.open { display: flex; }
+/* iPad keyboard (viewport.js kb-up): it covers the page without resizing
+   it, so a centered sheet sat behind it. While a field has the keyboard,
+   overlays take only the visible height and sheets sit at its top. */
+html.kb-up .overlay { bottom: auto; height: var(--vv-h); align-items: flex-start; padding-top: 8px; }
+html.kb-up .sheet { max-height: calc(var(--vv-h) - 16px); }
 .sheet {
   background: #fff;
   border-radius: 16px;

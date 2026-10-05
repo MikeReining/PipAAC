@@ -80,9 +80,9 @@ test("a saved entity word fires exactly one background mint", async () => {
   });
 
   add.openAddForm("grp_snacks");
-  $("add-name").value = "Cooper";
-  await $("add-name").fire("input");
-  await $("add-name").fire("keydown", { key: "Enter" });
+  $("add-word").value = "Cooper";
+  await $("add-word").fire("input");
+  await $("add-word").fire("keydown", { key: "Enter" });
 
   assert.deepEqual(mints, [{ text: "Cooper", source: "user_typed" }]);
   const ent = db.prepare(

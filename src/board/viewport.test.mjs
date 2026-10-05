@@ -6,7 +6,7 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { applyVisualFrame, correctedTop, visualFrame } from "../../public/board/viewport.js";
+import { applyVisualFrame, correctedTop, keyboardVisibleHeight, visualFrame } from "../../public/board/viewport.js";
 
 test("a stuck visual-viewport pan hides the sentence bar until #app moves with it", () => {
   const vv = { offsetTop: 68, offsetLeft: 0, width: 1180, height: 752 };
@@ -47,4 +47,16 @@ test("a pan that offsetTop does not report is corrected from the bar's measured 
 test("visualFrame ignores a viewport that has not been laid out", () => {
   assert.equal(visualFrame({ offsetTop: 10, offsetLeft: 0, width: 0, height: 700 }), null);
   assert.equal(visualFrame(null), null);
+});
+
+test("the iPad keyboard shrinks overlays to the space above it, only while a field is focused", () => {
+  // iPad landscape: 820 tall, the keyboard leaves 395 visible.
+  const kb = { height: 395, scale: 1 };
+  assert.equal(keyboardVisibleHeight(kb, 820, true), 395);
+  // Focus left: a stale short vv.height after the keyboard closes must not stick.
+  assert.equal(keyboardVisibleHeight(kb, 820, false), null);
+  // No keyboard (or a small accessory bar only): sheets stay centered.
+  assert.equal(keyboardVisibleHeight({ height: 790, scale: 1 }, 820, true), null);
+  // A pinch-zoom shrinks vv.height too; that is not a keyboard.
+  assert.equal(keyboardVisibleHeight({ height: 395, scale: 2 }, 820, true), null);
 });

@@ -238,7 +238,7 @@ once. It is never removed or hidden (memory: never interfere with the child).
    Return → tile on the board with picture and voice playing. Record wall
    time for (a) existing picture + cached voice, (b) cold draw + cold mint.
    Report both; no target invented.
-2. **Zero questions.** DOM test: Make with only `#add-name` filled creates a
+2. **Zero questions.** DOM test: Make with only `#add-word` filled creates a
    `personal_entity` and a placement; no other field is required or shown
    before the save.
 3. **Offline add.** Network off: Make saves; tile shows label + color; card
