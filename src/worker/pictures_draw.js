@@ -7,7 +7,7 @@ import { checkLicense } from "./license.mjs";
 import { usageRefund, usageReserve } from "./voice.js";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import {
-  captionForDrawing, drawKey, drawSubject,
+  captionForDrawing, drawKey, drawSubject, vectorId,
 } from "../shared/picture_index.mjs";
 import {
   appHeaders, buildPrompt, MUSE_MODEL, OPENROUTER_ENDPOINT, plannerLane,
@@ -141,6 +141,35 @@ async function lookupDraw(env, key) {
     new Request(`https://tile/pic/draw/row?key=${key}`)).catch(() => null);
   return (await res?.json().catch(() => null))?.row ?? null;
 }
+
+/** Index a ready drawing so the next family finds it (§ 5.3 step 5).
+ *  Never fatal — the ledger still serves the picture on draw — but a
+ *  silent miss leaves a paid drawing unfindable, so failures are logged
+ *  and every ledger hit re-attempts. `row` is the ledger row (or the same
+ *  fields at mint time); a stub mint never indexes. */
+async function indexDrawing(env, row) {
+  const caption = captionForDrawing(row);
+  if (!caption) return;
+  const imageId = `drw_${row.key}`;
+  const [vec] = await embed(env, [caption]);
+  await env.PICTURES.upsert([{
+    id: vectorId(imageId),
+    values: vec,
+    metadata: {
+      image_id: imageId,
+      asset: `/api/v1/pictures/img/${imageId}`,
+      source: "drawn",
+      status: "approved",
+      caption,
+      fitzgerald_role: row.kind ?? "",
+      lens: row.lens ?? "",
+      caption_version: CFG.caption_version,
+    },
+  }]);
+}
+const reindex = (env, row) =>
+  indexDrawing(env, row).catch((err) =>
+    console.error("picture_index_upsert_failed", err?.message ?? err));
 
 /** A loser of the single-flight claim waits out the winner's mint, then
  *  serves the same row. Bounded — a dead claimant fails closed at 502. */
@@ -302,7 +331,10 @@ async function runDraw(env, { uid, text, description, cap }, emit) {
     emit("serving");
     const served =
       await serveRow(readyRow, "hit", await allowanceLeft(env, uid, cap));
-    if (served) return served;
+    if (served) {
+      await reindex(env, readyRow); // heal any missed index row
+      return served;
+    }
     // ready row, missing bytes — fall through and mint it again
   } else if (withheldRow) {
     return err(422, { error: "unsafe" });
@@ -383,8 +415,9 @@ async function runDraw(env, { uid, text, description, cap }, emit) {
   if (claimed.disposition !== "mint") await refundBoth();
   if (claimed.disposition === "hit") {
     emit("serving");
-    return (await serveRow(claimed.row, "hit", leftFree))
-      ?? err(502, { error: "draw_failed" });
+    const served = await serveRow(claimed.row, "hit", leftFree);
+    if (served) await reindex(env, claimed.row);
+    return served ?? err(502, { error: "draw_failed" });
   }
   if (claimed.disposition === "withheld") {
     return err(422, { error: "unsafe" });
@@ -397,8 +430,9 @@ async function runDraw(env, { uid, text, description, cap }, emit) {
     const row = await waitDraw(env, key);
     if (row?.status === "ready") {
       emit("serving");
-      return (await serveRow(row, "hit", leftFree))
-        ?? err(502, { error: "draw_failed" });
+      const served = await serveRow(row, "hit", leftFree);
+      if (served) await reindex(env, row);
+      return served ?? err(502, { error: "draw_failed" });
     }
     if (row?.status === "withheld") {
       return err(422, { error: "unsafe" });
@@ -457,27 +491,13 @@ async function runDraw(env, { uid, text, description, cap }, emit) {
   // The next family finds this drawing by its description-derived caption
   // (§ 3.3) — upsert inline so the very next find sees it. A stub mint
   // never indexes: a placeholder that exists only in dev R2 would point
-  // the real index at a picture that doesn't exist.
-  try {
-    const caption = minted.cache === "stub" ? null
-      : captionForDrawing({ scope, text, description });
-    if (caption) {
-      const [vec] = await embed(env, [caption]);
-      await env.PICTURES.upsert([{
-        id: `drw_${key}`,
-        values: vec,
-        metadata: {
-          asset: `/api/v1/pictures/img/drw_${key}`,
-          source: "drawn",
-          status: "approved",
-          caption,
-          fitzgerald_role: jev.kind ?? "",
-          lens: jev.draw.framing,
-          caption_version: CFG.caption_version,
-        },
-      }]);
-    }
-  } catch { /* a missed index row costs nothing — the ledger still serves */ }
+  // the real index at a picture that doesn't exist. A failure here is
+  // logged, not fatal — the ledger still serves, and the next hit retries.
+  if (minted.cache !== "stub") {
+    await reindex(env, {
+      key, text, description, scope, kind: jev.kind, lens: jev.draw.framing,
+    });
+  }
 
   return {
     png: minted.bytes,

@@ -26,6 +26,7 @@ import {
   BATCH_MAX, CFG, DESC_MAX, TEXT_MAX,
   cleanText, embed, findOne, json, okUuid, picPost, pictureStub,
 } from "./pictures_shared.js";
+import { vectorId } from "../shared/picture_index.mjs";
 
 export { handleFind, handleFindBatch } from "./pictures_find.js";
 export { handlePick, handleReject } from "./pictures_signals.js";
@@ -108,9 +109,10 @@ export async function handlePicturesAdmin(request, env, url) {
     if (captions.some((c) => !c)) return json({ error: "bad_caption" }, { status: 400 });
     const vectors = await embed(env, captions);
     await index.upsert(rows.map((r, i) => ({
-      id: String(r.image_id),
+      id: vectorId(String(r.image_id)),
       values: vectors[i],
       metadata: {
+        image_id: String(r.image_id),
         asset: String(r.asset ?? ""),
         source: String(r.source ?? ""),
         status: String(r.status ?? "approved"),

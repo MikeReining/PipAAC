@@ -63,7 +63,13 @@ const fakeIndex = () => {
     upsertCalls: 0,
     async upsert(batch) {
       this.upsertCalls += 1;
-      for (const r of batch) rows.set(r.id, r);
+      for (const r of batch) {
+        // real Vectorize rejects ids over 64 bytes (40008)
+        if (new TextEncoder().encode(r.id).length > 64) {
+          throw new Error("VECTOR_UPSERT_ERROR (code = 40008): id too long");
+        }
+        rows.set(r.id, r);
+      }
     },
     async query() { return { matches: [] }; },
     async describe() { return { vectorCount: rows.size }; },
@@ -388,11 +394,32 @@ test("drawn rows enter the picture index as source drawn", async () => {
   const env = makeEnv();
   await draw(env, { text: "trampoline", description: "big backyard one" });
   const key = await keyFor("common", "trampoline", "big backyard one");
-  const row = env.PICTURES.rows.get(`drw_${key}`);
+  // drw_<sha256> is 68 bytes — over the 64-byte vector-id cap — so the
+  // stored vector is a truncation and the canonical id rides in metadata.
+  const row = [...env.PICTURES.rows.values()]
+    .find((r) => r.metadata?.image_id === `drw_${key}`);
   assert.ok(row, "drw_ row upserted");
+  assert.ok(row.id.length <= 64, "vector id within the cap");
   assert.equal(row.metadata.source, "drawn");
   assert.equal(row.metadata.status, "approved");
   assert.match(row.metadata.caption, /trampoline/);
+});
+
+test("a ledger hit re-indexes a drawing the mint upsert missed", async () => {
+  const env = makeEnv();
+  const key = await keyFor("common", "bell");
+  env.__db.prepare(
+    `INSERT INTO pic_drawing (key, text, description, scope, kind, lens,
+       status, r2_key, claimed_at, created_at, minted_at)
+     VALUES (?, 'bell', '', 'common', 'None', 'object', 'ready', ?, ?, ?, ?)`)
+    .run(key, `drawing/${key}.png`, Date.now(), Date.now(), Date.now());
+  await env.VOICE.put(`drawing/${key}.png`, PNG_BYTES);
+  const r = await draw(env, { text: "bell" });
+  assert.equal(r.headers.get("x-draw-cache"), "hit");
+  const row = [...env.PICTURES.rows.values()]
+    .find((v) => v.metadata?.image_id === `drw_${key}`);
+  assert.ok(row, "the hit repaired the missed index row");
+  assert.equal(row.metadata.caption, "bell");
 });
 
 test("single flight: a second claim waits, then fails closed at the bound", async () => {

@@ -21,6 +21,7 @@ import pictureFinder from "../../data/catalog/picture_finder.json" with { type: 
 import pictureLabels from "../../data/catalog/picture_labels.json" with { type: "json" };
 import drawBlocklist from "../../data/pictures/draw_blocklist.json" with { type: "json" };
 import {
+  canonicalImageId,
   decideAuto,
   labelKey,
   queryText,
@@ -181,18 +182,18 @@ export async function findOne(env, { text, description, locale, binding = "PICTU
 
   const skey = signalsKey(jev.scope, text, description);
   const [signals] = await rankSignals(env, [{
-    text_norm: skey, image_ids: matches.map((m) => m.id),
+    text_norm: skey, image_ids: matches.map(canonicalImageId),
   }]);
 
   const rescored = matches
     .map((m) => ({
-      image_id: m.id,
+      image_id: canonicalImageId(m),
       asset: m.metadata?.asset ?? null,
       source: m.metadata?.source ?? null,
       caption: m.metadata?.caption ?? null,
       status: m.metadata?.status ?? "approved",
       cosine: m.score,
-      score: scoreOf(m.score, signals?.counts?.[m.id] ?? {}, CFG),
+      score: scoreOf(m.score, signals?.counts?.[canonicalImageId(m)] ?? {}, CFG),
     }))
     .sort((a, b) => b.score - a.score);
   let candidates = rescored.slice(0, CFG.top_k);

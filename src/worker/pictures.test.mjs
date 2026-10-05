@@ -97,7 +97,15 @@ const fakeIndex = () => {
   const rows = new Map();
   return {
     rows,
-    async upsert(batch) { for (const r of batch) rows.set(r.id, r); },
+    async upsert(batch) {
+      for (const r of batch) {
+        // real Vectorize rejects ids over 64 bytes (40008)
+        if (new TextEncoder().encode(r.id).length > 64) {
+          throw new Error("VECTOR_UPSERT_ERROR (code = 40008): id too long");
+        }
+        rows.set(r.id, r);
+      }
+    },
     async query(values, { topK = 4 } = {}) {
       return {
         matches: [...rows.values()]

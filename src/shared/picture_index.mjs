@@ -93,6 +93,24 @@ export async function drawKey(styleVersion, subject) {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+/* ------------------------- vector vs image ids ------------------------- */
+
+/** Vectorize caps vector ids at 64 bytes — `drw_<sha256>` is 68, so a
+ *  drawing's canonical id can never BE the vector id. The vector id is a
+ *  storage detail: truncate it to the cap (ids are ASCII by construction)
+ *  and carry the canonical image_id in metadata, where every read
+ *  resolves it back. Prefixes stay legible (`drw_` + 60 hex). */
+export const VECTOR_ID_MAX = 64;
+export function vectorId(imageId) {
+  const id = String(imageId ?? "");
+  return id.length <= VECTOR_ID_MAX ? id : id.slice(0, VECTOR_ID_MAX);
+}
+/** A queried match's real image id — metadata for truncated rows, the
+ *  vector id itself for everything written before the cap mattered. */
+export function canonicalImageId(match) {
+  return match?.metadata?.image_id ?? match?.id ?? null;
+}
+
 /* ------------------------------ scoring ------------------------------- */
 
 /** § 4.2 — Vectorize cosine plus the anonymous crowd signal. */
