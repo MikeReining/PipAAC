@@ -164,6 +164,40 @@ test("free user: the relay refuses a second device; lifetime allows it", async (
   assert.equal(res.status, 200);
 });
 
+test("043 K — a revoked account (refund/dispute) denies re-presented licenses", async () => {
+  const userId = "user-revoked";
+  const { relay, dev, env } = await userAt(userId);
+  const p = `/users/${userId}`;
+  const license = await licenseFor(SECRET, userId);
+
+  // Grant, then the worker-side revoke (Stripe refund/dispute).
+  let res = await relay.fetch(await signed(dev.identity, "POST", `${p}/entitlement`, { license }));
+  assert.equal(res.status, 200);
+  res = await relay.fetch(new Request(`https://relay${p}/internal/payment_issue`, {
+    method: "POST",
+    headers: { "x-pip-internal": SECRET },
+    body: JSON.stringify({ issue: "refunded", revoke: true }),
+  }));
+  assert.equal(res.status, 200);
+  res = await relay.fetch(await signed(dev.identity, "GET", `${p}/entitlement`, undefined));
+  assert.equal((await res.json()).entitlement, "free");
+
+  // Re-presenting the stored token no longer re-grants.
+  res = await relay.fetch(await signed(dev.identity, "POST", `${p}/entitlement`, { license }));
+  assert.equal(res.status, 403);
+  assert.equal((await res.json()).error, "payment_revoked");
+
+  // A fresh worker-side grant (new purchase) clears the flag and reopens.
+  res = await relay.fetch(new Request(`https://relay${p}/internal/entitlement`, {
+    method: "POST",
+    headers: { "x-pip-internal": SECRET },
+    body: JSON.stringify({ source: "stripe", ref: "cs_again" }),
+  }));
+  assert.equal(res.status, 200);
+  res = await relay.fetch(await signed(dev.identity, "POST", `${p}/entitlement`, { license }));
+  assert.equal(res.status, 200);
+});
+
 test("GET entitlement: a signed device picks up its license copy (015 slice 6)", async () => {
   // A Stripe webhook or a redeemed code lands lifetime worker-side —
   // no device round-trip exists. The device asks for its copy; the

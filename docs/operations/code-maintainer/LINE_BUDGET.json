@@ -31,7 +31,7 @@
     "src/worker/index.js": 576,
     "src/worker/pictures.test.mjs": 795,
     "src/worker/pictures_draw.test.mjs": 634,
-    "src/worker/relay.js": 817,
+    "src/worker/relay.js": 831,
     "src/worker/tile.js": 779
   }
 }

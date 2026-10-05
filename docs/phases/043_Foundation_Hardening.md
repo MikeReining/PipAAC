@@ -13,12 +13,15 @@ the ~20-word German vocabulary itself is owed before catalog
 translation is scoped), **H** (Unicode masking + privacy page),
 **I** `7ec06c95`, **J** `c3cbb6f0` (seams built + typed; the
 real-device prototype decision stays **OPEN** — iOS spike before any
-iOS phase), **K** `ee651803` (refund/dispute **revoke** policy stays an
-**OPEN** founder call — flag-only ships).
+iOS phase), **K** — refund/dispute **revokes** the grant (founder
+ruling): flag + revoke land in one DO write, re-presented tokens get
+`payment_revoked`, `entitled()` consults the relay flag.
 
-**Remaining:** E's real-iPad audible proof (extends 036 § 5 — headless
-can't prove a speaker makes sound), J's device prototype, K's revoke
-decision, and the ops-alerting verification noted under I.
+**Confirmed on hardware:** E — real-iPad airplane-mode cold launch
+speaks on first tap (founder 2026-10-04).
+
+**Remaining:** J's device prototype and the ops-alerting verification
+noted under I.
 
 **Verdict on the stack:** keep it. Plain JS, SQLite WASM, Workers +
 Durable Objects + R2, and the meanings/labels/voices separation are all
@@ -327,10 +330,10 @@ never get the grant; a refund never revokes one.
 **Work.**
 
 - Handle `async_payment_succeeded` (grant), `payment_failed` (surface
-  to buyer), refunds/disputes (product decision: revoke-and-notify vs
-  keep — **OPEN founder call**: shipped default records
-  `payment_issue` on the relay and surfaces it in the app while the
-  grant stays; revoke-and-notify is one flag flip away).
+  to buyer), refunds/disputes — **founder ruling 2026-10-04: revoke**.
+  The `payment_issue` write drops the grant atomically, a re-presented
+  token answers `payment_revoked`, and `entitled()` checks the relay
+  flag so a revoked license stops unlocking cloud speech.
 - iOS IAP + restore-purchase resolve into the **same** `entitled()`
   model as web codes — one owner (`src/worker/` entitlement path), not
   two entitlement truths.

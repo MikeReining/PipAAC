@@ -265,17 +265,16 @@ async function stripeGet(env, path) {
 
 /** 043 K — flag a delayed-payment failure/refund/dispute on the user's
  *  relay; devices/self and the entitlement read carry it to the app.
- *  Whether the grant also gets revoked is the founder call recorded in
- *  the phase doc — the flag means the state is never invisible either
- *  way. */
-async function paymentIssue(env, userId, issue) {
+ *  revoke: a refund or dispute drops the lifetime grant in the same DO
+ *  op (founder ruling — a refunded buyer does not keep the product). */
+async function paymentIssue(env, userId, issue, { revoke = false } = {}) {
   const secret = internalSecret(env);
   if (!env.RELAY || !secret) return;
   await env.RELAY.get(env.RELAY.idFromName(userId)).fetch(
     new Request(`https://relay/users/${userId}/internal/payment_issue`, {
       method: "POST",
       headers: { "x-pip-internal": secret },
-      body: JSON.stringify({ issue }),
+      body: JSON.stringify({ issue, revoke }),
     })).catch(() => {});
 }
 
@@ -328,7 +327,7 @@ export async function handleStripeWebhook(request, env) {
 
   // 043 K — refunds and disputes arrive on the charge; resolve the user
   // through the PaymentIntent (session metadata is on the PI from the
-  // checkout's payment_intent_data). Grant stays — founder call, 043 K.
+  // checkout's payment_intent_data) and revoke the grant.
   if (type === "charge.refunded" || type.startsWith("charge.dispute.")) {
     let userId = uuidOf(s);
     if (!userId && s.payment_intent) {
@@ -336,7 +335,8 @@ export async function handleStripeWebhook(request, env) {
       userId = uuidOf(pi);
     }
     if (userId) {
-      await paymentIssue(env, userId, type === "charge.refunded" ? "refunded" : "dispute");
+      await paymentIssue(env, userId,
+        type === "charge.refunded" ? "refunded" : "dispute", { revoke: true });
     }
     return json({ ok: true });
   }

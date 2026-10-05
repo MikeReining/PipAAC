@@ -235,7 +235,7 @@ export function mountDevices({
         await store.put(issueKey, issue);
         toast(issue === "failed"
           ? "Your payment didn't finish — Pip isn't unlocked yet."
-          : "There's a problem with your payment — please contact support.");
+          : "Your payment was refunded — Pip Lifetime is off for this user.");
       }
     }
     const local = await store.get(key);
@@ -248,7 +248,7 @@ export function mountDevices({
       await client.setEntitlement(local);
       return true;
     } catch (e) {
-      if (e.message === "bad_license") {
+      if (e.message === "bad_license" || e.message === "payment_revoked") {
         await store.del(key);
         resetLicense();
       }

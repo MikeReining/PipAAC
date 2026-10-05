@@ -345,7 +345,9 @@ export class UserRelay {
       if (request.headers.get("x-pip-internal") !== secret) {
         return bad("forbidden", 403);
       }
-      return json({ entitlement: this.entitlement() });
+      return json({ entitlement: this.entitlement(),
+        ...(this.metaGet("payment_issue")
+          ? { payment_issue: this.metaGet("payment_issue") } : {}) });
     }
 
     // Worker-internal entitlement write (015 slice 6): a verified Stripe
@@ -370,8 +372,10 @@ export class UserRelay {
     }
 
     // 043 K — a delayed payment that failed, a refund, or a dispute:
-    // flag the account so the app surfaces it on the next read. The
-    // revoke-vs-keep call is the founder's, recorded in phase 043.
+    // flag the account so the app surfaces it on the next read.
+    // {revoke:true} (founder ruling 2026-10-04, refund/dispute) drops the
+    // lifetime grant atomically with the flag — a refunded buyer does
+    // not keep the product.
     if (method === "POST" && route === "internal/payment_issue") {
       const secret = this.env.PIP_INTERNAL_SECRET ?? this.env.PIP_LICENSE_SECRET;
       if (!secret) return bad("internal_unavailable", 503);
@@ -384,6 +388,10 @@ export class UserRelay {
         this.ctx.storage.sql.exec("DELETE FROM meta WHERE k = 'payment_issue'");
       } else {
         this.metaSet("payment_issue", String(parsed.issue).slice(0, 40));
+      }
+      if (parsed?.revoke) {
+        this.ctx.storage.sql.exec(
+          "DELETE FROM meta WHERE k IN ('entitlement','license_source','license_ref','licensed_at')");
       }
       return json({ ok: true });
     }
@@ -558,6 +566,12 @@ export class UserRelay {
       const userId = this.metaGet("user_id") ?? this.metaGet("board_id")
         ?? url.pathname.split("/")[2];
       if (!this.env.PIP_LICENSE_SECRET) return bad("licenses_unavailable", 503);
+      // 043 K — a revoked account (refund/dispute) rejects re-presented
+      // license tokens; only a fresh worker-side grant reopens it.
+      const issue = this.metaGet("payment_issue");
+      if (issue === "refunded" || issue === "dispute") {
+        return bad("payment_revoked", 403);
+      }
       if (!(await checkLicense(this.env.PIP_LICENSE_SECRET, userId, license))) {
         return bad("bad_license", 403);
       }

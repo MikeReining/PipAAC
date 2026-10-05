@@ -578,10 +578,14 @@ metadata `client_reference_id` carried through Checkout),
 `checkout.session.async_payment_failed`, `charge.refunded`, and
 `charge.dispute.created` (each records a `payment_issue` flag on the
 user, surfaced on `devices/self` and `GET /entitlement`, shown once in
-the devices sheet — conservative: no silent revoke). Both Stripe
-endpoints (live `we_1UMEFYFPjZdfZdLb1r6KEpbO`, test `we_1UMEFMFPjZdfZdLbqak24cbK`)
-subscribe to all five event types. **OPEN — founder call:** whether a
-refund/dispute should also revoke the lifetime grant (flag-only today).
+the devices sheet). Both Stripe endpoints (live `we_1UMEFYFPjZdfZdLb1r6KEpbO`,
+test `we_1UMEFMFPjZdfZdLbqak24cbK`) subscribe to all five event types.
+**Founder ruling:** a refund or dispute **revokes** the grant — the same
+`internal/payment_issue` write drops the entitlement keys atomically,
+`POST entitlement` answers `payment_revoked` to a re-presented token on
+a revoked account, and `entitled()` consults the relay flag so a revoked
+license stops unlocking cloud speech (relay-unreachable falls back to
+the cryptographic check — a relay hiccup never denies a paying family).
 
 Goal: `docs/product/Pricing_And_Packaging.md` § 4 enforced, honestly.
 

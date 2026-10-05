@@ -15,11 +15,14 @@ import worker from "./index.js";
 import { SupporterAccounts } from "./accounts.js";
 import { UserRelay } from "./relay.js";
 import { verifyStripeSignature } from "./stripe.js";
+import { licenseFor } from "./license.mjs";
+import { entitled } from "./trial.mjs";
 
 const te = new TextEncoder();
 const UID = "11111111-2222-3333-4444-555555555555";
 const WHSEC = "whsec_test";
 const INTERNAL = "internal-secret";
+const SECRET = "test-license-secret";
 
 function fakeCtx() {
   const db = new DatabaseSync(":memory:");
@@ -148,11 +151,12 @@ test("043 K — delayed-payment success grants; failure flags the account", asyn
   assert.equal(env._relay(UID).metaGet("payment_issue"), null);
 });
 
-test("043 K — refund and dispute flag the account, grant stays (founder call)", async () => {
+test("043 K — refund and dispute flag AND revoke (founder ruling)", async () => {
   // The PI lookup resolves the user — checkout writes user_id into
   // payment_intent_data.metadata; the charge only carries the PI id.
   const env = fakeEnv({
     STRIPE_WEBHOOK_SECRET: WHSEC, PIP_INTERNAL_SECRET: INTERNAL,
+    PIP_LICENSE_SECRET: SECRET,
     STRIPE_FETCH: async (url) => new Response(JSON.stringify({
       id: "pi_x", metadata: url.includes("/payment_intents/") ? { user_id: UID } : {},
     })),
@@ -169,14 +173,29 @@ test("043 K — refund and dispute flag the account, grant stays (founder call)"
     data: { object: { id: "ch_1", payment_intent: "pi_x" } } }));
   await webhook(env, payload, header);
   assert.equal(env._relay(UID).metaGet("payment_issue"), "refunded");
-  // The grant stays — revoke-vs-keep is the founder call in the doc.
+  // Revoke: a refunded buyer does not keep the product.
+  assert.equal(await relayEntitlement(env, UID), "free");
+
+  // A revoked account's still-valid token stops unlocking paid gates —
+  // the relay flag, not the crypto, is the authority.
+  const license = await licenseFor(SECRET, UID);
+  assert.equal(await entitled(env, UID, license), false);
+
+  // The worker-side grant (new purchase) reopens a revoked account.
+  ({ payload, header } = await signEvent({
+    type: "checkout.session.completed",
+    data: { object: { id: "cs_10", payment_status: "paid", client_reference_id: UID } } }));
+  await webhook(env, payload, header);
   assert.equal(await relayEntitlement(env, UID), "lifetime");
+  assert.equal(env._relay(UID).metaGet("payment_issue"), null);
+  assert.equal(await entitled(env, UID, license), true);
 
   ({ payload, header } = await signEvent({
     type: "charge.dispute.created",
     data: { object: { id: "dp_1", payment_intent: "pi_x" } } }));
   await webhook(env, payload, header);
   assert.equal(env._relay(UID).metaGet("payment_issue"), "dispute");
+  assert.equal(await relayEntitlement(env, UID), "free");
 });
 
 test("webhook ignores other events, unpaid sessions, and unsigned calls", async () => {

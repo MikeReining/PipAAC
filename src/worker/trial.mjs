@@ -86,11 +86,28 @@ export async function trialStatusFetch(env, uid) {
   return res?.ok ? res.json() : null;
 }
 
-/** The one predicate (040 § 5.1): a valid presented license wins;
- *  a presented-but-bad one is forged — callers answer bad_license;
- *  nothing presented → the trial decides. */
+/** The relay's payment flag for a presented license (043 K): a revoked
+ *  account's still-valid token must stop unlocking. Null = unreachable
+ *  or the user never linked — fall through to the crypto check. */
+async function relayPaymentIssue(env, uid) {
+  const secret = env.PIP_INTERNAL_SECRET ?? env.PIP_LICENSE_SECRET;
+  if (!env.RELAY || !secret) return null;
+  const res = await env.RELAY.get(env.RELAY.idFromName(uid)).fetch(
+    new Request(`https://relay/users/${uid}/internal/entitlement`, {
+      headers: { "x-pip-internal": secret } })).catch(() => null);
+  if (!res?.ok) return null;
+  return (await res.json().catch(() => null))?.payment_issue ?? null;
+}
+
+/** The one predicate (040 § 5.1): a valid presented license wins unless
+ *  the relay has it revoked (043 K — refund/dispute); a presented-but-bad
+ *  one is forged — callers answer bad_license; nothing presented → the
+ *  trial decides. */
 export async function entitled(env, uid, presented) {
-  if (await checkLicense(env.PIP_LICENSE_SECRET, uid, presented)) return true;
+  if (await checkLicense(env.PIP_LICENSE_SECRET, uid, presented)) {
+    const issue = await relayPaymentIssue(env, uid);
+    return !(issue === "refunded" || issue === "dispute");
+  }
   if (presented) return false;
   return (await trialStatusFetch(env, uid))?.active === true;
 }
