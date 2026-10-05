@@ -61,7 +61,7 @@ export function findSections(db, text, { locale, groupId, homeKeys = new Set() }
   for (const m of entityMatches(db, t, "__any__", locale)) {
     const w = where("entity", m.id);
     onBoard.push({
-      kind: "entity", id: m.id, label: m.name, role: m.fitzgerald_role ?? "Yellow",
+      kind: "entity", id: m.id, label: m.name, role: m.fitzgerald_role ?? "None",
       photo_key: m.photo_key, where: w.names, groups: w.groups,
       here: w.groups.some((g) => g.id === groupId),
     });

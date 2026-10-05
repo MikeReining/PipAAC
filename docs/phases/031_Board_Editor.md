@@ -165,9 +165,12 @@ word:
   show their label read-only).
 - **In these groups:** chips with ✕ (remove from that group) and
   **+ Another group** (`addToGroups`, 027 add to other groups).
-- **"…" menu** holds the rare and the destructive: Hide this word (catalog,
-  `setMask`), Remove everywhere (retire, `retireEntity`), Sounds wrong
-  (028 flag). Nothing red on the card's face.
+- **The foot** holds the rare and the destructive as quiet text (no "…"
+  menu — 2026-10-05): Hide this word (catalog, `setMask`), Remove this word
+  (retire, `retireEntity`, with Undo), Sounds wrong (028 flag). Nothing red
+  on the card's face. **Swap for another word** sits under the tile as the
+  card's one real button wherever the word holds a cell. Layout and row
+  grammar: 029 § 4.
 - Esc or clicking empty space closes it; the board gets the width back.
 
 ## 7. Groups (left)

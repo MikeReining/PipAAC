@@ -39,11 +39,11 @@ function openDb() {
   return db;
 }
 
-test("an action-word entity paints Green on the board and in its group; an unpicked one stays Yellow", () => {
+test("an action-word entity paints Green on the board and in its group; an unpicked one is neutral", () => {
   const db = openDb();
   createEntity(db, { id: "ent_jump", name: "Jump", role: "Green" });
   createEntity(db, { id: "ent_spin", name: "Spin", role: "Green" });
-  createEntity(db, { id: "ent_baba", name: "Baba" }); // family never picked → Yellow
+  createEntity(db, { id: "ent_baba", name: "Baba" }); // family never picked → neutral
   placeItem(db, "grp_my_words", "entity", "ent_baba");
   placeItem(db, "grp_my_words", "entity", "ent_jump");
   placeItem(db, "grp_my_words", "entity", "ent_spin");
@@ -57,7 +57,7 @@ test("an action-word entity paints Green on the board and in its group; an unpic
   // § 3.4's placement rule, proven in groups.test.mjs.)
   const items = groupPage(db, "grp_my_words", 0, "en");
   assert.equal(items.find((i) => i.item_id === "ent_jump").fitzgerald_role, "Green");
-  assert.equal(items.find((i) => i.item_id === "ent_baba").fitzgerald_role, "Yellow");
+  assert.equal(items.find((i) => i.item_id === "ent_baba").fitzgerald_role, "None");
 });
 
 test("the create_entity op carries the kind — replay restores the color on a second device", () => {
@@ -74,7 +74,7 @@ test("the create_entity op carries the kind — replay restores the color on a s
   );
 });
 
-test("a pre-D7 entity gains the column at migrate and renders Yellow", () => {
+test("a pre-D7 entity gains the column at migrate and can take the neutral role", () => {
   const db = new DatabaseSync(":memory:");
   db.exec("PRAGMA foreign_keys = ON");
   db.exec(schemaSql);
@@ -101,4 +101,22 @@ test("a pre-D7 entity gains the column at migrate and renders Yellow", () => {
   );
   assert.throws(() =>
     db.prepare("UPDATE personal_entity SET fitzgerald_role = 'Orange' WHERE id = 'ent_old'").run());
+  db.prepare("UPDATE personal_entity SET fitzgerald_role = 'None' WHERE id = 'ent_old'").run();
+});
+
+test("a saved database from before neutral words accepts the neutral role after migrate", () => {
+  const db = new DatabaseSync(":memory:");
+  db.exec("PRAGMA foreign_keys = ON");
+  db.exec(schemaSql.replace("('None', 'Yellow', 'Green', 'Blue', 'Pink', 'Purple', 'Red')),",
+    "('Yellow', 'Green', 'Blue', 'Pink', 'Purple', 'Red')),"));
+  db.prepare("INSERT INTO personal_entity (id, spoken_name, added_at, fitzgerald_role) VALUES ('ent_old', 'Crackers', 0, 'Yellow')").run();
+  assert.throws(() =>
+    db.prepare("UPDATE personal_entity SET fitzgerald_role = 'None' WHERE id = 'ent_old'").run(),
+    "the old stored CHECK refuses neutral");
+  migrateSchema(
+    { exec: (s) => db.exec(s), all: (s, p = []) => db.prepare(s).all(...p), prepare: (s) => db.prepare(s) },
+    schemaSql,
+  );
+  db.prepare("UPDATE personal_entity SET fitzgerald_role = 'None' WHERE id = 'ent_old'").run();
+  assert.equal(db.prepare("SELECT spoken_name, fitzgerald_role FROM personal_entity").get().spoken_name, "Crackers");
 });

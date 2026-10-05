@@ -84,9 +84,9 @@ are scheduled with those slices.
 
 | Row | Personal entity (Cooper) | Catalog word (`cup`) |
 | --- | --- | --- |
-| Picture | Photo, or change it — **BUILT** (file input → `savePhoto`) | **BUILT** — **Use my own picture** (a photo) or another approved library image sets `image_override`; **Use our picture** restores (`public/shared/images.mjs`) |
+| Picture | One row of choices (current ringed) + 📷 Photo + **Find or describe a picture** (find → matches; **Draw this**) — **BUILT** (`word-card-pictures.js`) | Same row: our pictures, then picks and photos; a pick or drawing sets `image_override`; tapping our picture restores (`public/shared/images.mjs`) — **BUILT** |
 | Name | Editable — **BUILT**. A rename supersedes the ready recording and enrichment (schema § 6.2; `renameEntity`) | Read-only — **BUILT**. For another word, add it as a new word |
-| Sound | ▶ plays what the board plays — **BUILT** (`resolveSlot` in `public/shared/voice.mjs`: override → voice clip → TTS → silent slot). **Record it** / **Use the voice again** — **BUILT** (`MediaRecorder` → `blob:` key → `set_override` op) |
+| Sound | ▶ plays what the board plays — **BUILT** (`resolveSlot` in `public/shared/voice.mjs`: override → voice clip → TTS → silent slot). Voice row: board voice · **Your voice** · 🎙 Record — tap one to hear it and use it; the recording stays offered after switching back — **BUILT** (`word-card-voice.js`; `MediaRecorder` → `blob:` key → `set_override` op) |
 | In groups | Chips, one per group — **BUILT** (`entityGroups`/`senseGroups`). × removes from that group with Undo — **BUILT**. **Add to other boards** opens named destinations — **BUILT** (027) | Same — seeded words leave any group too; group removal is distinct from global Hide (027, **BUILT**). |
 | Show on board | **BUILT** — opens the group page with the cell flashed; a core-mapped sense flashes on the board | Same |
 | Remove / Hide | **Remove** retires the entity — **BUILT** (`retireEntity`, restorable; `docs/product/Vocabulary_Masking_And_Safety.md` § 3.2) | **Hide** masks it — not built (009 slice 9) |
@@ -342,8 +342,9 @@ Scheduled in 009.
   voice download when it is chosen (009 slice 5).
 - **Record my own.** From the word card, the adult records the word.
   That recording is a `clip_override`. It wins over every voice for that
-  word or name, until the adult taps **Use the voice again** (the override
-  becomes `superseded`; the bytes stay). It can be a name said the family's
+  word or name, until the adult taps the board voice in the Voice row (the
+  override becomes `superseded`; the bytes stay, so **Your voice** stays
+  one tap away). It can be a name said the family's
   way, a word in a grandparent's language, or a sound: a bark, a song.
 - **PROPOSED, not scheduled.** Re-voice a recording into the profile voice
   (speech-to-speech), keeping the family's pronunciation in the child's

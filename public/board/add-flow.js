@@ -393,7 +393,7 @@ export function mountAddFlow({
 
   function picEl(role, fill) {
     const p = document.createElement("span");
-    p.className = `pic r-${role ?? "Yellow"}`;
+    p.className = `pic r-${role ?? "None"}`;
     fill?.(p);
     return p;
   }

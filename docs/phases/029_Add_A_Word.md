@@ -141,23 +141,31 @@ tile (reuse `public/board/word-card.js`; one card, a "just added" state).
 
 ```text
 ┌──────────────────────────────────────────────┐
-│  ✓ Added to My Words                    Done │
-│                                              │
-│        ┌────────────────┐                    │
-│        │   [picture]    │  ← best match now, │
-│        │                │    or "Drawing…"   │
-│        │  apple sauce   │  ← tile, real size │
-│        └────────────────┘    and real color  │
-│                                              │
-│  🔊  Making Pip's voice…   →   plays once     │
-│                                              │
-│  Other pictures  [▢] [▢] [▢]   📷 Photo       │
-│  Not right?  [ Describe it… ] [Draw it again] │
-│                          uses 1 of 295 left   │
-│  Voice   ▶   🎙 Record your own               │
-│  Kind    ● thing ▾        Also in  + group    │
+│  ✓ Added to My Words                      ✕  │
+│  ┌──────────────┐                            │
+│  │ apple sauce  │  Tap the name to change it │
+│  │  [picture] ▶ │  ← tap the tile to hear it │
+│  └──────────────┘                            │
+│  [ ⇄ Swap for another word ]  (where it has  │
+│                                a cell)       │
+│  PICTURE        Drawn for you · 294 left     │
+│  [●now] [▢] [▢] [▢] [📷 Photo]               │
+│  [ Find or describe a picture ] [Find]       │
+│  VOICE          Making Pip's voice…          │
+│  [▶ Pip] [▶ Your voice] [🎙 Record]           │
+│  COLOUR         Thing                        │
+│  [■][■][■][■][■][■][■]  neutral first        │
+│  ALSO IN  [My Words ✕] [+ Group]             │
+│  ───────────────────────────────────────     │
+│  Sounds wrong   Remove this word             │
 └──────────────────────────────────────────────┘
 ```
+
+One grammar (founder, 2026-10-05): a choice is a tile and the chosen one
+wears the ink ring; making a new one is the dashed tile at the end of its
+row; Swap is the one real button; rare actions are quiet text at the foot
+(no "…" menu, no provenance label). Built-in words get the same card minus
+Colour and rename.
 
 ### 4.1 Picture
 
@@ -171,12 +179,15 @@ Driven by 030 `find` (text only) the moment the card opens:
 | no `auto`, 0 drawings left | Label + color; candidates as alternatives; **Add a photo**; "No drawings left" (top-ups when payments land). |
 | offline / error | Label + color; "We'll find a picture when you're back online." Retries on reconnect. |
 
-- **Describe it** (replaces Hint): placeholder *"What should it show? e.g.
-  a bowl, not a jar"*. **Draw it again** is disabled until it has text; it
-  sends `draw` with the description and shows "uses 1 of N left" beside it.
-- Under the field, one quiet line: *"Your description helps us draw better
-  pictures for everyone."* True as written: only the word and description
-  are shared, never who wrote them (030 § 8).
+- **Find or describe a picture** — one field for every word, built-in or
+  added (2026-10-05). Find sends 030 `find` with the typed words and shows
+  our matches (free); the last tile is always **Draw this**, a `draw` of the
+  word steered by those words ("uses 1 of N left" beside it). A drawing
+  needs words once the word has a picture (030 § 5.2). On a personal word
+  the words are saved as its hint. A built-in word's pick becomes its
+  picture override — by id when it is one of that word's own pictures,
+  otherwise as bytes (works offline, syncs). Picking or drawing closes the
+  Find; the new picture sits in the row with the old ones.
 - **Replacing our choice sends `reject`** (030 § 6.3) — once, when the
   adult swaps the picture we chose (the `auto` match or our automatic
   drawing) for an alternative, a photo, or a redraw. Replacing a picture the
@@ -192,7 +203,13 @@ Driven by 030 `find` (text only) the moment the card opens:
 
 - On open: 028 `voice_tile.ensure(text)` — "Making {voice}'s voice…", then
   it **plays once** so the adult hears it without asking. Cache hit = instant.
-- Held / failed: 028 § 5.2 messages + **Record your own**. Never device TTS.
+- Held / failed: 028 § 5.2 messages beside the Voice label, with Try again.
+  Never device TTS.
+- **The board voice and Your voice are two choices**; tapping one plays it
+  and makes it the one the child hears. 🎙 Record is the dashed tile; after
+  Stop the take plays back once by itself (a recording that can't play is
+  found when it's made). Switching back to the board voice keeps the
+  recording offered (`latestRecording`, only for the current spelling).
 - **Handoff from 028 (founder 2026-09-29):** the shipped minting copy —
   "Making Pip's voice…", the tile badge, the word-card voice line, and
   "Try again" — is engineer prose, not designed UI. Slice C owns its
@@ -204,12 +221,15 @@ Driven by 030 `find` (text only) the moment the card opens:
 
 ### 4.3 Kind and places
 
-- **Kind chip** shows 030 `find`'s `kind` as the Fitzgerald color; tap to
-  change (existing `setEntityRole`). Offline or null: Yellow until the
-  result arrives; never overwrite a kind the adult set.
-- **Also in + group** reuses the word card's add-to-boards.
+- **Colour** is a row of seven swatches — **neutral ("Thing") first**,
+  then Person (Yellow), Action, Describing word, Little word, Question
+  word, Safety word — and shows 030 `find`'s `kind` (Jev's `None` → the
+  neutral tile, as on the built-in groups). Offline or null: neutral until
+  the result arrives; never overwrite a kind the adult set.
+- **Also in + Group** reuses the word card's add-to-boards; only groups on
+  the user's board size are listed (the More groups exist per size).
 
-### 4.4 Done
+### 4.4 Close (✕)
 
 Closes. Closing any other way also keeps everything — nothing on the card
 blocks or undoes the save.

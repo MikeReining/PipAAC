@@ -48,9 +48,10 @@ test("paste asks before drawing more than 10, or more than are left", () => {
   assert.equal(shouldConfirmDraws(5, null), false);
 });
 
-test("Jev's kind maps to a board role; a fringe noun is a thing", () => {
+test("Jev's kind maps to a board role; a fringe noun is the neutral tile", () => {
   assert.equal(roleForKind("Green"), "Green");
-  assert.equal(roleForKind("None"), "Yellow");
+  assert.equal(roleForKind("Yellow"), "Yellow");
+  assert.equal(roleForKind("None"), "None");
   assert.equal(roleForKind(null), null);
 });
 

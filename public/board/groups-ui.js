@@ -199,7 +199,7 @@ export function mountGroups({
   }
 
   async function entityCell(e, onTap) {
-    const el = wordTile({ label: e.spoken_name, role: e.fitzgerald_role ?? "Yellow" });
+    const el = wordTile({ label: e.spoken_name, role: e.fitzgerald_role ?? "None" });
     const url = await loadPhotoURL(e.photo_key);
     if (url) {
       const img = document.createElement("img");

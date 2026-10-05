@@ -996,83 +996,73 @@
     <!-- The word card (Word_Library § 4): one screen answers where the
          word is, how it sounds, and what can change. -->
     <div class="overlay" id="wordcard">
+      <!-- The word card: the tile as the child sees it (tap to hear), then
+           one row per thing you can change — Picture, Voice, Colour, Also in.
+           A choice is a tile with the ink ring when chosen; making a new one
+           is the dashed tile at the end of its row. Rare actions sit quiet
+           at the foot. -->
       <div class="sheet wc-sheet">
-        <header class="wc-head">
-          <p class="wc-added" id="wc-added" hidden>✓ Added to <b id="wc-addedto"></b></p>
-          <span id="wc-role" class="wc-rolelab"></span>
-          <button type="button" class="wc-more" id="wc-more" aria-haspopup="menu" aria-label="More">…</button>
-          <button type="button" class="btn wc-done" data-close>Done</button>
-        </header>
-        <div class="wc-menu" id="wc-menu" role="menu" hidden>
-          <button type="button" role="menuitem" id="wc-flag" hidden>Sounds wrong</button>
-          <button type="button" role="menuitem" id="wc-hide" hidden>Hide word</button>
-          <button type="button" role="menuitem" class="danger" id="wc-remove">Remove everywhere</button>
-        </div>
+        <button type="button" class="wc-x" data-close aria-label="Close">✕</button>
+        <p class="wc-added" id="wc-added" hidden>✓ Added to <b id="wc-addedto"></b></p>
 
-        <!-- The tile as the child sees it: label strip, picture, role border. -->
         <div class="wc-hero">
           <div class="wc-tile" id="wc-tile">
             <textarea id="wc-name" class="wc-label" rows="2" autocomplete="off" spellcheck="false" aria-label="Word"></textarea>
             <span id="wc-pic" class="pic"></span>
+            <button type="button" id="wc-play" class="wc-play" aria-label="Hear it">▶</button>
           </div>
-          <div class="wc-sound">
-            <button type="button" id="wc-play" class="wc-play" aria-label="Play">▶</button>
-            <p class="wc-voice" id="wc-voice"></p>
-            <div class="wc-voicebtns">
-              <button type="button" class="linkbtn" id="wc-voicetry" hidden>Try again</button>
-              <button type="button" class="linkbtn" id="wc-record">Record your own</button>
-              <button type="button" class="linkbtn" id="wc-revert" hidden>Use the voice again</button>
-            </div>
-            <p class="hint" id="wc-rechint" hidden></p>
-          </div>
+          <p class="wc-herohint" id="wc-herohint"></p>
+          <button type="button" class="btn secondary wc-swap" id="wc-replace" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>Swap for another word</button>
+          <button type="button" class="btn secondary wc-swap" id="wc-show">Show on board</button>
         </div>
 
-        <!-- Picture: personal words (029 § 4.1). -->
-        <section class="wc-sec" id="wc-picsec" hidden>
-          <p class="wc-picstate" id="wc-picstate" hidden></p>
-          <button type="button" class="linkbtn" id="wc-suggest" hidden></button>
-          <div class="wc-picrow">
-            <span class="wc-lab" id="wc-otherslab">Other pictures</span>
-            <div class="wc-others" id="wc-others"></div>
-            <label class="wc-chipbtn" id="wc-photolabel">📷 Photo
+        <section class="wc-row" id="wc-picsec">
+          <div class="wc-rowlab"><span>Picture</span><span class="wc-status" id="wc-picstate"></span></div>
+          <button type="button" class="wc-opt wc-pill" id="wc-suggest" hidden></button>
+          <div class="wc-choices" id="wc-pics">
+            <label class="wc-opt wc-thumb wc-add" id="wc-photolabel"><i aria-hidden="true">📷</i>Photo
               <input type="file" id="wc-photo" accept="image/*" hidden />
             </label>
           </div>
-          <div class="wc-describe" id="wc-describe">
-            <span class="wc-lab" id="wc-desclab">Not right? Say what it should show</span>
-            <input type="text" id="wc-desc" maxlength="120" autocomplete="off"
-              placeholder="e.g. a bowl, not a jar" />
-            <button type="button" class="btn secondary" id="wc-redraw" disabled>Draw it again</button>
-          </div>
+          <form class="wc-find" id="wc-find">
+            <input type="search" id="wc-desc" maxlength="120" autocomplete="off" enterkeyhint="search"
+              placeholder="Find or describe a picture" aria-label="Find or describe a picture" />
+            <button type="submit" class="btn secondary" id="wc-findgo" disabled>Find</button>
+          </form>
+          <div class="wc-choices" id="wc-results" hidden></div>
           <p class="hint wc-fine" id="wc-drawcost"></p>
-          <p class="hint wc-fine" id="wc-helps">Your description helps us draw better pictures for everyone.</p>
         </section>
 
-        <!-- Picture: catalog words — another of ours, or your own. -->
-        <section class="wc-sec" id="wc-catpics">
-          <div id="wc-libpics" hidden></div>
-          <div class="wc-picrow">
-            <label class="wc-chipbtn" id="wc-ownpiclabel" hidden>📷 Use my own picture
-              <input type="file" id="wc-ownpic" accept="image/*" hidden />
-            </label>
-            <button type="button" class="wc-chipbtn" id="wc-ourpic" hidden>Use our picture</button>
+        <section class="wc-row">
+          <div class="wc-rowlab"><span>Voice</span><span class="wc-status" id="wc-voice"></span>
+            <button type="button" class="linkbtn" id="wc-voicetry" hidden>Try again</button></div>
+          <div class="wc-choices">
+            <button type="button" class="wc-opt wc-pill" id="wc-voicebase"><span class="wc-dot" aria-hidden="true">▶</span><span id="wc-voicename">Pip</span></button>
+            <button type="button" class="wc-opt wc-pill" id="wc-voicemine" hidden><span class="wc-dot" aria-hidden="true">▶</span>Your voice</button>
+            <button type="button" class="wc-opt wc-pill wc-add" id="wc-record">🎙 Record your voice</button>
+          </div>
+          <p class="hint" id="wc-rechint" hidden></p>
+        </section>
+
+        <section class="wc-row" id="wc-kindlabel" hidden>
+          <div class="wc-rowlab"><span>Colour</span><span class="wc-status" id="wc-kind"></span></div>
+          <div class="wc-choices" id="wc-kindmenu" role="radiogroup" aria-label="Colour"></div>
+        </section>
+
+        <section class="wc-row">
+          <div class="wc-rowlab"><span>Also in</span></div>
+          <div class="wc-choices">
+            <div class="wc-chips" id="wc-groups"></div>
+            <button type="button" class="wc-chip wc-add" id="wc-addgroup">+ Group</button>
           </div>
         </section>
 
-        <section class="wc-sec wc-where">
-          <div class="wc-kindwrap" id="wc-kindlabel" hidden>
-            <span class="wc-lab">Kind</span>
-            <button type="button" class="wc-kindchip" id="wc-kind" aria-haspopup="listbox"></button>
-            <div class="wc-kindmenu" id="wc-kindmenu" role="listbox" hidden></div>
-          </div>
-          <div class="wc-pages">
-            <span class="wc-lab">In</span>
-            <div id="wc-groups"></div>
-            <button type="button" class="wc-chipbtn" id="wc-addgroup">+ Another group</button>
-            <button type="button" class="linkbtn" id="wc-show">Show on board</button>
-            <button type="button" class="linkbtn" id="wc-replace" hidden>Replace with another word</button>
-          </div>
-        </section>
+        <footer class="wc-foot" id="wc-foot">
+          <button type="button" class="wc-quiet" id="wc-hide" hidden>Hide this word</button>
+          <button type="button" class="wc-quiet" id="wc-flag" hidden>Sounds wrong</button>
+          <button type="button" class="wc-quiet" id="wc-remove" hidden>Remove this word</button>
+        </footer>
       </div>
     </div>
 

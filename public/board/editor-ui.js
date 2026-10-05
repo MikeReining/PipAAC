@@ -668,7 +668,7 @@ export function mountEditor({
 
   function thumb(r) {
     const p = document.createElement("span");
-    p.className = `pic r-${r.role ?? "Yellow"}`;
+    p.className = `pic r-${r.role ?? "None"}`;
     if (r.photo_key) {
       loadPhotoURL(r.photo_key).then((url) => {
         if (!url) return;

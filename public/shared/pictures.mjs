@@ -45,11 +45,10 @@ export function pictureAction(found) {
   return { kind: "none", personal: found.scope === "personal" };
 }
 
-/** Jev's Fitzgerald answer → the entity's role. "None" (a fringe noun)
- *  renders as a thing, which is Yellow on this board. */
+/** Jev's Fitzgerald answer → the entity's role. "None" (a thing, food,
+ *  animal, place) is the neutral tile, as on the built-in groups. */
 export const roleForKind = (kind) =>
-  ["Yellow", "Green", "Blue", "Pink", "Purple", "Red"].includes(kind) ? kind
-    : kind === "None" ? "Yellow" : null;
+  ["None", "Yellow", "Green", "Blue", "Pink", "Purple", "Red"].includes(kind) ? kind : null;
 
 /** A paste row needs a new drawing when nothing close exists for a
  *  common word and the finder is calibrated (§ 5 — the count the list

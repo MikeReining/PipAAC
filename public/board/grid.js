@@ -203,14 +203,14 @@ export function mountGrid({
   /**
    * One effective home cell's tile, without gestures — the core grid and
    * every group page's reserved cells (027 B3) draw the same tile. A person
-   * shows the family's kind color (018 D7 — Yellow until classified) and
+   * shows the family's kind color (018 D7 — neutral until classified) and
    * photo; a hidden word keeps its slot as a ghost (Design_System mask
    * tokens — faded, never tappable or spoken; Masking § 2). `say` is what a
    * tap speaks, null for a ghost.
    */
   function homeTile(c, masked = maskedSenseIds(db)) {
     if (c.kind === "entity") {
-      const el = wordTile({ label: c.label, role: c.fitzgerald_role ?? "Yellow" });
+      const el = wordTile({ label: c.label, role: c.fitzgerald_role ?? "None" });
       // 028 § 5.2: the supporter sees the voice state on the tile while a
       // mint is in flight or queued. The child hears silence until ready.
       const vst = tileApi.status(c.label);

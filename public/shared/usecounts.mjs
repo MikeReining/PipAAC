@@ -49,7 +49,7 @@ export function offBoardItems(
   const entities = all(
     db,
     `SELECT 'entity' AS kind, e.id, e.spoken_name AS label,
-            COALESCE(e.fitzgerald_role, 'Yellow') AS role
+            COALESCE(e.fitzgerald_role, 'None') AS role
      FROM personal_entity e WHERE e.status = 'active'`,
   );
   const needle = q.trim().toLowerCase();
@@ -91,7 +91,7 @@ export function notInGroupItems(
   const entities = all(
     db,
     `SELECT 'entity' AS kind, e.id, e.spoken_name AS label,
-            COALESCE(e.fitzgerald_role, 'Yellow') AS role
+            COALESCE(e.fitzgerald_role, 'None') AS role
      FROM personal_entity e WHERE e.status = 'active'`,
   );
   const needle = q.trim().toLowerCase();

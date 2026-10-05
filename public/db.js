@@ -13,6 +13,7 @@ import { reseedBuiltinGroups } from "./shared/groups.mjs";
 import { getDbBytes, getDbPrev, putDbBytes, putDbPrev } from "./shared/users.mjs";
 import { ADDITIVE_COLUMNS, beforeCleanBreak, migrateSchema, ensureAdditiveColumns } from "./shared/migrate.mjs";
 import { onHidden, onPageHide, opfsRoot } from "./shared/platform.mjs";
+import { typedBlob } from "./shared/mediatype.mjs";
 
 let handle = null;
 
@@ -302,14 +303,14 @@ export async function loadPhotoURL(photoKey) {
       const dir = await root.getDirectoryHandle("blobs", { create: true });
       try {
         const fh = await dir.getFileHandle(sha);
-        return URL.createObjectURL(await fh.getFile());
+        return URL.createObjectURL(await typedBlob(await fh.getFile()));
       } catch {
         // Not cached — pull the sealed blob, verify on open, cache it.
         if (!blobFetcher) return null;
         const bytes = await blobFetcher(sha);
         if (!bytes) return null;
         await saveBlobBytes(sha, bytes);
-        return URL.createObjectURL(new Blob([bytes]));
+        return URL.createObjectURL(await typedBlob(bytes));
       }
     }
     if (photoKey?.startsWith("opfs:photos/")) {

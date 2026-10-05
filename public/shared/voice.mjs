@@ -37,7 +37,7 @@ export function setOverride(db, { id = newId("ovr"), itemKind, itemId, key, reco
   recordOp(db, "set_override", { id, itemKind, itemId, key, recordedText });
 }
 
-/** "Use the voice again" — the ready override retires; bytes stay. */
+/** Back to the board voice — the ready override retires; bytes stay. */
 export function clearOverride(db, itemKind, itemId) {
   const col = itemKind === "entity" ? "entity_id" : "utterance_id";
   const had = one(db,
@@ -51,12 +51,24 @@ export function clearOverride(db, itemKind, itemId) {
 }
 
 /** The ready override for an item, if any — the card needs it to show
- *  "Use the voice again" and to re-record. */
+ *  which voice the Voice row marks chosen. */
 export function overrideFor(db, itemKind, itemId) {
   const col = itemKind === "entity" ? "entity_id" : "utterance_id";
   return one(db,
     `SELECT id, key, recorded_text FROM clip_override
      WHERE ${col} = ? AND status = 'ready'`, [itemId]) ?? null;
+}
+
+/** The family's newest recording for an item, ready or not — the card
+ *  keeps "Your voice" offered after a switch back to the app's voice.
+ *  Only a recording of `text` counts: a renamed word's old take says
+ *  the old name. */
+export function latestRecording(db, itemKind, itemId, text) {
+  const col = itemKind === "entity" ? "entity_id" : "utterance_id";
+  return one(db,
+    `SELECT id, key, recorded_text, status FROM clip_override
+     WHERE ${col} = ? AND recorded_text = ? ORDER BY rowid DESC LIMIT 1`,
+    [itemId, text]) ?? null;
 }
 
 /**

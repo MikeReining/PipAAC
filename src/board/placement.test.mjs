@@ -82,7 +82,7 @@ test("the placement list ranks by the child's taps, then the book — never an o
   // The family's person lists with the words, her count beside her.
   const baba = list.find((r) => r.id === "ent_baba");
   assert.equal(baba.count, 5);
-  assert.equal(baba.role, "Yellow");
+  assert.equal(baba.role, "None", "an unpicked kind is the neutral tile");
   // 🔍 filters the same list — a typed prefix narrows, never adds.
   const hits = offBoardItems(db, "grid60", "en", { counts, uni, q: "cooki" });
   assert.deepEqual(hits.map((r) => r.label), ["cookie"]);

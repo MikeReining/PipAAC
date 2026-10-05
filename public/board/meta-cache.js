@@ -55,14 +55,14 @@ export function mountMetaCache({ db, locale }) {
   }
 
   /** Cache: entity id → fitzgerald_role — the family's kind pick (018 D7),
-   *  Yellow until classified. */
+   *  neutral until classified. */
   const entityRole = new Map();
   function roleForEntity(entityId) {
     if (!entityRole.has(entityId)) {
       entityRole.set(
         entityId,
         ALL(db, "SELECT fitzgerald_role AS r FROM personal_entity WHERE id = ?",
-          [entityId])[0]?.r ?? "Yellow",
+          [entityId])[0]?.r ?? "None",
       );
     }
     return entityRole.get(entityId);

@@ -56,7 +56,7 @@ export function groupPage(db, groupId, page = 0, locale, layout = activeLayout(d
     db,
     `SELECT gc.item_kind, gc.item_id, gc.page, gc.slot_index,
             COALESCE(l.text, e.spoken_name) AS label,
-            COALESCE(s.fitzgerald_role, e.fitzgerald_role, 'Yellow') AS fitzgerald_role,
+            COALESCE(s.fitzgerald_role, e.fitzgerald_role, 'None') AS fitzgerald_role,
             e.photo_key AS photo_key,
             ${SENSE_ART_SQL} AS art
      FROM group_cell gc
@@ -178,7 +178,7 @@ export function renameEntity(db, id, newName) {
 }
 
 /** The family's kind pick (018 D7) — the tile repaints in the new band
- *  everywhere the word surfaces. null keeps the Yellow default. */
+ *  everywhere the word surfaces. null keeps the neutral default. */
 export function setEntityRole(db, id, role) {
   db.prepare("UPDATE personal_entity SET fitzgerald_role = ? WHERE id = ?").run(role, id);
   recordOp(db, "set_entity_role", { id, role });
