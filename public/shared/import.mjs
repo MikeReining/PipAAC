@@ -16,7 +16,7 @@
  * groups.
  */
 import { installSeedGroups } from "./groups.mjs";
-import { ensureBaseline } from "./ops.mjs";
+import { ensureBaseline, repairDrainedWithoutSeeds } from "./ops.mjs";
 
 export function importCatalog(db, catalog, { tiers = ["root_core", "primary_fringe"] } = {}) {
   // 041 B2 — the fingerprint is the reconcile's skip gate. A persisted
@@ -200,4 +200,8 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
 
   ensureBaseline(db);
   installSeedGroups(db, catalog);
+  // Devices that drained with the 095302a3 starter artifact already
+  // lost their boards once; the repair is one ordinary rebase, now
+  // that the install is in the log (ops.mjs § repair).
+  repairDrainedWithoutSeeds(db);
 }

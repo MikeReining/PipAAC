@@ -25,10 +25,51 @@ export function installSeedGroups(db, catalog) {
     cells: (catalog.groupCells ?? []).filter((c) => c.group_id === g.id)
       .map((c) => [c.layout, c.item_kind, c.item_id, c.page, c.slot_index]),
   }));
-  if (!groups.length) return;
-  const args = { version: catalog.groupSeedVersion ?? "0", groups };
-  applySeedInstall(db, args);
-  recordOp(db, "seed_install", args);
+  if (groups.length) {
+    const args = { version: catalog.groupSeedVersion ?? "0", groups };
+    applySeedInstall(db, args);
+    recordOp(db, "seed_install", args);
+  }
+  recordMissingSeedOp(db, catalog);
+}
+
+/**
+ * An installed marker must always be backed by a replayable install:
+ * the rebase baseline is deliberately pre-seed, so the seed_install op
+ * is the only way a drain rebuilds the boards before dependent edits
+ * replay. Starter artifacts built by 095302a3 shipped the applied
+ * state with that op deleted — every installed group is uncovered on
+ * those devices. Record one from the surviving rows when no logged
+ * seed op covers a marker; each device mints its own op id, so op
+ * identities stay independent and first-confirmed-wins still applies.
+ */
+function recordMissingSeedOp(db, catalog) {
+  const installed = all(db, "SELECT group_id FROM group_seed_install").map((r) => r.group_id);
+  if (!installed.length) return;
+  const covered = new Set();
+  for (const op of all(db, "SELECT args FROM sync_op WHERE kind = 'seed_install'")) {
+    for (const g of JSON.parse(op.args).groups ?? []) covered.add(g.id);
+  }
+  const missing = installed.filter((id) => !covered.has(id));
+  if (!missing.length) return;
+  const groups = missing.map((id) => {
+    const g = one(db, "SELECT kind, glyph, index_slot FROM board_group WHERE id = ?", [id]);
+    const cat = (catalog.groups ?? []).find((x) => x.id === id);
+    return {
+      id,
+      kind: g?.kind ?? cat?.kind ?? "builtin",
+      glyph: g?.glyph ?? cat?.glyph ?? null,
+      index_slot: g?.index_slot ?? cat?.index_slot ?? lowestFreeIndexSlot(db),
+      members: all(db,
+        "SELECT item_kind, item_id FROM group_membership WHERE group_id = ? ORDER BY rowid",
+        [id]).map((m) => [m.item_kind, m.item_id]),
+      cells: all(db,
+        `SELECT layout, item_kind, item_id, page, slot_index FROM group_cell
+         WHERE group_id = ? ORDER BY rowid`, [id])
+        .map((c) => [c.layout, c.item_kind, c.item_id, c.page, c.slot_index]),
+    };
+  });
+  recordOp(db, "seed_install", { version: catalog.groupSeedVersion ?? "0", groups });
 }
 
 /** Apply a seed install. A group that already has a marker is skipped —

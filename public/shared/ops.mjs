@@ -413,9 +413,54 @@ export function drainOps(db, confirmedOps = []) {
   const base = db.prepare("SELECT tables FROM sync_baseline WHERE id = 1").all()[0];
   if (!base) throw new Error("drainOps: no baseline — ensureBaseline must run at boot");
   restoreSynced(db, JSON.parse(base.tables));
-  for (const op of confirmed) applyOp(db, op);
+  // A seed install is a precondition, not an ordinary edit: every write
+  // into a group needs the install applied first, wherever the relay
+  // placed it. Install ops keep relay order among themselves (first
+  // confirmed still wins) but run ahead of the rest of the stream.
+  const seeds = confirmed.filter((o) => o.kind === "seed_install");
+  for (const op of seeds) applyOp(db, op);
+  // A device whose log carries no confirmed install — the 095302a3
+  // starter artifact shipped applied groups with the op deleted — still
+  // rebuilds its boards: its own recorded install runs ahead of the
+  // confirmed stream. Replaying it in the pending phase would come too
+  // late, after the writes it exists to make possible.
+  if (!seeds.length
+      && !db.prepare("SELECT 1 AS x FROM group_seed_install LIMIT 1").all()[0]) {
+    for (const op of pending) {
+      if (op.kind === "seed_install") applyOp(db, op);
+    }
+  }
+  for (const op of confirmed) {
+    if (op.kind !== "seed_install") applyOp(db, op);
+  }
   saveBaseline(db);
   for (const op of pending) applyOp(db, op);
+}
+
+/**
+ * Repair for devices that drained while their log carried no seed
+ * install (the 095302a3 artifact): the rebase wiped every board and the
+ * confirmed writes into the missing groups were skipped while relay_seq
+ * consumed them. The signature is a baseline with no seed state plus a
+ * confirmed op — proof the last rebase could not rebuild any board.
+ * One ordinary drain now that installSeedGroups has recorded the
+ * missing install rebuilds the boards and replays the skipped ops.
+ * Idempotent and self-limiting: the healed baseline carries seed state,
+ * so the signature never fires again.
+ */
+export function repairDrainedWithoutSeeds(db) {
+  if (!db.prepare("SELECT 1 AS x FROM sync_op WHERE relay_seq IS NOT NULL LIMIT 1").all()[0]) {
+    return false;
+  }
+  const row = db.prepare("SELECT tables FROM sync_baseline WHERE id = 1").all()[0];
+  if (!row) return false;
+  const tables = JSON.parse(row.tables);
+  if ((tables.board_group?.length ?? 0) > 0
+      || (tables.group_seed_install?.length ?? 0) > 0) {
+    return false;
+  }
+  drainOps(db, []);
+  return true;
 }
 
 /**

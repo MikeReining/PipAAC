@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-e12488245255",
+  "buildId": "r1-84bdd44ae8bf",
   "files": [
     {
       "path": "/board.js",
@@ -103,8 +103,8 @@
     },
     {
       "path": "/board/groups-ui.css",
-      "bytes": 3320,
-      "sha256": "d69c86626b9090409b35610e9be8b40f463106789bdd72f4220df943347993fb"
+      "bytes": 3321,
+      "sha256": "3098a78090244a9a423253441096c788b804caf6e1a9471afb8e616e317d1497"
     },
     {
       "path": "/board/groups-ui.js",
@@ -413,8 +413,8 @@
     },
     {
       "path": "/fresh_db.sqlite",
-      "bytes": 2981888,
-      "sha256": "22027da0e6fdd4dc1757e3f55fd7d99deeabc443ebde68d8e8a98c2fbe38ad58"
+      "bytes": 2531328,
+      "sha256": "bbec150ad8bae832807b86ae0e56183915bbaea3d1e7f46641169065571fffb5"
     },
     {
       "path": "/help.en.json",
@@ -818,8 +818,8 @@
     },
     {
       "path": "/shared/groups_seed.mjs",
-      "bytes": 3624,
-      "sha256": "9af4fa77466f4058228e9aac52f356b48d1e309eda3bca2bcb7192eb8728a379"
+      "bytes": 5574,
+      "sha256": "20ec833255a0698e2db327c2fc6d3024b1850b08c1662aff7d2329d94e4d5084"
     },
     {
       "path": "/shared/groups_shared.mjs",
@@ -843,8 +843,8 @@
     },
     {
       "path": "/shared/import.mjs",
-      "bytes": 9564,
-      "sha256": "54cf08ddc6c9cb1c927be5ac8de91084c3c1fd02a64048d2de045aa7517d0be3"
+      "bytes": 9818,
+      "sha256": "0064adfb741f5d615b7055fe2ef32019dee35752f19353138e64e9030355a5c6"
     },
     {
       "path": "/shared/keyboard.mjs",
@@ -888,8 +888,8 @@
     },
     {
       "path": "/shared/ops.mjs",
-      "bytes": 16740,
-      "sha256": "6b5b945b25d8edab1c49a54e7fbb53579d845327d7529dbfa715fd47d2211376"
+      "bytes": 18802,
+      "sha256": "b207208092bfe782ded7771cec14296a93a62acda1916d1da0409244e736ffb8"
     },
     {
       "path": "/shared/person_name.mjs",

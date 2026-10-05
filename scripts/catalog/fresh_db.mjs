@@ -6,10 +6,16 @@
  * deterministic comparison — the file's bytes carry a change counter
  * and freelist state, so the honest gate is table content, not bytes.
  *
- * sync_op is emptied before sealing: the seed_install op the build just
- * recorded describes a machine that isn't a device — every replica
- * derives built-in groups from its own import, so the op is noise with
- * a fake origin. The shipped file carries the applied state only.
+ * The shipped file carries the imported catalog and the pre-seed
+ * baseline — but no installed groups. Group state is replayable truth:
+ * the baseline is captured pre-seed by design, so a rebase can only
+ * rebuild boards from a seed_install op in the device's own log. Each
+ * device performs its install at first boot and records it under its
+ * own op id (first-confirmed-wins is preserved; op identities stay
+ * independent). Shipping the applied rows without that op was
+ * 095302a3's bug: the first drain restored the seedless baseline and
+ * wiped every board, and confirmed writes into the missing groups were
+ * silently skipped while the relay cursor advanced.
  */
 import { DatabaseSync } from "node:sqlite";
 import { createHash } from "node:crypto";
@@ -34,6 +40,13 @@ export function buildFreshDb(catalog, file) {
   db.exec(catalog.schemaSql);
   ensureAdditiveColumns(db);
   importCatalog(db, catalog);
+  // Strip the seed-installed rows: children first (FK), then the
+  // install markers, then the op the build recorded for them. What
+  // ships is "catalog imported, seed not yet performed" — the same
+  // shape the schema+import path always produced.
+  for (const t of ["group_cell", "group_membership", "board_group", "group_seed_install"]) {
+    db.exec(`DELETE FROM ${t}`);
+  }
   db.exec("DELETE FROM sync_op");
   db.exec("VACUUM");
   raw.close();
