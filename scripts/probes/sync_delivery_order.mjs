@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url";
 import { readFileSync } from "node:fs";
 import { createDatabase, importCatalog } from "../../src/board/catalog.mjs";
 import { createEntity, renameEntity } from "../../public/shared/groups.mjs";
-import { adoptSnapshot, drainOps, ensureBaseline, listOps, snapshotSynced } from "../../public/shared/ops.mjs";
+import { adoptSnapshot, confirmOps, drainOps, ensureBaseline, listOps, snapshotSynced } from "../../public/shared/ops.mjs";
 
 const catalog = JSON.parse(readFileSync(new URL("../../public/catalog.json", import.meta.url), "utf8"));
 export function compareDeliveryOrder() {
@@ -32,15 +32,22 @@ export function compareDeliveryOrder() {
     drainOps(pushed, setup);
     drainOps(ordered, setup);
     drainOps(acked, setup);
-    // A live push or an own-submit ack can land the later op before a
-    // catch-up fetch delivers the earlier one. Pushes overlay onto live
-    // state without folding — only fetched pages move coverage.
+    // A live push can land the later op before a catch-up fetch
+    // delivers the earlier one. Pushes overlay onto live state without
+    // folding — only fetched pages move coverage.
     drainOps(pushed, [renames[1]], { fetched: false });
-    drainOps(acked, [renames[1]], { fetched: false });
+    // ownAckThenFetch: the device edits locally — a real pending row —
+    // the submit acknowledgement stamps its relay_seq via confirmOps
+    // (the path client.submit's answer takes), and only then does a
+    // fetched page deliver the earlier foreign op plus the relay's
+    // echo of the device's own confirmed op.
+    renameEntity(acked, "ent_order_probe", "Newer");
+    const mine = listOps(acked).find((o) => o.relay_seq === null);
+    confirmOps(acked, [{ op_id: mine.op_id, relay_seq: renames[1].relay_seq }]);
+    drainOps(acked, [renames[0], { ...mine, relay_seq: renames[1].relay_seq }]);
     // A pending local edit must survive the order repair's re-replay.
     createEntity(pushed, { id: "ent_pending_probe", name: "Pending" });
     drainOps(pushed, renames);
-    drainOps(acked, renames);
     drainOps(ordered, renames);
     // A pushed op folded ahead of a snapshot adoption: the snapshot
     // covers only up to the earlier rename; the pushed op must replay
