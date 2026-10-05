@@ -134,7 +134,9 @@ async function render() {
       btnText = "Check for updates";
       break;
     case "offline": line += " · offline, can't check for updates"; break;
-    case "current": line += " · up to date"; btnText = "Check for updates"; break;
+    /* Opening Overview IS the check (showVersion → check) — no button
+     * for "up to date"; it would decorate the answer it just gave. */
+    case "current": line += checking ? " · checking…" : " · up to date"; break;
     case "available": line += ` · ${upd} available`; break;
     case "downloading":
       line += progress
@@ -269,7 +271,9 @@ export function initVersionUI({ reload, onPhase: onPhaseCb } = {}) {
   check();
 }
 
-/** Settings → Overview calls this each time it shows. */
+/** Settings → Overview calls this each time it shows — showing the
+ *  page is itself the freshness check (iOS Software Update does the
+ *  same: no Check button, opening the pane rechecks). */
 export function showVersion() {
-  render();
+  check();
 }

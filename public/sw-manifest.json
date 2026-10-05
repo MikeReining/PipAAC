@@ -1,10 +1,10 @@
 {
-  "buildId": "1.1.0-79a30f650751",
+  "buildId": "1.1.0-01406d043214",
   "files": [
     {
       "path": "/board.js",
-      "bytes": 67754,
-      "sha256": "3a10a51b697751602c12649075708615eb9b154d629465c155b2d3aad0275aa2"
+      "bytes": 67896,
+      "sha256": "ab9d9b28f74e4acba251d7e0c6c6ccfe52eca81fea315c73aa078c9663dfa7a8"
     },
     {
       "path": "/board/add-flow.css",
@@ -88,8 +88,8 @@
     },
     {
       "path": "/board/grid.js",
-      "bytes": 19219,
-      "sha256": "7c27895569cc5574d5980d2bfb34abcbaa7e5564cfa28092344f8ec7262ef4f7"
+      "bytes": 20428,
+      "sha256": "a13e6be6fede1d0f0f059951e4761351c724b3fe0f2468cd24cbd3fa8a01d2f0"
     },
     {
       "path": "/board/group-glyph.js",
@@ -238,13 +238,13 @@
     },
     {
       "path": "/board/settings-ui.css",
-      "bytes": 23494,
-      "sha256": "827098e1579cc97a603e7a845b5868a6ae31428339e2713a816da171be550e4d"
+      "bytes": 24379,
+      "sha256": "5ee7302f8bee8e788e18c8b58ed1974ce0d1f500ec533a37ad46e9b54ff518ee"
     },
     {
       "path": "/board/settings-ui.js",
-      "bytes": 18612,
-      "sha256": "84520340ac3581a47faf111378640648065d1de07ac0d9161afc1ba477334dba"
+      "bytes": 18534,
+      "sha256": "a820ff43ae19dfc4eb86f0becb211fd42d04f201fc9305be4cb029d2eb8c741c"
     },
     {
       "path": "/board/setup-ui.css",
@@ -303,8 +303,8 @@
     },
     {
       "path": "/board/version.js",
-      "bytes": 10919,
-      "sha256": "c00970ccdd7a46c79ab483637bcc62630b472fcb869e427ec366982d22bee745"
+      "bytes": 11203,
+      "sha256": "4974482ffec138f7a95f86ed59b6c2df26d3e08b4adc760d8e533dd2b1f0d730"
     },
     {
       "path": "/board/viewport.js",
@@ -418,8 +418,8 @@
     },
     {
       "path": "/help.en.json",
-      "bytes": 29805,
-      "sha256": "a55c7790af6eb212010d31e717f9550edbc76015c3077aa87fb7a69770e0f68f"
+      "bytes": 29809,
+      "sha256": "e4af9e362c111747637a16a3150a8d31434cc971d9c6281c5a8006999fd7a1a4"
     },
     {
       "path": "/icons/backspace.svg",
@@ -748,8 +748,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 69852,
-      "sha256": "631448e3cfc947680c16cc83decb995f9efb7cf0b4b61eb35b835e3927bbd63f"
+      "bytes": 70311,
+      "sha256": "adcde816e5a639c4c88b4c9758ef5a371ab76d7aa57b30cd59c264b24cdc5d44"
     },
     {
       "path": "/manifest.webmanifest",
