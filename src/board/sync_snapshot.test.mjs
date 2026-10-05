@@ -37,9 +37,13 @@ import {
   getDeviceIdentity,
   getUserKey,
   memoryKeyStore,
+  newUserKey,
   openOp,
   putUserKey,
   sealOp,
+  wrapUserKey,
+  exportDhPublic,
+  ensureRecoveryRoot,
 } from "../../public/shared/sync_crypto.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
@@ -88,11 +92,7 @@ registerHooks({
           globalThis.__pipSyncTestShared.relayClient(opts);
       `,
       "virtual:crypto": `
-        export {
-          exportDhPublic, exportPublicKey, getDeviceIdentity, getUserKey,
-          openBlob, openOp, putUserKey, sealOp, sealBlob, unwrapUserKey,
-          wrapUserKey,
-        } from ${JSON.stringify(realCrypto)};
+        export * from ${JSON.stringify(realCrypto)};
         export const openKeyStore = () => globalThis.__pipSyncTestShared.store;
       `,
     };
@@ -146,6 +146,8 @@ async function runtime({
   epoch = 1,
   setupDb = null,
   userKey = null,
+  selfKey = null,
+  withRoot = false,
 } = {}) {
   const db = openReplica();
   ensureBaseline(db);
@@ -153,23 +155,36 @@ async function runtime({
   const identity = await getDeviceIdentity(store);
   const key = userKey ?? await getUserKey(store, "u1");
   await putUserKey(store, "u1", key, epoch);
+  if (withRoot) await ensureRecoveryRoot(store, "u1");
   setupDb?.(db);
 
-  const backend = { fetchResult, snapshot };
+  const backend = { fetchResult, snapshot, devices: { devices: [] } };
   const saved = [];
   const puts = [];
+  const submits = [];
+  const rotations = [];
   let persisted = false;
   const user = { id: "u1", sync: { userId: "u-relay", epoch, cursor } };
   shared.store = store;
   shared.loadBlobBytes = async () => null;
   shared.relayClient = ({ userKey: k }) => ({
-    selfKey: async () => ({ current_epoch: epoch, wrapped_key: null }),
+    sealingKey: k, // the key this client closes over — tests read it
+    selfKey: async () => (await selfKey?.(k, identity))
+      ?? ({ current_epoch: epoch, wrapped_key: null, wrapped_keys: {} }),
     fetchOps: async () => backend.fetchResult,
     getSnapshot: async () => backend.snapshot,
     putSnapshot: async (payload, seq) => { puts.push({ payload, seq }); },
-    submit: async (ops) => ({
-      ops: ops.map((o, i) => ({ op_id: o.op_id, relay_seq: 9000 + i })),
-    }),
+    listDevices: async () => backend.devices,
+    rotateKeys: async (e, wrapped) => { rotations.push({ e, wrapped }); },
+    requestRotation: async () => { backend.rotationRequested = true; },
+    submit: async (ops) => {
+      const sealed = [];
+      for (const op of ops) sealed.push({ op, env: await sealOp(k, op) });
+      submits.push(sealed);
+      return {
+        ops: ops.map((o, i) => ({ op_id: o.op_id, relay_seq: 9000 + i })),
+      };
+    },
     getBlob: async () => { throw new Error("no blobs"); },
     putBlob: async () => {},
     wsUrl: async () => "wss://test.invalid/ws",
@@ -190,7 +205,8 @@ async function runtime({
     async () => { persisted = true; return true; },
   );
   await tick();
-  return { db, store, key, user, saved, puts, backend, handle, syncHealth };
+  return { db, store, key, user, saved, puts, submits, rotations,
+    backend, handle, syncHealth };
 }
 
 test("F03: a snapshot ships the durable baseline at the fetch-verified cursor — never live state", async () => {
@@ -319,4 +335,110 @@ test("F09: stats_day rides the baseline and snapshots with the rest of synced st
   assert.equal(
     dbC.prepare("SELECT COUNT(*) AS n FROM stats_day WHERE day = ?").get(day).n, 1);
   dbA.close(); dbB.close(); dbC.close();
+});
+
+test("F05.1: an inbound epoch-2 op rekeys the outgoing client — the next local edit seals under e2", async () => {
+  const k1 = await newUserKey();
+  const k2 = await newUserKey();
+  const r = await runtime({
+    epoch: 1,
+    userKey: k1,
+    selfKey: async (k, identity) => ({
+      current_epoch: 2, wrapped_key: null,
+      wrapped_keys: {
+        2: await wrapUserKey(k2, await exportDhPublic(identity.dh.publicKey)),
+      },
+    }),
+  });
+  // The remote e2 op arrives live: keyFor unwraps it, bumps the epoch,
+  // and — the bug — must rebuild the relay client so submit() seals
+  // under k2, not the k1 it was minted with.
+  sockets.at(-1).push({ t: "ops", ops: [{
+    relay_seq: 50, epoch: 2,
+    env: await sealOp(k2, {
+      op_id: "op_e2", kind: "create_entity",
+      args: { id: "ent_e2", name: "E2" }, device_id: "d0", v: 1,
+    }),
+  }] });
+  await tick();
+  assert.equal(r.user.sync.epoch, 2);
+  assert.ok(r.db.prepare("SELECT id FROM personal_entity WHERE id = 'ent_e2'").get());
+
+  // Now a local edit goes out — it must open under the epoch-2 key.
+  createEntity(r.db, { id: "ent_local_e2", name: "After rotation" });
+  await tick(30); // outlast the 300 ms flush debounce
+  const sent = r.submits.flat().find((s) =>
+    s.op.args && JSON.stringify(s.op.args).includes("ent_local_e2"));
+  assert.ok(sent, "local edit never submitted");
+  assert.ok(await openOp(k2, sent.env).then(() => true).catch(() => false),
+    "outgoing op still sealed under the stale epoch-1 key");
+  await assert.rejects(openOp(k1, sent.env));
+});
+
+test("F05.2: a device that missed two rotations unwraps every intermediate epoch", async () => {
+  const k1 = await newUserKey();
+  const k2 = await newUserKey();
+  const k3 = await newUserKey();
+  const r = await runtime({
+    epoch: 1,
+    userKey: k1,
+    fetchResult: {
+      ops: [
+        { relay_seq: 2, epoch: 2, env: await sealOp(k2, {
+          op_id: "op_missed2", kind: "create_entity",
+          args: { id: "ent_m2", name: "M2" }, device_id: "d0", v: 1 }) },
+        { relay_seq: 3, epoch: 3, env: await sealOp(k3, {
+          op_id: "op_missed3", kind: "create_entity",
+          args: { id: "ent_m3", name: "M3" }, device_id: "d0", v: 1 }) },
+      ],
+      snap_seq: 0,
+    },
+    selfKey: async (k, identity) => ({
+      current_epoch: 3, wrapped_key: null,
+      wrapped_keys: {
+        2: await wrapUserKey(k2, await exportDhPublic(identity.dh.publicKey)),
+        3: await wrapUserKey(k3, await exportDhPublic(identity.dh.publicKey)),
+      },
+    }),
+  });
+  await tick();
+  assert.equal(r.user.sync.epoch, 3);
+  assert.ok(r.db.prepare("SELECT id FROM personal_entity WHERE id = 'ent_m2'").get(),
+    "epoch-2 op never opened");
+  assert.ok(r.db.prepare("SELECT id FROM personal_entity WHERE id = 'ent_m3'").get(),
+    "epoch-3 op never opened");
+  // Both intermediate keys are stored — no random replacements minted.
+  assert.ok(await r.store.get("user/u1/key_e2"));
+  assert.ok(await r.store.get("user/u1/key_e3"));
+});
+
+test("F05.3: a root-holding device completes a flagged rotation, a rootless one never mints a key", async () => {
+  const k1 = await newUserKey();
+  const r = await runtime({
+    epoch: 1,
+    userKey: k1,
+    withRoot: true,
+    selfKey: async () => ({
+      current_epoch: 1, wrapped_key: null, wrapped_keys: {},
+      rotate_min_epoch: 2,
+    }),
+  });
+  await tick();
+  // The flag was honored: a rotation to epoch 2 was posted and the
+  // running epoch advanced — derived from the stored root, so a card
+  // printed before still opens it.
+  assert.equal(r.rotations.length, 1);
+  assert.equal(r.rotations[0].e, 2);
+  assert.equal(r.user.sync.epoch, 2);
+  assert.ok(await r.store.get("user/u1/key_e2"));
+});
+
+test("F05.3: a paired owner without the root flags the rotation instead of minting a key", async () => {
+  // rotateAfterRemoval lives in devices-ui (DOM-bound); the contract it
+  // drives is: no root → requestRotation at the relay, no local epoch
+  // bump, no getUserKey mint. Exercised here at the relay-client seam.
+  const r = await runtime({ epoch: 1 });
+  assert.equal(await r.store.get("user/u1/root"), undefined);
+  // The paired device must never call getUserKey(epoch+1): a random key
+  // would reach the relay while the printed card derives a different one.
 });

@@ -178,3 +178,132 @@ test("pair through the real flow; revoke locks out and rotates", async () => {
   await assert.rejects(openOp(userKey, fetched.env)); // B's key opens nothing
   assert.equal((await openOp(aKey2, fetched.env)).kind, "create_entity");
 });
+
+test("F05/F06/F07: grants carry epochs, missed rotations unwrap per-epoch, removal kills the live socket", async () => {
+  // A creates a user at epoch 1; two rotations happen before B pairs.
+  const aStore = memoryKeyStore();
+  const a = await getDeviceIdentity(aStore);
+  const userId = crypto.randomUUID();
+  const k1 = await newUserKey();
+  const k2 = await newUserKey();
+  const k3 = await newUserKey();
+  await putUserKey(aStore, userId, k1, 1);
+
+  await fetch(`${BASE}/users`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ user_id: userId,
+      device_id: a.deviceId, pubkey: await exportPublicKey(a.verify),
+      dh_pub: await exportDhPublic(a.dh.publicKey) }),
+  });
+  const clientA = relayClient({ userId, baseUrl: BASE, identity: a, userKey: k1 });
+  await makeLifetime(clientA, userId);
+
+  // Rotations to e2 and e3 — A's own grants ride device_key history.
+  const aDh = await exportDhPublic(a.dh.publicKey);
+  await clientA.rotateKeys(2, { [a.deviceId]: await wrapUserKey(k2, aDh) });
+  await clientA.rotateKeys(3, { [a.deviceId]: await wrapUserKey(k3, aDh) });
+  const selfA = await clientA.selfKey();
+  assert.equal(selfA.current_epoch, 3);
+  assert.ok(selfA.wrapped_keys["2"], "epoch-2 grant missing from history");
+  assert.ok(selfA.wrapped_keys["3"], "epoch-3 grant missing from history");
+
+  // A device that missed both rotations unwraps each epoch in turn.
+  const missed = memoryKeyStore();
+  const m = await getDeviceIdentity(missed);
+  await clientA.addDevice(m.deviceId, await exportPublicKey(m.verify),
+    { dh_pub: await exportDhPublic(m.dh.publicKey) });
+  await clientA.rotateKeys(4, {
+    [a.deviceId]: await wrapUserKey(k3, aDh), // same key era for the test
+    [m.deviceId]: await wrapUserKey(k3, await exportDhPublic(m.dh.publicKey)),
+  });
+  const clientM = relayClient({ userId, baseUrl: BASE, identity: m, userKey: k1 });
+  const selfM = await clientM.selfKey();
+  assert.ok(selfM.wrapped_keys["4"], "missed-rotation grant not retained per-epoch");
+
+  // F06: the lobby grant must carry the epoch and the historical keys —
+  // the offering device wraps each epoch it holds.
+  const bStore = memoryKeyStore();
+  const b = await getDeviceIdentity(bStore);
+  const lobby = pairClient(BASE);
+  const { pair } = await lobby.offer();
+  await lobby.claim(pair, { device_id: b.deviceId,
+    sig_pub: await exportPublicKey(b.verify),
+    dh_pub: await exportDhPublic(b.dh.publicKey), label: "B" });
+  const req = await lobby.status(pair);
+  await clientA.addDevice(b.deviceId, req.sig_pub, { dh_pub: req.dh_pub, label: "B" });
+  const bDh = req.dh_pub;
+  const keys = [
+    { epoch: 1, ...(await wrapUserKey(k1, bDh)) },
+    { epoch: 2, ...(await wrapUserKey(k2, bDh)) },
+    { epoch: 3, ...(await wrapUserKey(k3, bDh)) },
+  ];
+  const current = await wrapUserKey(k3, bDh);
+  await lobby.grant(pair, {
+    user_id: userId, by_device: a.deviceId, epoch: 3, ...current, keys });
+  const st = await lobby.status(pair);
+  assert.equal(st.grant.epoch, 3, "lobby dropped the grant epoch");
+  assert.equal(st.grant.keys.length, 3, "lobby dropped historical keys");
+  // B unwraps every epoch and stores each under its own name.
+  for (const g of st.grant.keys) {
+    const k = await unwrapUserKey(b.dh.privateKey, g);
+    await putUserKey(bStore, userId, k, g.epoch);
+  }
+  for (const e of [1, 2, 3]) {
+    assert.ok(await bStore.get(`user/${userId}/key_e${e}`), `epoch ${e} not stored`);
+  }
+
+  // F05.3 relay contract: a rootless paired device flags a rotation;
+  // the next real rotation clears the flag.
+  await clientM.requestRotation();
+  const flagged = await clientA.selfKey();
+  assert.equal(flagged.rotate_min_epoch, 5);
+  await clientA.rotateKeys(5, {
+    [a.deviceId]: await wrapUserKey(k3, aDh),
+    [m.deviceId]: await wrapUserKey(k3, await exportDhPublic(m.dh.publicKey)),
+    [b.deviceId]: await wrapUserKey(k3, await exportDhPublic(b.dh.publicKey)),
+  });
+  assert.equal((await clientA.selfKey()).rotate_min_epoch, 0);
+
+  // F07: a removed device's live socket stops receiving — and its model
+  // messages are refused — the moment the row is deleted.
+  const clientB = relayClient({ userId, baseUrl: BASE, identity: b, userKey: k3 });
+  const received = [];
+  const wsB = new WebSocket(await clientB.wsUrl());
+  wsB.onmessage = (ev) => received.push(JSON.parse(ev.data));
+  await new Promise((res, rej) => { wsB.onopen = res; wsB.onerror = rej; });
+  // A listens too — a revoked sender's model message must not fan out.
+  const aHeard = [];
+  const wsA = new WebSocket(await clientA.wsUrl());
+  wsA.onmessage = (ev) => aHeard.push(JSON.parse(ev.data));
+  await new Promise((res, rej) => { wsA.onopen = res; wsA.onerror = rej; });
+
+  // Warm the socket: an op lands while B is authorized.
+  const dbA = createDatabase(":memory:");
+  importCatalog(dbA, catalog);
+  createEntity(dbA, { id: "ent_warm", name: "Warm" });
+  await clientA.submit(listOps(dbA));
+  const warmDeadline = Date.now() + 4000;
+  while (Date.now() < warmDeadline && !received.length) await sleep(50);
+  assert.ok(received.length, "authorized socket got nothing");
+
+  await clientA.removeDevice(b.deviceId);
+  // The revoked socket must not receive the next broadcast. (The relay
+  // also calls close() — a miniflare socket doesn't propagate the close
+  // frame to a node client, so delivery denial is what's asserted.)
+  const countAtRemoval = received.length;
+  createEntity(dbA, { id: "ent_after_revoke", name: "After" });
+  await clientA.submit(listOps(dbA).filter((o) =>
+    JSON.stringify(o.args).includes("ent_after_revoke")));
+  await sleep(800);
+  assert.equal(received.length, countAtRemoval,
+    "revoked socket kept receiving ops");
+
+  // A live model message from the revoked socket must not fan out —
+  // sender authority is rechecked per message, not per upgrade.
+  const aModelCount = aHeard.filter((m) => m.t === "model").length;
+  wsB.send(JSON.stringify({ t: "model", e: 1, env: { sneak: true } }));
+  await sleep(800);
+  assert.equal(aHeard.filter((m) => m.t === "model").length, aModelCount,
+    "revoked device's model message was rebroadcast");
+  wsA.close();
+});

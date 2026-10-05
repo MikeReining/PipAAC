@@ -53,6 +53,11 @@ export class PairingLobby {
         );
       `);
       try { ctx.storage.sql.exec("ALTER TABLE req ADD COLUMN label TEXT"); } catch { /* there */ }
+      // The grant must carry which epoch its wrapped key seals under
+      // (audit F06) plus every historical epoch the receiver needs to
+      // open the backlog (audit F05.5) — the lobby used to drop both.
+      try { ctx.storage.sql.exec("ALTER TABLE grant ADD COLUMN epoch INTEGER"); } catch { /* there */ }
+      try { ctx.storage.sql.exec("ALTER TABLE grant ADD COLUMN keys TEXT"); } catch { /* there */ }
     });
   }
 
@@ -100,6 +105,8 @@ export class PairingLobby {
         ...(grant ? { grant: {
           user_id: grant.user_id, eph: grant.eph, iv: grant.iv,
           wrapped: grant.wrapped, by_device: grant.by_device,
+          ...(grant.epoch != null ? { epoch: grant.epoch } : {}),
+          ...(grant.keys ? { keys: JSON.parse(grant.keys) } : {}),
           ...(grant.refused ? { refused: grant.refused } : {}),
         } } : {}),
       });
@@ -117,10 +124,13 @@ export class PairingLobby {
         return bad("bad_request");
       }
       this.ctx.storage.sql.exec(
-        `INSERT INTO grant (id, user_id, eph, iv, wrapped, by_device, refused, created_at)
-         VALUES (1, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO grant (id, user_id, eph, iv, wrapped, by_device, refused, epoch, keys, created_at)
+         VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         g.user_id ?? "", g.eph ?? "", g.iv ?? "", g.wrapped ?? "",
-        g.by_device ?? "", refused || null, Date.now());
+        g.by_device ?? "", refused || null,
+        Number.isInteger(g.epoch) ? g.epoch : null,
+        Array.isArray(g.keys) ? JSON.stringify(g.keys) : null,
+        Date.now());
       return json({ ok: true });
     }
 

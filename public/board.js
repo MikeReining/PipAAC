@@ -1464,6 +1464,7 @@ mountRecovery({
   me, saveUser, userStore, flushDb, toast, qrcode,
   userClient: () => devicesUi.userClient(),
   ensureUser: (o) => devicesUi.ensureUser(o),
+  syncRekey,
 });
 
 /* Board editor — public/board/editor-ui.js (031) */

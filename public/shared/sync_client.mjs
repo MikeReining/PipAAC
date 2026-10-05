@@ -90,6 +90,9 @@ export function relayClient({ userId, baseUrl, identity, userKey }) {
       call("POST", `/supporters/${encodeURIComponent(for_acct)}/owner`, { owner: !!owner }),
     /** Post a new key epoch: { epoch, wrapped: { device_id: grant } }. */
     rotateKeys: (epoch, wrapped) => call("POST", "/keys", { epoch, wrapped }),
+    /** A paired owner (no recovery root) can't mint a card-derivable
+     *  epoch key — it flags the rotation and a root holder finishes it. */
+    requestRotation: () => call("POST", "/keys", { request_rotation: true }),
     /** Activate Pip Lifetime with a user-bound license key (dev path). */
     setEntitlement: (license) => call("POST", "/entitlement", { license }),
     /** Device-side read: after a purchase or redeemed code lands

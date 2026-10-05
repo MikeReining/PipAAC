@@ -19,6 +19,9 @@ const $ = (id) => document.getElementById(id);
 export function mountRecovery({
   me, saveUser, userStore, flushDb, toast, qrcode, userClient,
   ensureUser = async () => { throw new Error("no relay"); },
+  // Replace-card rotates the epoch — the running sync client must start
+  // sealing under the new key, not find out from the next inbound op.
+  syncRekey = async () => null,
 }) {
   const relayBase = location.origin;
   /* ------------------------------------------------------------------ *
@@ -193,6 +196,7 @@ export function mountRecovery({
     }
     await client.rotateKeys(epoch, wrapped);
     await saveUser({ sync: { ...me.sync, epoch } });
+    await syncRekey(epoch);
     await showCard();
   }
 

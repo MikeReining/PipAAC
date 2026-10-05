@@ -92,6 +92,15 @@ export class UserRelay {
           email TEXT,
           added_at INTEGER NOT NULL
         );
+        -- Every wrapped epoch grant a device was ever offered: a device
+        -- that missed rotations unwraps each epoch in turn instead of
+        -- finding only the latest (audit F05).
+        CREATE TABLE IF NOT EXISTS device_key (
+          device_id TEXT NOT NULL,
+          epoch INTEGER NOT NULL,
+          wrapped_key TEXT NOT NULL,
+          PRIMARY KEY (device_id, epoch)
+        );
       `);
       // Persisted dev DOs from before slice 5 lack the new columns.
       for (const alter of [
@@ -192,10 +201,37 @@ export class UserRelay {
     return ok ? device : null;
   }
 
+  /** The device ids currently authorized — a socket's upgrade-time
+   *  authentication is not permanent authority (audit F07). */
+  allowedDevices() {
+    return new Set(
+      this.ctx.storage.sql.exec("SELECT device_id FROM device").toArray()
+        .map((r) => r.device_id));
+  }
+
+  /** Close every live socket whose device is no longer authorized.
+   *  Called on every revocation path — removal, supporter cascade,
+   *  restore-move — so a deleted row ends the connection's authority
+   *  the moment it happens, not at the next request. */
+  dropRevokedSockets() {
+    const allowed = this.allowedDevices();
+    for (const ws of this.ctx.getWebSockets()) {
+      const d = ws.deserializeAttachment()?.d;
+      if (!allowed.has(d)) {
+        try { ws.close(); } catch { /* already going */ }
+      }
+    }
+  }
+
   broadcast(msg, except = null) {
     const text = JSON.stringify(msg);
+    const allowed = this.allowedDevices();
     for (const ws of this.ctx.getWebSockets()) {
       if (ws === except) continue;
+      if (!allowed.has(ws.deserializeAttachment()?.d)) {
+        try { ws.close(); } catch { /* closing */ }
+        continue;
+      }
       try { ws.send(text); } catch { /* socket closing */ }
     }
   }
@@ -254,6 +290,8 @@ export class UserRelay {
       const moved = this.entitlement() !== "lifetime";
       if (moved) {
         this.ctx.storage.sql.exec("DELETE FROM device");
+        this.ctx.storage.sql.exec("DELETE FROM device_key");
+        this.dropRevokedSockets();
       }
       this.ctx.storage.sql.exec(
         `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at)
@@ -273,7 +311,10 @@ export class UserRelay {
       this.touchSeen();
       const pair = new WebSocketPair();
       this.ctx.acceptWebSocket(pair[1]);
-      pair[1].serializeAttachment({ d: wsDevice.device_id });
+      // verify() returns the verified device id itself — attaching
+      // `wsDevice.device_id` stored undefined and every socket looked
+      // anonymous (audit F07).
+      pair[1].serializeAttachment({ d: wsDevice });
       return new Response(null, { status: 101, webSocket: pair[0] });
     }
 
@@ -333,7 +374,10 @@ export class UserRelay {
       if (!acct) return bad("bad_request");
       this.ctx.storage.sql.exec("DELETE FROM supporter WHERE acct_id = ?", acct);
       this.ctx.storage.sql.exec("DELETE FROM device WHERE via_acct = ?", acct);
+      this.ctx.storage.sql.exec(
+        "DELETE FROM device_key WHERE device_id NOT IN (SELECT device_id FROM device)");
       this.ctx.storage.sql.exec("DELETE FROM join_token WHERE for_acct = ?", acct);
+      this.dropRevokedSockets();
       return json({ ok: true });
     }
 
@@ -440,6 +484,11 @@ export class UserRelay {
         `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at, label)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         device_id, pubkey, dh_pub ?? null, wrapped_key ?? null, epoch, Date.now(), deviceLabel(label));
+      if (wrapped_key) {
+        this.ctx.storage.sql.exec(
+          "INSERT OR IGNORE INTO device_key (device_id, epoch, wrapped_key) VALUES (?, ?, ?)",
+          device_id, epoch, JSON.stringify(wrapped_key));
+      }
       return json({ ok: true });
     }
 
@@ -523,7 +572,10 @@ export class UserRelay {
       this.ctx.storage.sql.exec(
         "DELETE FROM device WHERE via_acct = ?", target);
       this.ctx.storage.sql.exec(
+        "DELETE FROM device_key WHERE device_id NOT IN (SELECT device_id FROM device)");
+      this.ctx.storage.sql.exec(
         "DELETE FROM join_token WHERE for_acct = ?", target);
+      this.dropRevokedSockets();
       return json({ ok: true });
     }
 
@@ -534,9 +586,21 @@ export class UserRelay {
       const row = this.ctx.storage.sql.exec(
         "SELECT device_id, dh_pub, wrapped_key, epoch FROM device WHERE device_id = ?",
         device).toArray()[0];
+      // Every wrapped epoch this device was ever granted — a returning
+      // device that missed rotations unwraps each in turn (audit F05).
+      const wrappedKeys = {};
+      for (const r of this.ctx.storage.sql.exec(
+        "SELECT epoch, wrapped_key FROM device_key WHERE device_id = ?",
+        device).toArray()) {
+        wrappedKeys[r.epoch] = JSON.parse(r.wrapped_key);
+      }
+      if (row?.wrapped_key && row.epoch != null && !wrappedKeys[row.epoch]) {
+        wrappedKeys[row.epoch] = JSON.parse(row.wrapped_key);
+      }
       const idleAt = prevSeen + IDLE_DELETE_MS;
       return json({
-        ...row, current_epoch: this.epoch(),
+        ...row, current_epoch: this.epoch(), wrapped_keys: wrappedKeys,
+        rotate_min_epoch: Number(this.metaGet("rotate_min_epoch") ?? 0),
         entitlement: this.entitlement(),
         owner: this.isOwner(device),
         ...(this.metaGet("payment_issue") ? { payment_issue: this.metaGet("payment_issue") } : {}),
@@ -617,8 +681,20 @@ export class UserRelay {
     // Key rotation (§ 3 revoke): the signer posts a new epoch and a
     // wrapped key per remaining device. Only devices still in the table
     // receive a wrapped key — a removed device gets nothing.
+    //
+    // A paired owner has no recovery root, so it cannot mint an epoch
+    // key the printed card could derive (audit F05.3). It flags
+    // `rotate_min_epoch` instead; the next root-holding device that
+    // checks in completes the rotation, which clears the flag. While
+    // the flag stands the removed device is already unauthorized —
+    // authorization, not encryption, is what holds the door.
     if (method === "POST" && route === "keys") {
-      const { epoch, wrapped } = JSON.parse(td.decode(bodyBytes));
+      const parsed = JSON.parse(td.decode(bodyBytes));
+      if (parsed?.request_rotation === true) {
+        this.metaSet("rotate_min_epoch", String(this.epoch() + 1));
+        return json({ ok: true, rotate_min_epoch: this.epoch() + 1 });
+      }
+      const { epoch, wrapped } = parsed;
       if (!epoch || !wrapped || epoch <= this.epoch()) return bad("bad_epoch");
       const allowed = new Set(
         this.ctx.storage.sql.exec("SELECT device_id FROM device").toArray()
@@ -628,17 +704,23 @@ export class UserRelay {
         this.ctx.storage.sql.exec(
           "UPDATE device SET wrapped_key = ?, epoch = ? WHERE device_id = ?",
           JSON.stringify(wk), epoch, dev);
+        this.ctx.storage.sql.exec(
+          "INSERT OR REPLACE INTO device_key (device_id, epoch, wrapped_key) VALUES (?, ?, ?)",
+          dev, epoch, JSON.stringify(wk));
       }
       this.ctx.storage.sql.exec(
         "INSERT OR REPLACE INTO meta (k, v) VALUES ('key_epoch', ?)", String(epoch));
+      if (epoch >= Number(this.metaGet("rotate_min_epoch") ?? 0)) {
+        this.ctx.storage.sql.exec("DELETE FROM meta WHERE k = 'rotate_min_epoch'");
+      }
       return json({ ok: true, epoch });
     }
 
     if (method === "DELETE" && route.startsWith("devices/")) {
       const target = route.slice("devices/".length);
       this.ctx.storage.sql.exec("DELETE FROM device WHERE device_id = ?", target);
-      // Key rotation lives with pairing (slice 5); removal alone just
-      // locks the door — old ops stay readable to nobody new.
+      this.ctx.storage.sql.exec("DELETE FROM device_key WHERE device_id = ?", target);
+      this.dropRevokedSockets();
       return json({ ok: true });
     }
 
@@ -843,8 +925,14 @@ export class UserRelay {
     try { m = JSON.parse(msg); } catch { return; }
     if (m?.t !== "model" || typeof m.env !== "object" || !m.env ||
         JSON.stringify(m.env).length > 4096) return;
-    this.broadcast({ t: "model", e: m.e ?? 1, env: m.env,
-      from: ws.deserializeAttachment()?.d ?? null }, ws);
+    // The sender must still be an authorized device — an accepted
+    // socket outlives a revocation without this check (audit F07).
+    const from = ws.deserializeAttachment()?.d ?? null;
+    if (!this.allowedDevices().has(from)) {
+      try { ws.close(); } catch { /* closing */ }
+      return;
+    }
+    this.broadcast({ t: "model", e: m.e ?? 1, env: m.env, from }, ws);
   }
   webSocketClose() { /* hibernation reaps the socket itself */ }
   webSocketError() {}

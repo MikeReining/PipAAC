@@ -2,16 +2,17 @@
   "files": {
     "public/audio-review-elevenlabs-tiles.html": 802,
     "public/audio-review-elevenlabs-v4-lab.html": 758,
-    "public/board.js": 1612,
+    "public/board.js": 1613,
     "public/board/add-flow.js": 677,
     "public/board/base.css": 828,
-    "public/board/devices-ui.js": 1042,
+    "public/board/devices-ui.js": 1069,
     "public/board/editor-ui.js": 1171,
     "public/board/speech.js": 569,
     "public/board/word-card.js": 805,
     "public/index.html": 1151,
     "public/shared/funnel.mjs": 673,
     "public/shared/ops.mjs": 585,
+    "public/shared/sync.mjs": 525,
     "public/sw-manifest.json": 4595,
     "scripts/art/batch52.mjs": 513,
     "scripts/catalog/audio_review_dev.mjs": 1056,
@@ -32,7 +33,7 @@
     "src/worker/index.js": 576,
     "src/worker/pictures.test.mjs": 795,
     "src/worker/pictures_draw.test.mjs": 634,
-    "src/worker/relay.js": 851,
+    "src/worker/relay.js": 939,
     "src/worker/tile.js": 779
   }
 }

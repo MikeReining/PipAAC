@@ -15,8 +15,9 @@
 import { adoptSnapshot, appliedSeqOf, baselineSnapshot, confirmOps, drainOps, listOps, setDeviceId, setOpSink } from "./ops.mjs";
 import { loadBlobBytes, saveBlobBytes, setBlobFetcher } from "../db.js";
 import {
-  getDeviceIdentity, getUserKey, openBlob, openKeyStore, openOp, putUserKey, sealOp,
-  sealBlob, unwrapUserKey,
+  deriveEpochKey, getDeviceIdentity, getUserKey, openBlob, openKeyStore, openOp,
+  putUserKey, sealOp, sealBlob, unwrapUserKey, userKeyName, userRootName,
+  wrapUserKey,
 } from "./sync_crypto.mjs";
 import { relayClient } from "./sync_client.mjs";
 import { onOnline, onVisible } from "./platform.mjs";
@@ -76,21 +77,61 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     return epoch;
   };
 
+  /** Rebuild the relay client whenever the sealing key changes —
+   *  submit() closes over its key, so a client minted under epoch N
+   *  keeps signing epoch-N envelopes after a rotation (audit F05.1). */
+  const rebuildClient = () => {
+    client = relayClient({ userId: cfg.userId, baseUrl, identity, userKey });
+  };
+
   /** Key for an op's epoch — a higher epoch means a rotation happened:
-   *  pick up the wrapped key the granter left for us. */
+   *  unwrap every grant between our epoch and the op's from the relay's
+   *  per-epoch history, so a device that missed several rotations still
+   *  opens each envelope under its own key (audit F05.2). A stored key
+   *  is fetched explicitly — a missing historical key must never mint a
+   *  random replacement. */
   const keyFor = async (e) => {
-    if (e <= epoch) return getUserKey(store, user.id, e);
+    if (e <= epoch) {
+      const stored = await store.get(userKeyName(user.id, e));
+      if (stored) return stored;
+      // Only the device's own top epoch may be minted — anything older
+      // is a genuinely absent grant, and a random key would just fail
+      // to open the envelope anyway.
+      if (e === epoch) return getUserKey(store, user.id, e);
+      throw new Error(`sync: no stored key for epoch ${e}`);
+    }
     const self = await client.selfKey();
-    if (!self.wrapped_key || self.current_epoch < e) {
+    const grants = self.wrapped_keys ?? {};
+    let highest = epoch;
+    // Unwrap every grant past our epoch, not just the op's: the local
+    // epoch must track the relay's so outgoing edits seal under the
+    // current key, and the whole chain stays openable in between.
+    for (const [ge, wk] of Object.entries(grants)) {
+      const g = Number(ge);
+      if (g <= epoch || !wk) continue;
+      const k = await unwrapUserKey(identity.dh.privateKey,
+        typeof wk === "string" ? JSON.parse(wk) : wk);
+      await putUserKey(store, user.id, k, g);
+      if (g > highest) highest = g;
+    }
+    // Legacy relay: only the current epoch's single grant.
+    if (highest === epoch && self.wrapped_key && self.current_epoch > epoch) {
+      const k = await unwrapUserKey(
+        identity.dh.privateKey, JSON.parse(self.wrapped_key));
+      await putUserKey(store, user.id, k, self.current_epoch);
+      highest = self.current_epoch;
+    }
+    if (highest < e) {
       throw new Error(`sync: no wrapped key for epoch ${e}`);
     }
-    const k = await unwrapUserKey(identity.dh.privateKey, JSON.parse(self.wrapped_key));
-    await putUserKey(store, user.id, k, self.current_epoch);
-    epoch = self.current_epoch;
-    userKey = k;
+    epoch = highest;
+    userKey = await getUserKey(store, user.id, epoch);
     cfg.epoch = epoch;
     await saveUser({ sync: cfg });
-    return k;
+    rebuildClient();
+    const key = await store.get(userKeyName(user.id, e));
+    if (!key) throw new Error(`sync: no stored key for epoch ${e}`);
+    return key;
   };
 
   /** Lazy blob pull for loadPhotoURL: fetch the sealed envelope, open it
@@ -269,6 +310,33 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     } catch { /* the next drain retries */ }
   };
 
+  /** A paired owner (no recovery root) can't mint an epoch key the
+   *  printed card could derive — it flags rotate_min_epoch at the relay
+   *  instead, and the next root holder that checks in finishes the
+   *  rotation: derive the epoch key, wrap it for every remaining
+   *  device, post it, rekey the running client (audit F05.3). */
+  const maybeCompleteRotation = async () => {
+    const root = await store.get(userRootName(user.id));
+    if (!root) return;
+    const self = await client.selfKey().catch(() => null);
+    const need = Number(self?.rotate_min_epoch ?? 0);
+    if (!(need > epoch)) return;
+    const key = await deriveEpochKey(
+      root instanceof Uint8Array ? root : new Uint8Array(root), need);
+    const { devices } = await client.listDevices();
+    const wrapped = {};
+    for (const d of devices) {
+      if (d.dh_pub) wrapped[d.device_id] = await wrapUserKey(key, d.dh_pub);
+    }
+    await client.rotateKeys(need, wrapped);
+    await putUserKey(store, user.id, key, need);
+    epoch = need;
+    userKey = key;
+    cfg.epoch = epoch;
+    await saveUser({ sync: cfg });
+    rebuildClient();
+  };
+
   /** Adopt the relay snapshot, durably: the cursor only moves to its
    *  watermark once the database bytes themselves were saved — the
    *  same rule ingest follows. Returns the cursor it reached. */
@@ -350,6 +418,8 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
       await ingest(rows ?? [], { fetched: true });
       break;
     }
+    await maybeCompleteRotation().catch((err) =>
+      console.warn("sync: deferred rotation failed", err));
     await maybeSnapshot().catch(() => {});
     await flush();
     // Ops applied above may carry new blob: refs, and the queue may

@@ -4,7 +4,8 @@
  */
 import {
   ensureRecoveryRoot, exportDhPublic, exportPublicKey, getDeviceIdentity,
-  getUserKey, openKeyStore, putUserKey, sealBlob, unwrapUserKey, wrapUserKey,
+  getUserKey, openKeyStore, putUserKey, sealBlob, unwrapUserKey, userRootName,
+  wrapUserKey,
 } from "../shared/sync_crypto.mjs";
 import { recoveryProof } from "../shared/recovery.mjs";
 import { joinDeviceWithToken, pairClient, relayClient } from "../shared/sync_client.mjs";
@@ -282,25 +283,39 @@ export function mountDevices({
     }
   }
 
+  /** Rotate the user key after a removal. A device holding the recovery
+   *  root derives the next epoch so a card printed before still opens
+   *  it. A paired owner holds no root — getUserKey would mint a random
+   *  key the card could never derive (audit F05.3), so it flags the
+   *  rotation at the relay and the next root holder completes it. The
+   *  removed party is already unauthorized in the meantime. */
+  async function rotateAfterRemoval(client, store, devices) {
+    const root = await store.get(userRootName(me.id));
+    if (!root) {
+      await client.requestRotation();
+      return;
+    }
+    const epoch = (me.sync?.epoch ?? 1) + 1;
+    const key = await getUserKey(store, me.id, epoch);
+    const wrapped = {};
+    for (const d of devices) {
+      if (d.dh_pub) wrapped[d.device_id] = await wrapUserKey(key, d.dh_pub);
+    }
+    await client.rotateKeys(epoch, wrapped);
+    await saveUser({ sync: { ...me.sync, epoch } });
+    // The running sync client still seals under the old epoch — tell it
+    // now so the next edit is sealed under the new key.
+    await syncRekey(epoch);
+  }
+
   /** Remove locks the door; rotating the user key means the removed
    *  device cannot read anything written after. */
   async function removeDeviceFlow(client, store, identity, targetId) {
     if (!confirm(`Remove ${targetId}? It keeps what it already saw.`)) return;
     const { devices } = await client.listDevices();
     await client.removeDevice(targetId);
-    const remaining = devices.filter((d) => d.device_id !== targetId && d.dh_pub);
-    const epoch = (me.sync?.epoch ?? 1) + 1;
-    // Root-derived when this device holds the recovery root, so a card
-    // printed before the removal still opens the new epoch.
-    const key = await getUserKey(store, me.id, epoch);
-    const wrapped = {};
-    for (const d of remaining) wrapped[d.device_id] = await wrapUserKey(key, d.dh_pub);
-    await client.rotateKeys(epoch, wrapped);
-    await saveUser({ sync: { ...me.sync, epoch } });
-    // The running sync client still seals under the old epoch until it
-    // sees an incoming e2 op — tell it now so the next edit is sealed
-    // under a key the removed device never received.
-    await syncRekey(epoch);
+    await rotateAfterRemoval(client, store,
+      devices.filter((d) => d.device_id !== targetId));
     await renderDevices();
   }
 
@@ -597,15 +612,7 @@ export function mountDevices({
       if (sup.token && st) await revokeInvite(sup.token, st.session);
       const { devices } = await client.listDevices();
       const { supporters } = await client.listSupporters();
-      const epoch = (me.sync?.epoch ?? 1) + 1;
-      const key = await getUserKey(store, me.id, epoch);
-      const wrapped = {};
-      for (const d of devices) {
-        if (d.dh_pub) wrapped[d.device_id] = await wrapUserKey(key, d.dh_pub);
-      }
-      await client.rotateKeys(epoch, wrapped);
-      await saveUser({ sync: { ...me.sync, epoch } });
-      await syncRekey(epoch); // running client seals under the new epoch now
+      await rotateAfterRemoval(client, store, devices);
       // Regrant remaining supporters so their next sign-in unwraps the
       // new epoch — their bundle rows replace wholesale.
       if (st) {
@@ -777,11 +784,22 @@ export function mountDevices({
         if (st.status !== "granted") return;
         clearInterval(pairPoll);
         pairPoll = null;
-        const key = await unwrapUserKey(identity.dh.privateKey, st.grant);
         // The granter wrapped its CURRENT-epoch key — the grant carries
         // which one; storing it as e1 would break post-rotation ops.
         const epoch = st.grant.epoch ?? 1;
-        await putUserKey(store, st.grant.user_id, key, epoch);
+        // Historical epochs ride along so the backlog under earlier
+        // rotations still opens; older granters send only the single
+        // wrapped key, which lands at `epoch`.
+        if (Array.isArray(st.grant.keys) && st.grant.keys.length) {
+          for (const g of st.grant.keys) {
+            if (!Number.isInteger(g?.epoch)) continue;
+            const k = await unwrapUserKey(identity.dh.privateKey, g);
+            await putUserKey(store, st.grant.user_id, k, g.epoch);
+          }
+        } else {
+          const key = await unwrapUserKey(identity.dh.privateKey, st.grant);
+          await putUserKey(store, st.grant.user_id, key, epoch);
+        }
         // A fresh device's untouched welcome person is a placeholder —
         // the joined person replaces it instead of sitting beside it.
         const fresh = me.needsSetup && me.id !== st.grant.user_id;
@@ -920,9 +938,18 @@ export function mountDevices({
         return;
       }
       const wrapped = await wrapUserKey(userKey, st.dh_pub);
+      // Every epoch this device holds, wrapped to the newcomer — ops,
+      // snapshots and media sealed under earlier rotations must still
+      // open on the new device (audit F05.5). The single-key fields
+      // ride along for older receivers.
+      const keys = [];
+      for (let e = 1; e <= (me.sync?.epoch ?? 1); e++) {
+        const k = await store.get(`user/${me.id}/key_e${e}`);
+        if (k) keys.push({ epoch: e, ...(await wrapUserKey(k, st.dh_pub)) });
+      }
       await pairClient(relayBase).grant(pair, {
         user_id: me.sync.userId, by_device: identity.deviceId,
-        epoch: me.sync.epoch ?? 1, ...wrapped });
+        epoch: me.sync.epoch ?? 1, ...wrapped, keys });
       const done = document.createElement("p");
       done.className = "pair-done";
       done.textContent = `✓ ${who} is on ${name}.`;
