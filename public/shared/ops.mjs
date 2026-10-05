@@ -482,25 +482,33 @@ export function adoptSnapshot(db, tables, seq = 0) {
  * state a rebuild restores before replaying the retained log, kept
  * separate from row 1's derived post-fold state. A fresh database
  * anchors at the post-catalog origin; adopted snapshots replace it.
- * Databases written before the anchor existed get the canonical empty
- * base — no pre-tail checkpoint survives on them, and an empty anchor
- * rebuild replays the complete retained log honestly (catalog-owned
- * synced rows are restored by the next catalog import).
+ * Databases written before the anchor existed have none — no provable
+ * pre-tail checkpoint survives on them, and fabricating one would let a
+ * wound rebuild over empty state and drop catalog-owned synced rows.
  */
 export function ensureBaseline(db) {
   if (!db.prepare("SELECT 1 AS x FROM sync_baseline WHERE id = 1").all()[0]) {
     saveBaseline(db, 0);
   }
-  // A baseline stamped 0 is still the post-catalog origin — folds always
-  // stamp seqs ≥ 1 — so it anchors rebuilds directly. Anything else
-  // predates anchors: no pre-tail checkpoint survives on it, so it gets
-  // the canonical empty base until an adoption stores a real one.
+  /* The e5cf9708 build wrote "{}" placeholder anchors into databases
+   * too old to have a real one — a fabricated "trusted" pre-tail state
+   * that a wound rebuild would restore, wiping catalog-owned synced
+   * rows (the profile) no op re-creates. Drop it wherever it landed so
+   * the missing-anchor refusal and adoption healing still apply. */
+  db.prepare("DELETE FROM sync_baseline WHERE id = 2 AND tables = '{}'").run();
+  /* A baseline stamped 0 is the post-catalog origin — folds always
+   * stamp seqs ≥ 1 — so it is the one baseline whose pre-tail state is
+   * provable; it anchors rebuilds directly. Anything else predates
+   * anchors: there is no trustworthy checkpoint to recover, so the
+   * database simply has none — a wound then refuses until an adoption
+   * stores a real anchor rather than rebuilding over a fabricated base. */
   const row = db.prepare(
     "SELECT tables, applied_seq FROM sync_baseline WHERE id = 1").all()[0];
-  const origin = row.applied_seq === 0 ? row.tables : "{}";
-  db.prepare(
-    "INSERT OR IGNORE INTO sync_baseline (id, tables, applied_seq) VALUES (2, ?, 0)",
-  ).run(origin);
+  if (row.applied_seq === 0) {
+    db.prepare(
+      "INSERT OR IGNORE INTO sync_baseline (id, tables, applied_seq) VALUES (2, ?, 0)",
+    ).run(row.tables);
+  }
 }
 
 /**
@@ -524,8 +532,10 @@ export function drainOps(db, confirmedOps = [], { fetched = true } = {}) {
   // Row 2 is the stable replay anchor (SYNC_REPLAY_ANCHOR): its seq is a
   // coverage floor — ops at or below it are claimed inside the anchor —
   // and its tables are the trusted pre-tail state a rebuild restores.
-  const anchor = db.prepare(
+  // A "{}" row is the e5cf9708 placeholder — fabrication, never a base.
+  const anchorRow = db.prepare(
     "SELECT tables, applied_seq FROM sync_baseline WHERE id = 2").all()[0];
+  const anchor = anchorRow?.tables === "{}" ? null : anchorRow;
   const floor = anchor?.applied_seq ?? 0;
   /* The legacy upgrade is decided BEFORE marking anything new: a
    * NULL-stamped baseline holding boards is old post-drain state —

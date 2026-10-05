@@ -5,12 +5,14 @@
  * review; set_setting fixtures corrected to a synced key (person_name). */
 import test from "node:test";
 import assert from "node:assert/strict";
+import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createDatabase, importCatalog } from "./catalog.mjs";
 import { createEntity, createGroup, swapGroups } from "../../public/shared/groups.mjs";
+import { migrateSchema, ADDITIVE_COLUMNS } from "../../public/shared/migrate.mjs";
 import { adoptSnapshot, appliedSeqOf, drainOps, ensureBaseline, listOps, snapshotSynced } from "../../public/shared/ops.mjs";
 
 const catalog = JSON.parse(readFileSync(new URL("../../public/catalog.json", import.meta.url), "utf8"));
@@ -195,3 +197,81 @@ test("drainOps works against a facade whose run() returns nothing", () => {
 /** Build the bytes an old release actually saved: the pre-anchor schema
  * (sync_baseline CHECK (id = 1)), confirmed+applied ops, a nonzero
  * derived baseline, a family edit, a pending op — and a persisted
+ * wound: a mid-log op unapplied beneath applied ones. */
+const savedWoundedDb = (file) => {
+  const schema = readFileSync(new URL("./schema.sql", import.meta.url), "utf8");
+  const old = schema.replace("CHECK (id IN (1, 2))", "CHECK (id = 1)");
+  assert.notEqual(old, schema, "schema no longer carries the anchor CHECK to revert");
+  const db = new DatabaseSync(file);
+  db.exec("PRAGMA foreign_keys = ON");
+  db.exec(old);
+  importCatalog(db, catalog); // ensureBaseline: old shape — baseline id=1 only
+  db.prepare("DELETE FROM sync_baseline WHERE id = 2").run(); // anchors did not exist
+  const ops = [
+    remote(1, "set_setting", { key: "person_name", value: "Family" }),
+    remote(2, "create_group", { id: "grp_saved", name: "Saved", indexSlot: 87 }),
+    remote(3, "set_setting", { key: "person_name", value: "Folded" }),
+  ];
+  drainOps(db, ops);
+  // The wound the 6a2c5f17-era repair could leave persisted.
+  db.prepare("UPDATE sync_op SET applied = 0 WHERE relay_seq = 2").run();
+  createEntity(db, { id: "ent_saved_pending", name: "Pending edit" });
+  db.close();
+};
+
+test("a saved pre-anchor database upgrades without a fabricated anchor", () => {
+  const file = `${mkdtempSync(join(tmpdir(), "pip-upgrade-"))}/db.sqlite`;
+  savedWoundedDb(file);
+  const donor = replica();
+  try {
+    // Reopen exactly as bootDb does: migrate, import (idempotent
+    // reconcile), ensureBaseline — then a fetched drain hits the wound.
+    const db = new DatabaseSync(file);
+    const d = voidRunFacade(db);
+    migrateSchema(d, catalog.schemaSql, ADDITIVE_COLUMNS);
+    d.exec(catalog.schemaSql);
+    importCatalog(d, catalog); // runs ensureBaseline internally
+    const anchor = db.prepare("SELECT tables FROM sync_baseline WHERE id = 2").get();
+    assert.equal(anchor, undefined,
+      "ensureBaseline fabricated a trusted anchor for a non-origin baseline");
+    assert.throws(() => drainOps(d, [remote(4, "set_setting", { key: "person_name", value: "Four" })]),
+      /no replay anchor/);
+    // Refusal preserves everything: family data, flags, pending edit.
+    assert.equal(db.prepare("SELECT person_name FROM learner_profile").get().person_name, "Folded");
+    assert.equal(db.prepare("SELECT applied AS a FROM sync_op WHERE relay_seq = 3").get().a, 1);
+    assert.ok(db.prepare("SELECT 1 FROM personal_entity WHERE id = 'ent_saved_pending'").get());
+    // A bridging snapshot installs a real anchor; the wound heals.
+    drainOps(donor, [remote(1, "set_setting", { key: "person_name", value: "Family" }),
+      remote(2, "create_group", { id: "grp_saved", name: "Saved", indexSlot: 87 }),
+      remote(3, "set_setting", { key: "person_name", value: "Folded" })]);
+    adoptSnapshot(d, snapshotSynced(donor), 3);
+    drainOps(d, [remote(4, "set_setting", { key: "person_name", value: "Four" })]);
+    assert.equal(db.prepare("SELECT person_name FROM learner_profile").get().person_name, "Four");
+    assert.equal(slot(db, "grp_saved"), 87);
+    assert.equal(appliedSeqOf(d), 4);
+    db.close();
+  } finally { donor.close(); }
+});
+
+test("a '{}' placeholder anchor written by the e5cf9708 release is not trusted", () => {
+  const file = `${mkdtempSync(join(tmpdir(), "pip-placeholder-"))}/db.sqlite`;
+  savedWoundedDb(file);
+  const db = new DatabaseSync(file);
+  const d = voidRunFacade(db);
+  try {
+    migrateSchema(d, catalog.schemaSql, ADDITIVE_COLUMNS);
+    d.exec(catalog.schemaSql);
+    // The e5cf9708 release wrote this fabricated anchor on upgrade —
+    // the CHECK only relaxes after migration, so the write lands here.
+    db.prepare(
+      "INSERT INTO sync_baseline (id, tables, applied_seq) VALUES (2, '{}', 0)").run();
+    importCatalog(d, catalog);
+    const anchor = db.prepare("SELECT tables FROM sync_baseline WHERE id = 2").get();
+    assert.ok(anchor === undefined || anchor.tables !== "{}",
+      "the fabricated placeholder anchor survived the boot path");
+    assert.throws(() => drainOps(d, [remote(4, "set_setting", { key: "person_name", value: "Four" })]),
+      /no replay anchor/, "a wound rebuilt over the fabricated empty base");
+    assert.equal(db.prepare("SELECT person_name FROM learner_profile").get().person_name, "Folded",
+      "rebuild-over-{} wiped the family's profile settings");
+  } finally { db.close(); }
+});
