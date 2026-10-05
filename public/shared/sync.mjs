@@ -12,7 +12,7 @@
  * recordOp calls the registered sink after every adult edit; sync.mjs
  * debounces a submit so edits reach the relay without the UI knowing.
  */
-import { adoptSnapshot, appliedSeqOf, baselineSnapshot, confirmOps, drainOps, listOps, setDeviceId, setOpSink } from "./ops.mjs";
+import { adoptSnapshot, appliedSeqOf, baselineSnapshot, confirmOps, drainOps, listOps, pendingOps, setDeviceId, setOpSink } from "./ops.mjs";
 import { loadBlobBytes, saveBlobBytes, setBlobFetcher } from "../db.js";
 import {
   deriveEpochKey, getDeviceIdentity, getUserKey, openBlob, openKeyStore, openOp,
@@ -249,16 +249,25 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     if (dirty) await store.put(BLOBQ, q);
   };
 
-  const pendingOps = () => listOps(db).filter((o) => o.relay_seq === null);
-  const flush = async () => {
-    const ops = pendingOps();
-    if (!ops.length) { flushError = null; return; }
+  /* The outbox flushes in bounded batches (audit: unbounded work), and
+   * the flush itself is serialized — a timer flush, a socket-triggered
+   * flush, and a recover flush share one in-flight promise instead of
+   * racing the same pending set through the relay twice. */
+  const FLUSH_BATCH = 200;
+  const OPS_PAGE = 200;
+  let flushing = null;
+  const flush = () => (flushing ??= (async () => {
     try {
-      const { ops: assigned } = await client.submit(ops);
+      const ops = pendingOps(db, FLUSH_BATCH + 1);
+      if (!ops.length) { flushError = null; return; }
+      const more = ops.length > FLUSH_BATCH;
+      const { ops: assigned } = await client.submit(ops.slice(0, FLUSH_BATCH));
       confirmOps(db, assigned);
       await maybeSnapshot();
       flushError = null;
       flushFails = 0;
+      // The batch drained but the outbox didn't — keep going promptly.
+      if (more || pendingOps(db, 1).length) scheduleFlush(0);
     } catch (err) {
       flushError = String(err?.message ?? err);
       // A stranded edit is silent loss (audit F10): bounded retries
@@ -268,8 +277,10 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
         scheduleFlush(Math.min(2000 * flushFails, 30000));
       }
       throw err;
+    } finally {
+      flushing = null;
     }
-  };
+  })());
   let flushTimer = null;
   let flushFails = 0;
   const scheduleFlush = (delay = 300) => {
@@ -418,7 +429,10 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
    * doesn't have. */
   const recover = async () => {
     for (;;) {
-      const { ops: rows, snap_seq: snapSeq = 0 } = await client.fetchOps(cfg.cursor ?? 0);
+      // Pages of OPS_PAGE — a long-offline device walks the backlog a
+      // bounded slice at a time instead of one unbounded response.
+      const { ops: rows, snap_seq: snapSeq = 0 } =
+        await client.fetchOps(cfg.cursor ?? 0, OPS_PAGE);
       // A gap between the cursor and the first row only means lost
       // history if the relay's prune point reaches into it: relay seqs
       // are sparse — a deduped resubmit burns a number — so a gap
@@ -447,6 +461,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
         return;
       }
       await ingest(rows ?? [], { fetched: true });
+      if ((rows?.length ?? 0) === OPS_PAGE) continue; // next page
       break;
     }
     await maybeCompleteRotation().catch((err) =>

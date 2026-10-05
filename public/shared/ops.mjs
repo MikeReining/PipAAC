@@ -308,6 +308,15 @@ export function listOps(db) {
   return db.prepare("SELECT seq, op_id, device_id, kind, args, created_at, relay_seq FROM sync_op ORDER BY seq").all();
 }
 
+/** The outbox only — unconfirmed ops, oldest first, optionally capped
+ * so a flush never scans or submits the whole log at once. */
+export function pendingOps(db, limit = null) {
+  return db.prepare(
+    `SELECT seq, op_id, device_id, kind, args, created_at, relay_seq
+     FROM sync_op WHERE relay_seq IS NULL ORDER BY seq LIMIT ?`,
+  ).all(limit ?? -1);
+}
+
 /**
  * § 5 — one order, same functions. The synced tables, parents first for
  * baseline restore. child history, prediction weights, the catalog and

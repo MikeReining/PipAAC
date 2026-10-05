@@ -771,9 +771,12 @@ export class UserRelay {
 
     if (method === "GET" && route === "ops") {
       const after = Number(url.searchParams.get("after") ?? 0);
+      // ?limit=N pages the tail — a device that was offline for months
+      // must not try to swallow the whole backlog in one response.
+      const limit = Number(url.searchParams.get("limit") ?? 0) || -1;
       const rows = this.ctx.storage.sql.exec(
         `SELECT relay_seq, op_id, device_id, epoch, env FROM op
-         WHERE relay_seq > ? ORDER BY relay_seq`, after).toArray();
+         WHERE relay_seq > ? ORDER BY relay_seq LIMIT ?`, after, limit).toArray();
       const latest = this.ctx.storage.sql.exec(
         "SELECT MAX(relay_seq) AS m FROM op").toArray()[0].m ?? 0;
       // The prune watermark lets a device tell "ops deleted under the

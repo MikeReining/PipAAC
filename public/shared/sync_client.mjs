@@ -112,7 +112,8 @@ export function relayClient({ userId, baseUrl, identity, userKey }) {
       return call("POST", "/ops", { ops: sealed });
     },
     /** Catch-up: ops after a relay_seq. Envelopes stay sealed — caller decrypts. */
-    fetchOps: (after) => call("GET", `/ops?after=${after}`),
+    fetchOps: (after, limit) =>
+      call("GET", `/ops?after=${after}${limit ? `&limit=${limit}` : ""}`),
     openOp: (env) => openOp(userKey, env),
     /** Sealed snapshot transport (§ 5): PUT marks the op log covered
      *  through seq; GET returns the stored payload or null. */

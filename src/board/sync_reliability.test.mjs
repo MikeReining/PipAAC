@@ -90,11 +90,18 @@ registerHooks({
 });
 
 // Globals sync.mjs reaches for outside its imports.
+const sockets = [];
 class QuietSocket {
   static OPEN = 1;
-  constructor(url) { this.url = url; this.readyState = QuietSocket.OPEN; }
+  constructor(url) {
+    this.url = url;
+    this.readyState = QuietSocket.OPEN;
+    sockets.push(this);
+  }
   send() {}
   close() { this.readyState = 3; this.onclose?.(); }
+  /** Deliver a relay frame as if it arrived on the wire. */
+  push(msg) { this.onmessage?.({ data: JSON.stringify(msg) }); }
 }
 globalThis.WebSocket = QuietSocket;
 
@@ -122,25 +129,31 @@ const openReplica = () => {
  */
 async function runtime({
   fetchResult = { ops: [], snap_seq: 0 },
+  fetchOps = null,
   submit = null,
   putBlob = null,
   getBlob = null,
   epoch = 1,
+  userKey = null,
 } = {}) {
   const db = openReplica();
   const store = memoryKeyStore();
   const identity = await getDeviceIdentity(store);
-  const key = await getUserKey(store, "u1");
+  const key = userKey ?? await getUserKey(store, "u1");
   await putUserKey(store, "u1", key, epoch);
 
   const submits = [];
   const uploads = [];
+  const fetches = [];
   const user = { id: "u1", sync: { userId: "u-relay", epoch, cursor: 0 } };
   shared.store = store;
   shared.loadBlobBytes = async () => null;
   shared.relayClient = () => ({
     selfKey: async () => ({ current_epoch: epoch, wrapped_key: null, wrapped_keys: {} }),
-    fetchOps: async () => fetchResult,
+    fetchOps: async (after, limit) => {
+      fetches.push({ after, limit });
+      return fetchOps ? fetchOps(after, limit) : fetchResult;
+    },
     getSnapshot: async () => null,
     putSnapshot: async () => {},
     listDevices: async () => ({ devices: [] }),
@@ -166,7 +179,7 @@ async function runtime({
     async () => true,
   );
   await settle();
-  return { db, store, key, user, submits, uploads, handle, syncHealth };
+  return { db, store, key, user, submits, uploads, fetches, handle, syncHealth };
 }
 
 test("F10: a failed submit re-arms on bounded backoff — an open socket and silence do not strand the edit", async () => {
@@ -332,3 +345,85 @@ test("F12: import marks an unjoined user pendingJoin — keys present, relay acc
     "a proven link was downgraded by a later failed import");
 });
 
+
+test("bounded work: a timer flush and a recovery flush share one in-flight submit", async () => {
+  const r = await runtime({
+    // The second submit (the user's edit) takes long enough that a
+    // socket-triggered recover lands mid-flight — the overlap the
+    // audit reproduces.
+    submit: async (ops, call) => {
+      if (call === 2) await sleep(300);
+      return { ops: ops.map((o, i) => ({ op_id: o.op_id, relay_seq: i + 1 })) };
+    },
+  });
+  const bootSubmits = r.submits.length; // the seed ops already went
+  createEntity(r.db, { id: "ent_overlap", name: "Overlap" });
+  await sleep(400); // debounce fired; submit #2 is in flight
+  assert.equal(r.submits.length, bootSubmits + 1);
+  // A socket frame mid-submit runs a recover pass — its flush must
+  // join the in-flight submit, not re-send the same pending op.
+  const pushed = {
+    relay_seq: 50, epoch: 1,
+    env: await sealOp(r.key, {
+      op_id: "op_remote", kind: "create_entity",
+      args: { id: "ent_remote", name: "Remote" }, device_id: "d0", v: 1 }),
+  };
+  sockets.at(-1).push({ t: "ops", ops: [pushed] });
+  await sleep(600);
+  const resubmitted = r.submits.slice(bootSubmits + 1)
+    .some((batch) => batch.some((o) =>
+      JSON.stringify(o.args).includes("ent_overlap")));
+  assert.ok(!resubmitted, "the overlapping flush resubmitted the same pending op");
+  assert.ok(!listOps(r.db).some((o) => o.relay_seq === null),
+    "the shared flush never confirmed the edit");
+});
+
+test("bounded work: the outbox submits in capped batches, never the whole log at once", async () => {
+  const r = await runtime();
+  for (let i = 0; i < 210; i++) {
+    createEntity(r.db, { id: `ent_batch_${i}`, name: `B${i}` });
+  }
+  await sleep(800); // debounce + follow-up batch
+  const sizes = r.submits.map((s) => s.length);
+  assert.ok(Math.max(...sizes) <= 200,
+    `a flush submitted ${Math.max(...sizes)} ops in one call`);
+  assert.ok(sizes.length >= 2, "the over-cap outbox never drained its remainder");
+  assert.ok(!listOps(r.db).some((o) => o.relay_seq === null),
+    "ops past the first batch were stranded");
+});
+
+test("bounded work: recovery fetches the backlog in pages and walks past a full page", async () => {
+  // A donor produces a 210-op backlog; the runtime joins with an empty
+  // cursor and must page through it — one fetch can never carry it all.
+  const key = await newUserKey();
+  const donor = openReplica();
+  for (let i = 0; i < 210; i++) {
+    createEntity(donor, { id: `ent_page_${i}`, name: `P${i}` });
+  }
+  const backlog = [];
+  for (const [i, op] of listOps(donor).entries()) {
+    backlog.push({ relay_seq: i + 1, epoch: 1, env: await sealOp(key, op) });
+  }
+  donor.close();
+
+  const r = await runtime({
+    userKey: key,
+    fetchOps: async (after, limit) => ({
+      ops: backlog.filter((o) => o.relay_seq > after).slice(0, limit),
+      snap_seq: 0,
+    }),
+  });
+  // Two pages of drains take real time — wait for the cursor to walk
+  // the whole backlog rather than a fixed settle.
+  const deadline = Date.now() + 15000;
+  while (r.user.sync.cursor < backlog.length && Date.now() < deadline) {
+    await sleep(200);
+  }
+  assert.ok(r.fetches.length >= 2, "a full page was never followed by the next fetch");
+  assert.ok(r.fetches.every((f) => f.limit === 200), "fetchOps ignored the page bound");
+  assert.equal(r.user.sync.cursor, backlog.length,
+    "the cursor did not reach the end of the paged backlog");
+  assert.equal(
+    r.db.prepare("SELECT COUNT(*) AS n FROM personal_entity WHERE id LIKE 'ent_page_%'").all()[0].n,
+    210, "paged backlog ops never applied");
+});
