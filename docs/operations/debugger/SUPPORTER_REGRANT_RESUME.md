@@ -1,8 +1,18 @@
-# Outstanding supporter-regrant resume gap
+# Supporter-regrant resume gap — closed 2026-10-06
 
-Status: code-traced 2026-10-04 during the card-rotation takeover; not yet
-reproduced end-to-end. P2 / T2, sync + account developer. Linked from the
-canonical sync owner and phase 043.
+Status: CLOSED — durable `regrant/<user>` journal in `rotation.mjs`
+(`regrantJournalName`, written after every committed relay rotation) +
+`resumeSupporterRegrant` drained on every owner recover and inside the
+remove flow via `setSyncAccountOps` (`devices-ui.js`). Regression tests
+in `src/board/sync_reliability.test.mjs` cover commit→drain,
+interrupt→resume, and signed-out retention. Remaining coverage gap:
+the obligation is device-local — a rotation completed on a device that
+never holds an account session leaves the drain to any session-bearing
+owner boot; a fresh supporter sign-in mid-gap still fails loudly
+(`no wrapped key`), healed by the drain.
+
+Original finding (code-traced 2026-10-04 during the card-rotation
+takeover; P2 / T2):
 
 Symptom: a supporter who signs in fresh after a device/supporter removal
 whose regrant loop was interrupted can land on a stale key epoch — their

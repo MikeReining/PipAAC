@@ -8,7 +8,8 @@ import {
   wrapUserKey,
 } from "../shared/sync_crypto.mjs";
 import { recoveryProof } from "../shared/recovery.mjs";
-import { completeRemovalRotation } from "../shared/rotation.mjs";
+import { completeRemovalRotation, resumeSupporterRegrant } from "../shared/rotation.mjs";
+import { setSyncAccountOps } from "../shared/sync.mjs";
 import { joinDeviceWithToken, pairClient, relayClient } from "../shared/sync_client.mjs";
 import {
   accountPub, accountState, claimInvite, claimToken, createInvite,
@@ -585,33 +586,33 @@ export function mountDevices({
     }
   }
 
+  /* The durable regrant drain needs account verbs (session, invites,
+   *  grant rewrites, bundle building) — sync recovery calls it whenever
+   *  a committed rotation left the obligation unfinished. Registered
+   *  once here so it outlives whichever tab or pass raised it. */
+  const regrantOps = () => {
+    const st = accountState();
+    return st ? { acctId: st.acct_id, session: st.session,
+      listInvites, grantInvite, buildUserGrant } : null;
+  };
+  setSyncAccountOps(regrantOps);
+
   /** Remove: relay cascade first (their devices + tokens die), then the
    *  account-side grant revoke, then rotate the user key so every op
    *  written after is sealed under an epoch they never received.
-   *  Remaining devices and supporters get the new epoch re-wrapped. */
+   *  Remaining devices and supporters get the new epoch re-wrapped —
+   *  through the journaled drain, so an interrupted pass still finishes
+   *  on the next session's recover instead of stranding bundles. */
   async function removeSupporterFlow(sup) {
     const label = sup.email ?? "this supporter";
     if (!confirm(`Remove ${label}? They keep what they already saw — nothing new reaches them.`)) return;
-    const st = accountState();
     try {
       const { client, store } = await userClient();
       await client.removeSupporter(sup.acct_id);
+      const st = accountState();
       if (sup.token && st) await revokeInvite(sup.token, st.session);
-      const { supporters } = await client.listSupporters();
       await rotateAfterRemoval(client, store);
-      // Regrant remaining supporters so their next sign-in unwraps the
-      // new epoch — their bundle rows replace wholesale.
-      if (st) {
-        const { invites } = await listInvites(st.acct_id, st.session)
-          .catch(() => ({ invites: [] }));
-        for (const s of supporters) {
-          const inv = (invites ?? []).find((i) => i.to_acct === s.acct_id
-            && i.status === "granted" && i.to_acct_pub);
-          if (!inv) continue;
-          const grant = await buildUserGrant(store, me, inv.to_acct_pub, s.acct_id);
-          await grantInvite(inv.token, st.session, grant);
-        }
-      }
+      await resumeSupporterRegrant({ store, user: me, client, accountOps: regrantOps });
       toast(`Removed ${label} — this user re-keyed.`);
       await renderSupporters();
       await renderDevices();

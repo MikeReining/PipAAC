@@ -9,6 +9,12 @@ import { recoveryProof, ROOT_BYTES } from "./recovery.mjs";
 import { serialized } from "./bounded.mjs";
 
 export const rotationJournalName = (id) => `rotation/${id}`;
+/** Once a rotation commits at the relay, every supporter's account-side
+ *  grant bundle is stale until the owner re-wraps it. The obligation is
+ *  durable like the rotation journal: the UI loop that drains it can
+ *  die between the relay commit and the last grantInvite, and the next
+ *  session-bearing owner resume must finish it (SUPPORTER_REGRANT_RESUME). */
+export const regrantJournalName = (id) => `regrant/${id}`;
 const locks = new Map();
 const locked = (id, fn) =>
   serialized(locks, (n) => `pip-rotation:${n}`, id, fn);
@@ -76,6 +82,7 @@ async function resume({ store, user, client, saveUser, rekey }) {
     }
     throw err;
   }
+  await store.put(regrantJournalName(user.id), { epoch: job.epoch });
   await retireRoot(store, user.id, bytes(job.oldRoot), job.oldEpoch);
   await store.put(userRootName(user.id), bytes(job.newRoot));
   await putUserKey(store, user.id, await deriveEpochKey(bytes(job.newRoot), job.epoch), job.epoch);
@@ -115,9 +122,45 @@ export async function completeRemovalRotation({ store, user, client, saveUser, r
       if (d.dh_pub) wrapped[d.device_id] = await wrapUserKey(key, d.dh_pub);
     }
     await client.rotateKeys(epoch, wrapped, { expected_proof: await recoveryProof(root) });
+    await store.put(regrantJournalName(user.id), { epoch });
     await putUserKey(store, user.id, key, epoch);
     await saveUser({ sync: { ...user.sync, epoch } });
     await rekey(epoch);
     return epoch;
   });
+}
+
+/** Drain the durable regrant obligation a committed rotation left
+ *  behind. Runs on every recovery on an owner device; with no account
+ *  session the journal simply stays — it cannot be forged healthy, and
+ *  the next signed-in session drains it. Regrant replaces each
+ *  supporter's bundle wholesale, so a partial pass is safe to redo:
+ *  the journal leaves only when every remaining supporter was granted
+ *  the current epoch (SUPPORTER_REGRANT_RESUME). */
+export async function resumeSupporterRegrant({ store, user, client, accountOps }) {
+  const name = regrantJournalName(user.id);
+  const job = await store.get(name);
+  if (!job) return null;
+  const ops = await accountOps?.();
+  if (!ops?.session) return null;
+  const { supporters } = await client.listSupporters();
+  if (!supporters?.length) { await store.del(name); return 0; }
+  const { invites } = await ops.listInvites(ops.acctId, ops.session)
+    .catch(() => ({ invites: [] }));
+  let unresolved = 0;
+  for (const s of supporters) {
+    const inv = (invites ?? []).find((i) => i.to_acct === s.acct_id
+      && i.status === "granted" && i.to_acct_pub);
+    // No granted invite for this supporter — the bundle cannot be
+    // regranted; a fresh owner invite is their documented recovery,
+    // and their device fails loudly (no wrapped key) in the meantime.
+    // The journal stays: deleting it would hide an obligation that
+    // still hasn't been fulfilled.
+    if (!inv) { unresolved++; console.warn("sync: no granted invite to regrant", s.acct_id); continue; }
+    await ops.grantInvite(inv.token, ops.session,
+      await ops.buildUserGrant(store, user, inv.to_acct_pub, s.acct_id));
+  }
+  if (unresolved) return supporters.length - unresolved;
+  await store.del(name);
+  return supporters.length;
 }

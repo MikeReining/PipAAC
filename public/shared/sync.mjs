@@ -21,9 +21,15 @@ import {
 import { relayClient } from "./sync_client.mjs";
 import { withDeadline } from "./bounded.mjs";
 import { onOnline, onVisible } from "./platform.mjs";
-import { completeRemovalRotation, resumeRecoveryCard } from "./rotation.mjs";
+import { completeRemovalRotation, resumeRecoveryCard, resumeSupporterRegrant } from "./rotation.mjs";
 
 let running = null;
+/** The account-side verbs the supporter-regrant drain needs (session,
+ *  invite list, grant rewrite, bundle builder) live in board chrome —
+ *  devices-ui registers them once ready. Without a registered provider
+ *  (or a signed-in session) the durable obligation simply stays put. */
+let accountOps = null;
+export const setSyncAccountOps = (fn) => { accountOps = fn; };
 /** 031 § 8 — honest save status: did the last attempt to hand ops to
  *  the relay fail? Pending ops themselves are read from sync_op
  *  (relay_seq IS NULL until the relay accepted them). */
@@ -533,6 +539,15 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
       break;
     }
     await maybeCompleteRotation();
+    /* Any rotation that committed — here or on a session that died
+     * mid-regrant — left a durable obligation: every remaining
+     * supporter's account bundle predates the epoch. A signed-in owner
+     * drains it on this pass; otherwise it waits in the key store. */
+    try {
+      await resumeSupporterRegrant({ store, user, client, accountOps });
+    } catch (err) {
+      console.warn("sync: supporter regrant failed", err);
+    }
     await maybeSnapshot().catch(() => {});
     await flush();
     // Ops applied above may carry new blob: refs, and the queue may

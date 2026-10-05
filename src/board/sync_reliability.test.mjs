@@ -18,6 +18,7 @@ import {
   genAccountKeys,
   getDeviceIdentity,
   getUserKey,
+  ensureRecoveryRoot,
   importAccountPriv,
   memoryKeyStore,
   openBlob,
@@ -129,6 +130,9 @@ async function runtime({
   submit = null,
   putBlob = null,
   getBlob = null,
+  supporters = [],
+  rotateMinEpoch = 0,
+  root = false,
   persist = async () => true,
   epoch = 1,
   userKey = null,
@@ -139,6 +143,7 @@ async function runtime({
   const identity = await getDeviceIdentity(store);
   const key = userKey ?? await getUserKey(store, "u1");
   await putUserKey(store, "u1", key, epoch);
+  if (root) await ensureRecoveryRoot(store, "u1");
 
   const submits = [];
   const uploads = [];
@@ -152,14 +157,15 @@ async function runtime({
   shared.relayClient = (args) => {
     clients.push(args);
     return ({
-    selfKey: async () => ({ current_epoch: epoch, wrapped_key: null, wrapped_keys: {} }),
+    selfKey: async () => ({ current_epoch: epoch, wrapped_key: null,
+      wrapped_keys: {}, rotate_min_epoch: rotateMinEpoch }),
     fetchOps: async (after, limit) => {
       fetches.push({ after, limit });
       return fetchOps ? fetchOps(after, limit) : fetchResult;
     },
     getSnapshot: async () => null,
     putSnapshot: async () => {},
-    listDevices: async () => ({ devices: [] }),
+    listDevices: async () => ({ devices: [], current_epoch: epoch }),
     rotateKeys: async () => {},
     requestRotation: async () => {},
     submit: async (ops, declaredEpoch) => {
@@ -170,11 +176,12 @@ async function runtime({
     },
     getBlob: getBlob ?? (async () => { throw Object.assign(new Error("no blob"), { status: 404 }); }),
     putBlob: putBlob ?? (async (sealed) => { uploads.push(sealed); }),
+    listSupporters: async () => ({ supporters }),
     wsUrl: async () => "wss://test.invalid/ws",
     });
   };
 
-  const { initSync, syncHealth } = await loadSync();
+  const { initSync, syncHealth, setSyncAccountOps } = await loadSync();
   const handle = await initSync(
     db, user,
     async (patch) => Object.assign(user.sync, patch.sync ?? {}),
@@ -186,7 +193,7 @@ async function runtime({
   );
   await settle();
   return { db, store, key, user, submits, uploads, fetches, clients,
-    handle, syncHealth };
+    handle, syncHealth, setSyncAccountOps };
 }
 
 for (const kind of ["blob", "live"]) {
@@ -626,6 +633,7 @@ test("a timed-out flush is fenced: the late ack still stamps, but cannot clear a
   assert.equal(r.syncHealth().flushError, null);
   assert.ok(!listOps(r.db).some((o) => o.relay_seq === null));
 });
+
 test("competing rekeys publish epoch, key and client as one step — a late loser cannot regress them", { timeout: 15000 }, async () => {
   const ciphertexts = [];
   const submit = async (ops, _n, { declaredEpoch, userKey }) => {
@@ -667,4 +675,85 @@ test("competing rekeys publish epoch, key and client as one step — a late lose
     "the active client's ciphertext did not open under its declared epoch");
   await assert.rejects(openOp(e2, env.env), /./,
     "ciphertext labelled epoch 3 was sealed under epoch 2");
+});
+
+test("a committed rotation journals the regrant obligation and the recover pass drains it", { timeout: 15000 }, async () => {
+  const grants = [];
+  const r = await runtime({
+    root: true, rotateMinEpoch: 2,
+    supporters: [{ acct_id: "a1" }, { acct_id: "a2" }],
+  });
+  r.setSyncAccountOps(() => ({
+    acctId: "acct_owner", session: "sess",
+    listInvites: async () => ({ invites: [
+      { token: "tok_a1", to_acct: "a1", status: "granted", to_acct_pub: {} },
+      { token: "tok_a2", to_acct: "a2", status: "granted", to_acct_pub: {} },
+    ] }),
+    grantInvite: async (token, session, grant) => { grants.push({ token, grant }); },
+    buildUserGrant: async (store, u, toPub, forAcct) =>
+      ({ for: forAcct, epoch: u.sync.epoch }),
+  }));
+  await sleep(300);                // boot recover already ran — journal
+  // written before registration? The drain runs on the NEXT recover.
+  sockets.at(-1).push({ t: "ops", ops: [] });
+  await sleep(2600);               // 2 s recover debounce → drain
+  assert.equal(r.user.sync.epoch, 2, "the rotation never committed");
+  assert.deepEqual(grants.map((g) => g.token).sort(), ["tok_a1", "tok_a2"],
+    "not every remaining supporter was regranted");
+  assert.ok(grants.every((g) => g.grant.epoch === 2),
+    "a supporter bundle was rebuilt at the pre-rotation epoch");
+  assert.equal(await r.store.get("regrant/u1"), undefined,
+    "the regrant obligation survived its own completion");
+});
+
+test("an interrupted regrant leaves the journal — the next session's recover finishes it", { timeout: 15000 }, async () => {
+  const grants = [];
+  let die = true;
+  const r = await runtime({ supporters: [{ acct_id: "a1" }, { acct_id: "a2" }] });
+  r.setSyncAccountOps(() => ({
+    acctId: "acct_owner", session: "sess",
+    listInvites: async () => ({ invites: [
+      { token: "tok_a1", to_acct: "a1", status: "granted", to_acct_pub: {} },
+      { token: "tok_a2", to_acct: "a2", status: "granted", to_acct_pub: {} },
+    ] }),
+    grantInvite: async (token) => {
+      if (die) { die = false; throw new Error("tab killed mid-regrant"); }
+      grants.push(token);
+    },
+    buildUserGrant: async () => ({}),
+  }));
+  await r.store.put("regrant/u1", { epoch: 2 });   // as a killed pass left it
+  sockets.at(-1).push({ t: "ops", ops: [] });
+  await sleep(2600);
+  assert.equal(grants.length, 0, "the pass died on the first grant");
+  assert.ok(await r.store.get("regrant/u1"), "the obligation was lost mid-pass");
+  sockets.at(-1).push({ t: "ops", ops: [] });      // next session's recover
+  await sleep(2600);
+  assert.deepEqual(grants.sort(), ["tok_a1", "tok_a2"],
+    "the resumed pass did not regrant every remaining supporter");
+  assert.equal(await r.store.get("regrant/u1"), undefined);
+});
+
+test("the regrant obligation waits for a signed-in session instead of draining unauthenticated", { timeout: 15000 }, async () => {
+  const grants = [];
+  const r = await runtime({ supporters: [{ acct_id: "a1" }] });
+  r.setSyncAccountOps(() => null);                 // signed out
+  await r.store.put("regrant/u1", { epoch: 2 });
+  sockets.at(-1).push({ t: "ops", ops: [] });
+  await sleep(2600);
+  assert.equal(grants.length, 0);
+  assert.ok(await r.store.get("regrant/u1"),
+    "the obligation vanished without a session to drain it");
+  r.setSyncAccountOps(() => ({
+    acctId: "acct_owner", session: "sess",
+    listInvites: async () => ({ invites: [
+      { token: "tok_a1", to_acct: "a1", status: "granted", to_acct_pub: {} }] }),
+    grantInvite: async (token) => { grants.push(token); },
+    buildUserGrant: async () => ({}),
+  }));
+  sockets.at(-1).push({ t: "ops", ops: [] });
+  await sleep(2600);
+  assert.deepEqual(grants, ["tok_a1"],
+    "a later signed-in session did not drain the obligation");
+  assert.equal(await r.store.get("regrant/u1"), undefined);
 });
