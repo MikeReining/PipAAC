@@ -13,6 +13,7 @@ import "./jsc_shims.mjs"; // FIRST — installs host shims before module eval
 export * as ops from "../../public/shared/ops.mjs";
 export * as groups from "../../public/shared/groups.mjs";
 export * as groupsOps from "../../public/shared/groups_ops.mjs";
+export * as groups_shared from "../../public/shared/groups_shared.mjs";
 export * as funnel from "../../public/shared/funnel.mjs";
 export * as forms from "../../public/shared/forms.mjs";
 export * as importer from "../../public/shared/import.mjs";
@@ -46,6 +47,11 @@ export * as spotlightStarters from "../../public/shared/spotlight_starters.mjs";
 export * as recoveryWords from "../../public/shared/recovery_words.mjs";
 export * as research from "../../public/shared/research.mjs";
 export * as groupIcons from "../../public/shared/group-icon-library.mjs";
+
+/** The app facade (scripts/ios/app.mjs) — the board.js child-mode tap
+ *  path and the SwiftUI render models; bundled with the core so the app
+ *  and the fixtures run the same rules. */
+export * as app from "./app.mjs";
 
 /**
  * The db seam (Platforms § 2): the exact adapt() shape public/db.js

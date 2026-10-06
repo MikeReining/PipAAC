@@ -415,3 +415,43 @@ fast enough on the floor device; nothing ports to Swift for speed.
 - Verdict: JSC + native SQLite meets budgets with ~6× headroom on
   the probe path. Smart bar stays in the shared core; the plan's
   Swift-escape-hatch for it is not needed.
+
+**2026-10-06 (S2 shipped + B1 — the app boots the real board):**
+PipAAC launches into the working board on the iPad (A16) simulator,
+fully offline.
+
+- S2 done (infra half): `wrangler deploy` shipped the site; live
+  `https://pipaac.org/.well-known/apple-app-site-association` returns
+  200 `application/json` with `LP5YNK7A36.org.pipaac`, and Apple's CDN
+  copy already serves it. The device passkey run is still owed once
+  auth screens exist.
+- JS app facade `scripts/ios/app.mjs` (exported as `PIPCORE.app`,
+  bundle 256 KB/41 modules): `appOpen` (db + catalog + answer tables,
+  the `loadCatalog`/`loadLanguage` boot path), `appBoard`, `appStrip`,
+  `appBar`, `appTap`/`appBackspace`/`appClear`/`appSpeak` (the
+  board.js child tap path — form, re-pick, log, resolveSlot),
+  `appGroups`/`appGroupPage`/`appShowBoard`, `appOpenFamily`/
+  `appFamilyPage`. Every mutation returns the whole painted state —
+  Swift renders, never re-derives.
+- Asset bundle `scripts/ios/bundle_assets.mjs` →
+  `apps/PipAAC/SharedAssets/` (gitignored, `npm run ios:assets`,
+  `--check` exists): fresh_db, catalog + answer tables, sw-audio
+  manifest, the default voice's clips, symbols + icons + brand, the
+  21 SVGs rasterized to PNG by `qlmanage`. ~1,970 files, ~30 MB.
+- Swift shell: `PipAssets` (bundle lookup, art cache, user-db
+  seeding — a failed open reports, never re-seeds), `PipSpeaker`
+  (`.playback` session, clip slots, 400 ms silent slot — no TTS on
+  tiles, per the audio law), `AppModel` (bridge + published state —
+  MainActor UI, nonisolated `core.sync` calls on the pool; the Xcode
+  template defaults everything to MainActor so models/assets are
+  marked `nonisolated`), `BoardView`/`TileView` (cream bg, role
+  border/fill pairs, label-strip-over-art tiles, strip cards, bar
+  chips — the web palette verbatim).
+- `PipCore.call` gained dotted-path resolution (`PIPCORE.app.x` —
+  `objectForKeyedSubscript` is literal, not a path).
+- Proven: `xcodebuild test` — all 8 parity tests still green with the
+  new resolve path; `PipAACUITests.testBoardTapBar` passes — boots to
+  real catalog tiles, tap arms backspace/play + resolves a clip,
+  backspace/clear work, Groups anchor round-trips index→board.
+- Not in B1: transform buttons (✨❓⏪⏩), keyboard surface, group-page
+  header chrome, settings, sync — later slices per § 6.

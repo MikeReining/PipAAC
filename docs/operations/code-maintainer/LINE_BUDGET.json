@@ -3,7 +3,7 @@
     "apps/PipAAC/PipAAC/Core/SQLite/sqlite3.c": 269649,
     "apps/PipAAC/PipAAC/Core/SQLite/sqlite3.h": 14349,
     "apps/PipAAC/PipAAC/Core/SQLite/sqlite3ext.h": 739,
-    "apps/PipAAC/PipAAC/Core/pip-core.js": 5744,
+    "apps/PipAAC/PipAAC/Core/pip-core.js": 6345,
     "public/audio-review-elevenlabs-tiles.html": 802,
     "public/audio-review-elevenlabs-v4-lab.html": 758,
     "public/board.js": 1634,
@@ -41,6 +41,9 @@
     "src/worker/pictures_draw.test.mjs": 661,
     "src/worker/relay.heavy.test.mjs": 605,
     "src/worker/relay.js": 959,
-    "src/worker/tile.js": 779
+    "src/worker/tile.js": 779,
+    "apps/PipAAC/SharedAssets/catalog.json": 132886,
+    "apps/PipAAC/SharedAssets/manifest.json": 1973,
+    "scripts/ios/app.mjs": 550
   }
 }

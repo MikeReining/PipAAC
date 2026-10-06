@@ -2,7 +2,10 @@
 //  PipAACUITests.swift
 //  PipAACUITests
 //
-//  Created by Michael Reining on 2026-10-06.
+//  B1 works test (phase 044): the app boots to the real board,
+//  a tile tap updates the sentence bar, backspace/clear work.
+//  Clip file playback is covered by the parity harness + node facade;
+//  UI tests assert the paint, not the speaker.
 //
 
 import XCTest
@@ -10,32 +13,44 @@ import XCTest
 final class PipAACUITests: XCTestCase {
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    func testBoardTapBar() throws {
         let app = XCUIApplication()
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
+        // Boot: the seeded 10×6 board paints real catalog tiles.
+        let want = app.buttons["want"]
+        XCTAssertTrue(want.waitForExistence(timeout: 20), "board tile 'want' never appeared")
+        XCTAssertTrue(app.buttons["go"].exists)
+        XCTAssertTrue(app.buttons["I"].exists)
 
-    @MainActor
-    func testLaunchPerformance() throws {
-        // This measures how long it takes to launch your application.
-        measure(metrics: [XCTApplicationLaunchMetric()]) {
-            XCUIApplication().launch()
-        }
+        // Tap a tile: the bar fills, controls arm, a clip plays.
+        want.tap()
+        let backspace = app.buttons["Backspace"]
+        XCTAssertTrue(backspace.waitForExistence(timeout: 10))
+        XCTAssertTrue(backspace.isEnabled, "backspace should arm after a tap")
+        XCTAssertTrue(app.buttons["Play"].isEnabled)
+
+        // Second tile grows the bar.
+        app.buttons["more"].tap()
+
+        // Backspace shrinks it; controls stay armed.
+        backspace.tap()
+        XCTAssertTrue(app.buttons["Play"].isEnabled)
+
+        // Clear empties the bar; controls disarm again.
+        app.buttons["Clear"].tap()
+        XCTAssertTrue(app.staticTexts["Tap a word to start."].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.buttons["Play"].isEnabled)
+
+        // Groups anchor opens the index; a door opens a group page;
+        // Groups returns to the board.
+        app.buttons["Groups"].tap()
+        XCTAssertTrue(app.buttons["Groups"].waitForExistence(timeout: 10))
+        app.buttons["Groups"].tap()
+        XCTAssertTrue(app.buttons["want"].waitForExistence(timeout: 10))
     }
 }

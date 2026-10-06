@@ -86,10 +86,7 @@ public nonisolated final class PipCore: @unchecked Sendable {
     @discardableResult
     public func call(_ object: String, _ method: String, _ args: [Any] = []) throws -> Any? {
         guard let ctx else { throw PipCoreError.evalFailed("no context") }
-        guard let obj = ctx.objectForKeyedSubscript(object), obj.isObject,
-              let fn = obj.objectForKeyedSubscript(method), fn.isObject else {
-            throw PipCoreError.evalFailed("no \(object).\(method)")
-        }
+        let fn = try resolve(object, method, in: ctx)
         let v = fn.call(withArguments: args)
         if let ex = ctx.exception {
             ctx.exception = nil
@@ -98,15 +95,30 @@ public nonisolated final class PipCore: @unchecked Sendable {
         return v?.toObject()
     }
 
+    /// `object` is a dotted path from the global — "PIPCORE.app" walks
+    /// PIPCORE then app (subscript lookup is literal, not a path).
+    private func resolve(_ object: String, _ method: String, in ctx: JSContext) throws -> JSValue {
+        var obj: JSValue? = nil
+        for part in object.split(separator: ".") {
+            let next = (obj?.objectForKeyedSubscript(String(part))
+                        ?? ctx.objectForKeyedSubscript(String(part)))
+            guard let next, next.isObject else {
+                throw PipCoreError.evalFailed("no \(object)")
+            }
+            obj = next
+        }
+        guard let fn = obj?.objectForKeyedSubscript(method), fn.isObject else {
+            throw PipCoreError.evalFailed("no \(object).\(method)")
+        }
+        return fn
+    }
+
     /// Same call but the raw JSValue — for passing one result into the
     /// next call (canon comparisons) without a Foundation round-trip.
     @discardableResult
     public func callValue(_ object: String, _ method: String, _ args: [Any] = []) throws -> JSValue {
         guard let ctx else { throw PipCoreError.evalFailed("no context") }
-        guard let obj = ctx.objectForKeyedSubscript(object), obj.isObject,
-              let fn = obj.objectForKeyedSubscript(method), fn.isObject else {
-            throw PipCoreError.evalFailed("no \(object).\(method)")
-        }
+        let fn = try resolve(object, method, in: ctx)
         let v = fn.call(withArguments: args)
         if let ex = ctx.exception {
             ctx.exception = nil

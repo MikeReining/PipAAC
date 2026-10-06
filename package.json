@@ -63,7 +63,9 @@
     "ios:core:check": "node scripts/ios/build_core.mjs --check",
     "ios:fixtures": "node scripts/ios/export_fixtures.mjs",
     "ios:fixtures:check": "node scripts/ios/export_fixtures.mjs --check",
-    "ios:test": "xcodebuild test -project apps/PipAAC/PipAAC.xcodeproj -scheme PipAAC -configuration Release"
+    "ios:test": "xcodebuild test -project apps/PipAAC/PipAAC.xcodeproj -scheme PipAAC -configuration Release",
+    "ios:assets": "node scripts/ios/bundle_assets.mjs",
+    "ios:assets:check": "node scripts/ios/bundle_assets.mjs --check"
   },
   "devDependencies": {
     "esbuild": "0.28.2",
