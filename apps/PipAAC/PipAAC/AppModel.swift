@@ -93,12 +93,35 @@ nonisolated struct SpeechSlotModel: Decodable, Sendable {
     var text: String?
 }
 
+nonisolated struct KbKeyModel: Decodable, Sendable {
+    let slot: Int
+    let span: Int
+    let kind: String          // char | dead | space | backspace | partner | empty
+    var value: String?
+    var senseId: String?
+    var label: String?
+    var role: String?
+    var art: String?
+    var latched: Bool?
+}
+
+nonisolated struct KeyboardModel: Decodable, Sendable {
+    let mode: String          // pip | device
+    let keys: [KbKeyModel]
+}
+
 nonisolated struct PaintedState: Decodable, Sendable {
     var speech: SpeechSlotModel? = nil
     var clips: [SpeechSlotModel]? = nil
+    var toast: String? = nil
     let bar: [ChipModel]
     let strip: StripModel
     let board: BoardModel
+    var typing: String? = nil
+    var kb: KeyboardModel? = nil
+    var controls: [String]? = nil
+    var tense: String? = nil
+    var question: Bool? = nil
 }
 
 nonisolated struct AppOpenResult: Decodable, Sendable {
@@ -121,6 +144,15 @@ final class AppModel: ObservableObject {
     @Published private(set) var groupIndex: GroupIndexModel?
     @Published private(set) var groupPage: GroupPageModel?
     @Published private(set) var bootError: String?
+    @Published private(set) var typing: String?
+    @Published private(set) var kb: KeyboardModel?
+    /// Shown bar controls (learner_profile.bar_controls — all six when unset).
+    @Published private(set) var controls: Set<String> =
+        ["fix", "question", "past", "future", "backspace", "clear"]
+    @Published private(set) var tense = "present"
+    @Published private(set) var question = false
+    @Published private(set) var toast: String?
+    private var toastSeq = 0
 
     private nonisolated let core = PipCore()
     private var appId = ""
@@ -193,7 +225,13 @@ final class AppModel: ObservableObject {
             guard let self else { return }
             do {
                 let st: PaintedState = try await Self.coreCall(core, method, [appId] + args)
-                if let s = st.speech {
+                // A sentence clip list owns the audio (Enter/transform) —
+                // a lone word slot would only ever be cut off mid-play.
+                if let clips = st.clips {
+                    speaker.playSentence(clips.map {
+                        .init(type: $0.type, key: $0.key, text: $0.text)
+                    })
+                } else if let s = st.speech {
                     speaker.play(slot: .init(type: s.type, key: s.key, text: s.text))
                 }
                 apply(st)
@@ -207,6 +245,22 @@ final class AppModel: ObservableObject {
         bar = st.bar
         strip = st.strip
         board = st.board
+        typing = st.typing
+        kb = st.kb
+        if let c = st.controls { controls = Set(c) }
+        if let t = st.tense { tense = t }
+        if let q = st.question { question = q }
+        if let msg = st.toast { showToast(msg) }
+    }
+
+    private func showToast(_ msg: String) {
+        toastSeq += 1
+        let seq = toastSeq
+        toast = msg
+        Task { [weak self] in
+            try? await Task.sleep(for: .seconds(3.5))
+            if self?.toastSeq == seq { self?.toast = nil }
+        }
     }
 
     func tap(kind: String, id: String, text: String, source: String = "grid") {
@@ -215,6 +269,19 @@ final class AppModel: ObservableObject {
 
     func backspace() { mutate("appBackspace", []) }
     func clear() { mutate("appClear", []) }
+
+    /// ✨ ❓ ⏪ ⏩ — offline every press speaks the bar as built and toasts
+    /// why (the Worker transform lands with transport).
+    func transform(_ mode: String) { mutate("appTransform", [mode]) }
+
+    // MARK: keyboard
+
+    func toggleKeyboard() {
+        mutate(kb == nil ? "appKbOpen" : "appKbClose", [])
+    }
+
+    func kbPress(_ key: String) { mutate("appKbPress", [key]) }
+    func kbPartner(_ senseId: String) { mutate("appKbPartner", [senseId]) }
 
     func speak() {
         let appId = self.appId

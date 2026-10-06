@@ -33,6 +33,7 @@ export * as keyboard from "../../public/shared/keyboard.mjs";
 export * as keymaps from "../../public/shared/keymaps.mjs";
 export * as library from "../../public/shared/library.mjs";
 export * as bar from "../../public/shared/bar.mjs";
+export * as txbar from "../../public/shared/txbar.mjs";
 export * as wincard from "../../public/shared/wincard.mjs";
 export * as bulk from "../../public/shared/bulk.mjs";
 export * as personName from "../../public/shared/person_name.mjs";

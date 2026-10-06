@@ -53,4 +53,48 @@ final class PipAACUITests: XCTestCase {
         app.buttons["Groups"].tap()
         XCTAssertTrue(app.buttons["want"].waitForExistence(timeout: 10))
     }
+
+    /// B2 works test: the Keyboard anchor swaps the grid for the Pip key
+    /// map, typing offers spelling completions in the strip, a completion
+    /// tap commits the word, and the transform buttons' offline path
+    /// speaks + toasts (Sentence_Bar § 1d — never dead).
+    @MainActor
+    func testKeyboardAndTransforms() throws {
+        let app = XCUIApplication()
+        app.launch()
+        XCTAssertTrue(app.buttons["want"].waitForExistence(timeout: 20))
+
+        // All six controls show on a fresh profile (bar_controls NULL).
+        XCTAssertTrue(app.buttons["Fix it"].exists)
+        XCTAssertTrue(app.buttons["Ask it"].exists)
+        XCTAssertTrue(app.buttons["Say it in the past"].exists)
+        XCTAssertTrue(app.buttons["Say it in the future"].exists)
+
+        // The anchor opens the key grid; its label flips to Board.
+        app.buttons["Keyboard"].tap()
+        XCTAssertTrue(app.buttons["kbkey:w"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["Board"].exists)
+        XCTAssertTrue(app.buttons["kbpartner:sns_0073"].exists) // yes tile
+
+        // Type "wan": the buffer shows in the bar, the strip completes.
+        app.buttons["kbkey:w"].tap()
+        app.buttons["kbkey:a"].tap()
+        app.buttons["kbkey:n"].tap()
+        XCTAssertTrue(app.staticTexts["wan▌"].waitForExistence(timeout: 5))
+
+        // Completion tap commits the word — the bar owns "Want".
+        app.buttons["want"].tap()
+        XCTAssertTrue(app.staticTexts["Want"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.staticTexts["wan▌"].exists)
+
+        // A ⏪ press offline still speaks and says why — the bar keeps
+        // her words unchanged.
+        app.buttons["Say it in the past"].tap()
+        XCTAssertTrue(app.staticTexts["toast"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Want"].exists)
+
+        // Board anchor returns to the grid.
+        app.buttons["Board"].tap()
+        XCTAssertTrue(app.buttons["want"].waitForExistence(timeout: 10))
+    }
 }

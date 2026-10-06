@@ -455,3 +455,52 @@ fully offline.
   backspace/clear work, Groups anchor round-trips index→board.
 - Not in B1: transform buttons (✨❓⏪⏩), keyboard surface, group-page
   header chrome, settings, sync — later slices per § 6.
+
+**2026-10-06 (B2 — keyboard surface + transform chrome):** the board's
+Keyboard anchor opens the real Pip key map; the sentence bar carries
+the full control row (⌫ ✕ inside the bar, ✨ ❓ ⏪ ▶ ⏩ outside it, in
+web order). All semantics run in shared JS — Swift renders keys and
+buttons, never rules.
+
+- Facade additions (`scripts/ios/app.mjs`): `appKbOpen`/`appKbClose`,
+  `appKbPress` (keyboard.mjs `applyKey` — buffer, dead-key latch,
+  punct-as-mark, ⌫ reopens the last word, Enter speaks),
+  `appKbPartner` (yes/no tiles speak, never touch the sentence),
+  `appTransform`. `state()` now carries `typing` (buffer + caret),
+  `kb` (slot/span key model — partner keys arrive as board tiles),
+  `controls` (`bar.barControls` — `learner_profile.bar_controls`,
+  NULL = Everything), and `tense`/`question` for lit-state.
+- Committed typed words take the web's `resolveTyped` path — approved
+  label first (a form spelling pins), then active personal entities,
+  else the word stays typed; grammar help still re-picks, and a
+  commit logs + speaks like a tile tap. Mid-word, the strip switches
+  to `spelling.suggest` completions (`mode: "complete"`); a completion
+  tap clears the buffer and taps the suggested word (`source:
+  "keyboard"` — a completion card's sense stays a sense, never an
+  entity stand-in). `tileEnsure` (on-demand mint) is skipped — no
+  transport yet.
+- `barState` (txbar.mjs) now tracks `preTransform`/`tense`/`question`:
+  `noteBarEdit` on every bar edit (tap, ⌫, clear, typed commit — the
+  doc's rule; note web's `commitKbItem` doesn't void on typed words —
+  a likely gap worth an upstream check), `restoreBar` inside `appSpeak`
+  (▶ restores her taps on a past/future bar, no model call).
+- Transforms have no transport yet, so `appTransform` takes the doc's
+  offline path verbatim: a same-state press (❓ on a question, ⏪ on
+  past, ⏩ on future) just re-speaks; otherwise `logTransform` + toast
+  "needs the internet — spoke it as it was." + `speakNow` — every
+  press produces audio, the bar never changes, nothing reads dead.
+  When transport lands this adds the fetch + `sourceText` staleness
+  check + `snapshotBar`/`applyTransform`; the shape is already right.
+- Swift: `KbKeyModel`/`KeyboardModel`/`PaintedState` fields; `kbGrid`
+  renders the 5×10 map with spans; transform buttons lit-state per
+  `tense`/`question`; a 3.5 s toast overlay; `clips` and `speech`
+  return values both handled (a sentence clip list owns the audio).
+- Proven: `testKeyboardAndTransforms` UI test passes — anchor → key
+  grid → "wan" → strip completes "want" → commit → ⏪ → toast + speak
+  + bar unchanged → Board. All 8 parity tests green; `check:fast`
+  clean. Found and fixed en route: two Realm `.cv` FIFO files inside
+  other apps' sim containers were killing `xcodebuild`'s device clone
+  — deleted the scratch files, clones work again.
+- Still not built: the actual Worker transform call (needs transport
+  + license), device-keyboard mode, keyboard settings (order lives in
+  the profile already), settings surface, natural sentence voice.

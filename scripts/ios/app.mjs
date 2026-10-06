@@ -58,6 +58,11 @@ export function appOpen(dbId, catalogJson, phrasesJson, formTableJson) {
     topRowOn: !!profile.group_top_row,
     sentence: [], sentenceId: null, picks: 0,
     freshNext: false,
+    kbOpen: false,
+    kbBuffer: "", kbPendingAccent: null, kbLead: null,
+    kbIndex: null,
+    kbOrder: profile.keyboard_order ?? "standard",
+    barState: { tense: "present", question: false, preTransform: null },
     lastImpressionKey: null, openImpressionId: null,
     expand: null,                       // { familyId, page, depth }
     view: "board", groupId: null, page: 0,
@@ -252,6 +257,23 @@ function stripModel(s) {
   const geom = boardGeom(s);
   const cap = stripSlots(geom.cols);
 
+  /* strip.js: mid-word, the strip switches from continuations to
+   *  spelling completions — prefix matches over approved labels and
+   *  active personal entities, no impression logged. */
+  if (s.kbBuffer) {
+    s.kbIndex ??= buildKbIndex(s);
+    /* Completion taps target the suggested word itself — a sense stays
+     *  a sense (no entity stand-in here; stripCardFor would rewrite it
+     *  and the tap would hit the wrong item kind). */
+    const cards = PIP().spelling.suggest(s.kbIndex, s.kbBuffer, cap)
+      .map((e) => e.kind === "entity"
+        ? stripCardFor(s, { kind: "entity", id: e.id })
+        : { kind: "sense", id: e.id, label: e.text,
+            role: e.role ?? "None", art: metaFor(s, e.id).art })
+      .filter(Boolean);
+    return { cap, mode: "complete", cards };
+  }
+
   if (s.expand) {
     const fam = PIP().families.family(s.d, s.expand.familyId);
     if (!fam) s.expand = null;
@@ -285,7 +307,8 @@ function stripModel(s) {
   const items = ranked.shown;
   ensureSentence(s);
   maybeImpression(s, ranked.ranked, items, {
-    cap, gate: groupId ? { group: groupId } : { ending: ranked.ending } });
+    cap, mode: s.kbOpen ? "keyboard" : "picture",
+    gate: groupId ? { group: groupId } : { ending: ranked.ending } });
   const cards = items.map((c) => stripCardFor(s, c)).filter(Boolean);
   if (s.openImpressionId !== null) {
     PIP().funnel.stampShownFinal(s.d, s.openImpressionId,
@@ -334,6 +357,7 @@ export function appFamilyPage(appId) {
  *  canonical index_visual slot. Hidden groups are skipped (child view). */
 export function appGroups(appId) {
   const s = S(appId);
+  s.kbOpen = false; // any non-board view closes the keyboard (kbUi.setView)
   const layout = PIP().groups_shared.activeLayout(s.d);
   const geom = PIP().groups_shared.geometryOf(s.d, layout);
   const home = new Map(PIP().coremove.coreCells(s.d, boardGeom(s).name, s.locale)
@@ -416,7 +440,7 @@ export function appGroupPage(appId, groupId, page = 0) {
     }
     slots[slots.length - 1].slot = slot;
   }
-  s.view = "group"; s.groupId = groupId; s.page = page;
+  s.view = "group"; s.groupId = groupId; s.page = page; s.kbOpen = false;
   return { cols: geom.cols, rows: geom.rows, groupId, name, page, pages, cells: slots };
 }
 
@@ -458,8 +482,16 @@ const startFresh = (s, editing = false) => {
 };
 
 /** The whole painted state after a change — one call, so a tap is one
- *  bridge round trip, not three. */
-const state = (s) => ({ bar: barModel(s), strip: stripModel(s), board: boardModel(s) });
+ *  bridge round trip, not three. `controls`/`tense`/`question` are the
+ *  bar chrome (bar.mjs owns the shown set; txbar owns the flags); `kb`
+ *  is the key grid while the keyboard surface is open. */
+const state = (s) => ({
+  bar: barModel(s), strip: stripModel(s), board: boardModel(s),
+  typing: s.kbBuffer || null,
+  kb: s.kbOpen ? kbModel(s) : null,
+  controls: [...PIP().bar.barControls(s.d)],
+  tense: s.barState.tense, question: s.barState.question,
+});
 
 /** board.js tap() — the child path (no tour/demo/edit/pick/model).
  *  tap: { kind: 'sense'|'entity', id, text, source, groupId? } */
@@ -469,6 +501,11 @@ export function appTap(appId, tap) {
   const source = tap.source ?? "grid";
   s.expand = null;
   startFresh(s);
+  /* A strip completion tap commits the suggested word — the in-progress
+   *  buffer is discarded, not committed (keyboard-ui.js kbCompletions). */
+  if (source === "keyboard") {
+    s.kbBuffer = ""; s.kbPendingAccent = null; s.kbLead = null;
+  }
   let item = { kind, id, text };
   if (kind === "sense" && id && s.grammarHelp) {
     const f = PIP().forms.formFor(s.d, s.formTable, s.sentence, id);
@@ -476,6 +513,7 @@ export function appTap(appId, tap) {
       labelId: f.labelId, fixed: f.merged, features: f.features };
   }
   s.sentence.push(item);
+  PIP().txbar.noteBarEdit(s.barState);
   revisitPrev(s, s.sentence.length - 1);
   let speech = null;
   if (id) {
@@ -496,10 +534,15 @@ export function appTap(appId, tap) {
 export function appBackspace(appId) {
   const s = S(appId);
   startFresh(s, true);
-  const last = s.sentence.pop();
-  if (last?.id && s.sentenceId !== null && s.picks > 0) {
-    PIP().funnel.detachEvent(s.d, s.sentenceId, s.picks - 1);
-    s.picks--;
+  if (s.kbBuffer) {
+    s.kbBuffer = ""; // the word in progress goes first — never a pick
+  } else {
+    const last = s.sentence.pop();
+    PIP().txbar.noteBarEdit(s.barState);
+    if (last?.id && s.sentenceId !== null && s.picks > 0) {
+      PIP().funnel.detachEvent(s.d, s.sentenceId, s.picks - 1);
+      s.picks--;
+    }
   }
   return { speech: null, ...state(s) };
 }
@@ -514,14 +557,15 @@ export function appClear(appId) {
     s.lastImpressionKey = null; s.openImpressionId = null;
   }
   s.sentence.length = 0;
+  s.kbBuffer = ""; s.kbPendingAccent = null; s.kbLead = null;
+  PIP().txbar.noteBarEdit(s.barState);
   return { speech: null, ...state(s) };
 }
 
-/** ▶ Speak — the EOS re-pick, then the clip list for every bar item
- *  (offline = the word-by-word path; the minted sentence voice lands
- *  with networking). Closes the sentence 'spoken'. */
-export function appSpeak(appId) {
-  const s = S(appId);
+/** speakSentence — the EOS re-pick, then the clip list for every bar
+ *  item (offline = the word-by-word path; the minted sentence voice
+ *  lands with networking). Closes the sentence 'spoken'. */
+function speakNow(s) {
   if (s.grammarHelp && s.sentence.length) {
     const last = s.sentence[s.sentence.length - 1];
     if (last.kind === "sense" && last.id) {
@@ -546,5 +590,204 @@ export function appSpeak(appId) {
     s.lastImpressionKey = null; s.openImpressionId = null;
   }
   s.freshNext = s.freshAfterSpeak;
-  return { clips, ...state(s) };
+  return clips;
+}
+
+/** ▶ — the bar as built, never the model. On a past/future bar it first
+ *  restores her exact taps (txbar.js — no model call, works offline). */
+export function appSpeak(appId) {
+  const s = S(appId);
+  PIP().txbar.restoreBar(s.sentence, s.barState);
+  return { clips: speakNow(s), ...state(s) };
+}
+
+/* ---------------- keyboard (keyboard-ui.js) ---------------- */
+
+/** The yes/no partner keys draw as the word's own board tile. */
+function partnerInfo(s, senseId) {
+  const w = one(s.d,
+    `SELECT s.id, l.text AS label, s.fitzgerald_role AS role FROM sense s
+     JOIN label l ON l.sense_id = s.id
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
+     WHERE s.id = ?`, [s.locale, senseId]);
+  if (!w) return null;
+  return { id: w.id, label: w.label, role: w.role, art: metaFor(s, w.id).art };
+}
+
+/** keyboard.mjs keyMap → JSON. Keys carry slot/span/kind; partner keys
+ *  carry the sense's tile model; the latched dead key is flagged. */
+function kbModel(s) {
+  const keys = PIP().keyboard.keyMap(s.locale, s.kbOrder) ?? [];
+  return {
+    mode: keys.length ? "pip" : "device",
+    keys: keys.map((k) => {
+      const m = { slot: k.slot, span: k.span, kind: k.kind };
+      if (k.kind === "partner") {
+        const p = partnerInfo(s, k.value);
+        return p ? { ...m, senseId: p.id, label: p.label, role: p.role, art: p.art }
+                 : { ...m, kind: "empty" };
+      }
+      m.value = k.value;
+      if (k.kind === "dead" && s.kbPendingAccent === k.value) m.latched = true;
+      return m;
+    }),
+  };
+}
+
+/** keyboard-ui.js buildKbIndex — every approved label and active
+ *  personal entity, frequency-ranked, minus hidden senses. */
+function buildKbIndex(s) {
+  const senses = all(s.d,
+    `SELECT s.id, l.text AS label, l.kind AS label_kind, s.fitzgerald_role,
+       (SELECT COUNT(*) FROM learner_event_log le
+         WHERE le.item_kind = 'sense' AND le.item_id = s.id) AS freq
+     FROM label l JOIN sense s ON s.id = l.sense_id
+     WHERE l.status = 'approved' AND l.locale = ?
+       AND NOT EXISTS (SELECT 1 FROM sense_mask m
+                       WHERE m.sense_id = s.id AND m.status = 'hidden')`,
+    [s.locale],
+  ).map((w) => ({ kind: "sense", id: w.id, text: w.label,
+    labelKind: w.label_kind, freq: w.freq, role: w.fitzgerald_role }));
+  const ents = all(s.d,
+    `SELECT e.*,
+       (SELECT COUNT(*) FROM learner_event_log le
+         WHERE le.item_kind = 'entity' AND le.item_id = e.id) AS freq
+     FROM personal_entity e WHERE e.status = 'active'`,
+  ).map((e) => ({ kind: "entity", id: e.id, text: e.spoken_name,
+    freq: e.freq, entity: e }));
+  return PIP().spelling.buildIndex([...senses, ...ents], s.locale);
+}
+
+/** keyboard-ui.js resolveTyped: approved label first (a form spelling
+ *  is her pick and pins), then active personal entities, else the word
+ *  stays typed. */
+function resolveTyped(s, text) {
+  const norm = PIP().normalize.normalizeV1(text);
+  const hit = all(s.d,
+    `SELECT s.id, l.text AS label, l.kind, l.id AS label_id
+     FROM label l JOIN sense s ON s.id = l.sense_id
+     WHERE l.normalized_text = ? AND l.locale = ? AND l.status = 'approved'
+     ORDER BY (l.kind = 'lemma') DESC, l.default_for_text DESC`,
+    [norm, s.locale])[0];
+  if (hit) return { kind: "sense", id: hit.id,
+    display: hit.kind === "lemma" ? hit.label : text,
+    formLabel: hit.kind === "form" ? { id: hit.label_id, text } : null };
+  const ent = all(s.d,
+    "SELECT id, spoken_name FROM personal_entity WHERE status = 'active'")
+    .find((e) => PIP().normalize.normalizeV1(e.spoken_name) === norm);
+  if (ent) return { kind: "entity", id: ent.id, display: ent.spoken_name };
+  return { kind: "typed", id: null, display: text };
+}
+
+/** keyboard-ui.js commitKbItem: resolve the raw typed text, let grammar
+ *  help re-pick, log the pick, speak it. Typed words are the on-demand
+ *  mint trigger on web — skipped here until transport lands. */
+function commitKbItem(s, index) {
+  const raw = s.sentence[index];
+  const hit = resolveTyped(s, raw.text);
+  let item = { kind: hit.kind, id: hit.id, text: hit.display };
+  if (hit.kind === "sense" && hit.id && s.grammarHelp) {
+    if (hit.formLabel) {
+      item = { kind: "sense", id: hit.id, text: hit.formLabel.text,
+        labelId: hit.formLabel.id, fixed: true };
+    } else {
+      const f = PIP().forms.formFor(s.d, s.formTable,
+        s.sentence.slice(0, index), hit.id);
+      item = { kind: "sense", id: f.senseId, text: f.text ?? item.text,
+        labelId: f.labelId, fixed: !!f.merged, features: f.features };
+    }
+  }
+  if (raw.punct) item.punct = raw.punct;
+  if (raw.lead) item.lead = raw.lead;
+  s.sentence[index] = item;
+  const speech = PIP().voice.resolveSlot(s.d, item, s.locale, s.voiceId);
+  if (item.id) {
+    ensureSentence(s);
+    const position = s.picks++;
+    PIP().funnel.fillChosen?.(s.d, s.sentenceId,
+      { kind: item.kind, id: item.id, source: "keyboard" });
+    PIP().funnel.logSelection(s.d, item.kind, item.id, Date.now(), {
+      sentenceId: s.sentenceId, position, source: "keyboard",
+      labelId: item.labelId ?? null,
+    });
+    revisitPrev(s, index); // "what do" + typed he -> does
+  }
+  return speech;
+}
+
+export function appKbOpen(appId) {
+  const s = S(appId);
+  s.kbOpen = true;
+  s.kbIndex ??= buildKbIndex(s);
+  return { speech: null, ...state(s) };
+}
+
+export function appKbClose(appId) {
+  const s = S(appId);
+  s.kbOpen = false;
+  return { speech: null, ...state(s) };
+}
+
+/** One keystroke (keyboard-ui.js kbPress): applyKey owns the buffer
+ *  semantics; commits resolve/speak/log; Enter speaks the sentence. */
+export function appKbPress(appId, key) {
+  const s = S(appId);
+  if (key !== "Enter") startFresh(s, key === "Backspace"); // ⌫ edits the spoken bar
+  const prevLast = s.sentence[s.sentence.length - 1];
+  const res = PIP().keyboard.applyKey(
+    { buffer: s.kbBuffer, pendingAccent: s.kbPendingAccent,
+      lead: s.kbLead, items: s.sentence },
+    key, s.locale);
+  s.kbBuffer = res.state.buffer;
+  s.kbPendingAccent = res.state.pendingAccent;
+  s.kbLead = res.state.lead;
+  if (key === "Backspace" && res.state.items.length < s.sentence.length
+      && prevLast?.id && s.sentenceId !== null && s.picks > 0) {
+    PIP().funnel.detachEvent(s.d, s.sentenceId, s.picks - 1);
+    s.picks--;
+    PIP().txbar.noteBarEdit(s.barState);
+  }
+  s.sentence.splice(0, s.sentence.length, ...res.state.items);
+  let speech = null, clips = null;
+  for (const e of res.effects) {
+    if (e.type === "commit") {
+      speech = commitKbItem(s, e.index);
+      PIP().txbar.noteBarEdit(s.barState); // a typed word voids the snapshot
+    } else if (e.type === "speak") {
+      clips = speakNow(s);
+    }
+  }
+  return { speech, clips, ...state(s) };
+}
+
+/** The partner answer keys (yes/no): the tap speaks the word and
+ *  leaves the sentence and the buffer alone (keyboard-ui partnerCell). */
+export function appKbPartner(appId, senseId) {
+  const s = S(appId);
+  PIP().funnel.logSelection(s.d, "sense", senseId, Date.now(), {
+    sentenceId: s.sentenceId, position: null, source: "keyboard" });
+  const speech = PIP().voice.resolveSlot(s.d,
+    { kind: "sense", id: senseId }, s.locale, s.voiceId);
+  return { speech, ...state(s) };
+}
+
+/* ---------------- transform buttons (speech.js transformAndSpeak) ---------------- */
+
+/** ✨ ❓ ⏪ ⏩ — the press logs, then the Worker answers. Native has no
+ *  transport yet, so every press takes the doc's offline path: it speaks
+ *  the bar as built and says why (Sentence_Bar § 1d). A same-state press
+ *  (❓ on a question, ⏪ on past, ⏩ on future) just re-speaks. */
+export function appTransform(appId, mode) {
+  const s = S(appId);
+  if (!s.sentence.length) return { speech: null, ...state(s) };
+  const settled = (mode === "question" && s.barState.question)
+    || (mode === "past" && s.barState.tense === "past")
+    || (mode === "future" && s.barState.tense === "future");
+  if (settled) return { clips: speakNow(s), ...state(s) };
+  PIP().funnel.logTransform(s.d, mode, 0);
+  const name = { fix: "Fix it", question: "Ask it",
+    past: "Say it in the past", future: "Say it in the future" }[mode]
+    ?? "That button";
+  const toast = `${name} needs the internet — spoke it as it was.`;
+  return { clips: speakNow(s), toast, ...state(s) };
 }

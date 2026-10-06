@@ -21,16 +21,36 @@ struct BoardView: View {
         .padding(.horizontal, 10)
         .padding(.bottom, 8)
         .background(PipStyle.cream.ignoresSafeArea())
+        .overlay(alignment: .top) {
+            if let toast = model.toast {
+                Text(toast)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(PipStyle.ink)
+                    .padding(.horizontal, 16).padding(.vertical, 10)
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .overlay(RoundedRectangle(cornerRadius: 12)
+                        .stroke(PipStyle.ink.opacity(0.3), lineWidth: 1.5))
+                    .shadow(color: .black.opacity(0.12), radius: 8, y: 3)
+                    .padding(.top, 76)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .accessibilityIdentifier("toast")
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: model.toast)
     }
 
     // MARK: - Sentence bar
 
+    /// Web order: the scroll holds chips, then ⌫ ✕ inside the bar; the
+    /// model buttons ✨ ❓ sit apart from the time transport ⏪ ▶ ⏩
+    /// (index.html #bar + tx-* — docs/product/Sentence_Bar.md).
     private var topBar: some View {
         HStack(spacing: 8) {
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 6) {
-                        if model.bar.isEmpty {
+                        if model.bar.isEmpty && model.typing == nil {
                             Text("Tap a word to start.")
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundStyle(PipStyle.muted)
@@ -39,6 +59,13 @@ struct BoardView: View {
                             ForEach(Array(model.bar.enumerated()), id: \.offset) { i, chip in
                                 BarChip(display: chip.display ?? "", art: chip.art)
                                     .id(i)
+                            }
+                            if let typing = model.typing {
+                                Text(typing + "▌")
+                                    .font(.system(size: 22, weight: .semibold))
+                                    .foregroundStyle(PipStyle.ink)
+                                    .padding(.horizontal, 4)
+                                    .id("typing")
                             }
                         }
                     }
@@ -53,14 +80,39 @@ struct BoardView: View {
             }
             .layoutPriority(1)
 
-            BarButton(system: "delete.backward", label: "Backspace",
-                      enabled: !model.bar.isEmpty) { model.backspace() }
-            BarButton(system: "xmark", label: "Clear",
-                      enabled: !model.bar.isEmpty) { model.clear() }
+            let editable = !model.bar.isEmpty || model.typing != nil
+            if model.controls.contains("backspace") {
+                BarButton(system: "delete.backward", label: "Backspace",
+                          enabled: editable) { model.backspace() }
+            }
+            if model.controls.contains("clear") {
+                BarButton(system: "xmark", label: "Clear",
+                          enabled: editable) { model.clear() }
+            }
+            if model.controls.contains("fix") {
+                TxButton(system: "wand.and.stars", label: "Fix it",
+                         enabled: !model.bar.isEmpty) { model.transform("fix") }
+            }
+            if model.controls.contains("question") {
+                TxButton(system: "questionmark", label: "Ask it",
+                         selected: model.question,
+                         enabled: !model.bar.isEmpty) { model.transform("question") }
+            }
+            if model.controls.contains("past") {
+                TxButton(system: "backward.fill", label: "Say it in the past",
+                         selected: model.tense == "past",
+                         enabled: !model.bar.isEmpty) { model.transform("past") }
+            }
             BarButton(system: "play.fill", label: "Play",
                       enabled: !model.bar.isEmpty, wide: true) { model.speak() }
+            if model.controls.contains("future") {
+                TxButton(system: "forward.fill", label: "Say it in the future",
+                         selected: model.tense == "future",
+                         enabled: !model.bar.isEmpty) { model.transform("future") }
+            }
         }
         .frame(height: 64)
+        .accessibilityIdentifier("sentenceBar")
     }
 
     // MARK: - Strip
@@ -85,7 +137,11 @@ struct BoardView: View {
                 case .boot: break
                 }
             }
-            AnchorTile(icon: "keyboard", label: "Keyboard", dimmed: true) {}
+            AnchorTile(icon: "keyboard",
+                       label: model.kb == nil ? "Keyboard" : "Board") {
+                model.toggleKeyboard()
+            }
+            .accessibilityIdentifier("anchor:keyboard")
         }
         .frame(height: 76)
     }
@@ -102,8 +158,8 @@ struct BoardView: View {
         default:
             Button {
                 if let id = card.id {
-                    model.tap(kind: card.kind, id: id,
-                              text: card.label ?? "", source: "strip")
+                    model.tap(kind: card.kind, id: id, text: card.label ?? "",
+                              source: model.strip?.mode == "complete" ? "keyboard" : "strip")
                 }
             } label: {
                 StripCard(label: card.label ?? "",
@@ -122,7 +178,9 @@ struct BoardView: View {
             case .boot:
                 ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
             case .board:
-                if let b = model.board {
+                if let kb = model.kb {
+                    kbGrid(kb, in: geo.size)
+                } else if let b = model.board {
                     slotGrid(cols: b.cols, rows: b.rows, cells: b.cells, in: geo.size)
                 }
             case .index:
@@ -186,6 +244,52 @@ struct BoardView: View {
             ChromeTile(label: "Next ›") { model.nextGroupPage() }
         default:
             EmptyCell()
+        }
+    }
+
+    // MARK: - Keyboard
+
+    /// The locale's key map in the grid's place — 50 slots, 5 rows of
+    /// 10 (keyboard.mjs). Span keys (space) stretch across their slots;
+    /// partner keys draw as the word's own board tile.
+    private func kbGrid(_ kb: KeyboardModel, in size: CGSize) -> some View {
+        let gap: CGFloat = 6
+        let cols = 10, rows = 5
+        let w = (size.width - gap * CGFloat(cols - 1)) / CGFloat(cols)
+        let h = (size.height - gap * CGFloat(rows - 1)) / CGFloat(rows)
+        return VStack(spacing: gap) {
+            ForEach(0..<rows, id: \.self) { r in
+                HStack(spacing: gap) {
+                    ForEach(kb.keys.filter { $0.slot / cols == r }.sorted { $0.slot < $1.slot },
+                            id: \.slot) { key in
+                        kbKeyView(key)
+                            .frame(width: w * CGFloat(key.span) + gap * CGFloat(key.span - 1),
+                                   height: h)
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    @ViewBuilder
+    private func kbKeyView(_ key: KbKeyModel) -> some View {
+        switch key.kind {
+        case "partner":
+            Button { if let id = key.senseId { model.kbPartner(id) } } label: {
+                WordTile(label: key.label ?? "", role: key.role, art: key.art)
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("kbpartner:\(key.senseId ?? "")")
+        case "empty":
+            EmptyCell()
+        default:
+            Button { if let v = key.value { model.kbPress(v) } } label: {
+                KbKeyCap(key: key)
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("kbkey:\(key.value ?? "?")")
+            .accessibilityLabel(key.kind == "backspace" ? "Delete" : (key.value ?? ""))
         }
     }
 }
@@ -265,6 +369,61 @@ struct GroupDoor: View {
                 .stroke(PipStyle.muted.opacity(0.5), lineWidth: 2))
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(label)
+    }
+}
+
+/// A keyboard key — big centered cap; ⌫ and space get the util style;
+/// a latched dead key lights (two taps in a fixed order, never a
+/// long-press — keyboard.mjs).
+struct KbKeyCap: View {
+    let key: KbKeyModel
+    var body: some View {
+        let util = key.kind != "char"
+        VStack(spacing: 0) {
+            Text(key.kind == "space" ? "␣"
+                 : key.kind == "backspace" ? "⌫"
+                 : key.value ?? "")
+                .font(.system(size: util ? 22 : 30, weight: util ? .semibold : .bold))
+            if key.kind == "space" {
+                Text("space").font(.system(size: 10, weight: .medium))
+                    .foregroundStyle(PipStyle.muted)
+            }
+        }
+        .foregroundStyle(PipStyle.ink)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(key.latched == true ? PipStyle.ink.opacity(0.15) : Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .overlay(RoundedRectangle(cornerRadius: 8)
+            .stroke(PipStyle.ink.opacity(util ? 0.25 : 0.4),
+                    lineWidth: key.latched == true ? 2.5 : 1.5))
+    }
+}
+
+/// A transform button — same footprint as the bar buttons, `selected`
+/// fills it (the tense trio is a three-position switch; ❓ lights while
+/// the bar is a question — Sentence_Bar § 4.2).
+struct TxButton: View {
+    let system: String
+    let label: String
+    var selected = false
+    var enabled = true
+    var action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: system)
+                .font(.system(size: 18, weight: .semibold))
+                .frame(width: 44, height: 48)
+                .background(selected ? PipStyle.ink
+                            : enabled ? Color.white : Color(white: 0.94))
+                .foregroundStyle(selected ? Color.white
+                                 : enabled ? PipStyle.ink : PipStyle.muted.opacity(0.5))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(RoundedRectangle(cornerRadius: 10)
+                    .stroke(PipStyle.ink.opacity(0.35), lineWidth: 1.5))
+        }
+        .buttonStyle(.plain)
+        .disabled(!enabled)
         .accessibilityLabel(label)
     }
 }
