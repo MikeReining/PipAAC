@@ -1,22 +1,22 @@
 {
-  "buildId": "1.1.10-5e541db32a34",
-  "version": "1.1.10",
-  "payloadHash": "5e541db32a34",
+  "buildId": "1.1.12-6b283d790c84",
+  "version": "1.1.12",
+  "payloadHash": "6b283d790c84",
   "files": [
     {
       "path": "/board.js",
-      "bytes": 67896,
-      "sha256": "ab9d9b28f74e4acba251d7e0c6c6ccfe52eca81fea315c73aa078c9663dfa7a8"
+      "bytes": 68390,
+      "sha256": "fdd1399d93f1a65d1afd135a3e4ca587dc97fef861637e344d5440e1071a4c16"
     },
     {
       "path": "/board/add-flow.css",
-      "bytes": 6292,
-      "sha256": "f2373d4f472442e31e9be58d63a9ba6b32964af2a53cca121bb7b5a323738ee6"
+      "bytes": 6418,
+      "sha256": "6b97dfec96a563b986375273f24fa47baee959677fb743c441d42ec7a8d65fc8"
     },
     {
       "path": "/board/add-flow.js",
-      "bytes": 26665,
-      "sha256": "fbd5962f01781f6bd6c93e29c41206cee2aff6b289123f2401a6bac9b16da739"
+      "bytes": 29436,
+      "sha256": "2fef9ac915d73912cc7407c4ce1381b82c00d071c4aeea04ad6120ee2cb2baec"
     },
     {
       "path": "/board/avatar.js",
@@ -75,8 +75,8 @@
     },
     {
       "path": "/board/editor-ui.js",
-      "bytes": 44166,
-      "sha256": "301e888084b118ecd70cab437e95428b4505ac07dc8678b56db5f86b727a0617"
+      "bytes": 44962,
+      "sha256": "f32bbeadbfc3bbee8466d581f52751cc44b0ff8200e37474c6e24a6e6f1be39a"
     },
     {
       "path": "/board/family-editor.css",
@@ -265,8 +265,8 @@
     },
     {
       "path": "/board/setup-ui.js",
-      "bytes": 10071,
-      "sha256": "8c1ec30cbbe857c9cadc30e0fe5276bcb70826b5c0c48edfa896f5f05a12296c"
+      "bytes": 11186,
+      "sha256": "256234a7747ee81615a1e25b17e4750dd2f89a958af390ef7a624faf885ccf47"
     },
     {
       "path": "/board/speech.js",
@@ -441,7 +441,7 @@
     {
       "path": "/help.en.json",
       "bytes": 29811,
-      "sha256": "81bad189044cb7a21692c276b0ac8ce786409783ca631111cbc94dd89b925ef6"
+      "sha256": "db855f7abe9dac54121c82258735bb0ac0680bfa6d9b7cde05914c36f3ec9588"
     },
     {
       "path": "/icons/backspace.svg",
@@ -770,8 +770,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 70314,
-      "sha256": "1c75280427e0806deb42a369b4ec7cf74d8d8a61ac77664000300c8b604b93a8"
+      "bytes": 70375,
+      "sha256": "87b701d69126d21414dc34c54d326aef1908b36d2f4c339331c6cd0b9e04d400"
     },
     {
       "path": "/manifest.webmanifest",
@@ -805,8 +805,8 @@
     },
     {
       "path": "/shared/bulk.mjs",
-      "bytes": 4312,
-      "sha256": "6852a94e1e5f3300658b625e05ba997e1a83485c42ed563413dac136211d7bf0"
+      "bytes": 4744,
+      "sha256": "2470687d0f3f32c8888bc9ccff9a0740a440c091fc269bcb8b38a81e1ad10a7b"
     },
     {
       "path": "/shared/coremove.mjs",
@@ -860,8 +860,8 @@
     },
     {
       "path": "/shared/groups.mjs",
-      "bytes": 19496,
-      "sha256": "20da1b6b1eaf4495383450b3b35a7111cddc6d7ecd51cd6737ac687d3ab7d631"
+      "bytes": 20029,
+      "sha256": "1eb325a7fad71e55a65f813016cf92c1d3b9d996eb0f0868bd761d46cc54a104"
     },
     {
       "path": "/shared/help_search.mjs",
@@ -980,8 +980,8 @@
     },
     {
       "path": "/shared/setup.mjs",
-      "bytes": 3007,
-      "sha256": "62dd1b8f35b8dd0c1f501830bd7b219c34a7637c3f12d2382f77904f760f9975"
+      "bytes": 3139,
+      "sha256": "bc6d4f985158c8c19964ef584762aa564fada839a1eaf458082e7b751b10e4e2"
     },
     {
       "path": "/shared/spelling.mjs",

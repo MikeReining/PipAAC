@@ -9,6 +9,9 @@ off **10** or more (was 20, by request).
 buttons, faces, voice choice, typed-word voice, Progress) are the paid
 surface and are tried, not gated forever. § 4.2's table is the canonical
 list (`docs/phases/040_Trial_And_Upgrade_Page.md` § 3).
+**Amended 2026-10-06:** free own words 20 → **10** (founder). The cap is
+constant from the first add — trial or no trial, it never moves; words
+stay structural and are never inside the trial.
 Intake: `docs/founder/2026-09-22_Customization_Pricing_VoiceCloning.md`,
 `docs/founder/2026-09-23_Accounts_And_Pricing.md`.
 Fact map: `docs/product/SSOT.md`.
@@ -41,7 +44,7 @@ Pip AAC establishes a permanent architectural and business invariant:
 | 1. CORE TIER (Free Forever, Local-First)                                       |
 |    - 100% functional AAC communication (offline-always)                       |
 |    - Full 677-word core & primary fringe library                              |
-|    - 20 words of your own (§ 4; superseded 'unlimited' 2026-09-23)            |
+|    - 10 words of your own (§ 4; 20 → 10 on 2026-10-06)                        |
 |    - Device text-to-speech (OS synthesized voices)                            |
 |    - Full spatial-vector motor grid & predictive strip                        |
 |    - Local storage (SQLite WASM / OPFS)                                       |
@@ -139,7 +142,7 @@ no others (`docs/phases/040_Trial_And_Upgrade_Page.md` § 3, DECIDED
 | | Choose a voice | **Yes** |
 | | Voice for the words you type | **Yes**, inside its existing per-license caps |
 | | Progress: weekly charts, goal words, new words, PDF/IEP report | **Yes** — shown in full, locked back to the preview after |
-| **20 words of your own** (people, pets, places, with your photos) | Unlimited words of your own | **No** — structural, never unwound |
+| **10 words of your own** (people, pets, places, with your photos) | Unlimited words of your own | **No** — structural, never unwound |
 | **The user's own device + one supporter** (all of that supporter's devices: laptop, phone, tablet) | **Every supporter**, every web editor | **No** — structural, people are never removed |
 | The user's own device | Sync across unlimited devices | **No** |
 | 5 drawings (Draw it for me) | 300 drawings, then top-up packs near cost | **No** — has its own quota |
@@ -152,7 +155,9 @@ removing a teacher. Those stay behind Lifetime during the trial.
 
 - **A word of your own** is a live `personal_entity`. Retiring one frees a
   slot; changing a built-in word's picture or recording does not count.
-  20 is a starting value, to be tested with real families.
+  10 is a starting value (founder, 2026-10-06 — was 20), to be tested with
+  real families; raising it later is free goodwill, lowering is a rug
+  pull, so start low.
 - **One supporter free** (DECIDED 2026-09-23, replaces "one live
   device"). A free user has its own device (the child's iPad) and one
   supporter, on as many of that supporter's devices as they like. Editing
@@ -183,9 +188,9 @@ removing a teacher. Those stay behind Lifetime during the trial.
 
 ### 4.3 No surprise
 
-- App Store listing and first run: "Free: every word speaks, 20 of your
+- App Store listing and first run: "Free: every word speaks, 10 of your
   own, and one supporter. \$49 once: unlimited, for the whole team."
-- The add flow shows "14 of 20 free words" from the first add.
+- The add flow shows "4 of 10 free words" from the first add.
 - At the limit the adult sees the offer; the child never sees a paywall
   and speaking never waits on it.
 

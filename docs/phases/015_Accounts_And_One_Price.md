@@ -16,7 +16,7 @@ Any change to those stops the phase for a new founder call.
 | Topic | Owner |
 | --- | --- |
 | Users, supporters, accounts, QR card, many users per device | `docs/product/Sync_And_Web_Editing.md` § 12 |
-| Price, free vs Pip Lifetime, the 20-word limit, drawings | `docs/product/Pricing_And_Packaging.md` § 4 |
+| Price, free vs Pip Lifetime, the 10-word limit, drawings | `docs/product/Pricing_And_Packaging.md` § 4 |
 | Keys, pairing, op log, relay (unchanged) | `docs/product/Sync_And_Web_Editing.md` § 3–§ 7 |
 | The synced tables | `docs/product/Language_And_Voice_Schema.md` |
 
@@ -181,7 +181,7 @@ push even one user past kvvfs's envelope, so this move is needed anyway.
   devices; the device warns if it is the only copy and no QR card was
   saved).
 - **Add user:** a name and an optional photo, then the user's first
-  board opens. Free limits (20 own words) count per user.
+  board opens. Free limits (10 own words) count per user.
 - **The child's screen never shows a switcher.** The device opens to its
   home user; switching needs the Parent Corner lock. A laptop with no
   home user opens to the list.
@@ -493,7 +493,7 @@ launching, nobody's using it right now." The dev-license path stays the
 entitlement mechanism until Stripe/Apple land. Owed when resumed:
 Stripe Checkout + webhook, iOS consumable IAP + App Store Server
 Notifications, license codes, server-signed offline license statement,
-and the 20-word / 5-drawing / web-editor / free-supporter gates below.
+and the 10-word / 5-drawing / web-editor / free-supporter gates below.
 
 **Partially BUILT 2026-09-23** (relay legs, dev-license path; the cap
 predates the one-supporter ruling and is owed a change, see Scope): the
@@ -566,7 +566,7 @@ or more. **Deployed 2026-10-03** — worker `bccf2c5a` on app.pipaac.org
 
 Still owed by this slice: Stripe/Apple **confirmation wiring tested
 live** (test-mode purchase end-to-end), iOS consumable IAP (lands with
-the iOS shell — Out of scope), the 20-word and 5-drawing counters, the
+the iOS shell — Out of scope), the 10-word and 5-drawing counters, the
 web-editor gate, the own-device + one-supporter cap replacing the
 one-device cap, and the server-signed offline license statement.
 
@@ -620,7 +620,7 @@ Scope:
   or Apple purchase or a code redemption; a server-signed license
   statement the device verifies offline. The license belongs to the
   user, not to the supporter who paid.
-- Free limits: 20 live own words (counter from the first add); **the
+- Free limits: 10 live own words (counter from the first add); **the
   user's own device + one supporter** (DECIDED 2026-09-23). Each device
   registers with a role: `own` (not signed in as a supporter) or
   `supporter:<account>`. The relay allows one `own` device (a QR restore
@@ -629,11 +629,11 @@ Scope:
   days frees the spot. Replaces the built one-device cap. The web editor
   opens for the free supporter and for every supporter of a Lifetime
   user. 5 drawings.
-- License codes: generate, redeem on one user; 50% off 20+ for schools.
+- License codes: generate, redeem on one user; 50% off 10+ for schools.
 - Speaking never waits on any of it.
 
 Works Test:
-1. A free user's 21st own word is refused with the offer; the 20 keep
+1. A free user's 11th own word is refused with the offer; the 10 keep
    speaking offline with the relay down.
 2. **The SLP story.** SLP account S builds free user Maya on a laptop and
    emails the QR card. The parent scans it on an iPad that is not signed

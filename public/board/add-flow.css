@@ -102,6 +102,8 @@ html.kb-up .add-grouplist { max-height: none; }
 .addmatch:not(.hi):hover { border-color: var(--muted); }
 
 .add-more { color: var(--muted); font-size: 14px; text-align: center; }
+/* The free-word counter (015 § 4.3): shown from the first own word. */
+.add-count { margin: -6px 0 0; text-align: center; }
 .linkbtn {
   border: none; background: none; padding: 2px 2px; font: inherit;
   color: var(--ink); font-weight: 700; text-decoration: underline;

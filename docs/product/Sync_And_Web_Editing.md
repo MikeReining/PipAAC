@@ -744,5 +744,5 @@ are in § 9's BUILT block. Camera scanning is gated on
 
 Owned by `docs/product/Pricing_And_Packaging.md` § 4: \$49 once per user,
 every supporter free once paid, a free user gets its own device + one
-supporter + 20 words of its own,
+supporter + 10 words of its own,
 backup and QR restore always free.

@@ -13,6 +13,7 @@
 import { applyPasteRows, nameFromFile, resolvePasteRows } from "../shared/bulk.mjs";
 import { SENSE_ART_SQL } from "../shared/images.mjs";
 import { applySetupPeople, setupPeople, SETUP_STEPS } from "../shared/setup.mjs";
+import { liveOwnWords, OWN_WORDS_FREE } from "../shared/groups.mjs";
 import { GROUP_ICONS } from "./group-glyph.js";
 
 const $ = (id) => document.getElementById(id);
@@ -22,7 +23,19 @@ export function mountSetup({
   savePhoto, syncUploadBlob, loadPhotoURL, artInto, me, saveUser, flushDb,
   tile, dropEntityPhoto,
   invalidateIndex, renderGrid, rerenderView, renderStrip,
+  licensed = () => false, openSettings,
 }) {
+  /* 015 slice 6 — the free-word cap applies inside the wizard too: a
+   *  family pasting twelve names lands the first slots and hears the
+   *  offer for the rest. */
+  const ownSlots = () =>
+    licensed() ? Infinity : Math.max(0, OWN_WORDS_FREE - liveOwnWords(db));
+  const offerRefused = (refused) => {
+    if (refused) {
+      toast(`That's your ${OWN_WORDS_FREE} free words — Pip Lifetime adds unlimited.`,
+        null, { actionLabel: "See Pip Lifetime", onAction: () => openSettings?.("lifetime") });
+    }
+  };
   let step = 0;
   let people = []; // { id?, name, photoKey?, file?, url? } — one row each
   let faceRow = null; // the row whose face opened the photo picker
@@ -205,22 +218,33 @@ export function mountSetup({
         rows.push({ id: p.id, name: p.name, photoKey });
         if (p.id && p.file) dropEntityPhoto(p.id); // the tile repaints its new face
       }
-      const res = applySetupPeople(db, { people: rows, locale, category: categoryOf("people") });
+      const res = applySetupPeople(db, {
+        people: rows, locale, category: categoryOf("people"), maxNew: ownSlots(),
+      });
+      if (res.refused) {
+        offerRefused(res.refused);
+        // Refused rows stay typed — the names remain for the next save.
+      }
       if (!res.added && !res.updated) return;
       // 028: the family's own words mint in the background — every name
-      // the supporter just typed is a new tile clip.
-      const minted = rows.filter((r) => !r.id).map((r) => r.name.trim());
+      // the supporter just typed is a new tile clip. The first
+      // `res.added` new rows are the ones that landed; refused rows mint
+      // nothing.
+      const minted = rows.filter((r) => !r.id).slice(0, res.added)
+        .map((r) => r.name.trim());
       if (minted.length) tile?.prefetch(minted).catch(() => {});
     } else {
       const rows = resolvePasteRows(db, $("setup-paste").value, {
         groupId: stepGroup(m.key), locale,
       });
       if (!rows.some((r) => !r.already)) return;
-      const newTexts = rows.filter((r) => r.kind === "new" && !r.already)
-        .map((r) => r.text);
-      applyPasteRows(db, rows, {
-        groupId: stepGroup(m.key), category: categoryOf(m.key),
+      const res = applyPasteRows(db, rows, {
+        groupId: stepGroup(m.key), category: categoryOf(m.key), maxNew: ownSlots(),
       });
+      if (res.refused) offerRefused(res.refused);
+      // Refused rows were never created — mint only what landed.
+      const newTexts = rows.filter((r) => r.kind === "new" && !r.already)
+        .slice(0, res.created).map((r) => r.text);
       if (newTexts.length) tile?.prefetch(newTexts).catch(() => {});
     }
     wrote = true;

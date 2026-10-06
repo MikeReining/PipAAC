@@ -51,7 +51,7 @@ app copy must use — do not drop or add rows without editing this table.
 | | Choose a voice (`voice-ui.js` picker; costs to mint per voice, 028) | **Yes** |
 | | Voice for the words you type (`tile.js` on-demand mint, license-gated) | **Yes**, inside its existing per-license caps |
 | | Progress: weekly charts, goal words, new words, PDF/IEP report (`progress-ui.js`, `report.mjs`) | **Yes** — shown in full, locked back to the preview after |
-| 20 words of your own | Unlimited words of your own | **No** — structural, never unwound |
+| 10 words of your own | Unlimited words of your own | **No** — structural, never unwound |
 | One supporter (any of their devices) + that supporter's web editor | Every supporter, every web editor | **No** — structural, people are never removed |
 | The user's own device | Sync across unlimited devices | **No** |
 | 5 "Draw it for me" pictures | 300, then top-ups (`pictures_draw.js`) | **No** — has its own quota |
@@ -146,7 +146,7 @@ Add `lifetime upgrade buy price` to the search keywords (`settings-ui.js`).
 
 **Every dead end routes here** (one destination, one button): the ❓/✨ ask,
 a locked face, the voice lock, Progress's locked state (replace `#prog-buy`'s
-fallback), the 20-word limit, the second-supporter and second-device walls
+fallback), the 10-word limit, the second-supporter and second-device walls
 (`upgrade_required`, `devices-ui.js`), Overview's "What Lifetime adds" door.
 
 **Page, top to bottom (the Settings page style — `set-sec`, `Design_System.md`):**

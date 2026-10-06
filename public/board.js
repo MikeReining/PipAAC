@@ -61,7 +61,7 @@ import { mountAddFlow } from "./board/add-flow.js";
 import { mountLibrary } from "./board/library-ui.js";
 import { mountWordCard } from "./board/word-card.js";
 import { mountDevices } from "./board/devices-ui.js";
-import { checkoutFromUrl, orderFromUrl, purchasedFromUrl, unlicensedFromUrl, unlockFromUrl } from "./board/unlock.js";
+import { checkoutFromUrl, orderFromUrl, purchasedFromUrl, unlicensedFromUrl, unlicensedPreview, unlockFromUrl } from "./board/unlock.js";
 import { mountPlacePicker } from "./board/place-ui.js";
 import { mountSetup } from "./board/setup-ui.js";
 import { mountRecovery } from "./board/recovery-ui.js";
@@ -1115,6 +1115,10 @@ const pictureFill = mountPictureFill({
 addEventListener("online", () => pictureFill.drainPending().catch(() => {}));
 setTimeout(() => pictureFill.drainPending().catch(() => {}), 5000);
 
+/* 015 slice 6 — the free-word cap reads the same license answer as every
+ *  other gate; ?unlicensed previews the wall on localhost. */
+const wordLicensed = () => trialLicensed && !unlicensedPreview(me.id);
+
 /* Add a word — public/board/add-flow.js */
 addUi = mountAddFlow({
   db, locale, all: ALL, catalog, open, close, toast,
@@ -1126,6 +1130,8 @@ addUi = mountAddFlow({
   speakItem: (item) => speakItem(item),
   openWordCard: (item, opts) => wordCard.openWordCard(item, opts),
   pictures, pictureFill, creds: pictureCreds,
+  licensed: wordLicensed,
+  openSettings: (sec) => gatePin(() => settingsUi.open(sec)),
 });
 
 /* Word library — public/board/library-ui.js */
@@ -1324,6 +1330,8 @@ const setupUi = mountSetup({
   dropEntityPhoto: (id) => entityPhoto.delete(id),
   invalidateIndex: () => kbUi.invalidateIndex(),
   renderGrid, rerenderView, renderStrip,
+  licensed: wordLicensed,
+  openSettings: (sec) => gatePin(() => settingsUi.open(sec)),
 });
 $("open-setup").addEventListener("click", () => {
   close("menu");
@@ -1507,6 +1515,8 @@ editorUi = mountEditor({
   renderStrip,
   savePhoto, syncUploadBlob,
   tile: tileApi, loadPhotoURL, artInto, flashCell,
+  licensed: wordLicensed,
+  openSettings: (sec) => gatePin(() => settingsUi.open(sec)),
 });
 
 // A session survives a restart (013 § 4): the synced row lights the

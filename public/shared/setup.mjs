@@ -45,8 +45,8 @@ export function setupPeople(db) {
  *  removes anyone). A row without an `id` and with a name is a new
  *  person: they join the People group and take a free mom/dad seat on
  *  every layout that has one (018 D1). */
-export function applySetupPeople(db, { people = [], locale, category = null }) {
-  let updated = 0;
+export function applySetupPeople(db, { people = [], locale, category = null, maxNew = Infinity }) {
+  let updated = 0, refused = 0;
   const added = [];
   for (const p of people) {
     const name = p.name?.trim() ?? "";
@@ -65,10 +65,11 @@ export function applySetupPeople(db, { people = [], locale, category = null }) {
       if (changed) updated++;
       continue;
     }
+    if (added.length >= maxNew) { refused++; continue; } // free-word cap (Pricing § 4.2)
     const { id } = createEntity(db, { name, photoKey: p.photoKey ?? null, category });
     placeItem(db, "grp_people", "entity", id);
     added.push(id);
   }
   const seated = seatSetupPeople(db, added, locale);
-  return { added: added.length, updated, seated };
+  return { added: added.length, updated, refused, seated };
 }

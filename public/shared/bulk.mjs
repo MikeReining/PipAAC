@@ -78,13 +78,16 @@ export function resolvePasteRows(db, text, { groupId, locale }) {
 /** Add all: each resolved row lands in the target group through the real
  *  write owners. New words become entities carrying the group's seed
  *  category (a classifier input, never displayed) so enrichment and
- *  ranking treat them like a hand-added word. Rows already placed skip. */
-export function applyPasteRows(db, rows, { groupId, category = null }) {
-  let placed = 0, created = 0, skipped = 0;
+ *  ranking treat them like a hand-added word. Rows already placed skip.
+ *  `maxNew` is the caller's free-word allowance (OWN_WORDS_FREE): new
+ *  rows past it are refused, not created — existing matches still place. */
+export function applyPasteRows(db, rows, { groupId, category = null, maxNew = Infinity }) {
+  let placed = 0, created = 0, skipped = 0, refused = 0;
   const newIds = []; // [{ row, id }] — the caller gives each its picture
   for (const r of rows) {
     if (r.already) { skipped++; continue; }
     if (r.kind === "new") {
+      if (created >= maxNew) { refused++; continue; }
       const { id } = createEntity(db, { name: r.text, category });
       placeItem(db, groupId, "entity", id);
       newIds.push({ row: r, id });
@@ -94,20 +97,23 @@ export function applyPasteRows(db, rows, { groupId, category = null }) {
     }
     placed++;
   }
-  return { placed, created, skipped, newIds };
+  return { placed, created, skipped, refused, newIds };
 }
 
 /** Photo-drop drafts (§ 5.3): one entity per named draft — photo bytes
  *  are already stored by the caller (`photoKey`); a blank name means the
- *  adult skipped the row, so it is not saved. No I/O, no network. */
-export function applyPhotoDrafts(db, drafts, { groupId, category = null, cell = null }) {
-  let saved = 0, blank = 0;
+ *  adult skipped the row, so it is not saved. `maxNew` is the caller's
+ *  free-word allowance: named drafts past it are refused, not saved.
+ *  No I/O, no network. */
+export function applyPhotoDrafts(db, drafts, { groupId, category = null, cell = null, maxNew = Infinity }) {
+  let saved = 0, blank = 0, refused = 0;
   for (const d of drafts) {
     if (!d.name?.trim()) { blank++; continue; }
+    if (saved >= maxNew) { refused++; continue; }
     const { id } = createEntity(db, {
       name: d.name.trim(), photoKey: d.photoKey ?? null, category });
     placeItem(db, groupId, "entity", id, cell);
     saved++;
   }
-  return { saved, blank };
+  return { saved, blank, refused };
 }

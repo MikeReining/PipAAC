@@ -9,7 +9,7 @@ import {
 } from "../shared/bulk.mjs";
 import {
   catalogMatches, createEntity, createGroup, entityMatches, groupDisplayName, groupIndex,
-  placeItem,
+  liveOwnWords, OWN_WORDS_FREE, placeItem,
 } from "../shared/groups.mjs";
 import { groupGlyph } from "./group-glyph.js";
 import { normalizeV1 } from "../shared/normalize.mjs";
@@ -24,7 +24,26 @@ export function mountAddFlow({
   savePhoto, syncUploadBlob, loadPhotoURL, artInto,
   invalidateIndex, rerenderView, renderStrip, renderLibrary, openAddToBoards,
   tile, speakItem, openWordCard, pictures, pictureFill, creds,
+  licensed = () => false, openSettings,
 }) {
+  /* 015 slice 6 — the free-word cap (Pricing § 4.2): licensed boards add
+   *  without limit; free boards stop at OWN_WORDS_FREE live own words and
+   *  every refusal is a door to the Lifetime page. Retiring frees a slot;
+   *  words already made keep speaking — the cap gates adding only. */
+  const ownLeft = () =>
+    licensed() ? Infinity : Math.max(0, OWN_WORDS_FREE - liveOwnWords(db));
+  function offerLimit() {
+    toast(`That's your ${OWN_WORDS_FREE} free words — Pip Lifetime adds unlimited.`,
+      null, { actionLabel: "See Pip Lifetime", onAction: () => openSettings?.("lifetime") });
+  }
+  function paintCount() {
+    const n = liveOwnWords(db);
+    const el = $("add-count");
+    el.hidden = licensed();
+    el.textContent = n >= OWN_WORDS_FREE
+      ? `All ${OWN_WORDS_FREE} free words used — Pip Lifetime adds unlimited.`
+      : `${n} of ${OWN_WORDS_FREE} free words`;
+  }
   let addTarget = null; // board_group id the add form files into
   let addCell = null; // {page, slot_index} when + came from an empty slot
   let bulkTarget = null;
@@ -45,6 +64,7 @@ export function mountAddFlow({
     $("add-destname").textContent = groupName(addTarget, "My Words");
     setPickerOpen(false);
     $("add-word").value = "";
+    paintCount();
     renderAddMatches();
     open("addform");
     setTimeout(() => $("add-word").focus?.(), 0);
@@ -255,6 +275,14 @@ export function mountAddFlow({
     const box = $("bulk-preview");
     box.innerHTML = "";
     let draws = 0;
+    /* Free-word cap: only kind:"new" rows consume a slot; matches that
+     * resolve to an existing word or a catalog word always place. Rows
+     * past the allowance tag "over the limit" and are refused on Add. */
+    let newSeen = 0;
+    const slots = ownLeft();
+    for (const r of bulkRows) {
+      r.overCap = r.kind === "new" && !r.already && newSeen++ >= slots;
+    }
     for (const r of bulkRows) {
       const row = document.createElement("div");
       row.className = "ed-prow" + (r.already ? " over" : "");
@@ -302,7 +330,8 @@ export function mountAddFlow({
       }
       const tag = document.createElement("span");
       tag.className = "tag" + (r.kind === "new" ? " new" : r.already ? " already" : "");
-      tag.textContent = r.already ? "already"
+      tag.textContent = r.overCap ? "over the limit"
+        : r.already ? "already"
         : r.kind !== "new" ? "ours"
         : f === "pending" ? "finding…"
         : rowDraws(f) ? "will draw"
@@ -312,18 +341,22 @@ export function mountAddFlow({
       row.append(tag, lb);
       box.appendChild(row);
     }
-    const pending = bulkRows.filter((r) => !r.already).length;
+    const pending = bulkRows.filter((r) => !r.already && !r.overCap).length;
+    const over = bulkRows.filter((r) => r.overCap).length;
     const add = $("bulk-add");
-    add.disabled = pending === 0;
+    add.disabled = pending === 0 && over === 0;
     const name = groupName(bulkTarget, "My Words");
     const ask = draws > 0 && shouldConfirmDraws(draws, bulkLeft);
     const cost = draws ? ` · draws ${draws} new picture${draws === 1 ? "" : "s"}` : "";
-    add.textContent = !pending ? "Add all"
+    add.textContent = !pending && over ? "See Pip Lifetime"
+      : !pending ? "Add all"
       : confirmArmed ? `Yes — add ${pending} and draw ${draws}`
       : `Add ${pending} to ${name}${cost}`;
     const note = $("bulk-note");
-    note.hidden = !ask;
-    note.textContent = ask
+    note.hidden = !(ask || over);
+    note.textContent = over
+      ? `Only ${slots} free word${slots === 1 ? "" : "s"} left — ${over} row${over === 1 ? "" : "s"} need${over === 1 ? "s" : ""} Pip Lifetime.`
+      : ask
       ? (typeof bulkLeft === "number" && draws > bulkLeft
         ? `That's more drawings than you have left (${bulkLeft}). Words past that get their picture later — pick one of ours or add a photo.`
         : `Drawing ${draws} pictures uses ${draws} of your ${bulkLeft ?? "remaining"} drawings. Tap a thumbnail to use one of ours instead.`)
@@ -508,12 +541,16 @@ export function mountAddFlow({
     }
 
     // Make — always last; the default unless the typed word already exists.
+    // At the free-word cap it is a door to the Lifetime page, not a dead end.
+    const capped = ownLeft() <= 0;
     const plus = picEl("None", (p) => { p.textContent = "+"; p.classList.add("plus"); });
     const make = addRow({
       pic: plus, label: `“${text}”`,
-      sub: "New word — picture and voice made for you",
-      action: "Make", cls: "make",
-      run: () => makeWord(text),
+      sub: capped
+        ? `Your ${OWN_WORDS_FREE} free words are used`
+        : "New word — picture and voice made for you",
+      action: capped ? "See Pip Lifetime" : "Make", cls: "make",
+      run: () => (capped ? offerLimit() : makeWord(text)),
     });
     make.id = "add-new"; // probes and tests click Make by id
     setHi(exact >= 0 ? exact : rows.length - 1);
@@ -544,6 +581,7 @@ export function mountAddFlow({
   function makeWord(text, { groupId = addTarget, cell = addCell } = {}) {
     const name = text.trim();
     if (!name) return null;
+    if (ownLeft() <= 0) { offerLimit(); return null; }
     const id = `ent_${crypto.randomUUID().replaceAll("-", "")}`;
     const category = catalog.groups.find((g) => g.id === groupId)?.category ?? null;
     createEntity(db, { id, name, category });
@@ -574,14 +612,17 @@ export function mountAddFlow({
 
   $("bulk-paste").addEventListener("input", renderBulkPreview);
   $("bulk-add").addEventListener("click", () => {
+    const pendingNow = bulkRows.filter((r) => !r.already && !r.overCap).length;
+    if (!pendingNow && bulkRows.some((r) => r.overCap)) { offerLimit(); return; }
     if (bulkNeedsConfirm && !confirmArmed) { confirmArmed = true; paintBulk(); return; }
     // 028 § 5.3: brand-new entity words mint one at a time after the
     // rows land — hits for words the ledger already knows are free.
-    const newTexts = bulkRows.filter((r) => r.kind === "new" && !r.already)
+    const newTexts = bulkRows.filter((r) => r.kind === "new" && !r.already && !r.overCap)
       .map((r) => r.text);
     const res = applyPasteRows(db, bulkRows, {
       groupId: bulkTarget,
       category: catalog.groups.find((g) => g.id === bulkTarget)?.category ?? null,
+      maxNew: ownLeft(),
     });
     if (newTexts.length) {
       tile?.prefetch(newTexts, {
@@ -597,7 +638,13 @@ export function mountAddFlow({
     renderStrip();
     renderLibrary();
     const name = groupName(bulkTarget, "My Words");
-    toast(`Added ${res.placed} to ${name}` + (res.skipped ? ` (${res.skipped} already there)` : ""));
+    const msg = `Added ${res.placed} to ${name}` + (res.skipped ? ` (${res.skipped} already there)` : "");
+    if (res.refused) {
+      toast(`${msg} — ${res.refused} more need${res.refused === 1 ? "s" : ""} Pip Lifetime`,
+        null, { actionLabel: "See Pip Lifetime", onAction: () => openSettings?.("lifetime") });
+    } else {
+      toast(msg);
+    }
   });
 
   /** Pictures for the pasted words, one at a time in the background: the
@@ -650,6 +697,7 @@ export function mountAddFlow({
       groupId: gid,
       category: catalog.groups.find((g) => g.id === gid)?.category ?? null,
       cell: addCell,
+      maxNew: ownLeft(),
     });
     const named = drafts.filter((d) => d.name).map((d) => d.name);
     if (named.length) tile?.prefetch(named).catch(() => {});
@@ -660,7 +708,12 @@ export function mountAddFlow({
     rerenderView();
     renderStrip();
     renderLibrary();
-    toast(`Added ${res.saved} photo${res.saved === 1 ? "" : "s"}`);
+    if (res.refused) {
+      toast(`Added ${res.saved} photo${res.saved === 1 ? "" : "s"} — ${res.refused} more need${res.refused === 1 ? "s" : ""} Pip Lifetime`,
+        null, { actionLabel: "See Pip Lifetime", onAction: () => openSettings?.("lifetime") });
+    } else {
+      toast(`Added ${res.saved} photo${res.saved === 1 ? "" : "s"}`);
+    }
   });
 
   $("add-word").addEventListener("input", renderAddMatches);

@@ -232,6 +232,16 @@ export function senseGroups(db, senseId, locale) {
   );
 }
 
+/** 015 slice 6 / Pricing § 4.2: a free board holds up to OWN_WORDS_FREE
+ *  live own words; retiring one frees the slot. The cap gates *adding* —
+ *  past-limit words keep speaking, and op replay (ops.mjs) and restores
+ *  bypass it on purpose: they apply history, not new intent. Callers in
+ *  the add paths check liveOwnWords before createEntity. */
+export const OWN_WORDS_FREE = 10;
+export const liveOwnWords = (db) =>
+  db.prepare("SELECT count(*) AS n FROM personal_entity WHERE status = 'active'")
+    .all()[0]?.n ?? 0;
+
 /** Create a personal entity (the + Add "New" path and op replay share
  *  this). `id`/`addedAt` are set by replay so replicas match byte-for-byte;
  *  a fresh save generates them. */

@@ -11,8 +11,8 @@
  */
 import {
   activeLayout, createEntity, createGroup, deleteGroupUndoable, groupDisplayName,
-  groupIndex, pageCount, placeItem, removeItemUndoable, renameGroup,
-  setGroupHidden, swapGroups,
+  groupIndex, liveOwnWords, OWN_WORDS_FREE, pageCount, placeItem,
+  removeItemUndoable, renameGroup, setGroupHidden, swapGroups,
 } from "../shared/groups.mjs";
 import { placeOnBoard } from "../shared/coremove.mjs";
 import { nameFromFile } from "../shared/bulk.mjs";
@@ -49,6 +49,7 @@ export function mountEditor({
   setView, openGroupView, toast, undoLast, syncState,
   renderLibrary, invalidateIndex, renderStrip,
   savePhoto, syncUploadBlob, tile, loadPhotoURL, artInto, flashCell,
+  licensed = () => false, openSettings,
 }) {
   /* where: { kind: "main" } | { kind: "group", id, page } | { kind: "words" } */
   let where = { kind: "main" };
@@ -936,9 +937,14 @@ export function mountEditor({
     const layout = boardGeom().name;
     let n = 0;
     let onMain = 0;
+    // 015 slice 6 — each photo is one own word; the free cap gates them.
+    let slots = licensed() ? Infinity : Math.max(0, OWN_WORDS_FREE - liveOwnWords(db));
+    let refused = 0;
     for (const f of imgs) {
       const label = nameFromFile(f.name);
       if (!label) continue;
+      if (slots <= 0) { refused++; continue; }
+      slots--;
       const photo = await savePhoto(f);
       if (photo) syncUploadBlob(photo.bytes).catch(() => {});
       const { id } = createEntity(db, { name: label, photoKey: photo?.key ?? null, category });
@@ -955,13 +961,25 @@ export function mountEditor({
       tile?.ensure(label, { source: "user_typed" }).catch(() => {});
       n++;
     }
-    if (!n) return;
+    if (!n) {
+      if (refused) {
+        toast(`That's your ${OWN_WORDS_FREE} free words — Pip Lifetime adds unlimited.`,
+          null, { actionLabel: "See Pip Lifetime", onAction: () => openSettings?.("lifetime") });
+      }
+      return;
+    }
     invalidateIndex();
     changed();
     const rest = n - onMain;
-    toast(onMain && rest ? `Added ${n} photos — 1 on the main board, ${rest} to ${groupName(gid)}`
+    const base = onMain && rest ? `Added ${n} photos — 1 on the main board, ${rest} to ${groupName(gid)}`
       : onMain ? "Added 1 photo to the main board"
-      : `Added ${n} photo${n === 1 ? "" : "s"} to ${groupName(gid)}`);
+      : `Added ${n} photo${n === 1 ? "" : "s"} to ${groupName(gid)}`;
+    if (refused) {
+      toast(`${base} — ${refused} more need${refused === 1 ? "s" : ""} Pip Lifetime`,
+        null, { actionLabel: "See Pip Lifetime", onAction: () => openSettings?.("lifetime") });
+    } else {
+      toast(base);
+    }
   }
 
   $("editor").addEventListener("dragover", (e) => {

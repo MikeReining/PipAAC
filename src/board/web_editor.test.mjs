@@ -79,7 +79,7 @@ test("a row already in the group resolves 'already' and skips on apply", () => {
   assert.equal(again.find((r) => r.label === "juice").already, true);
   const res = applyPasteRows(db, again, { groupId: FOOD });
   const { newIds, ...counts } = res;
-  assert.deepEqual(counts, { placed: 1, created: 0, skipped: 1 });
+  assert.deepEqual(counts, { placed: 1, created: 0, skipped: 1, refused: 0 });
   assert.deepEqual(newIds, []);
   // juice still occupies exactly one cell in that group
   const placed = cells(db).filter(
@@ -97,7 +97,7 @@ test("applyPasteRows writes through the real owners — ops, slots, My Words cat
     category: catalog.groups.find((g) => g.id === FOOD)?.category ?? null,
   });
   const { newIds, ...counts } = res;
-  assert.deepEqual(counts, { placed: 3, created: 1, skipped: 0 });
+  assert.deepEqual(counts, { placed: 3, created: 1, skipped: 0, refused: 0 });
   assert.equal(newIds.length, 1, "the new word's id comes back for its picture (029 § 5)");
   const page = groupPage(db, FOOD, 0, "en");
   const labels = page.map((r) => r.label);
