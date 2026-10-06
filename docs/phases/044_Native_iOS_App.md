@@ -504,3 +504,43 @@ buttons, never rules.
 - Still not built: the actual Worker transform call (needs transport
   + license), device-keyboard mode, keyboard settings (order lives in
   the profile already), settings surface, natural sentence voice.
+
+**2026-10-06 (B3 — Settings surface + PIN):** the corner gear now opens
+a real Settings sheet, and the Settings PIN gate/lock/change/reset
+flows run natively. Every row is a synced `learner_profile` write
+through `groups.setSetting` — the ops are already recorded for when
+sync lands (Slice C).
+
+- Facade (`scripts/ios/app.mjs`): `appSettings` returns the settings
+  render model (toggles, enums, `BAR_PRESETS`/`BAR_CONTROLS`/
+  `BAR_NAMES`, catalog `layouts`, the locale's standard keymap name);
+  `appSetSetting` is one allowlisted write + `applyProfile` +
+  repaint, and answers `speechRate` (the profile stores the word —
+  slower/normal/faster — `appOpen` now maps it via speech.js's table;
+  the earlier `Number()||1` always landed 1) and the refreshed
+  settings model so the sheet never shows a value the db doesn't
+  hold. Arrays serialize to JSON text inside the facade —
+  `bar_controls`'s storage convention, same as settings-sync.js.
+- Rows shipped: Grammar help, Start fresh after speaking, Speaking
+  speed (segmented), Sentence bar presets + per-button toggles,
+  Letter order (QWERTY/ABC), Cells (15/30/60/90), Top row on group
+  pages, Occasions in Groups, Help improve Pip, and the Settings PIN
+  card (lock/change/off).
+- PIN (`Core/PipPin.swift`): the web's rules verbatim — 4 digits,
+  SHA-256 of `pip-pin:device:<pin>`, device-local (UserDefaults is
+  the native keyStore seat), never synced, every open asks, Forgot →
+  "new pin" reset phrase → choose twice. UserDefaults, not Keychain:
+  the threat model is a stray kid, not a stolen backup — matches the
+  web keystore's durability class.
+- Swift: `SettingsView` (Form sections) + `PinSheet` (check → forgot →
+  new → confirm, auto-submit on the 4th digit, web's copy verbatim);
+  the corner gear is small/muted/far-top-left per base.css, and
+  becomes Home on index/group surfaces (web `#corner` dual role).
+- Proven: `testSettingsSurface` UI test — gear → sheet → "Play +
+  Question" preset → Done → bar shows Ask it + Clear only. Node smoke
+  covers the write path (slower→0.8, abc reorder, grid30 repaint,
+  empty bar_controls → Clear survives per bar.mjs). All parity + UI
+  tests green; `check:fast` clean.
+- Still not built: keyboard_mode=device (system keyboard), voice
+  picker, person photo/name, sync/account/purchase sections (Slice
+  C+), expressive-voice faces row (needs the strip faces first).

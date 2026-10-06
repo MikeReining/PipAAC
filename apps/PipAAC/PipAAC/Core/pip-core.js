@@ -5893,6 +5893,8 @@ ${a.a}` }
     appKbPress: () => appKbPress,
     appOpen: () => appOpen,
     appOpenFamily: () => appOpenFamily,
+    appSetSetting: () => appSetSetting,
+    appSettings: () => appSettings,
     appShowBoard: () => appShowBoard,
     appSpeak: () => appSpeak,
     appStrip: () => appStrip,
@@ -5957,8 +5959,20 @@ ${a.a}` }
       appId: id,
       locale: s.locale,
       voiceId: s.voiceId,
-      speechRate: Number(profile2.speech_rate) || 1
+      speechRate: SPEECH_RATES[profile2.speech_rate] ?? 1
     };
+  }
+  var SPEECH_RATES = { slower: 0.8, normal: 1, faster: 1.2 };
+  function applyProfile(s) {
+    const p = one4(s.d, "SELECT * FROM learner_profile WHERE id = 'prf_local'") ?? {};
+    s.locale = p.locale ?? s.locale;
+    s.voiceId = p.preferred_voice_id ?? s.voiceId;
+    s.grammarHelp = p.grammar_help !== 0;
+    s.freshAfterSpeak = !!p.fresh_after_speak;
+    s.topRowOn = !!p.group_top_row;
+    s.kbOrder = p.keyboard_order ?? "standard";
+    s.kbIndex = null;
+    return p;
   }
   function appClose(appId) {
     apps.delete(appId);
@@ -6695,6 +6709,43 @@ ${a.a}` }
       s.voiceId
     );
     return { speech, ...state(s) };
+  }
+  function settingsModel(s) {
+    const p = one4(s.d, "SELECT * FROM learner_profile WHERE id = 'prf_local'") ?? {};
+    return {
+      grammarHelp: p.grammar_help !== 0,
+      freshAfterSpeak: !!p.fresh_after_speak,
+      expressiveVoice: p.expressive_voice !== 0,
+      groupTopRow: !!p.group_top_row,
+      occasionsVisible: p.occasions_visible !== 0,
+      shareResearch: p.share_research !== 0,
+      speechRate: p.speech_rate ?? "normal",
+      keyboardOrder: p.keyboard_order ?? "standard",
+      keyboardStandardName: PIP().keyboard.resolveKeymap(s.locale)?.standardName ?? "Standard",
+      boardLayout: p.board_layout ?? "grid60",
+      layouts: Object.keys(s.catalog.layouts ?? {}),
+      barControls: [...PIP().bar.barControls(s.d)],
+      barPresets: PIP().bar.BAR_PRESETS,
+      allControls: PIP().bar.BAR_CONTROLS,
+      controlNames: PIP().bar.BAR_NAMES
+    };
+  }
+  function appSettings(appId) {
+    return settingsModel(S(appId));
+  }
+  function appSetSetting(appId, key, value) {
+    const s = S(appId);
+    PIP().groups.setSetting(
+      s.d,
+      key,
+      Array.isArray(value) ? JSON.stringify(value) : value
+    );
+    const p = applyProfile(s);
+    return {
+      speechRate: SPEECH_RATES[p.speech_rate] ?? 1,
+      settings: settingsModel(s),
+      ...state(s)
+    };
   }
   function appTransform(appId, mode) {
     const s = S(appId);

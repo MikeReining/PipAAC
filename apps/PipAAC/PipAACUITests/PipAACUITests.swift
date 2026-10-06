@@ -97,4 +97,29 @@ final class PipAACUITests: XCTestCase {
         app.buttons["Board"].tap()
         XCTAssertTrue(app.buttons["want"].waitForExistence(timeout: 10))
     }
+
+    /// B3 works test: the gear opens Settings (no PIN = one tap), a
+    /// write lands — bar_controls trims the bar — and Done returns.
+    @MainActor
+    func testSettingsSurface() throws {
+        let app = XCUIApplication()
+        app.launch()
+        XCTAssertTrue(app.buttons["want"].waitForExistence(timeout: 20))
+
+        // The corner gear opens the sheet — no PIN on a fresh install.
+        app.buttons["settingsGear"].tap()
+        XCTAssertTrue(app.buttons["settingsDone"].waitForExistence(timeout: 10))
+
+        // Pick the "Play + Question" preset — the bar keeps only Play,
+        // Ask it, and Clear.
+        app.buttons["Play + Question"].tap()
+        app.buttons["settingsDone"].tap()
+
+        XCTAssertTrue(app.buttons["want"].waitForExistence(timeout: 10))
+        app.buttons["tile:sns_0013"].tap() // tile id — "want" is also a strip card
+        XCTAssertTrue(app.buttons["Ask it"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Clear"].exists)
+        XCTAssertFalse(app.buttons["Fix it"].exists)
+        XCTAssertFalse(app.buttons["Say it in the past"].exists)
+    }
 }

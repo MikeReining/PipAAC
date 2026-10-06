@@ -122,6 +122,32 @@ nonisolated struct PaintedState: Decodable, Sendable {
     var controls: [String]? = nil
     var tense: String? = nil
     var question: Bool? = nil
+    var speechRate: Float? = nil   // appSetSetting replies carry the playback rate
+    var settings: SettingsModel? = nil
+}
+
+/// appSettings() — the synced learner_profile rows the settings sheet
+/// renders. Every write goes back through appSetSetting → the shared
+/// allowlisted setSetting (it records the op; sync ships it later).
+nonisolated struct SettingsModel: Decodable, Sendable {
+    struct BarPreset: Decodable, Sendable {
+        let id: String, name: String, controls: [String]
+    }
+    let grammarHelp: Bool
+    let freshAfterSpeak: Bool
+    let expressiveVoice: Bool
+    let groupTopRow: Bool
+    let occasionsVisible: Bool
+    let shareResearch: Bool
+    let speechRate: String
+    let keyboardOrder: String
+    let keyboardStandardName: String
+    let boardLayout: String
+    let layouts: [String]
+    let barControls: [String]
+    let barPresets: [BarPreset]
+    let allControls: [String]
+    let controlNames: [String: String]
 }
 
 nonisolated struct AppOpenResult: Decodable, Sendable {
@@ -152,6 +178,8 @@ final class AppModel: ObservableObject {
     @Published private(set) var tense = "present"
     @Published private(set) var question = false
     @Published private(set) var toast: String?
+    @Published var showSettings = false
+    @Published private(set) var settings: SettingsModel?
     private var toastSeq = 0
 
     private nonisolated let core = PipCore()
@@ -250,6 +278,8 @@ final class AppModel: ObservableObject {
         if let c = st.controls { controls = Set(c) }
         if let t = st.tense { tense = t }
         if let q = st.question { question = q }
+        if let rate = st.speechRate { speaker.rate = rate }
+        if let m = st.settings { settings = m }
         if let msg = st.toast { showToast(msg) }
     }
 
@@ -273,6 +303,21 @@ final class AppModel: ObservableObject {
     /// ✨ ❓ ⏪ ⏩ — offline every press speaks the bar as built and toasts
     /// why (the Worker transform lands with transport).
     func transform(_ mode: String) { mutate("appTransform", [mode]) }
+
+    // MARK: settings (settings-ui.js / settings-sync.js)
+
+    func openSettings() {
+        navCall("appSettings", []) { [weak self] (m: SettingsModel) in
+            self?.settings = m
+            self?.showSettings = true
+        }
+    }
+
+    /// Every write is the shared synced-profile path — groups.setSetting
+    /// allowlists the column and records the op; sync ships it later.
+    func setSetting(_ key: String, _ value: Any) {
+        mutate("appSetSetting", [key, value])
+    }
 
     // MARK: keyboard
 

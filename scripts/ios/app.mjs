@@ -72,7 +72,24 @@ export function appOpen(dbId, catalogJson, phrasesJson, formTableJson) {
   });
   const s = apps.get(id);
   return { appId: id, locale: s.locale, voiceId: s.voiceId,
-    speechRate: Number(profile.speech_rate) || 1 };
+    speechRate: SPEECH_RATES[profile.speech_rate] ?? 1 };
+}
+
+/* speech.js SPEECH_RATES — the profile stores a word, playback a rate. */
+const SPEECH_RATES = { slower: 0.8, normal: 1, faster: 1.2 };
+
+/** Re-read the synced profile into the session after a settings write
+ *  (settings-sync.js does this through live setters on web). */
+function applyProfile(s) {
+  const p = one(s.d, "SELECT * FROM learner_profile WHERE id = 'prf_local'") ?? {};
+  s.locale = p.locale ?? s.locale;
+  s.voiceId = p.preferred_voice_id ?? s.voiceId;
+  s.grammarHelp = p.grammar_help !== 0;
+  s.freshAfterSpeak = !!p.fresh_after_speak;
+  s.topRowOn = !!p.group_top_row;
+  s.kbOrder = p.keyboard_order ?? "standard";
+  s.kbIndex = null; // masks/entities may have changed
+  return p;
 }
 
 export function appClose(appId) { apps.delete(appId); }
@@ -769,6 +786,52 @@ export function appKbPartner(appId, senseId) {
   const speech = PIP().voice.resolveSlot(s.d,
     { kind: "sense", id: senseId }, s.locale, s.voiceId);
   return { speech, ...state(s) };
+}
+
+/* ---------------- settings (settings-sync.js + settings-ui.js) ---------------- */
+
+/** The rows the native settings sheet shows — every entry is a synced
+ *  learner_profile column groups.setSetting can write. `layouts` are
+ *  the catalog's coordinate maps (the web's Cells setting). */
+function settingsModel(s) {
+  const p = one(s.d, "SELECT * FROM learner_profile WHERE id = 'prf_local'") ?? {};
+  return {
+    grammarHelp: p.grammar_help !== 0,
+    freshAfterSpeak: !!p.fresh_after_speak,
+    expressiveVoice: p.expressive_voice !== 0,
+    groupTopRow: !!p.group_top_row,
+    occasionsVisible: p.occasions_visible !== 0,
+    shareResearch: p.share_research !== 0,
+    speechRate: p.speech_rate ?? "normal",
+    keyboardOrder: p.keyboard_order ?? "standard",
+    keyboardStandardName:
+      PIP().keyboard.resolveKeymap(s.locale)?.standardName ?? "Standard",
+    boardLayout: p.board_layout ?? "grid60",
+    layouts: Object.keys(s.catalog.layouts ?? {}),
+    barControls: [...PIP().bar.barControls(s.d)],
+    barPresets: PIP().bar.BAR_PRESETS,
+    allControls: PIP().bar.BAR_CONTROLS,
+    controlNames: PIP().bar.BAR_NAMES,
+  };
+}
+export function appSettings(appId) { return settingsModel(S(appId)); }
+
+/** One settings write — the shared, synced path (groups.setSetting
+ *  allowlists the column and records the op; sync ships it later).
+ *  Returns the repainted state, the playback rate, and the refreshed
+ *  settings model so the sheet stays truthful without a second call. */
+export function appSetSetting(appId, key, value) {
+  const s = S(appId);
+  // Array-valued settings are stored as JSON text (settings-sync.js
+  // stringifies bar_controls at the call site; the facade owns that).
+  PIP().groups.setSetting(s.d, key,
+    Array.isArray(value) ? JSON.stringify(value) : value);
+  const p = applyProfile(s);
+  return {
+    speechRate: SPEECH_RATES[p.speech_rate] ?? 1,
+    settings: settingsModel(s),
+    ...state(s),
+  };
 }
 
 /* ---------------- transform buttons (speech.js transformAndSpeak) ---------------- */

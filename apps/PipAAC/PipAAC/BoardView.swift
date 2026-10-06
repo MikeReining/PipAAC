@@ -11,6 +11,7 @@ import SwiftUI
 
 struct BoardView: View {
     @EnvironmentObject var model: AppModel
+    @State private var pinGate = false
 
     var body: some View {
         VStack(spacing: 8) {
@@ -21,6 +22,17 @@ struct BoardView: View {
         .padding(.horizontal, 10)
         .padding(.bottom, 8)
         .background(PipStyle.cream.ignoresSafeArea())
+        .sheet(isPresented: $pinGate) {
+            // 023 §1e — every Settings open asks once a PIN is set.
+            PinSheet(change: false) { ok in
+                if ok { model.openSettings() }
+            }
+            .presentationDetents([.medium])
+        }
+        .sheet(isPresented: $model.showSettings) {
+            SettingsView()
+                .environmentObject(model)
+        }
         .overlay(alignment: .top) {
             if let toast = model.toast {
                 Text(toast)
@@ -47,6 +59,7 @@ struct BoardView: View {
     /// (index.html #bar + tx-* — docs/product/Sentence_Bar.md).
     private var topBar: some View {
         HStack(spacing: 8) {
+            cornerButton
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 6) {
@@ -79,6 +92,7 @@ struct BoardView: View {
                 }
             }
             .layoutPriority(1)
+            .accessibilityIdentifier("sentenceBar")
 
             let editable = !model.bar.isEmpty || model.typing != nil
             if model.controls.contains("backspace") {
@@ -112,7 +126,37 @@ struct BoardView: View {
             }
         }
         .frame(height: 64)
-        .accessibilityIdentifier("sentenceBar")
+    }
+
+    /// The settings gear — small, quiet, borderless, far top-left
+    /// (base.css #corner). While a group or the index is open the
+    /// corner becomes Home instead.
+    @ViewBuilder
+    private var cornerButton: some View {
+        if model.surface == .board {
+            Button {
+                if PipPin.isSet { pinGate = true } else { model.openSettings() }
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 22))
+                    .foregroundStyle(PipStyle.muted)
+                    .frame(width: 44, height: 48)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Settings")
+            .accessibilityIdentifier("settingsGear")
+        } else {
+            Button { model.backToBoard() } label: {
+                Image(systemName: "house.fill")
+                    .font(.system(size: 22))
+                    .foregroundStyle(PipStyle.ink)
+                    .frame(width: 44, height: 48)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Home")
+        }
     }
 
     // MARK: - Strip
