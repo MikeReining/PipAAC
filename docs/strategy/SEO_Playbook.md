@@ -216,6 +216,7 @@ draft names that URL before any sentence is written.
 | Price, the free tier, $49 once | `/pricing` |
 | How Pip is built | `/method` |
 | Modeling AAC at home, or a parent who can't reach the iPad | `/modeling` |
+| Adding words, fringe vocabulary, "the app doesn't have his word" | `/add-any-word` |
 | Therapists, and that the SLP does not pay | `/slps` |
 | A school or a classroom set | `/schools` |
 | A general mention of the product | `/` |

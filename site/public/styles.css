@@ -1421,3 +1421,42 @@ p { margin: 0 0 1em; }
   .demo-grid { grid-template-columns: repeat(3, 1fr); }
   .demo-ipad .tile b { font-size: .68rem; }
 }
+
+/* ── add-any-word.html: hero tile, chores vs Pip, edit-once demo ── */
+.hero-tile { width: clamp(150px, 20vw, 210px); margin: 0 auto 1.4rem; transform: rotate(-3deg); box-shadow: 0 18px 30px -16px rgba(42, 36, 29, .45); }
+.hero-tile b { font-size: clamp(.8rem, 1.6vw, 1rem); }
+.chores {
+  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 2rem); margin-top: clamp(2rem, 5vw, 3.5rem); align-items: stretch;
+}
+@media (max-width: 820px) { .chores { grid-template-columns: 1fr; } }
+.chore-card { background: var(--cream); border-radius: 24px; padding: clamp(1.4rem, 3.5vw, 2.2rem); }
+.chore-card .eyebrow { margin-bottom: .6rem; }
+.chore-list { margin: 0; padding-left: 1.4rem; color: var(--muted); }
+.chore-list li { padding: .3rem 0; text-decoration: line-through; text-decoration-color: rgba(198, 40, 40, .55); text-decoration-thickness: 2px; }
+.chore-card.pip { background: var(--yellow-fill); border: 2px solid var(--yellow); display: grid; align-content: start; gap: .2rem; }
+.chore-card.pip .tile { width: 120px; margin-top: .6rem; }
+.chore-card.pip .tile b { font-size: .7rem; }
+.typed {
+  display: flex; align-items: center; gap: .6rem; margin: 0 0 .4rem;
+  font-weight: 700; font-size: clamp(1.4rem, 3vw, 1.9rem); color: var(--ink);
+}
+.typed span { background: var(--white); border: 2px solid var(--ink); border-radius: 12px; padding: .2rem .7rem; }
+.typed kbd { font: inherit; font-size: .9rem; padding: .25rem .55rem; border: 2px solid var(--edge); border-bottom-width: 4px; border-radius: 8px; background: var(--white); color: var(--muted); }
+
+.edit-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(.6rem, 2vw, 1.2rem); }
+.edit-group { display: grid; gap: .45rem; justify-items: center; }
+.demo-ipad .board.edit-board { grid-template-columns: repeat(2, 1fr); }
+.edit-group .ipad.small.demo-ipad { max-width: 220px; }
+.story-copy .small-print { margin-top: 1.2rem; }
+.edit-board .tile { width: auto; }
+.tile.jack img { transition: opacity .35s; }
+.tile.jack.redrawn { animation: jack-pop .5s ease-out; }
+@keyframes jack-pop { 40% { transform: scale(1.12); } }
+.describe {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .7rem;
+  margin-top: 1.2rem; padding: .7rem .9rem;
+  background: var(--cream); border-radius: 14px;
+}
+.describe-label { font-size: .85rem; font-weight: 700; color: var(--muted); }
+.describe-text { flex: 1 1 10rem; background: var(--white); border: 2px solid var(--line); border-radius: 10px; padding: .3rem .7rem; font-weight: 700; }

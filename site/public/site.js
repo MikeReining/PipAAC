@@ -183,3 +183,30 @@
     delete say.dataset.wait;
   });
 })();
+
+// add-any-word.html demo: one word placed in two groups. "Draw again" swaps
+// the picture on every placement at once — the word owns its picture, the
+// groups only point at it. Both pictures were drawn once, ahead of time, by
+// the app's art pipeline (assets/site/); nothing is drawn or sent here.
+(() => {
+  const draw = document.getElementById("edit-draw");
+  if (!draw) return;
+  const say = document.getElementById("edit-say");
+  const tiles = [...document.querySelectorAll(".tile.jack")];
+  const PICS = { clown: "/tiles/jack-in-the-box.webp", puppy: "/tiles/jack-in-the-box-puppy.webp" };
+  new Image().src = PICS.puppy;
+  let puppy = false;
+  draw.addEventListener("click", () => {
+    puppy = !puppy;
+    for (const t of tiles) {
+      t.querySelector("img").src = puppy ? PICS.puppy : PICS.clown;
+      t.classList.remove("redrawn");
+      void t.offsetWidth;
+      t.classList.add("redrawn");
+    }
+    draw.textContent = puppy ? "Undo" : "Draw again";
+    say.innerHTML = puppy
+      ? "Changed in <strong>My Words</strong> and <strong>Play</strong> at once. It's one word, so there's one picture."
+      : "One word in two groups. Change it once.";
+  });
+})();
