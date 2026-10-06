@@ -91,9 +91,11 @@
 // modeling.html demo: a tap on the phone lights that word on the iPad for
 // a few seconds, or until it's pressed (the app's MODEL_FADE_MS is 4 s; the
 // demo waits 6 so a reader can find the tile); a press on
-// the iPad shows up as a count on the phone. Tips are the shipped ones
-// (data/coach_tips.json). A picture of the app, not the app: no audio, no
-// storage, nothing sent.
+// the iPad speaks and shows up as a count on the phone. The phone's light is
+// silent, as in the app by default. Tips are the shipped ones
+// (data/coach_tips.json); voice/ holds copies of the default voice's shipped
+// clips (catalog.json clips, voi_default_en) — never device TTS. No storage,
+// nothing sent.
 (() => {
   const phone = document.getElementById("demo-phone");
   if (!phone) return;
@@ -114,6 +116,14 @@
   const counts = new Map();
   const tile = (root, w) => root.querySelector(`[data-w="${w}"]`);
   const b = (w) => `<strong>${w}</strong>`;
+  const clips = new Map();
+  let playing = null;
+  const speak = (w) => {
+    if (!clips.has(w)) clips.set(w, new Audio(`/voice/${w.replace(" ", "-")}.mp3`));
+    if (playing) { playing.pause(); playing.currentTime = 0; }
+    playing = clips.get(w);
+    playing.play().catch(() => { /* no sound allowed: the words still show */ });
+  };
 
   const unlight = (w) => {
     clearTimeout(lit.get(w));
@@ -144,6 +154,7 @@
     const wasLit = lit.has(w);
     unlight(w);
     delete say.dataset.wait;
+    speak(w);
     const word = document.createElement("span");
     word.className = "said";
     word.textContent = w;

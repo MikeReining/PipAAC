@@ -43,7 +43,9 @@ npm run deploy:site   # deploy to pipaac.org (uses the repo's wrangler auth)
   `index.html`, so rerun it after changing those. Spec and copy source:
   `docs/phases/035_Marketing_Site_Proposal.md`.
 - Art: bird poses as transparent WebP in `pip/`, tile art in `tiles/`
-  (from `public/symbols/`). Fonts are Andika latin subsets.
+  (from `public/symbols/`). Fonts are Andika latin subsets. `voice/` holds
+  copies of the default voice's shipped clips for the /modeling demo (from
+  `public/audio/`, keys in `catalog.json` clips) — recopy if a clip is replaced.
 - Brand tokens are CSS custom properties at the top of `styles.css`; they
   trace to `docs/product/Design_System.md`. The Pip marks and poses are in
   `site/public/brand/` (masters in `assets/brand/`).
