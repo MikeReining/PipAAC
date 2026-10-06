@@ -8,6 +8,9 @@
  *   node scripts/voice/mint_onramp.mjs            mint all missing takes
  *   node scripts/voice/mint_onramp.mjs --only a-child,tour-want
  *   node scripts/voice/mint_onramp.mjs --ship     copy takes -> public/audio/onramp/
+ *   node scripts/voice/mint_onramp.mjs --say "Mimi is going to the park." --as hero-mimi-park
+ *                                                 one take of any text (e.g. a pipaac.org
+ *                                                 demo); after the listen, copy it by hand
  *
  * Takes land in data/samples/onramp/takes/ (gitignored) for the founder
  * listen (AGENTS.md: mint locally, then wait for the ear). --ship is the
@@ -44,6 +47,9 @@ const only = args.includes("--only")
   : null;
 const ship = args.includes("--ship");
 const force = args.includes("--force");
+const say = args.includes("--say") ? args[args.indexOf("--say") + 1] : null;
+const as = args.includes("--as") ? args[args.indexOf("--as") + 1] : null;
+if (say && !as) throw new Error("--say needs --as <key>");
 
 const voice = tileVoices.voices.find((v) => v.voice_key === "voi_default_en" && v.status === "active");
 if (!voice) throw new Error("voi_default_en missing or inactive in tile_voices.json");
@@ -64,7 +70,8 @@ if (ship) {
 
 fs.mkdirSync(TAKES, { recursive: true });
 const apiKey = loadKey();
-for (const [key, text] of Object.entries(ONRAMP_CLIPS)) {
+const clips = say ? { [as]: say } : ONRAMP_CLIPS;
+for (const [key, text] of Object.entries(clips)) {
   if (only && !only.has(key)) continue;
   const out = path.join(TAKES, `${key}.mp3`);
   if (fs.existsSync(out) && !force) { console.log(`skip ${key} (exists)`); continue; }

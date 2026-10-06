@@ -147,39 +147,9 @@ p { margin: 0 0 1em; }
   margin-bottom: 1.1rem;
 }
 .hero h1 {
-  font-size: clamp(2.5rem, 6vw, 4.9rem);
+  font-size: clamp(2.3rem, 4.4vw, 3.6rem);
   line-height: 1.02;
   margin-bottom: .35em;
-}
-.price-strike {
-  position: relative;
-  display: inline-block;
-  white-space: nowrap;
-}
-.price-strike s {
-  text-decoration: none;
-  position: relative;
-}
-.price-strike s::after {
-  content: "";
-  position: absolute; left: -4%; right: -4%; top: 52%;
-  height: .11em;
-  background: var(--red);
-  border-radius: 99px;
-  transform: rotate(-9deg);
-}
-.stamp {
-  position: absolute;
-  right: -1.85em; top: -.12em;
-  display: grid; place-items: center;
-  width: 1.55em; height: 1.55em;
-  border-radius: 50%;
-  background: var(--pip-amber);
-  border: .07em solid var(--ink);
-  font-size: .6em;
-  color: var(--ink);
-  transform: rotate(12deg);
-  box-shadow: 0 .06em 0 var(--ink);
 }
 .hero .sub {
   font-size: clamp(1.35rem, 2.6vw, 1.9rem);
@@ -256,6 +226,67 @@ p { margin: 0 0 1em; }
   width: 44px; height: 44px; border-radius: 10px;
   display: grid; place-items: center;
   background: var(--ink); color: var(--cream);
+}
+/* Hero: she taps Mimi · go · park, ✨ pulses, the bar becomes the sentence. */
+.sentence-bar.tx { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; }
+.tx-words { grid-area: 1 / 1; display: flex; gap: 8px; align-items: end; }
+.tx-taps { opacity: 0; animation: tx-taps 9s infinite; }
+.tx-out { animation: tx-out 9s infinite; }
+.tx-wand {
+  width: 44px; height: 44px; border-radius: 10px;
+  display: grid; place-items: center;
+  background: var(--cream); border: 2.5px solid var(--pip-amber);
+  animation: tx-wand 9s infinite;
+}
+.tx-wand img { width: 26px; height: 26px; }
+.sentence-bar.tx .speak { margin-left: 0; }
+.tile.tap { animation: tx-tap 9s infinite backwards; }
+.tile.tap.t1 { animation-delay: .4s; }
+.tile.tap.t2 { animation-delay: 1.2s; }
+.tile.tap.t3 { animation-delay: 2s; }
+/* Tap anywhere on the iPad: the sentence holds and plays in the app's voice. */
+.ipad-wrap { position: relative; }
+.hear {
+  position: absolute; inset: 0;
+  background: none; border: 0; padding: 0; margin: 0;
+  border-radius: 34px; cursor: pointer; font: inherit;
+}
+.hear[hidden] { display: none; }
+.hear:focus-visible { outline: 3px solid var(--pip-amber); outline-offset: 6px; }
+.hear-pill {
+  position: absolute; left: 50%; bottom: -20px; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .5rem 1.05rem; border-radius: 999px;
+  background: var(--pip-amber); color: var(--ink);
+  border: 2px solid var(--ink); box-shadow: 0 3px 0 var(--ink);
+  font: inherit; font-weight: 700; font-size: 1rem; white-space: nowrap;
+}
+.hear:hover .hear-pill { background: #ffc94d; }
+.device-stage.hearing .tx-taps, .device-stage.hearing .tx-out,
+.device-stage.hearing .tx-wand, .device-stage.hearing .tile.tap { animation: none; }
+.device-stage.hearing .sentence-bar .speak {
+  background: var(--pip-ember);
+  animation: hear-pulse .5s ease-in-out infinite alternate;
+}
+.device-stage .device-caption { margin-top: 2.6rem; }
+@keyframes hear-pulse { to { box-shadow: 0 0 0 4px var(--cream), 0 0 0 7px var(--pip-ember), 0 0 20px 6px rgba(252, 116, 25, .5); } }
+@keyframes tx-taps { 0%, 40% { opacity: 1; } 46%, 100% { opacity: 0; } }
+@keyframes tx-out { 0%, 44% { opacity: 0; transform: translateY(4px); } 50%, 96% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes tx-wand {
+  0%, 34%, 50%, 100% { transform: none; box-shadow: none; }
+  40% { transform: scale(1.14); box-shadow: 0 0 0 3px var(--cream), 0 0 0 6px var(--pip-amber), 0 0 22px 4px rgba(252, 184, 43, .6); }
+}
+@keyframes tx-tap {
+  0%, 9%, 100% { box-shadow: none; }
+  3% { box-shadow: 0 0 0 3px var(--cream), 0 0 0 6px var(--pip-amber), 0 0 22px 4px rgba(252, 184, 43, .6); }
+}
+@media (max-width: 480px) {
+  .tx-words { gap: 4px; }
+  .sentence-bar.tx { gap: 5px; padding: 5px 6px; }
+  .sentence-bar.tx .said { font-size: .62rem; }
+  .sentence-bar.tx .said img { width: 24px; height: 24px; }
+  .tx-wand, .sentence-bar.tx .speak { width: 34px; height: 34px; }
+  .tx-wand img { width: 20px; height: 20px; }
 }
 .smart-bar {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
@@ -390,49 +421,6 @@ p { margin: 0 0 1em; }
 }
 @media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
 
-/* Price tags in the pain section */
-.tags { position: relative; min-height: 420px; }
-.tag {
-  position: absolute;
-  display: grid;
-  padding: 1rem 1.4rem 1.1rem 2.4rem;
-  background: var(--cream);
-  border: 2px solid var(--ink);
-  border-radius: 10px 22px 22px 10px;
-  font-weight: 700;
-  font-size: clamp(2rem, 4vw, 2.8rem);
-  line-height: 1;
-  color: var(--ink);
-  box-shadow: 0 10px 22px -12px rgba(42, 36, 29, .45);
-}
-.tag::before {
-  content: "";
-  position: absolute; left: .8rem; top: 50%;
-  width: .7rem; height: .7rem; margin-top: -.35rem;
-  border-radius: 50%;
-  border: 2px solid var(--ink);
-  background: var(--white);
-}
-.tag small {
-  font-size: .9rem; letter-spacing: .06em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: .35rem;
-}
-.tag em { font-style: normal; font-size: .9rem; color: var(--muted); margin-top: .3rem; }
-.tag.t1 { top: 0; left: 6%; transform: rotate(-7deg); }
-.tag.t2 { top: 26%; right: 4%; transform: rotate(5deg); }
-.tag.t3 { top: 50%; left: 0; transform: rotate(-3deg); }
-.tag s { text-decoration-color: var(--red); text-decoration-thickness: .09em; }
-.tag small, .tag em { display: block; }
-.tag.pip {
-  bottom: 0; right: 10%;
-  background: var(--pip-amber);
-  font-size: clamp(3rem, 6vw, 4.4rem);
-  transform: rotate(4deg);
-}
-.tag.pip small { color: var(--ink); }
-@media (max-width: 900px) {
-  .tags { min-height: 360px; max-width: 420px; margin-inline: auto; width: 100%; }
-}
 
 /* Light button on ink */
 .button.light { background: var(--pip-amber); color: var(--ink); }

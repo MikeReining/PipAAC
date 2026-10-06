@@ -16,6 +16,26 @@
   update();
 })();
 
+// Home hero: a tap anywhere on the iPad holds the finished sentence and plays
+// it in the app's voice. The clip is a take of the production sentence recipe
+// (scripts/voice/mint_onramp.mjs --say, voi_default_en) — never device TTS.
+(() => {
+  const btn = document.getElementById("hero-hear");
+  if (!btn) return;
+  const stage = btn.closest(".device-stage");
+  const clip = new Audio("/voice/hero-mimi-park.mp3");
+  clip.preload = "metadata";
+  // Until the clip ships (founder listen), a silent button is worse than none.
+  clip.addEventListener("error", () => { btn.hidden = true; });
+  const stop = () => stage.classList.remove("hearing");
+  clip.addEventListener("ended", stop);
+  btn.addEventListener("click", () => {
+    clip.currentTime = 0;
+    stage.classList.add("hearing");
+    clip.play().catch(stop);
+  });
+})();
+
 // schools.html license-code box: live total at $24.50 a code (Pricing § 4.5,
 // half price from 10). The form itself is a plain POST to the app worker —
 // no JS needed to buy; this only repaints the math and, in local preview,
