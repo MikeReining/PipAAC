@@ -105,6 +105,20 @@ and the merge rules.
 - Founder: read the "Is this normal?" answers. Then confirm the smoke
   message ("Pip help: [smoke] …") reached hello@pipaac.org: the Worker
   reports `sent: true`, but only the inbox proves delivery.
+  **2026-10-05 trace + final state:** zone had no MX records (Porkbun
+  forwards configured but DNS lives at Cloudflare) — every send
+  `deliveryFailed`/`transport_none`. Even after Porkbun MX were added, the
+  forward target `support@happymooseapps.com` had no MX either (Google
+  Workspace MX lost in the Namesilo→Porkbun registrar migration; Gmail
+  service also needed reactivation in Google Admin). Founder then moved
+  `pipaac.org` mail to Google Workspace: `mike@pipaac.org` is the primary
+  mailbox, `hello@`/`support@` are user aliases on it; MX = Google's
+  aspmx set; Porkbun forwards are dead config (mail never reaches
+  Porkbun). Full chain proven `delivered` end-to-end 20:38Z.
+  Truth-owner instrument for this path: GraphQL `emailSendingAdaptive`
+  under zone `pipaac.org` (per-message status/errorCause/errorDetail);
+  suppressions: `GET /accounts/{acct}/email/sending/suppression`.
+  "delivered" = accepted by the destination MX; inbox is the final proof.
 - Searches that find nothing are not logged yet (proposed: anonymous
   count + query under the research setting). This waits for a privacy
   ruling on storing query text.
