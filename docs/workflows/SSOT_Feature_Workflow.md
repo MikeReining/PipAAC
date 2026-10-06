@@ -140,6 +140,8 @@ SSOT
 Implementation
 - Data/API impact:
 - UI impact:
+- Platforms (shared core / web screen / iOS screen / backend / web-only
+  + reason — `docs/product/Platforms_iOS_And_Web.md` § 7):
 - Prompt/AI impact:
 - Auth/privacy/publishing impact:
 - Generated artifact impact:

@@ -1,13 +1,14 @@
 # Platforms — native iOS and web
 
 **DECIDED 2026-10-06.** Pip AAC will have a native Swift/SwiftUI iOS app
-and a full web app. The founder approved this architecture and the
-implementation plan after reviewing the working web app. Desktop
-customization of the user's native device is essential.
+and a full web app. The founder approved this architecture, the shared
+JavaScript core (§ 2, subject to the A0 device test in phase 044) and the
+device floor (§ 5) on 2026-10-06. Desktop customization of the user's
+native device is essential.
 
 **Current state:** the web app and backend are live. The Xcode project at
-`apps/PipAAC/PipAAC.xcodeproj/project.pbxproj` is a starter template;
-native Pip functionality is not implemented. Execution lives in
+`apps/PipAAC/PipAAC.xcodeproj` is a starter template; native Pip
+functionality is not implemented. Execution lives in
 `docs/phases/044_Native_iOS_App.md`. This document owns lasting platform
 decisions; the phase owns work and proof, and is deleted at closeout.
 
@@ -15,9 +16,9 @@ decisions; the phase owns work and proof, and is deleted at closeout.
 
 | | Native iOS app | Web app |
 | --- | --- | --- |
-| Main job | Everyday communication on iPad and iPhone, including offline use | Full communication app on browser devices, plus desktop customization |
+| Main job | Everyday communication on iPad, including offline use | Full communication app on browser devices, plus desktop customization |
 | Supporter work | Native Settings, Library, customization, team and recovery flows | Edit words, groups, positions, pictures, recordings and settings with a keyboard and mouse |
-| Local data | On-disk SQLite and persistent media files in the app container | SQLite WASM, persisted exports in IndexedDB; media in OPFS |
+| Local data | On-disk SQLite file and persistent media files in the app container | SQLite WASM, persisted exports in IndexedDB; media in OPFS |
 | Distribution | Apple's App Store | `https://app.pipaac.org` |
 
 The web app remains a supported product. Building iOS does not turn it
@@ -33,35 +34,70 @@ Vocabulary: `docs/product/SSOT.md`. Data:
 `docs/product/Motor_Grid_And_Art.md` and
 `docs/product/Core_Coordinate_Map.md`.
 
-## 2. Native implementation
+## 2. One shared core, native everything else
 
-- SwiftUI is the primary UI framework; Observation (`@Observable`) owns
-  observable presentation state, with `@State`, `@Environment` and
-  `@Bindable` as appropriate. UIKit integration is available where a
-  specific native capability needs it.
-- Use the current stable toolchain and Swift 6 language mode, structured
-  concurrency and explicit isolation. UI state belongs on the main
-  actor; database work, media processing and other expensive work must
-  not block tile interaction. An `async` declaration alone does not move
-  work off the UI actor.
-- Persist the existing data model with SQLite. The template's SwiftData
-  `Item` model is scaffolding, not a persistence decision. Observation
-  does not require SwiftData. Select the SQLite binding during the
-  foundation slice and preserve the schema, constraints and migrations.
-- Use native playback for Pip's audio files, native secure key storage,
-  photo selection, recording, authentication and purchase integration.
-- Keep one state owner for each screen or flow. Views render domain
-  results; they do not independently decide sync, permissions or
-  entitlement truth.
+**Why.** Sync replays operations through the same write functions on
+every device, and replicas must end byte-identical
+(`public/shared/ops.mjs`; proof style: `src/board/sync_merge.test.mjs`).
+A second implementation of those functions in Swift would have to match
+the JavaScript one exactly, forever, for every future rule change. So
+the rules are not rewritten: the iOS app runs the existing shared
+JavaScript in **JavaScriptCore**, Apple's built-in JavaScript engine.
+It is not a web view and draws nothing.
 
-The board is native UI. A web view is not its implementation. The
-existing browser seam, `public/shared/platform.mjs`, identifies browser
-capabilities; swapping that module does not port JavaScript flows into
-Swift. Reimplement the client behavior with shared contracts and proof.
+**The split:**
 
-Apple references: [Observation](https://developer.apple.com/documentation/swiftui/managing-model-data-in-your-app)
-and [Swift concurrency](https://docs.swift.org/latest/documentation/the-swift-programming-language/concurrency/).
-Recheck availability against the selected deployment target when building.
+| Shared core — the same JavaScript, bundled into the app | Swift — native |
+| --- | --- |
+| Op record/apply/replay/drain and snapshots (`ops.mjs`) | Every screen, gesture and animation (SwiftUI) |
+| Every write owner that changes synced tables: entities, groups, placement, masks, overrides, families, Spotlight lists, stats days, supporter names | Audio playback and the audio session (§ 3) |
+| Smart bar and forms (`funnel.mjs`, `forms.mjs`, answer tables) | The SQLite file, transactions, backups of the file |
+| Normalization, spelling, keyboard maps, library queries, import and migrations | Encryption (CryptoKit), passkeys, keychain |
+| Read-side queries the screens render: board layout, labels, which clip a tile plays | Relay transport, media upload/download, voice/picture HTTP clients |
+| | Purchases (StoreKit), photos, recording, files, background tasks |
+
+Rule of thumb: a shared module that reads or writes the database, or
+decides which words appear or what they say, belongs to the core. A
+module that touches the network, keys, audio, files or the screen is
+platform code. Today's web-only globals in shared modules are small
+(`crypto.randomUUID`, and comments that only mention "window"); the
+host supplies them.
+
+**The database seam already exists.** The shared code runs today on two
+SQLite engines — `node:sqlite` in tests and SQLite WASM in the browser —
+through one adapter shape (`adapt()` in `public/db.js`): `exec(sql)`,
+`prepare(sql).run(...params) → { changes }`, `prepare(sql).all(...params)
+→ rows` and `all(sql, params)`. The iOS app implements that same shape
+over its on-disk SQLite file. That is the third engine, not a new API.
+
+**Rules for the core on iOS:**
+
+- The core is bundled into the app at build time from `public/shared/`
+  by one build script. The app never downloads code (App Review 2.5.2).
+- One JavaScriptCore context runs on one serial executor off the main
+  actor. Screens never wait on the core before making a sound: the
+  board precomputes each visible tile's label, picture and clip when it
+  renders, so a tap plays audio natively first and updates the Smart
+  bar after.
+- Web and iOS share the same SQL schema and migrations (`migrate.mjs`,
+  `fresh_db.sqlite`), driven by the core.
+- Changing a core module changes both apps. Its existing node tests are
+  the first proof; the shared parity fixtures (phase 044 A) are the
+  second.
+
+**Gate.** Phase 044 A0 times and verifies this on the floor iPad before
+any feature slice. If one module is too slow in JavaScriptCore, only
+that module moves to Swift, held to the same golden fixtures. Sync
+replay stays in the shared core in every case.
+
+**Native stack.** SwiftUI and Observation (`@Observable`), Swift 6
+language mode with strict concurrency; UI state on the main actor;
+UIKit only where a native capability needs it. The template's SwiftData
+`Item` model is scaffolding and is deleted.
+
+Apple references: [JavaScriptCore](https://developer.apple.com/documentation/javascriptcore),
+[Observation](https://developer.apple.com/documentation/swiftui/managing-model-data-in-your-app),
+[Swift concurrency](https://docs.swift.org/latest/documentation/the-swift-programming-language/concurrency/).
 
 ## 3. Our recordings, stored locally
 
@@ -70,12 +106,19 @@ audio APIs play those files; Apple TTS is not the native speech engine
 or a fallback for missing Pip recordings. Personal Voice and voice
 cloning are not added by this platform decision.
 
-The release bundles the default built-in audio and board assets needed
-to communicate on first launch without a network. Additional voice
-packs, new word clips and generated sentence recordings are downloaded
-from the existing services and saved locally. Caregiver recordings are
-persistent user media. Packaging and coverage must be verified from
-the actual catalog during implementation, not assumed from a manifest.
+**Audio session.** Pip is the user's voice, so it uses the `.playback`
+category: it speaks with the Ring/Silent switch on, in Guided Access and
+with the screen about to lock. It stops other apps' audio rather than
+mixing under it. Route changes (Bluetooth speaker, headphones pulled)
+must never leave speech silent.
+
+The release bundles the default voice's clips and the board assets
+needed to communicate on first launch without a network. `public/audio`
+holds about 114 MB across six voices today; the other five voices,
+new word clips and generated sentence recordings download from the
+existing services and are saved locally. Caregiver recordings are
+persistent user media. Packaging and coverage are measured from the
+actual catalog during implementation, not assumed from a manifest.
 
 Catalog clip identity, word/form resolution, overrides, voice selection,
 speed, sentence fallback and expressive voice keep their existing owners:
@@ -87,17 +130,23 @@ speed, sentence fallback and expressive voice keep their existing owners:
 Downloaded words and media stay usable offline. A new cloud-generated
 sentence still needs the network until its recording is available
 locally; offline sentence playback uses the existing local clip behavior.
-A missing or pending clip must have an honest supporter-visible state,
-without silently selecting a different voice. If imported legacy data
-selects `device_tts`, resolve that compatibility case explicitly before
-claiming parity; do not silently replace the family's voice.
+A missing or pending clip has an honest supporter-visible state, without
+silently selecting a different voice. If imported data selects
+`device_tts`, resolve that case explicitly; do not silently replace the
+family's voice.
 
-Keep user recordings and irreplaceable photos in persistent storage,
-separate from disposable caches. Downloaded media referenced by the
-active user's words must remain locally available under the offline
-contract. Verify files before making an updated voice pack active, and
-preserve the working pack when a download is interrupted. Device backup
-and Pip recovery are distinct mechanisms; neither is proof of the other.
+**Storage.** User recordings and photos live in Application Support,
+included in device backup. Downloaded voice packs and caches are
+excluded from backup and can be re-downloaded. Verify files before making
+an updated voice pack active, and keep the working pack when a download
+is interrupted.
+
+**Keys.** Device and account keys live in the keychain as
+"this device only", available after first unlock. They do not travel in
+an iCloud backup. A family moving to a new iPad gets their words back
+through the existing recovery card or a supporter's sign-in — the same
+route as the web. Device backup and Pip recovery are distinct
+mechanisms; neither is proof of the other.
 
 ## 4. Desktop customization is a core requirement
 
@@ -111,71 +160,117 @@ database + media -> the user's board shows and speaks the edit offline
 This includes pictures and recordings, not just references to their bytes.
 Native edits return through the same protocol to other linked clients.
 Pairing, supporter permissions, recovery, key rotation and private/local
-data boundaries retain their owner:
-`docs/product/Sync_And_Web_Editing.md`.
+data boundaries keep their owner: `docs/product/Sync_And_Web_Editing.md`.
 
-**Same SQLite schema is necessary but insufficient.** The current client
-records editing operations and replays them through domain functions:
-`public/shared/ops.mjs` records and applies operations,
-`public/shared/sync.mjs` exchanges them, and
-`public/shared/sync_crypto.mjs` seals their payloads. Both clients must
-agree on operation semantics, ordering, placement/conflict behavior,
-snapshot versions, key epochs and media formats.
-
-Share the existing backend and asset pipeline. Keep stable IDs, normalized
-text and hashes compatible. Compare both clients using the same scenario
-inputs, inspecting persisted tables and media and exercising encryption
-in both directions. Device-local histories remain device-local according
-to the sync owner; parity does not mean transferring every table.
+Operation semantics come from the shared core (§ 2), so ordering,
+placement/conflict behavior and snapshot versions match by construction.
+What the iOS app reimplements is the envelope: `sync_crypto.mjs` and
+`sync_client.mjs` in Swift. Every primitive has a CryptoKit/Compression
+equivalent: P-256 ECDSA (raw `r‖s` signatures) and ECDH, HKDF-SHA256,
+AES-GCM-256 and raw DEFLATE (`deflate-raw`). Interop is proven with
+fixtures sealed on one side and opened on the other, in both directions.
+Device-local histories stay device-local; parity does not mean
+transferring every table.
 
 App resume/reconnect catches up durably. A desktop editor must not need
-the child to reload the board to receive an edit. iOS suspension does
-not imply a permanent background WebSocket or guaranteed immediate
-delivery while the app is closed.
+the child to reload the board to receive an edit. Version 1 catches up
+on launch, on resume and while open; it does not use push notifications
+or a permanent background connection.
 
-## 5. Native accessibility and platform fit
+**Passkeys.** Accounts use passkeys with the PRF extension to unlock the
+account key; the relying party is `pipaac.org` (`public/shared/account.mjs`).
+The iOS app uses the same passkeys through Associated Domains
+(`webcredentials:pipaac.org`), which requires an
+`apple-app-site-association` file served from
+`https://pipaac.org/.well-known/`. Native passkey PRF needs iOS 18 or
+later, which the device floor covers.
 
-Accessibility is part of the communication experience from the first
-board slice: VoiceOver labels/actions, Switch Control traversal, focus,
-contrast, text legibility, reduced motion, indirect input and predictable
-touch targets. Validate these on devices with the relevant assistive
-features enabled. Framework adoption alone proves none of them.
+**Moving from the web app.** A family using Pip in Safari on their iPad
+moves to the app through the existing routes, not a file export: the QR
+card restore (free) or linking the app as another device (Lifetime,
+per `docs/product/Pricing_And_Packaging.md` § 4.2). The app becomes "the
+user's own device" without spending the family's free supporter spot.
+
+## 5. Device floor, accessibility and platform fit
+
+**Device floor (founder, 2026-10-06).** We support new devices and
+recent software, not legacy hardware.
+
+- **Minimum OS: iOS/iPadOS 26.** Raise it as new versions ship; never
+  hold it back for old devices.
+- **Slowest supported device: the base iPad (A16, 2025)** — the
+  cheapest iPad Apple sells. Speed budgets are measured on it.
+- **Supported means tested and promised.** Apple can only restrict by OS
+  version, so older iPads that run iOS 26 can install the app; we do
+  not test them or fix bugs that only happen on them. The App Store
+  listing and Help say which devices are supported.
+
+**Version 1 is iPad-only.** iPhone joins when the iPhone layout is decided
+(`docs/founder/2026-09-22_iPhone_Proposal.md` is still a proposal).
+The App Store lets an app add a device family later but never remove
+one, so iPad-first keeps the option open.
+
+**Accessibility** is part of the communication experience from the
+first board slice:
+
+- VoiceOver labels and actions; a tile must not be spoken twice (once by
+  VoiceOver, once by Pip). Phase 044 A decides the tile behavior.
+- Switch Control with a scan order that follows the motor grid.
+- Larger system text grows text inside a tile; it never moves a word.
+- Reduced motion, contrast, legibility and predictable touch targets.
+- Guided Access: the whole board works with the iPad locked to Pip;
+  supporter screens stay behind the PIN.
+
+Validate these on devices with the features turned on. Framework
+adoption alone proves none of them.
 
 Native presentation preserves fixed word positions, masking without
 reflow, the reserved Smart bar area and the existing sentence-button
-semantics. Adaptive layouts and visual effects must respect those laws.
-Owners: `docs/product/Design_System.md`,
+semantics. Owners: `docs/product/Design_System.md`,
 `docs/product/Motor_Grid_And_Art.md` and `docs/product/Sentence_Bar.md`.
 Apple reference: [accessible controls](https://developer.apple.com/documentation/swiftui/accessible-controls).
-
-iPad and iPhone are the intended platforms. Minimum OS, the supported
-hardware matrix and iPhone launch layouts are still implementation
-decisions. The template's iOS 26 minimum is not a founder ruling.
-Modern Swift does not by itself require the newest OS. The iPhone
-proposal's pocket mode, location features and widgets remain proposals:
-`docs/founder/2026-09-22_iPhone_Proposal.md`.
 
 ## 6. Shared services and release
 
 The Worker, relay, media store and generation services remain shared.
 Native requests use the existing production API origin and contracts;
-service secrets remain server-side. Native authentication must preserve
-the account encryption/recovery design rather than create another
-identity system.
+service secrets remain server-side. Native authentication preserves the
+account encryption/recovery design; there is no second identity system.
 
-StoreKit purchases and restore feed the same backend entitlement truth
-as web purchases. Pricing, limits and access remain owned by
-`docs/product/Pricing_And_Packaging.md` and
-`docs/product/Sync_And_Web_Editing.md`; storefront-specific purchase
-handling is implementation work, not a new pricing law. Check current
-[StoreKit guidance](https://developer.apple.com/documentation/storekit/in-app-purchase)
-and [App Review Guidelines](https://developer.apple.com/app-store/review/guidelines/)
-when implementing and submitting.
+**Purchases** follow `docs/product/Pricing_And_Packaging.md` § 4.5:
+Apple in-app purchase only, a consumable "Pip Lifetime for one user",
+validated by our server with the App Store Server API and bound to one
+user. The Worker adds the App Store Server Notifications endpoint;
+StoreKit and Stripe grants resolve into the same `entitled()` owner.
 
-Release proof covers real-device offline communication, persistent edits,
-desktop/native convergence including media, recovery, accessibility and
-upgrade compatibility. Native implementation is not evidence of lower
-latency, App Store acceptance, ratings or rankings. Measure and verify
-those outcomes separately. Full launch scope and release evidence live
-in phase 044 until closeout; lasting decisions return here or to their
-existing feature owner.
+**App Review requirements:** in-app account deletion (built on web in
+015; reachable from the app), a privacy manifest, App Privacy answers
+that match what we actually send (including the anonymous research data,
+on by default), a parent gate in front of purchases and outside links
+because a child holds the device, and no listing in the Kids category.
+Check current [App Review Guidelines](https://developer.apple.com/app-store/review/guidelines/)
+and [StoreKit guidance](https://developer.apple.com/documentation/storekit/in-app-purchase)
+when submitting.
+
+**Shipping.** For native work, "always deploy" means a TestFlight build
+installed on a real iPad at the end of every slice. Store releases go out
+when a planned release scope is complete.
+
+Native implementation is not evidence of lower latency, App Store
+acceptance, ratings or rankings. Measure those separately.
+
+## 7. Keeping the two apps in step
+
+- **Every new phase doc carries a `**Platforms:**` line** saying where
+  the change lands: *shared core* (both apps, one change), *web screen*,
+  *iOS screen*, *backend*, or *web-only* with the reason. A phase that
+  changes a screen on one app names the matching work on the other, or
+  says why there is none. `npm run check` enforces the line once phase
+  044 A adds the lint.
+- **Push rules into the core or the data**, never into a screen. Catalog,
+  answer tables, Help answers, prompts and voice generation are already
+  shared data or services; keep it that way.
+- **Parity fixtures:** core scenarios (op streams with expected table
+  dumps, Smart bar and form cases, crypto envelopes) live in one place
+  and run in node and in the iOS test target. A new core behavior adds
+  a fixture; both test suites read it.

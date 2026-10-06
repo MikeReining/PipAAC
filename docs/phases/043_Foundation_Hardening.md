@@ -306,9 +306,10 @@ copies the bugs, not just the features.
   044 verifies speech latency, durability, accessibility and desktop
   interoperability. It is not a web-shell versus native decision gate.
 
-**Proof.** The seam modules are exercised by the web app. Swift must
-implement equivalent client behavior and protocol semantics; swapping a
-browser module is not a native port. Phase 044 owns the native Works Tests
+**Proof.** The seam modules are exercised by the web app. On iOS the
+shared rules run unchanged in JavaScriptCore; Swift implements the
+platform side (storage file, audio, keys, transport, crypto envelope)
+behind the same seams (`docs/product/Platforms_iOS_And_Web.md` § 2). Phase 044 owns the native Works Tests
 against the readiness bar above, including cross-client media recovery.
 
 ## K — One entitlement owner for purchases

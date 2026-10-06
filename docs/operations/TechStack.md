@@ -22,9 +22,11 @@ Durable Objects (`RELAY` per user, `TILE_LEDGER` per-day mint counters,
 - Package manager: npm with `package-lock.json`
 - Node: see `.nvmrc` (24 — `node:sqlite` drives tests and scripts)
 - Runtime: Cloudflare Workers (`wrangler.jsonc`, `src/worker/index.js`)
-- Native plan: Swift 6 language mode, SwiftUI + Observation, on-disk
-  SQLite and local Pip recordings. Native setup/build/test commands and
-  minimum OS are established in phase 044; template settings are not policy.
+- Native plan: Swift 6 language mode, SwiftUI + Observation; the shared
+  rules (`public/shared/`) run in JavaScriptCore over a bundled on-disk
+  SQLite; local Pip recordings. iOS/iPadOS 26 minimum, base A16 iPad is
+  the slowest supported device (`docs/product/Platforms_iOS_And_Web.md`).
+  Native build/test commands are recorded here by phase 044 A.
 - Test runner: `scripts/test.sh` + `node --test`
 - Closeout gates: `npm run check` / `npm run check:fast`
 - Commit handoff queue: `scripts/commit_handoff_queue.py` + `.wmd/commit-queue.jsonl`

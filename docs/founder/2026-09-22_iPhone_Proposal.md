@@ -151,7 +151,8 @@ trust with SLPs. Pip should say it in onboarding and marketing.
   answer. Test it with pocket mode.
 - **iOS build path:** native Swift/SwiftUI decided 2026-10-06
   (`docs/product/Platforms_iOS_And_Web.md`). The phone layouts in this
-  proposal remain preliminary; phase 044 resolves launch scope.
+  proposal remain preliminary. Version 1.0 is iPad-only (founder,
+  2026-10-06); iPhone joins once its layout is decided here.
 
 ## 6. Blocking questions
 
