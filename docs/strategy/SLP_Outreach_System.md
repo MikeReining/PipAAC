@@ -62,9 +62,11 @@ Pip Lifetime code in the first email, said plainly: "Here's a Pip Lifetime
 code so you can try all of it, on me, whether or not you write anything." No
 program name (it reads like enrolling them in something). Never tie it to a
 mention or review (that makes it a paid endorsement). One single-use code per
-person, never a shared promo code: mint with `POST /admin/v1/license-codes` on
-app.pipaac.org, `{"count":1,"batch":"gift:<name-site>"}`. Redeem: Pip Settings
-→ "Have a code?". The batch label is the record of who got one; check it with
+person, never a shared promo code: put `{{CODE}}` in the body and pass
+`draft.mjs --gift <name-site>`; it mints one on app.pipaac.org (`POST
+/admin/v1/license-codes`, batch `gift:<name-site>`), checks the code is in the
+saved draft, and logs it. Revisions reuse it with `--code`. Redeem: Pip
+Settings → "Have a code?". The batch label is the record of who got one; check it with
 `POST /admin/v1/license-codes/status` `{"code":"PIP-…"}` — same Bearer token,
 returns the batch label and whether/who redeemed it.
 
