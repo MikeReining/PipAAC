@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.12-6b283d790c84",
-  "version": "1.1.12",
-  "payloadHash": "6b283d790c84",
+  "buildId": "1.1.13-0e6b8ac0ce3c",
+  "version": "1.1.13",
+  "payloadHash": "0e6b8ac0ce3c",
   "files": [
     {
       "path": "/board.js",
@@ -835,8 +835,8 @@
     },
     {
       "path": "/shared/funnel.mjs",
-      "bytes": 27294,
-      "sha256": "a5a9b61b7bae9cf7ad361ea34550c1ed412f746e00be6c6e9683f38aaaad3686"
+      "bytes": 28601,
+      "sha256": "f1b4c926af6619538c1f7f7d99672b895252eae032f4d20a996c0cb5eef985d7"
     },
     {
       "path": "/shared/group-icon-library.mjs",
@@ -900,8 +900,8 @@
     },
     {
       "path": "/shared/migrate.mjs",
-      "bytes": 9472,
-      "sha256": "90dfb2ab041c670f9faaa3ba7b196d6d9a28da1f8d6a9a5ae5393c8ad7f56b78"
+      "bytes": 10172,
+      "sha256": "7e95dab52e55e26b4c6369cde5ea09224390e18f45998a45b9764b50209005d0"
     },
     {
       "path": "/shared/movecost.mjs",
@@ -925,8 +925,8 @@
     },
     {
       "path": "/shared/ops.mjs",
-      "bytes": 34386,
-      "sha256": "2ff9a3455e528f68d1bc92bb21984ec677eb0924522cbc46b0e1ceaf71460e92"
+      "bytes": 34393,
+      "sha256": "80b801117e5c2039ee6cee258236803487af2b79badcac88178c5b057906be19"
     },
     {
       "path": "/shared/person_name.mjs",

@@ -220,7 +220,7 @@ function stripFor(db, M, view, items, scen, now) {
 
 /* ---------------- one corpus pass ---------------- */
 
-function runCorpus(db, M, corpus, scen, { warm = false } = {}) {
+function runCorpus(db, M, corpus, scen, { warm = false, now = NOW } = {}) {
   let view = { kind: "home" };
   const promoted = new Set();       // folded ids pinned to the surface
   const buriedUse = new Map();      // folded id -> buried fetch count
@@ -231,7 +231,7 @@ function runCorpus(db, M, corpus, scen, { warm = false } = {}) {
     door: 0, flip: 0, home: 0, board: 0, kb: 0, bigram: 0, wrongDoor: 0,
     doorFires: 0, doorHits: 0, promoteUsed: 0, autoBack: 0, surfaceDiff: 0 };
 
-  let clock = NOW;
+  let clock = now;
   for (const sent of corpus) {
     // Greedy longest-match: multi-word lemmas ("all done", "my turn")
     // are one tile — the ideal user takes the cheaper path.

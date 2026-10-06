@@ -188,6 +188,22 @@ export const ADDITIVE_TABLES = {
   acct_id TEXT PRIMARY KEY CHECK (length(acct_id) > 0),
   name TEXT NOT NULL CHECK (length(name) BETWEEN 1 AND 80)
 );`,
+  // phrase_count rebuild watermark (044 A0) — persists so the full
+  // rescan is once-ever, not per session.
+  phrase_watermark: `CREATE TABLE IF NOT EXISTS phrase_watermark (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  built_to INTEGER NOT NULL
+);`,
+  // Per-sentence ending->follower links for the strip's ±90-minute
+  // window (044 A0). Index created lazily by ensurePhraseHistory too.
+  phrase_link: `CREATE TABLE IF NOT EXISTS phrase_link (
+  ctx TEXT NOT NULL,
+  mod INTEGER NOT NULL CHECK (mod BETWEEN 0 AND 1439),
+  sid INTEGER NOT NULL,
+  pos INTEGER NOT NULL,
+  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),
+  item_id TEXT NOT NULL CHECK (length(item_id) > 0)
+);`,
 };
 export function ensureAdditiveColumns(d) {
   for (const ddl of Object.values(ADDITIVE_TABLES)) d.exec(ddl);

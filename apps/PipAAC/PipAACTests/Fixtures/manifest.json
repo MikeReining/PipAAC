@@ -1,0 +1,42 @@
+{
+  "format": 1,
+  "tz": "UTC",
+  "tables": {
+    "kids": "public/suggest_answers.en.json",
+    "forms": "public/form_answers.en.json"
+  },
+  "replay": [
+    {
+      "seed": 20260923,
+      "ops": 229,
+      "localOps": 114
+    },
+    {
+      "seed": 7,
+      "ops": 252,
+      "localOps": 122
+    },
+    {
+      "seed": 424242,
+      "ops": 244,
+      "localOps": 128
+    },
+    {
+      "seed": "pending",
+      "ops": 3,
+      "localOps": 2
+    }
+  ],
+  "probeTaps": 502,
+  "catchupOps": 1373,
+  "golden": {
+    "bar": {
+      "cases": 27,
+      "expectedSetMisses": 1
+    },
+    "forms": {
+      "cases": 72,
+      "expectedMisses": 0
+    }
+  }
+}

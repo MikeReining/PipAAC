@@ -1,5 +1,9 @@
 {
   "files": {
+    "apps/PipAAC/PipAAC/Core/SQLite/sqlite3.c": 269649,
+    "apps/PipAAC/PipAAC/Core/SQLite/sqlite3.h": 14349,
+    "apps/PipAAC/PipAAC/Core/SQLite/sqlite3ext.h": 739,
+    "apps/PipAAC/PipAAC/Core/pip-core.js": 5744,
     "public/audio-review-elevenlabs-tiles.html": 802,
     "public/audio-review-elevenlabs-v4-lab.html": 758,
     "public/board.js": 1634,
@@ -10,7 +14,7 @@
     "public/board/speech.js": 569,
     "public/board/word-card.js": 805,
     "public/index.html": 1171,
-    "public/shared/funnel.mjs": 673,
+    "public/shared/funnel.mjs": 700,
     "public/shared/ops.mjs": 786,
     "public/shared/sync.mjs": 654,
     "public/sw-manifest.json": 4637,
@@ -27,16 +31,16 @@
     "site/public/index.html": 588,
     "site/public/styles.css": 1462,
     "src/board/groups.test.mjs": 660,
-    "src/board/schema.sql": 881,
+    "src/board/schema.sql": 903,
     "src/board/sync_reliability.test.mjs": 759,
     "src/worker/accounts.heavy.test.mjs": 513,
-    "src/worker/accounts.js": 625,
-    "src/worker/index.js": 576,
+    "src/worker/accounts.js": 642,
+    "src/worker/index.js": 586,
     "src/worker/pictures.test.mjs": 803,
     "src/worker/pictures_draw.js": 510,
     "src/worker/pictures_draw.test.mjs": 661,
+    "src/worker/relay.heavy.test.mjs": 605,
     "src/worker/relay.js": 959,
-    "src/worker/tile.js": 779,
-    "src/worker/relay.heavy.test.mjs": 605
+    "src/worker/tile.js": 779
   }
 }

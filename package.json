@@ -58,9 +58,15 @@
     "pictures:lab": "node scripts/pictures/calibration_dev.mjs",
     "prediction:bench": "node scripts/prediction/bench/bench.mjs",
     "prediction:book": "node scripts/prediction/book/build_book.mjs && node scripts/prediction/book/score_book.mjs",
-    "seo:collect": "node scripts/seo/collect.mjs"
+    "seo:collect": "node scripts/seo/collect.mjs",
+    "ios:core": "node scripts/ios/build_core.mjs",
+    "ios:core:check": "node scripts/ios/build_core.mjs --check",
+    "ios:fixtures": "node scripts/ios/export_fixtures.mjs",
+    "ios:fixtures:check": "node scripts/ios/export_fixtures.mjs --check",
+    "ios:test": "xcodebuild test -project apps/PipAAC/PipAAC.xcodeproj -scheme PipAAC -configuration Release"
   },
   "devDependencies": {
+    "esbuild": "0.28.2",
     "linkedom": "0.18.13",
     "playwright-core": "1.63.0",
     "sharp": "0.35.4",

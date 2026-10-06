@@ -25,6 +25,12 @@ export default {
     const res = await env.ASSETS.fetch(request);
     const headers = new Headers(res.headers);
     for (const [k, v] of Object.entries(SECURITY)) headers.set(k, v);
+    /* AASA for the app's passkeys (phase 044 S2): Apple requires
+     *  application/json and no redirect; the file has no extension, so
+     *  the assets layer would serve octet-stream and fail validation. */
+    if (url.pathname === "/.well-known/apple-app-site-association") {
+      headers.set("content-type", "application/json");
+    }
     return new Response(res.body, {
       status: res.status, statusText: res.statusText, headers,
     });

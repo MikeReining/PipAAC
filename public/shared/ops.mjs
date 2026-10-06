@@ -322,7 +322,7 @@ export function pendingOps(db, limit = null) {
  * baseline restore. child history, prediction weights, the catalog and
  * sync_op itself are device-local and never enter a baseline.
  */
-const SYNCED_TABLES = [
+export const SYNCED_TABLES = [
   "learner_profile", "personal_entity", "board_group", "group_label",
   "clip_override", "image_override", "entity_enrichment", "group_membership",
   "group_cell", "group_seed_install",

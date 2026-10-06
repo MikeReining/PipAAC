@@ -335,3 +335,83 @@ first, founder admin list. Documentation only; no native code, CI,
 fixtures or device results exist yet. Bundle ID `org.pipaac` set in
 Xcode and App Store Connect. Next: A0 (§ 6), built on the simulator and
 the iPad 10th gen until the A16 arrives.
+
+**2026-10-06 (S1 build):** the shared core runs in JavaScriptCore with
+the real adapter shape — A0-S1 is built, device run pending.
+
+- Core bundle: `scripts/ios/build_core.mjs` (esbuild IIFE) emits
+  `apps/PipAAC/PipAAC/Core/pip-core.js` (234 KB, 40 modules — data-side
+  `public/shared/` only; network/crypto/account modules stay native).
+  `npm run ios:core`; `--check` is a `check:fast` gate. Host shims in
+  `scripts/ios/jsc_shims.mjs` cover `crypto.randomUUID`,
+  `getRandomValues`, `console.*`, `TextEncoder/Decoder`; the only
+  Web-API reference left in the bundle is a guarded `fetch` inside a
+  `.catch` (never reached by the harness).
+- Swift host: `apps/PipAAC/PipAAC/Core/PipCore.swift` — one `JSContext`
+  on one serial `DispatchQueue` (`sync`/`enqueue` only; every host block
+  runs on-queue). `PipDatabase.swift` wraps the vendored SQLite 3.53.4
+  amalgamation (`Core/SQLite/`, verified SHA3-256 against sqlite.org)
+  with the `public/db.js` adapter shape: `exec`, `run → {changes}`,
+  `all → {columns, rows}`; `__err` results on failure. BLOB cells cross
+  as `{__pipBytes}`; bools bind as 0/1, matching the node host.
+- Fixture harness: `scripts/ios/harness.mjs` runs in both engines —
+  node (fixture generation) and JSC (device verify) — so expected
+  outputs come from the code under test, not a second implementation.
+  `runReplay` / `dumpSynced` (all `SYNCED_TABLES`, canonical JSON),
+  `probeBegin/Tap/…` (tap → form + decision-4 re-pick + log + Smart bar,
+  mirroring `public/board.js`), `barGolden`/`formGolden`, `oneEdit`.
+- Fixtures: `scripts/ios/export_fixtures.mjs` (`npm run ios:fixtures`,
+  `--check` for drift). Deterministic — per-lane `crypto.randomUUID`
+  and `Date.now` counters, `TZ=UTC` re-exec (log rows carry
+  tz_offset_min). Emits `base.sqlite` (post-import replica), three
+  merge-scenario replay fixtures + the pending-reapply case,
+  `heavy.sqlite` (180 days × 191 corpus sentences synthesized at real
+  row counts — the timing gate needs shape, not a real-path replay),
+  500 probe taps, a ~1,400-op catch-up stream, and the resolved
+  bar/form goldens against the *shipped* answer tables
+  (`public/suggest_answers`, `form_answers` — what the device loads,
+  not the build corpora).
+- Extraction: `src/board/merge_scenario.mjs` now owns the merge storm
+  (shared by `sync_merge.test.mjs` and the exporter); `ops.mjs` exports
+  `SYNCED_TABLES`; `sim.mjs` `runCorpus` takes a `now` base clock.
+- Node-side proof: all 4 replay fixtures verify byte-identical through
+  the harness over `node:sqlite`; `sync_merge.test.mjs` still green
+  after the extraction.
+- Xcode: Swift 6, iPad-only (`TARGETED_DEVICE_FAMILY = 2`), iOS 26,
+  bridging header for the vendored SQLite, SwiftData scaffold deleted.
+  App + test targets build Release for the iPad (A16) simulator.
+- S2 partial: `site/public/.well-known/apple-app-site-association`
+  written (`webcredentials: LP5YNK7A36.org.pipaac`) + worker serves it
+  `application/json`; app entitlements carry
+  `webcredentials:pipaac.org`. Site deploy + Apple CDN smoke still owed.
+- Still owed for A0: S2 needs the site deploy and a device passkey
+  run; S3 needs physical hardware + 240 fps camera. Physical-A16
+  confirmation of the simulator numbers below still owed.
+
+**2026-10-06 (S1 device run — Smart bar answered):** the shared core is
+fast enough on the floor device; nothing ports to Swift for speed.
+
+- `xcodebuild test`, Release, iPad (A16) simulator — every
+  `PipCoreParityTests` gate green: core load, replay byte-parity ×4,
+  502 probe taps canon-identical, ~1,400-op catch-up drain, edit+op
+  record, 27 bar + 72 form goldens.
+- **Probe taps (six-month db): inside the 30/60 ms budget with ~5×
+  headroom** — 502 taps in ~2 s (~4 ms mean). Phase split: append
+  (form + re-pick + log write) p95 3 ms; strip (sentence → ranked bar)
+  p95 5–7 ms; JS↔SQLite bridge floor 0.01–0.02 ms per call — the
+  bridge was never the bottleneck.
+- The 76 ms p95 found on the first run was *our* hot path, not the
+  engine: `herNowTable` ferried every ±90-minute sentence's events to
+  JS each paint. Two shared-code fixes (both benefit the web app too):
+  - `phrase_link` (new device-local table): per-sentence ending→follower
+    links written at close time with the start's minute-of-day — the
+    "her now" window is one indexed `ctx/mod` aggregate per tap instead
+    of an event rescan. Schema + `ADDITIVE_TABLES`; `ensurePhraseHistory`
+    lazily creates it and rebuilds it when missing.
+  - `phrase_watermark` (new singleton row): the `phrase_count` rebuild
+    was a per-session WeakMap — ~80 s of CPU on a six-month history,
+    every launch. Persisted, it's once-ever; incremental catches
+    synced sentences by id as before.
+- Verdict: JSC + native SQLite meets budgets with ~6× headroom on
+  the probe path. Smart bar stays in the shared core; the plan's
+  Swift-escape-hatch for it is not needed.

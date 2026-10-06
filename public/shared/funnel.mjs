@@ -143,10 +143,14 @@ export function logTransform(db, mode, spotlit, at = Date.now()) {
  *  empty ctx counts sentence-start items only; every other ctx is a
  *  SUFFIX of a prefix — "what came next after this ending" is what the
  *  bar asks, so endings are what gets stored. Plain counts — no decay,
- *  no weights; the evidence gate reads them raw. */
+ *  no weights; the evidence gate reads them raw.
+ *  phrase_link keeps the same pairs per sentence with the start's
+ *  minute-of-day — the ±90-minute "her now" window is then a pure
+ *  `mod IN` index predicate instead of a per-tap rescan (044 A0). */
 function recordPhraseHistory(db, sentenceId) {
   const picks = db.prepare(
-    `SELECT item_kind AS kind, item_id AS id
+    `SELECT item_kind AS kind, item_id AS id, selected_at AS at,
+            tz_offset_min AS tz
      FROM learner_event_log
      WHERE sentence_id = ? AND position IS NOT NULL
      ORDER BY position`,
@@ -156,34 +160,69 @@ function recordPhraseHistory(db, sentenceId) {
      VALUES (?, ?, ?, 1)
      ON CONFLICT (ctx, item_kind, item_id) DO UPDATE SET n = n + 1`,
   );
+  const link = db.prepare(
+    `INSERT INTO phrase_link (ctx, mod, sid, pos, item_kind, item_id)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+  );
+  const start = picks[0];
+  const mod = start === undefined ? 0 : minuteOfDay(
+    start.at, start.tz ?? -new Date(start.at).getTimezoneOffset());
   for (let j = 0; j < picks.length; j++) {
     const it = foldItem(db, picks[j]);
     for (let len = j === 0 ? 0 : 1; len <= j; len++) {
-      put.run(ctxKeyDb(db, picks.slice(j - len, j)), it.kind, it.id);
+      const ctx = ctxKeyDb(db, picks.slice(j - len, j));
+      put.run(ctx, it.kind, it.id);
+      link.run(ctx, mod, sentenceId, j, it.kind, it.id);
     }
   }
 }
 
-/** phrase_count is a derived cache of learner_event_log. Rebuild it
- *  once per app session (cheap insurance against drift), then keep it
- *  current incrementally — synced sentences land as new local rows and
- *  are picked up by the id watermark the same way. */
-const phraseBuilt = new WeakMap(); // db -> highest spoken sentence id counted
+/** phrase_count is a derived cache of learner_event_log. Kept current
+ *  incrementally — synced sentences land as new local rows and are
+ *  picked up by the id watermark. The full rebuild runs once-ever per
+ *  install (persisted in phrase_watermark): rescanning every session
+ *  cost ~80 s of CPU on a six-month history (044 A0). */
+const phraseBuilt = new WeakMap(); // db -> highest spoken sentence id counted this session
 function ensurePhraseHistory(db) {
-  const prev = phraseBuilt.get(db);
+  db.exec(`CREATE TABLE IF NOT EXISTS phrase_watermark (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    built_to INTEGER NOT NULL)`);
+  db.exec(`CREATE TABLE IF NOT EXISTS phrase_link (
+    ctx TEXT NOT NULL,
+    mod INTEGER NOT NULL CHECK (mod BETWEEN 0 AND 1439),
+    sid INTEGER NOT NULL,
+    pos INTEGER NOT NULL,
+    item_kind TEXT NOT NULL CHECK (item_kind IN ('sense','entity')),
+    item_id TEXT NOT NULL CHECK (length(item_id) > 0))`);
+  db.exec(`CREATE INDEX IF NOT EXISTS phrase_link_ctx
+    ON phrase_link(ctx, mod)`);
+  let prev = phraseBuilt.get(db);
   if (prev === undefined) {
-    db.exec("DELETE FROM phrase_count");
-    const sids = db.prepare(
-      "SELECT id FROM sentence WHERE end_kind = 'spoken' ORDER BY id").all();
-    for (const s of sids) recordPhraseHistory(db, s.id);
-    phraseBuilt.set(db, sids.length ? sids[sids.length - 1].id : 0);
-    return;
+    prev = db.prepare(
+      "SELECT built_to FROM phrase_watermark WHERE id = 1").all()[0]?.built_to;
+    const empty = (t) => db.prepare(
+      `SELECT 1 AS x FROM ${t} LIMIT 1`).all().length === 0;
+    const spoken = db.prepare(
+      "SELECT 1 AS x FROM sentence WHERE end_kind = 'spoken' LIMIT 1",
+    ).all().length > 0;
+    if (prev === undefined ||
+        (spoken && (empty("phrase_count") || empty("phrase_link")))) {
+      // Never built, or a derived table is missing rows (a pre-
+      // phrase_link install counts as unbuilt) — rebuild once.
+      db.exec("DELETE FROM phrase_count; DELETE FROM phrase_link");
+      prev = 0;
+    }
   }
   const sids = db.prepare(
     "SELECT id FROM sentence WHERE end_kind = 'spoken' AND id > ? ORDER BY id",
   ).all(prev);
   for (const s of sids) recordPhraseHistory(db, s.id);
-  if (sids.length) phraseBuilt.set(db, sids[sids.length - 1].id);
+  const to = Math.max(prev, sids.length ? sids[sids.length - 1].id : prev);
+  phraseBuilt.set(db, to);
+  db.prepare(
+    `INSERT INTO phrase_watermark (id, built_to) VALUES (1, ?)
+     ON CONFLICT(id) DO UPDATE SET built_to = excluded.built_to`,
+  ).run(to);
 }
 
 /** Local clock minute of a timestamp (ms) under its own tz_offset_min. */
@@ -196,41 +235,29 @@ const minuteOfDay = (atMs, tzOffsetMin) => {
  *  midnight (23:59 and 00:01 are two minutes apart, not 1438). */
 const minuteDist = (a, b) => Math.min(Math.abs(a - b), 1440 - Math.abs(a - b));
 
-/** Her sentences that started within HER_NOW_MIN of `nowMin`: built
- *  live per paint — the window is small, so the set of sentences and
- *  their member events is a short list. Returns Map ctx -> rows. */
-function herNowTable(db, nowMin, tzNow) {
-  const starts = db.prepare(
-    `SELECT e.sentence_id AS sid, e.selected_at AS at, e.tz_offset_min AS tz
-     FROM learner_event_log e JOIN sentence s ON s.id = e.sentence_id
-     WHERE e.position = 0 AND s.end_kind = 'spoken'`,
-  ).all();
-  const ids = starts
-    .filter((r) => minuteDist(minuteOfDay(r.at, r.tz ?? tzNow), nowMin) <= HER_NOW_MIN)
-    .map((r) => r.sid);
+/** The ±90-minute "her now" table for the endings of one phrase — one
+ *  indexed aggregate over phrase_link (each ctx probed, mod windows the
+ *  start minute). Followers are stored folded, so the rows group
+ *  straight into the Map the merge loop reads; first-encounter order
+ *  is preserved by MIN(sid), MIN(pos) like the old event traversal. */
+function herNowTable(db, endings, nowMin) {
+  const keys = endings.map((e) => ctxKeyDb(db, e));
+  const mods = [];
+  for (let d = -HER_NOW_MIN; d <= HER_NOW_MIN; d++) {
+    mods.push((((nowMin + d) % 1440) + 1440) % 1440);
+  }
+  const rows = db.prepare(
+    `SELECT ctx, item_kind AS kind, item_id AS id, COUNT(*) AS n
+     FROM phrase_link
+     WHERE ctx IN (${keys.map(() => "?").join(",")})
+       AND mod IN (${mods.join(",")})
+     GROUP BY ctx, item_kind, item_id
+     ORDER BY MIN(sid), MIN(pos)`,
+  ).all(...keys);
   const table = new Map();
-  if (!ids.length) return table;
-  const add = (ctx, kind, id) => {
-    if (!table.has(ctx)) table.set(ctx, []);
-    const rows = table.get(ctx);
-    const hit = rows.find((r) => r.kind === kind && r.id === id);
-    if (hit) hit.n++; else rows.push({ kind, id, n: 1 });
-  };
-  let cur = null;
-  for (const e of db.prepare(
-    `SELECT sentence_id AS sid, item_kind AS kind, item_id AS id
-     FROM learner_event_log
-     WHERE sentence_id IN (${ids.map(Number).join(",")})
-       AND position IS NOT NULL
-     ORDER BY sid, position`,
-  ).all()) {
-    if (cur === null || cur.sid !== e.sid) cur = { sid: e.sid, pos: 0, items: [] };
-    const it = foldItem(db, { kind: e.kind, id: e.id });
-    for (let len = cur.pos === 0 ? 0 : 1; len <= cur.pos; len++) {
-      add(ctxKeyDb(db, cur.items.slice(cur.pos - len)), it.kind, it.id);
-    }
-    cur.items.push(it);
-    cur.pos++;
+  for (const r of rows) {
+    if (!table.has(r.ctx)) table.set(r.ctx, []);
+    table.get(r.ctx).push({ kind: r.kind, id: r.id, n: r.n });
   }
   return table;
 }
@@ -345,7 +372,7 @@ export function stripRanked(db, sentence, now, locale, kidsTable = null) {
   const nowMin = minuteOfDay(now, tzNow);
   const endings = endingsOf(phrase);
 
-  const nowTbl = herNowTable(db, nowMin, tzNow);
+  const nowTbl = herNowTable(db, endings, nowMin);
   const allTbl = herAllRows(db, endings);
   const kids = locale === "en" ? kidsTable : null;
 
@@ -450,7 +477,7 @@ export function groupRanked(db, sentence, groupId, now = Date.now()) {
   const nowMin = minuteOfDay(now, tzNow);
   const endings = endingsOf(phrase);
 
-  const nowTbl = herNowTable(db, nowMin, tzNow);
+  const nowTbl = herNowTable(db, endings, nowMin);
   const allTbl = herAllRows(db, endings);
   const phraseNow = lookupRanked(
     (e) => nowTbl.get(ctxKeyDb(db, e))?.filter(offerable), phrase);

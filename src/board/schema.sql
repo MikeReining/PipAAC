@@ -321,6 +321,28 @@ CREATE TABLE IF NOT EXISTS phrase_count (
   PRIMARY KEY (ctx, item_kind, item_id)
 );
 
+-- Highest spoken sentence id already folded into phrase_count. Persisted
+-- so the full rebuild is once-ever insurance, not a once-per-session
+-- rescan (~80 s of CPU on a six-month history — 044 A0). Singleton row.
+CREATE TABLE IF NOT EXISTS phrase_watermark (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  built_to INTEGER NOT NULL
+);
+
+-- Per-sentence (ending ctx -> follower) links with the start event's
+-- minute-of-day: the strip's ±90-minute "her now" window is then a pure
+-- `mod IN` index predicate rather than a per-tap event rescan (044 A0).
+-- Same derived-from-event-log lifecycle as phrase_count; device-local.
+CREATE TABLE IF NOT EXISTS phrase_link (
+  ctx TEXT NOT NULL,
+  mod INTEGER NOT NULL CHECK (mod BETWEEN 0 AND 1439),
+  sid INTEGER NOT NULL,
+  pos INTEGER NOT NULL,
+  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),
+  item_id TEXT NOT NULL CHECK (length(item_id) > 0)
+);
+CREATE INDEX IF NOT EXISTS phrase_link_ctx ON phrase_link(ctx, mod);
+
 -- One row per strip moment (017-5): what the ranker had, what it
 -- showed, and what the child picked next (chosen_* fills on the next
 -- pick). The instrument for §5.7 and the evidence base for whether an
