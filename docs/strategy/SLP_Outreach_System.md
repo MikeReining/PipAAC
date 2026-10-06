@@ -64,7 +64,9 @@ program name (it reads like enrolling them in something). Never tie it to a
 mention or review (that makes it a paid endorsement). One single-use code per
 person, never a shared promo code: mint with `POST /admin/v1/license-codes` on
 app.pipaac.org, `{"count":1,"batch":"gift:<name-site>"}`. Redeem: Pip Settings
-→ "Have a code?". The batch label is the record of who got one.
+→ "Have a code?". The batch label is the record of who got one; check it with
+`POST /admin/v1/license-codes/status` `{"code":"PIP-…"}` — same Bearer token,
+returns the batch label and whether/who redeemed it.
 
 Tone rules: never call Pip "free" or imply it is fully free — there is a
 price. Say "new AAC app". No price, no trial, no "download now", no urgency.

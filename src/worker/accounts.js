@@ -470,18 +470,35 @@ export class SupporterAccounts {
         email: row.email, count: row.count });
     }
 
+    // Founder-side status: does a code exist, under which label, and has
+    // it been spent. The plaintext arrives over the admin channel and is
+    // hashed the same way mint hashes it — nothing new is stored or shown.
+    if (path === "/dir/license/status" && request.method === "POST") {
+      const row = one(
+        `SELECT batch, redeemed_by, redeemed_at, created_at
+         FROM license_code WHERE hash = ?`,
+        await sha(String(body?.code ?? "").trim().toUpperCase()));
+      if (!row) return bad("bad_code", 404);
+      return json({ ok: true, batch: row.batch, redeemed: !!row.redeemed_by,
+        redeemed_by: row.redeemed_by, redeemed_at: row.redeemed_at,
+        created_at: row.created_at });
+    }
+
     // Bearer redemption: the code itself is the authority, like the QR
-    // card. Single-use — a spent code is spent forever.
+    // card. Single-use — a spent code is spent forever. The WHERE clause
+    // makes the spend atomic: two racing redeems can't both pass, because
+    // the second one's UPDATE matches nothing.
     if (path === "/dir/license/redeem" && request.method === "POST") {
       const code = String(body?.code ?? "").trim().toUpperCase();
       const userId = String(body?.user_id ?? "");
-      const row = one("SELECT batch, redeemed_by FROM license_code WHERE hash = ?",
-        await sha(code));
+      const hash = await sha(code);
+      const row = one("SELECT batch FROM license_code WHERE hash = ?", hash);
       if (!row) return bad("bad_code", 403);
-      if (row.redeemed_by) return bad("code_used", 409);
-      sql.exec(
-        "UPDATE license_code SET redeemed_by = ?, redeemed_at = ? WHERE hash = ?",
-        userId, now, await sha(code));
+      const spent = one(
+        `UPDATE license_code SET redeemed_by = ?, redeemed_at = ?
+         WHERE hash = ? AND redeemed_by IS NULL RETURNING hash`,
+        userId, now, hash);
+      if (!spent) return bad("code_used", 409);
       return json({ ok: true, batch: row.batch });
     }
 

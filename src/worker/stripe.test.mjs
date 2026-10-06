@@ -373,6 +373,17 @@ test("license codes: admin mints, bearer redeems once, release on grant failure"
   assert.equal(codes.length, 2);
   assert.match(codes[0], /^PIP-[2-9A-HJKMNP-Z]{4}-[2-9A-HJKMNP-Z]{4}-[2-9A-HJKMNP-Z]{4}$/);
 
+  // Founder-side status (same admin token): label and spend state read back.
+  const status = (code, tok = "adm") => worker.fetch(new Request(
+    "http://localhost/admin/v1/license-codes/status", {
+      method: "POST", headers: { authorization: `Bearer ${tok}` },
+      body: JSON.stringify({ code }) }), env);
+  assert.equal((await status(codes[0], "wrong")).status, 401);
+  assert.equal((await status("PIP-FAKE-FAKE-FAKE")).status, 404);
+  let st = await (await status(codes[0])).json();
+  assert.equal(st.batch, "school-x");
+  assert.equal(st.redeemed, false);
+
   const redeem = (code, userId = UID) => worker.fetch(new Request(
     "http://localhost/api/v1/license/redeem", {
       method: "POST", body: JSON.stringify({ code, user_id: userId }) }), env);
@@ -382,9 +393,12 @@ test("license codes: admin mints, bearer redeems once, release on grant failure"
   res = await redeem(codes[0]);
   assert.equal(res.status, 200);
   assert.equal(await relayEntitlement(env, UID), "lifetime");
-  // Single-use — a spent code stays spent.
+  // Single-use — a spent code stays spent, and status shows who spent it.
   res = await redeem(codes[0]);
   assert.equal(res.status, 409);
+  st = await (await status(codes[0])).json();
+  assert.equal(st.redeemed, true);
+  assert.equal(st.redeemed_by, UID);
 
   // Grant failure releases the code: redeem with no internal secret →
   // 502, then the same code redeems cleanly once the secret is back.

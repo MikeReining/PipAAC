@@ -556,6 +556,16 @@ export default {
         body: JSON.stringify({ count: body?.count ?? 1, batch: body?.batch ?? null }),
       }));
     }
+    // Founder checks a minted code — exists, batch label, spent or not.
+    if (path === "/admin/v1/license-codes/status" && request.method === "POST" && env?.ACCOUNTS) {
+      if (!(await adminOk(request, env))) {
+        return json({ error: "unauthorized" }, { status: 401 });
+      }
+      const body = await request.json().catch(() => null);
+      return acctDir().fetch(new Request("https://accounts/dir/license/status", {
+        method: "POST", body: JSON.stringify({ code: body?.code }),
+      }));
+    }
 
     // Static shell. COOP/COEP make the page cross-origin isolated so the
     // SQLite WASM OPFS database can persist on-device.
