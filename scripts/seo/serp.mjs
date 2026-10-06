@@ -207,3 +207,43 @@ export function evidenceLinks(evidence) {
   }
   return out;
 }
+
+// --- Slice C: the local `agy` CLI (Gemini) ----------------------------------
+// A CLI answer only counts as an observation when its own event stream shows
+// a web-search tool call fired — links generated from parametric memory are
+// not citations. The recorded URLs are the links the CLI printed.
+
+export function parseAgyStream(text) {
+  let searched = false;
+  let response = "";
+  for (const line of String(text).split("\n")) {
+    if (!line.startsWith("{")) continue;
+    let e;
+    try {
+      e = JSON.parse(line);
+    } catch {
+      continue;
+    }
+    if (e.event === "step_update") {
+      const s = e.step_update || {};
+      const tool = (s.tool_name || (s.tool_info && s.tool_info.name) || "").toLowerCase();
+      if (s.step_type === "tool" && /search|url_content|browser/.test(tool)) searched = true;
+    }
+    if (e.event === "result" && e.result && typeof e.result.response === "string") {
+      response = e.result.response;
+    }
+  }
+  return { searched, response };
+}
+
+export function extractMarkdownLinks(markdown) {
+  const out = [];
+  const seen = new Set();
+  const re = /\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g;
+  let m;
+  while ((m = re.exec(String(markdown)))) {
+    const url = m[2].replace(/[.,;:]+$/, "");
+    dedupePush(out, seen, { url, title: normText(m[1]) }, url);
+  }
+  return out;
+}

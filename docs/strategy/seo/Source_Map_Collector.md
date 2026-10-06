@@ -1,6 +1,6 @@
 # Source map collector
 
-**Spec + Slice A built 2026-10-06.** The rules for what the rows mean live in
+**Spec; Slices A–C built 2026-10-06.** The rules for what the rows mean live in
 `docs/strategy/SEO_Playbook.md`. If this spec and the playbook
 disagree, the playbook wins, and this file gets edited in the same
 change.
@@ -12,7 +12,7 @@ notes under `docs/strategy/seo/`.
 ## Founder ruling
 
 No API calls. No suggest endpoint, no SerpAPI, no Search Console API,
-no OpenAI, Gemini, or Perplexity HTTP API. The collector looks at the
+no OpenAI or Gemini HTTP API. The collector looks at the
 same screen a person sees, in a local browser or a local app, and
 writes down the links that are actually there.
 
@@ -42,12 +42,13 @@ The founder's Mac. Checked 2026-10-06:
 | Installed | Use in v1 |
 | --- | --- |
 | Google Chrome | Yes. The only browser the collector drives. |
+| `agy` CLI | Yes — Slice C, Gemini. The engine's local app (installed via alln); its `--output-format stream-json` events show the web-search calls, which is the proof the links are observed, not memorized. |
 | ChatGPT.app | Slice B, only if chatgpt.com in Chrome cannot show sources. |
-| `claude` CLI, Claude.app, `grok` CLI | Not a v1 engine. A model answer with no web citations is not an observation. |
+| `claude` CLI, Claude.app, `grok` CLI | Not engines. A model answer with no web citations is not an observation. |
 
-Gemini and Perplexity are not installed. The run records
-`engine not available` and continues. Slice C is how one of them gets
-added later, through a local app, under the same proof.
+Perplexity is not used (founder, 2026-10-06). If an engine's local app is
+missing, the run records `engine not available` and continues. A CLI engine
+gets 150s per phrase — a tool-using answer takes longer than a page load.
 
 The founder logs in once, in the collector's Chrome window. The
 script never types a password, never reads 1Password, and never copies
@@ -64,9 +65,11 @@ present, destination rules, tests, gitignore.
 **Slice B. ChatGPT.** Same Chrome profile, chatgpt.com, a new chat
 for every phrase, citation links only.
 
-**Slice C. Another local engine.** Only after that engine's own app
-or CLI prints or shows real web citation URLs. Same proof as the
-others. No HTTP client inside the adapter.
+**Slice C. Gemini via the local `agy` CLI.** The adapter sends the phrase
+plus one instruction line — search the web first, link the pages found —
+and records the links the CLI printed. Only when the event stream shows a
+`search_web` (or read/browse) tool call do the links count as citations.
+No HTTP client inside the adapter.
 
 ## Command
 
@@ -144,6 +147,12 @@ value `ChatGPT`. Zero links means one row with an empty URL and the
 note `no citations shown`. Do not scrape URLs out of the model's
 prose and call them citations.
 
+**Gemini.** A fresh `agy --print` per phrase. Record the links the
+printed answer carries. Engine value `Gemini`. If no search tool call
+fired that run, or the answer carries no links: one row, empty URL,
+`no citations shown` (plus a `no web search performed` note when the
+stream shows none).
+
 ## Columns
 
 The playbook § The source map owns this table. Implement these fields.
@@ -151,7 +160,7 @@ The playbook § The source map owns this table. Implement these fields.
 | Column | Who fills it |
 | --- | --- |
 | question | The phrase that was typed |
-| engine | `Google`, `Google AI`, `ChatGPT`, later `Gemini` or `Perplexity` |
+| engine | `Google`, `Google AI`, `ChatGPT`, `Gemini` |
 | url | The link on the screen. Empty only for the explicit notes above |
 | domain | Hostname of `url`, lowercase, no leading `www.` |
 | page type | A host rule below, otherwise blank |
@@ -194,9 +203,16 @@ default the homepage.
 ## Files
 
 ```text
-scripts/seo/collect.mjs              # CLI and browser driver
+scripts/seo/collect.mjs              # CLI, lock, cache, pacing, orchestration
+scripts/seo/browser.mjs              # Chrome page machinery, wall detection/hold
+scripts/seo/google.mjs               # Slice A: expansion + SERP citation passes
+scripts/seo/chatgpt.mjs              # Slice B: chatgpt.com citations
+scripts/seo/gemini.mjs               # Slice C: agy CLI adapter
+scripts/seo/serp.mjs                 # DOM + output parsers (page.evaluate + tests)
 scripts/seo/phrases.mjs              # seed check, dedupe, cap
 scripts/seo/destination.mjs          # the table above, pure
+scripts/seo/rows.mjs                 # row construction + evidence proof
+scripts/seo/mapfile.mjs              # run note render, living-map merge
 scripts/seo/collect.test.mjs         # parser, destination, seed check
 docs/strategy/seo/buyer-questions.json
 docs/strategy/seo/runs/YYYY-MM-DD.md # committed summary

@@ -148,16 +148,16 @@ Once a month, run the collector specified in
 questions, expands them from Google's own suggestion box, People Also
 Ask, and related searches, then records the links on Google's first
 page, the AI overview when it is shown, and a fresh ChatGPT answer.
-It uses the local browser. It does not call an API. Gemini and
-Perplexity join that run when a local app for them is installed.
-TikTok stays a manual pass on the phone.
+It uses the local browser, and the local `agy` CLI for Gemini.
+It does not call an API. Perplexity is not used. TikTok stays a
+manual pass on the phone.
 
 Record one row per URL:
 
 | Column | What goes in it |
 | --- | --- |
 | question | The buyer question, copied from § 2 |
-| engine | ChatGPT, Gemini, Perplexity, Google, or Google AI |
+| engine | ChatGPT, Gemini, Google, or Google AI |
 | url | The cited or ranking page |
 | domain | Hostname only |
 | page type | listicle, review, clinical, directory, forum, video, or other |

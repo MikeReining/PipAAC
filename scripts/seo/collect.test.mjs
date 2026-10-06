@@ -19,6 +19,8 @@ import {
   detectWall,
   pageEvidence,
   evidenceLinks,
+  parseAgyStream,
+  extractMarkdownLinks,
 } from "./serp.mjs";
 import { renderRunNote, mergeMap, parseTableRows, domainDiff } from "./mapfile.mjs";
 import { acquireLock, releaseLock } from "./collect.mjs";
@@ -224,6 +226,32 @@ test("run note and domain diff", () => {
   assert.match(note, /gemini: engine not available/);
   const diff = domainDiff(note, [{ domain: "new.example.com" }]);
   assert.deepEqual(diff, { added: ["new.example.com"], gone: ["a.example.com"] });
+});
+
+// --- gemini (agy CLI) --------------------------------------------------------
+
+const AGY_STREAM = [
+  '{"event":"init","init":{"model":"gemini-3.8-flash-medium"}}',
+  '{"event":"step_update","step_update":{"step_index":2,"state":"DONE","step_type":"tool","tool_name":"search_web","tool_info":{"name":"search_web","parameters":{"query":"best AAC app for iPad"}}}}',
+  '{"event":"result","result":{"status":"SUCCESS","response":"Top picks: [TouchChat](https://touchchatapp.com/) and [Proloquo2Go](https://www.assistiveware.com/products/proloquo2go)."}}',
+].join("\n");
+
+test("gemini: stream parse finds the search call and the response", () => {
+  const { searched, response } = parseAgyStream(AGY_STREAM);
+  assert.equal(searched, true);
+  assert.match(response, /TouchChat/);
+  const links = extractMarkdownLinks(response);
+  assert.deepEqual(
+    links.map((l) => l.url),
+    ["https://touchchatapp.com/", "https://www.assistiveware.com/products/proloquo2go"],
+  );
+});
+
+test("gemini: no search call means no citations count", () => {
+  const { searched } = parseAgyStream(
+    '{"event":"result","result":{"response":"I think Proloquo2Go is good."}}',
+  );
+  assert.equal(searched, false);
 });
 
 // --- lock and cli -----------------------------------------------------------

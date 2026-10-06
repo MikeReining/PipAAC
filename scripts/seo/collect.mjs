@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // Source-map collector — spec: docs/strategy/seo/Source_Map_Collector.md.
 // Drives the installed Chrome (Playwright channel "chrome") with a persistent
-// profile at data/seo/profile/. No API calls: the tool reads the same screen
-// a person sees and writes down the links that are actually there.
+// profile at data/seo/profile/, and Gemini through the local agy CLI.
+// No API calls: the tool reads the same screen a person sees (or the local
+// engine's own printed output) and writes down the links that are there.
 
 import {
   appendFileSync,
@@ -18,7 +19,11 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
 
 import { loadSeeds, playbookSeeds, checkSeeds, expandPhrases } from "./phrases.mjs";
-import { domainFor, pageTypeFor, destinationFor } from "./destination.mjs";
+import { sleep } from "./rows.mjs";
+import { WallStop, holdForWall } from "./browser.mjs";
+import { googleSeed, googlePhrase } from "./google.mjs";
+import { chatgptPhrase } from "./chatgpt.mjs";
+import { geminiPhrase } from "./gemini.mjs";
 import { renderRunNote, mergeMap, domainDiff, parseTableRows } from "./mapfile.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -31,34 +36,16 @@ const NOTES_DIR = path.join(ROOT, "docs/strategy/seo/runs");
 const MAP_FILE = path.join(ROOT, "docs/strategy/seo/source-map.md");
 const LOCK_FILE = path.join(DATA_DIR, "collect.lock");
 
-const QUERY_TIMEOUT_MS = 30_000;
 const WALL_EXIT = 2;
 const LOCKED_EXIT = 75;
-const ENGINES = ["google", "chatgpt"];
+const ENGINES = ["google", "chatgpt", "gemini"];
 
-// serp.mjs runs inside the page: strip the `export` keywords and expose the
-// functions on window.__seo so the same source serves both page.evaluate and
-// the linkedom-backed unit tests.
-const SERP_FUNCTIONS = [
-  "extractSuggestions",
-  "extractSerp",
-  "extractChatGPT",
-  "detectWall",
-  "pageEvidence",
-];
-const SERP_SRC =
-  "window.__seo = (() => {\n" +
-  readFileSync(new URL("./serp.mjs", import.meta.url), "utf8").replace(/^export /gm, "") +
-  `\nreturn { ${SERP_FUNCTIONS.join(", ")} };\n})();`;
-
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const today = () => new Date().toISOString().slice(0, 10);
-const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
 const pause = () => sleep(3000 + Math.random() * 5000);
 
 function usage() {
   console.log(
-    "usage: npm run seo:collect -- [--dry-run] [--check-seeds] [--engine google|chatgpt] [--limit N] [--force]",
+    "usage: npm run seo:collect -- [--dry-run] [--check-seeds] [--engine google|chatgpt|gemini] [--limit N] [--force]",
   );
   process.exit(2);
 }
@@ -105,213 +92,6 @@ export function acquireLock(dataDir = DATA_DIR, lockFile = LOCK_FILE) {
 
 export function releaseLock(lockFile = LOCK_FILE) {
   rmSync(lockFile, { force: true });
-}
-
-class WallStop extends Error {
-  constructor(kind) {
-    super(kind);
-    this.kind = kind;
-  }
-}
-
-async function inject(page) {
-  await page.evaluate(SERP_SRC);
-}
-
-async function checkWall(page) {
-  const kind = await page.evaluate("window.__seo && window.__seo.detectWall(document, location.href)");
-  if (kind) throw new WallStop(kind);
-}
-
-async function callSerp(page, fn, ...args) {
-  return page.evaluate(`window.__seo.${fn}(${"document"}${args.length ? ", " + args.map(JSON.stringify).join(", ") : ""})`);
-}
-
-async function savePage(page, runDir, engine, question) {
-  const evidence = await callSerp(page, "pageEvidence");
-  const file = path.join(runDir, `${engine}-${slug(question)}.txt`);
-  writeFileSync(file, evidence);
-  const links = new Set(
-    evidence
-      .split("\n")
-      .slice(evidence.split("\n").indexOf("=== LINKS ON PAGE ===") + 1)
-      .map((l) => l.split("\t")[0].trim())
-      .filter(Boolean),
-  );
-  return { file, links };
-}
-
-function makeRow(engine, question, url, title, date) {
-  return {
-    question,
-    engine,
-    url,
-    domain: domainFor(url),
-    pageType: pageTypeFor(url),
-    realistic: "",
-    destination: destinationFor({ question, url, title }),
-    checked: date,
-  };
-}
-
-// Poll for a selector while watching for a wall — a captcha or consent page
-// never shows #search, so waiting on the selector alone would misreport the
-// wall as a timeout. Re-injects __seo when navigation wiped it.
-async function waitFor(page, sel, ms) {
-  const deadline = Date.now() + ms;
-  while (Date.now() < deadline) {
-    const state = await page
-      .evaluate(
-        `(() => { if (!window.__seo) { ${SERP_SRC} }
-          return { wall: window.__seo.detectWall(document, location.href),
-                   found: !!document.querySelector(${JSON.stringify(sel)}) }; })()`,
-      )
-      .catch(() => null);
-    if (state && state.wall) throw new WallStop(state.wall);
-    if (state && state.found) return true;
-    await sleep(400);
-  }
-  return false;
-}
-
-async function waitSerp(page, question, notes) {
-  const found = await waitFor(page, "#search, #rso, #center_col", QUERY_TIMEOUT_MS);
-  if (!found) notes.push(`google — "${question}": timed out`);
-  else await sleep(600);
-  return found;
-}
-
-function serpRows(engine, question, links, date) {
-  return links.map(({ url, title }) => makeRow(engine, question, url, title, date));
-}
-
-function assertInEvidence(rows, links, engine, question) {
-  for (const r of rows) {
-    if (r.url && !links.has(r.url)) {
-      throw new Error(`proof failed: ${engine} row url not on the page for "${question}": ${r.url}`);
-    }
-  }
-}
-
-// Type each seed, read the suggestion dropdown, Enter, then read the whole
-// results page (organic, AI overview, PAA, related). Persisted per seed in
-// expansion.json so an interrupted run resumes instead of re-asking Google.
-async function googleSeed(page, runDir, seed, date, emit, notes) {
-  await page.goto("https://www.google.com/", { waitUntil: "domcontentloaded" });
-  await inject(page);
-  await checkWall(page);
-  if (!(await waitFor(page, 'textarea[name="q"], input[name="q"]', QUERY_TIMEOUT_MS))) {
-    notes.push(`google — "${seed}": timed out`);
-    return { extras: [], done: false };
-  }
-  const box = await page.$('textarea[name="q"], input[name="q"]');
-  await box.click();
-  await page.keyboard.type(seed, { delay: 50 + Math.random() * 40 });
-  let suggestions = [];
-  try {
-    await page.waitForSelector('[role="option"]', { timeout: 4000 });
-    suggestions = await callSerp(page, "extractSuggestions");
-  } catch {
-    // dropdown stayed closed — still press Enter
-  }
-  await page.keyboard.press("Enter");
-  if (!(await waitSerp(page, seed, notes))) return { extras: [], done: false };
-  const { links } = await savePage(page, runDir, "google", seed);
-  const serp = await callSerp(page, "extractSerp");
-  const rows = [
-    ...serpRows("Google", seed, serp.organic, date),
-    ...serpRows("Google AI", seed, serp.aiOverview ?? [], date),
-  ];
-  if (serp.aiOverview === null) notes.push(`google — "${seed}": no AI overview`);
-  if (!serp.organic.length) notes.push(`google — "${seed}": no organic results`);
-  assertInEvidence(rows, links, "google", seed);
-  emit(rows);
-  return { extras: [...suggestions, ...serp.peopleAlsoAsk, ...serp.related], done: true };
-}
-
-// Citation pass for a phrase the expansion pass did not already land on.
-async function googlePhrase(page, runDir, phrase, date, emit, notes) {
-  await page.goto(`https://www.google.com/search?q=${encodeURIComponent(phrase)}`, {
-    waitUntil: "domcontentloaded",
-  });
-  await inject(page);
-  await checkWall(page);
-  if (!(await waitSerp(page, phrase, notes))) return;
-  await checkWall(page);
-  const { links } = await savePage(page, runDir, "google", phrase);
-  const serp = await callSerp(page, "extractSerp");
-  const rows = [
-    ...serpRows("Google", phrase, serp.organic, date),
-    ...serpRows("Google AI", phrase, serp.aiOverview ?? [], date),
-  ];
-  if (serp.aiOverview === null) notes.push(`google — "${phrase}": no AI overview`);
-  assertInEvidence(rows, links, "google", phrase);
-  emit(rows);
-}
-
-async function chatgptPhrase(page, runDir, phrase, date, emit, notes) {
-  await page.goto("https://chatgpt.com/", { waitUntil: "domcontentloaded" });
-  await inject(page);
-  await checkWall(page);
-  if (!(await waitFor(page, '#prompt-textarea, div[contenteditable="true"], textarea', 15000))) {
-    return false;
-  }
-  const composer = await page.$('#prompt-textarea, div[contenteditable="true"], textarea');
-  await composer.click();
-  await page.keyboard.type(phrase, { delay: 40 + Math.random() * 30 });
-  await page.keyboard.press("Enter");
-  if (!(await waitFor(page, '[data-message-author-role="assistant"], .agent-turn, article', QUERY_TIMEOUT_MS))) {
-    notes.push(`chatgpt — "${phrase}": timed out`);
-    return true;
-  }
-  // Wait until the answer stops: body text stable across three 1s samples,
-  // or the same 30s give-up fires.
-  let last = "";
-  let stable = 0;
-  const deadline = Date.now() + QUERY_TIMEOUT_MS;
-  while (Date.now() < deadline && stable < 3) {
-    const text = await page.evaluate(() => document.body.innerText).catch(() => "");
-    if (text === last) stable += 1;
-    else {
-      stable = 0;
-      last = text;
-    }
-    await sleep(1000);
-  }
-  try {
-    await page.locator('button:has-text("Sources")').first().click({ timeout: 1500 });
-    await sleep(800);
-  } catch {
-    // no sources panel — links may still be footnotes or cards
-  }
-  const { links: evidenceSet } = await savePage(page, runDir, "chatgpt", phrase);
-  const citations = await callSerp(page, "extractChatGPT");
-  const rows = citations.length
-    ? serpRows("ChatGPT", phrase, citations, date)
-    : [{ ...makeRow("ChatGPT", phrase, "", "", date), note: "no citations shown" }];
-  if (!citations.length) notes.push(`chatgpt — "${phrase}": no citations shown`);
-  assertInEvidence(rows, evidenceSet, "chatgpt", phrase);
-  emit(rows);
-  return true;
-}
-
-// Hold the process while the founder clears a wall in the open window, then
-// exit 2 so the run can be rerun. Saved phrases stay saved.
-async function holdForWall(context, kind) {
-  console.log(`wall: ${kind} — finish the check in the open window, then rerun.`);
-  const deadline = Date.now() + 10 * 60_000;
-  while (Date.now() < deadline) {
-    await sleep(2000);
-    const pages = context.pages();
-    if (!pages.length) break;
-    const still = await pages[0]
-      .evaluate(
-        `(() => { if (!window.__seo) { ${SERP_SRC} }
-          return window.__seo.detectWall(document, location.href); })()`,
-      )
-      .catch(() => null);
-    if (!still) break;
-  }
 }
 
 function loadSaved(rowsFile) {
@@ -383,12 +163,17 @@ async function main() {
   };
 
   let context = null;
+  const getPage = async () => {
+    if (!context) {
+      context = await chromium.launchPersistentContext(PROFILE_DIR, {
+        channel: "chrome",
+        headless: false,
+      });
+    }
+    return context.pages()[0] || (await context.newPage());
+  };
+
   try {
-    context = await chromium.launchPersistentContext(PROFILE_DIR, {
-      channel: "chrome",
-      headless: false,
-    });
-    const page = context.pages()[0] || (await context.newPage());
     let firstQuery = true;
     const between = async () => {
       if (firstQuery) firstQuery = false;
@@ -399,6 +184,7 @@ async function main() {
     let dropped = [];
 
     if (engines.includes("google")) {
+      const page = await getPage();
       for (const seed of runSeeds) {
         if (expansion[seed] && !args.force) continue;
         await between();
@@ -412,6 +198,7 @@ async function main() {
     dropped = expanded.dropped;
 
     if (engines.includes("google") && !args.limit) {
+      const page = await getPage();
       for (const phrase of phrases) {
         if (saved.has(`Google|${phrase}`) || expansion[phrase]?.done) continue;
         await between();
@@ -420,6 +207,7 @@ async function main() {
     }
 
     if (engines.includes("chatgpt")) {
+      const page = await getPage();
       for (const phrase of args.limit ? runSeeds : phrases) {
         if (saved.has(`ChatGPT|${phrase}`)) continue;
         try {
@@ -436,7 +224,24 @@ async function main() {
         }
       }
     }
-    notes.push("gemini: engine not available", "perplexity: engine not available");
+
+    if (engines.includes("gemini")) {
+      for (const phrase of args.limit ? runSeeds : phrases) {
+        if (saved.has(`Gemini|${phrase}`)) continue;
+        try {
+          await between();
+          await geminiPhrase(runDir, phrase, dateStr, emit, notes);
+        } catch (e) {
+          if (e instanceof WallStop) throw e;
+          if (e.code === "TIMEOUT") {
+            notes.push(`gemini — "${phrase}": timed out`);
+            continue;
+          }
+          notes.push("gemini: engine not available");
+          break;
+        }
+      }
+    }
 
     const note = renderRunNote({ date: dateStr, seeds, phrases, dropped, rows: allRows, notes });
     writeFileSync(path.join(NOTES_DIR, `${dateStr}.md`), note);
@@ -458,6 +263,7 @@ async function main() {
   } catch (e) {
     if (e instanceof WallStop) {
       if (context) await holdForWall(context, e.kind);
+      else console.log(`wall: ${e.kind} — rerun to continue.`);
       releaseLock();
       process.exit(WALL_EXIT);
     }
