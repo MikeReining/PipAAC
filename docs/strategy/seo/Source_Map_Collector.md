@@ -1,7 +1,6 @@
 # Source map collector
 
-**Spec, not built. 2026-10-06.** A developer can build this from this
-file alone. The rules for what the rows mean live in
+**Spec + Slice A built 2026-10-06.** The rules for what the rows mean live in
 `docs/strategy/SEO_Playbook.md`. If this spec and the playbook
 disagree, the playbook wins, and this file gets edited in the same
 change.

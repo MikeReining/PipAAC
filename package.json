@@ -57,9 +57,12 @@
     "pictures:calibrate": "node scripts/pictures/calibration_dev.mjs",
     "pictures:lab": "node scripts/pictures/calibration_dev.mjs",
     "prediction:bench": "node scripts/prediction/bench/bench.mjs",
-    "prediction:book": "node scripts/prediction/book/build_book.mjs && node scripts/prediction/book/score_book.mjs"
+    "prediction:book": "node scripts/prediction/book/build_book.mjs && node scripts/prediction/book/score_book.mjs",
+    "seo:collect": "node scripts/seo/collect.mjs"
   },
   "devDependencies": {
+    "linkedom": "0.18.13",
+    "playwright-core": "1.63.0",
     "sharp": "0.35.4",
     "typescript": "5.7.3",
     "wrangler": "^4.45.0"

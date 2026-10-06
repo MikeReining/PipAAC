@@ -87,6 +87,11 @@ temp/
 # CHILDES transcript cache — local only, never committed (017 R11)
 data/prediction/childes/
 
+# SEO source-map collector — Chrome profile and raw run artifacts stay local
+data/seo/profile/
+data/seo/runs/
+data/seo/collect.lock
+
 # Grok / ElevenLabs mint churn (truth: approved/, shortlist/*_recommended, shipping.json)
 data/samples/**/takes/
 data/samples/**/*_raw.mp3
