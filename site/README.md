@@ -49,6 +49,10 @@ npm run deploy:site   # deploy to pipaac.org (uses the repo's wrangler auth)
   `site/public/brand/` (masters in `assets/brand/`).
 - **Factual claims** (price, free tier, "never a subscription") must match
   `docs/product/Pricing_And_Packaging.md` § 4 — that doc is the truth owner.
+- **Discovery** (search, AI answers, pitches, links) follows
+  `docs/strategy/SEO_Playbook.md`. Change the playbook when the plan
+  changes. A new page still needs a job the playbook's destination
+  table does not already cover.
 - New pages: add `public/<name>.html` and link it — no routing config.
 - Keep it fast and static. Anything interactive or tracked needs a founder
   call first (COPPA posture above).
