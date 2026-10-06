@@ -139,11 +139,11 @@ playground.xctimeline
 Packages/
 *.xcuserstate
 *.xcscmblueprint
-*.xcodeproj/*
-!*.xcodeproj/project.pbxproj
-!*.xcodeproj/xcshareddata/
-!*.xcodeproj/project.xcworkspace/
-!*.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+**/*.xcodeproj/*
+!**/*.xcodeproj/project.pbxproj
+!**/*.xcodeproj/xcshareddata/
+!**/*.xcodeproj/project.xcworkspace/
+!**/*.xcodeproj/project.xcworkspace/contents.xcworkspacedata
 **/project.xcworkspace/xcuserdata/
 **/xcshareddata/xcschemes/*.xcscheme
 !**/xcshareddata/xcschemes/*.xcscheme
