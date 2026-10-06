@@ -87,3 +87,88 @@
     }, 300);
   });
 })();
+
+// modeling.html demo: a tap on the phone lights that word on the iPad for
+// a few seconds, or until it's pressed (the app's MODEL_FADE_MS is 4 s; the
+// demo waits 6 so a reader can find the tile); a press on
+// the iPad shows up as a count on the phone. Tips are the shipped ones
+// (data/coach_tips.json). A picture of the app, not the app: no audio, no
+// storage, nothing sent.
+(() => {
+  const phone = document.getElementById("demo-phone");
+  if (!phone) return;
+  const ipad = document.getElementById("demo-ipad");
+  const say = document.getElementById("demo-say");
+  const bar = document.getElementById("demo-bar");
+  const tip = document.getElementById("demo-tip");
+  const reset = document.getElementById("demo-reset");
+  const TIPS = {
+    eat: "model \"eat\" while you take a bite yourself.",
+    drink: "offer the cup, model \"drink\", and wait a beat before helping.",
+    more: "pause mid-snack or mid-play, then model \"more crackers\" and wait.",
+    "all done": "model it at the natural end of things: \"all done bath\", \"all done book\".",
+    open: "at doors, jars, and boxes: model \"open\" and wait before opening.",
+  };
+  const START = say.innerHTML;
+  const lit = new Map(); // word → fade timer
+  const counts = new Map();
+  const tile = (root, w) => root.querySelector(`[data-w="${w}"]`);
+  const b = (w) => `<strong>${w}</strong>`;
+
+  const unlight = (w) => {
+    clearTimeout(lit.get(w));
+    lit.delete(w);
+    tile(ipad, w)?.classList.remove("lit");
+  };
+
+  phone.addEventListener("click", (e) => {
+    const w = e.target.closest("[data-w]")?.dataset.w;
+    if (!w) return;
+    unlight(w);
+    tile(ipad, w).classList.add("lit");
+    lit.set(w, setTimeout(() => {
+      unlight(w);
+      if (say.dataset.wait !== w) return;
+      say.innerHTML = `The light faded on its own. It's an invitation, never a must. Light another word on your phone.`;
+    }, 6000));
+    tip.hidden = false;
+    tip.innerHTML = `<strong>On your phone, the tip:</strong> ${b(w)} — ${TIPS[w]}`;
+    say.innerHTML = `Now you're Theo. Tap ${b(w)} on the iPad.`;
+    say.dataset.wait = w;
+    reset.hidden = false;
+  });
+
+  ipad.addEventListener("click", (e) => {
+    const w = e.target.closest("[data-w]")?.dataset.w;
+    if (!w) return;
+    const wasLit = lit.has(w);
+    unlight(w);
+    delete say.dataset.wait;
+    const word = document.createElement("span");
+    word.className = "said";
+    word.textContent = w;
+    bar.querySelector(".demo-bar-empty")?.remove();
+    bar.append(word);
+    while (bar.children.length > 4) bar.firstElementChild.remove();
+    const mine = tile(phone, w);
+    if (mine) {
+      counts.set(w, (counts.get(w) ?? 0) + 1);
+      mine.dataset.n = counts.get(w);
+    }
+    say.innerHTML = wasLit
+      ? `That's modeling. He saw ${b(w)} light up, then said it himself. The ${b(counts.get(w))} on your phone is his.`
+      : `Pip says "${w}." Nothing on his board is turned off, so he can say anything${mine ? ", and it still counts" : ""}.`;
+    reset.hidden = false;
+  });
+
+  reset.addEventListener("click", () => {
+    for (const w of [...lit.keys()]) unlight(w);
+    counts.clear();
+    for (const t of phone.querySelectorAll("[data-n]")) delete t.dataset.n;
+    bar.innerHTML = `<span class="demo-bar-empty">Theo's words show here</span>`;
+    tip.hidden = true;
+    reset.hidden = true;
+    say.innerHTML = START;
+    delete say.dataset.wait;
+  });
+})();

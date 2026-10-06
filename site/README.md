@@ -34,7 +34,7 @@ npm run deploy:site   # deploy to pipaac.org (uses the repo's wrangler auth)
 - **Header and footer are copied into every page.** Change nav or footer
   in `index.html`, then make the same edit in every other `.html` file
   (`grep -l site-nav site/public -r`).
-- Pages: `index`, `method`, `slps`, `pricing`, `faq`, `schools`, `about`,
+- Pages: `index`, `method`, `modeling`, `slps`, `pricing`, `faq`, `schools`, `about`,
   `404`, `compare/` (hub + one page per competitor).
 - **`compare/*.html` are generated.** Edit `site/compare-data.json` (the
   feature matrix, ratings 0–4 as Harvey balls) and run `npm run

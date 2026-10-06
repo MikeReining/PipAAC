@@ -1335,3 +1335,89 @@ p { margin: 0 0 1em; }
 .faq-search input:focus { outline: none; border-color: var(--ink); }
 .faq-none { margin: 1rem 0 0; }
 .faq-intro { margin: .6rem 0 0; color: #3b342b; }
+
+/* ── modeling.html: the Tuesday story + phone → iPad demo ── */
+.model-story {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
+}
+@media (max-width: 960px) { .model-story { grid-template-columns: 1fr; } }
+.story { list-style: none; margin: 1.5rem 0 0; padding: 0; }
+.story li {
+  display: grid; grid-template-columns: 3.4rem minmax(0, 1fr); gap: 1rem;
+  padding: .9rem 0; border-top: 1px solid var(--line);
+}
+.story time { font-weight: 700; color: var(--muted); padding-top: .1rem; }
+.story p { margin: 0; font-size: 1.15rem; }
+.story .now p { font-weight: 700; color: var(--ink); }
+.story-end { font-size: 1.2rem; margin: 1.2rem 0 0; padding-left: 1rem; border-left: 6px solid var(--pip-amber); }
+
+.demo {
+  margin: 0;
+  background: var(--white); border-radius: 24px;
+  padding: clamp(1rem, 3vw, 1.8rem);
+  position: sticky; top: 1.5rem;
+}
+@media (max-width: 960px) { .demo { position: static; } }
+.demo-say { margin: 0 0 1rem; font-size: 1.15rem; min-height: 2.6em; }
+.demo-stage { display: flex; align-items: center; gap: .5rem; }
+.demo-ipad .screen { overflow: visible; }
+.demo-side { display: grid; gap: .45rem; justify-items: center; flex: none; }
+.demo-side.grow { flex: 1 1 auto; min-width: 0; }
+.demo-label { font-size: .85rem; font-weight: 700; color: var(--muted); }
+.demo .beam { width: 28px; }
+.demo-phone { width: 150px; transform: none; }
+.demo-phone .phone-screen { height: auto; padding: 8px 7px 10px; display: grid; gap: 6px; place-items: stretch; }
+.demo-chip { font-size: .62rem; font-weight: 700; text-align: center; color: var(--ink); }
+.demo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+.demo-grid .tile, .demo-ipad .tile { width: auto; border-width: 2px; border-radius: 7px; }
+.demo-grid .tile b { font-size: .68rem; }
+.demo-grid .tile.glow { box-shadow: 0 0 0 2px var(--pip-amber), 0 0 10px 2px rgba(252, 184, 43, .5); }
+.ipad.small.demo-ipad { width: 100%; max-width: 400px; transform: none; }
+.demo-ipad .board { grid-template-columns: repeat(4, 1fr); }
+.demo-ipad .tile b { font-size: clamp(.55rem, 1.6vw, .7rem); }
+.demo-bar {
+  min-height: 34px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px;
+  background: var(--white); border: 2px solid var(--line); border-radius: 9px;
+  padding: 3px 7px; font-weight: 700; font-size: .78rem;
+}
+.demo-bar-empty { color: var(--edge); font-weight: 400; font-size: .7rem; }
+.demo-bar .said { background: var(--tray); border-radius: 6px; padding: 1px 6px; }
+.demo .tile { padding: 0; font: inherit; cursor: pointer; touch-action: manipulation; transition: transform .2s; }
+.demo .tile:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.demo .tile.lit {
+  --f: var(--pip-amber);
+  transform: scale(1.08);
+  box-shadow: 0 0 0 2px var(--cream), 0 0 0 5px var(--pip-amber), 0 0 22px 6px rgba(252, 184, 43, .75);
+  animation: demo-lit .7s ease-in-out infinite alternate;
+  z-index: 1;
+}
+@keyframes demo-lit { to { box-shadow: 0 0 0 2px var(--cream), 0 0 0 5px var(--pip-ember), 0 0 28px 9px rgba(252, 116, 25, .55); } }
+.demo .tile[data-n]::before {
+  content: attr(data-n);
+  position: absolute; top: 2px; right: 2px; z-index: 1;
+  min-width: 1.15rem; height: 1.15rem; padding: 0 3px; border-radius: 99px;
+  display: grid; place-items: center;
+  background: var(--ink); color: var(--cream); font-size: .65rem; font-weight: 700;
+}
+.demo-tip {
+  margin: 1.2rem 0 0; padding: .8rem 1rem;
+  background: var(--yellow-fill); border: 2px solid var(--yellow); border-radius: 14px;
+  font-size: 1rem;
+}
+.demo figcaption { margin-top: 1rem; font-size: .9rem; color: var(--muted); }
+.demo-reset {
+  font: inherit; font-weight: 700; color: var(--ink);
+  background: none; border: 0; padding: 0; margin-right: .5rem;
+  text-decoration: underline; text-underline-offset: 4px; cursor: pointer;
+}
+@media (max-width: 560px) {
+  .demo-stage { flex-direction: column; gap: .7rem; }
+  .demo-side.grow { width: 100%; }
+  .demo .beam { width: 4px; height: 22px; background: repeating-linear-gradient(180deg, var(--pip-amber) 0 6px, transparent 6px 11px); }
+  .demo-phone { width: min(230px, 100%); }
+  .demo-grid { grid-template-columns: repeat(3, 1fr); }
+  .demo-ipad .tile b { font-size: .68rem; }
+}

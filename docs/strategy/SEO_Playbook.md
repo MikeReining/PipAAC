@@ -207,6 +207,7 @@ draft names that URL before any sentence is written.
 | Choosing among them | `/compare/` |
 | Price, the free tier, $49 once | `/pricing` |
 | How Pip is built | `/method` |
+| Modeling AAC at home, or a parent who can't reach the iPad | `/modeling` |
 | Therapists, and that the SLP does not pay | `/slps` |
 | A school or a classroom set | `/schools` |
 | A general mention of the product | `/` |
