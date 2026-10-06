@@ -116,7 +116,7 @@ export function gmail({ dir, sender, fromName }) {
 
   // Read the stored draft back from Gmail; the API response is the instrument,
   // not what we sent.
-  async function verify(draftId, { body }) {
+  async function verify(draftId, { body, expect = [] }) {
     const d = await call(`/drafts/${draftId}?format=full`);
     const texts = [];
     const walk = (p) => {
@@ -132,6 +132,7 @@ export function gmail({ dir, sender, fromName }) {
     for (const link of body.match(/https?:\/\/\S+/g) || []) {
       if (!stored.includes(link)) problems.push(`link missing verbatim: ${link}`);
     }
+    for (const want of expect) if (!stored.includes(want)) problems.push(`missing: ${want}`);
     return { messageId: d.message.id, from, problems };
   }
 

@@ -5,6 +5,8 @@
 // Procedure and voice: docs/strategy/SLP_Outreach_System.md § Fast lane.
 //
 //   node scripts/outreach/draft.mjs --to a@b.com --subject "..." --source URL < body.txt
+//   ... --gift <name-site>                           (mint a single-use Lifetime code into {{CODE}})
+//   ... --code PIP-XXXX-XXXX-XXXX                    (reuse an already-minted code for {{CODE}})
 //   ... --force --replace <draftId>                  (new version; old draft deleted after the new one verifies)
 //   node scripts/outreach/draft.mjs --check a@b.com     (exit 1 if already contacted)
 //   node scripts/outreach/draft.mjs --list
@@ -17,6 +19,8 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { gmail } from './gmail.mjs';
 
+const ENV = new URL('../../.env', import.meta.url);
+if (existsSync(ENV)) process.loadEnvFile(ENV);
 const SENDER = process.env.OUTREACH_SENDER || 'mike@pipaac.org';
 const DIR = join(homedir(), '.pipaac-outreach');
 const LOG = join(DIR, 'log.jsonl');
@@ -72,10 +76,32 @@ if (hit && !flag('force')) {
   process.exit(1);
 }
 
-const { draftId, from } = await mail.createDraft({ to, subject, body });
+// Gift code (§ Gift code): one single-use Lifetime code per person, minted
+// in production; the batch label is the record of who got it.
+async function mintGift(label) {
+  const res = await fetch('https://app.pipaac.org/admin/v1/license-codes', {
+    method: 'POST',
+    headers: { authorization: `Bearer ${process.env.PIP_ADMIN_TOKEN}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ count: 1, batch: `gift:${label}` }),
+  });
+  const j = await res.json().catch(() => ({}));
+  if (!res.ok || !j.codes?.[0]) throw new Error(`gift mint failed: ${res.status} ${j.error || ''}`);
+  return j.codes[0];
+}
+
+const gift = flag('gift');
+let code = flag('code');
+if (body.includes('{{CODE}}') !== (typeof gift === 'string' || typeof code === 'string')) {
+  console.error('{{CODE}} in the body needs --gift <name-site> or --code, and vice versa');
+  process.exit(2);
+}
+if (typeof gift === 'string') code = await mintGift(gift);
+const text = typeof code === 'string' ? body.replaceAll('{{CODE}}', code) : body;
+
+const { draftId, from } = await mail.createDraft({ to, subject, body: text, expect: code ? [code] : [] });
 const replace = flag('replace');
 if (typeof replace === 'string') await mail.deleteDraft(replace);
 mkdirSync(DIR, { recursive: true });
-appendFileSync(LOG, JSON.stringify({ at: new Date().toISOString(), to, subject, source, body, draftId }) + '\n');
-console.log(`draft saved and read back: from ${from}, to ${to}, links verbatim`);
+appendFileSync(LOG, JSON.stringify({ at: new Date().toISOString(), to, subject, source, body: text, draftId, ...(code ? { code, gift: gift ?? null } : {}) }) + '\n');
+console.log(`draft saved and read back: from ${from}, to ${to}, links verbatim${code ? `, code ${code}` : ''}`);
 console.log(`Drafts: https://mail.google.com/mail/?authuser=${SENDER}#drafts`);
