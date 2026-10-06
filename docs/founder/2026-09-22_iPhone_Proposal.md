@@ -149,8 +149,9 @@ trust with SLPs. Pip should say it in onboarding and marketing.
   Yourself named this as a reason it first skipped the iPhone.
 - **Home-indicator swipes** near the bottom edge. Guided Access is the usual
   answer. Test it with pocket mode.
-- **iOS build path** is still open (`docs/product/Platforms_iOS_And_Web.md`
-  § 3). This proposal does not depend on the answer.
+- **iOS build path:** native Swift/SwiftUI decided 2026-10-06
+  (`docs/product/Platforms_iOS_And_Web.md`). The phone layouts in this
+  proposal remain preliminary; phase 044 resolves launch scope.
 
 ## 6. Blocking questions
 
@@ -172,7 +173,7 @@ trust with SLPs. Pip should say it in onboarding and marketing.
 | iPhone as a platform | `docs/product/Platforms_iOS_And_Web.md` |
 | Phone as a paired device, live modeling | `docs/product/Sync_And_Web_Editing.md` |
 | Location signal in prediction | phase 006 (in git history) |
-| Occasions in pocket mode | `docs/phases/007_Occasions.md` |
+| Occasions in pocket mode | `docs/backlog/007_Occasions.md` |
 
 ## Next slice
 

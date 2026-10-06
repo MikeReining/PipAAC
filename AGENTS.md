@@ -42,6 +42,7 @@ files touched, proof state, and next action.
 | Spotlight page, try-it demo, suggested lists | `docs/phases/032_Spotlight_Page.md` |
 | Help page, FAQ answers, Help search, Write to us (in-app + site FAQ) | `docs/phases/042_Help.md` |
 | Audit hardening: saves, sync recovery, media backup, privacy, iOS readiness | `docs/phases/043_Foundation_Hardening.md` |
+| Native iOS architecture, Swift app implementation, desktop/native parity | `docs/product/Platforms_iOS_And_Web.md` + `docs/phases/044_Native_iOS_App.md` |
 | Voice emotion tags, prosody formulas (Eleven sentences § 7; Grok legacy § 2) | `docs/operations/Grok_Voice_Emotional_Prosody.md` |
 | Vision, roadmap, monetization | `docs/strategy/Vision.md` + `docs/strategy/Roadmap.md` |
 | Stack, commands, local setup | `docs/operations/TechStack.md` |

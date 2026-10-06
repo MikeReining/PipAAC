@@ -11,17 +11,17 @@ landing here; the audit's file references are accurate.
 (locale boundary — the small German *runtime* proof is done;
 the ~20-word German vocabulary itself is owed before catalog
 translation is scoped), **H** (Unicode masking + privacy page),
-**I** `7ec06c95`, **J** `c3cbb6f0` (seams built + typed; the
-real-device prototype decision stays **OPEN** — iOS spike before any
-iOS phase), **K** — refund/dispute **revokes** the grant (founder
+**I** `7ec06c95`, **J** `c3cbb6f0` (seams built + typed; native
+Swift/SwiftUI decided 2026-10-06, device implementation/proof moves to
+`docs/phases/044_Native_iOS_App.md`), **K** — refund/dispute **revokes** the grant (founder
 ruling): flag + revoke land in one DO write, re-presented tokens get
 `payment_revoked`, `entitled()` consults the relay flag.
 
 **Confirmed on hardware:** E — real-iPad airplane-mode cold launch
 speaks on first tap (founder 2026-10-04).
 
-**Remaining:** J's device prototype and the ops-alerting verification
-noted under I. Sync follow-up: the supporter-regrant resume gap —
+**Remaining:** ops-alerting verification noted under I; J's native
+device proof is owned by phase 044. Sync follow-up: the supporter-regrant resume gap —
 `docs/operations/debugger/SUPPORTER_REGRANT_RESUME.md` (P2, traced, not
 reproduced end-to-end). The 2026-10-04 card-rotation slice (durable
 device journal + atomic guarded relay replacement + removal
@@ -287,7 +287,7 @@ counters (fail-open on the budget).
 **Proof.** Parallel-burst test against a dev DO shows the count
 reserved once per request and the cap enforced exactly.
 
-## J — Named seams before the iOS shell
+## J — Named seams before the native iOS client
 
 **Finding.** Good shared JS exists (`shared/*.mjs`), but storage,
 browser APIs, DOM state, licensing, and speech orchestration are
@@ -298,16 +298,18 @@ copies the bugs, not just the features.
 
 - Narrow interfaces first — storage, audio playback, secure keys,
   media blobs, network lifecycle — as modules the browser code
-  *already* calls, so iOS swaps implementations, not flows.
+  *already* calls, so platform dependencies have explicit owners.
 - `checkJs`-level typing at those boundaries only (JSDoc + `tsc
   --noEmit` in `check:fast`) — the seams get types; the app stays JS.
-- Then a small real-device prototype decides **web shell + native
-  capabilities vs native UI** — judged on speech latency, durability,
-  accessibility, maintenance. Decide on measurement, not preference.
+- **DECIDED 2026-10-06:** build native Swift/SwiftUI, owned by
+  `docs/product/Platforms_iOS_And_Web.md`. Early hardware work in phase
+  044 verifies speech latency, durability, accessibility and desktop
+  interoperability. It is not a web-shell versus native decision gate.
 
-**Proof.** The seam modules are exercised by the web app (no parallel
-iOS fork of logic); the prototype scores against the readiness bar
-above.
+**Proof.** The seam modules are exercised by the web app. Swift must
+implement equivalent client behavior and protocol semantics; swapping a
+browser module is not a native port. Phase 044 owns the native Works Tests
+against the readiness bar above, including cross-client media recovery.
 
 ## K — One entitlement owner for purchases
 
@@ -351,7 +353,7 @@ Delete contradicted prose; git history is the archive. No parallel
   justified and none are proposed.
 - Bulk German catalog translation (gated on G's proof).
 - Any batch art/voice generation — existing founder-gated laws stand.
-- iOS UI work beyond J's prototype.
+- Native iOS implementation — owned by phase 044, not this hardening phase.
 - Device-TTS fallback — the 036 ruling stands (silence over a wrong
   voice).
 
@@ -368,6 +370,6 @@ Delete contradicted prose; git history is the archive. No parallel
 | 7 | H — privacy (masking + copy + policy) | before any non-English launch |
 | 8 | I — atomic limits | before wider distribution |
 | 9 | G — language boundary, small German proof | before German catalog work |
-| 10 | J — seams + iOS prototype | before substantial iOS |
+| 10 | J — typed seams; native device proof routed to 044 | before claiming native parity |
 | 11 | K — entitlement owner | before App Store submission |
 | 12 | L — doc consolidation | continuous, folded into each slice |

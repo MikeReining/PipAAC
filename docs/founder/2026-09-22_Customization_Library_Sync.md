@@ -80,7 +80,8 @@ below.
   extended library, voices and recordings, suggested words:
   `docs/product/Word_Library.md`.
 - **DECIDED 2026-09-22.** iOS App Store app plus web app:
-  `docs/product/Platforms_iOS_And_Web.md`. The iOS build approach is open.
+  `docs/product/Platforms_iOS_And_Web.md`. **Updated 2026-10-06:** native
+  Swift/SwiftUI decided; execution in `docs/phases/044_Native_iOS_App.md`.
 - **Direction DECIDED 2026-09-22, design PROPOSED.** Sync and web editing:
   `docs/product/Sync_And_Web_Editing.md`, with five open rulings in § 11.
 - **DECIDED 2026-09-22.** Suggested words kept on device:
@@ -94,7 +95,7 @@ below.
 | --- | --- |
 | 009 — Word Library and customization | `docs/phases/009_Word_Library_And_Customize.md` |
 | 010 — Extended picture library | `docs/phases/010_Extended_Picture_Library.md` |
-| 011 — Sync and web editing | `docs/phases/011_Sync_And_Web_Editing.md` |
+| 011 — Sync and web editing (phase in git history) | `docs/product/Sync_And_Web_Editing.md` |
 
 ## Round 2 rulings (same day)
 
@@ -155,4 +156,5 @@ decided when their slice starts:
 2. The in-app purchase price for drawings past fair use (010 slice 6).
 3. How Apple School Manager and grant purchases interact with the
    Lifetime in-app purchase (`docs/product/Sync_And_Web_Editing.md` § 11).
-4. The iOS build approach (`docs/product/Platforms_iOS_And_Web.md` § 3).
+4. **Resolved 2026-10-06:** native Swift/SwiftUI
+   (`docs/product/Platforms_iOS_And_Web.md`); this is no longer an open question.

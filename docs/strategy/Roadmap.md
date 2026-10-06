@@ -27,7 +27,7 @@ picture library (phase 010); the labels themselves already ship.
 **DECIDED 2026-09-22** (not built). Owner: `docs/strategy/Dual_Engine_Predictive_Intelligence.md`.
 
 1. 006 — Prediction engine: fix local time, track sentences, log impressions and measure, the learned local model, on-device learning, then Jev behind the sharing setting (on by default) (phase 006, in git history).
-2. 007 — Occasions: breakfast experiment (LLM vs. Jev), then an occasion prior and each child's own windows (`docs/phases/007_Occasions.md`).
+2. 007 — Occasions: breakfast experiment (LLM vs. Jev), then an occasion prior and each child's own windows (`docs/backlog/007_Occasions.md`).
 3. ~~008 — Partner listening~~ — held 2026-09-24 (017 R20: no listening; `docs/backlog/008_Partner_Listening.md`).
 4. No phase yet: core-cell halos as a fading prompt and the SLP independence report (strategy doc § 7.4).
 
@@ -39,7 +39,7 @@ picture library (phase 010); the labels themselves already ship.
 2. 010 — Extended picture library: 2,000 drawn words + 300 phrases, found on add, and Draw it for me (`docs/phases/010_Extended_Picture_Library.md`).
 3. 011 — Sync and web editing: edit on a computer, the iPad gets it; free backup (phase 011, in git history).
    Then 015 — Accounts and one price: supporter accounts (email + passkey), many users per device, the QR card, \$49 once per user (`docs/phases/015_Accounts_And_One_Price.md`).
-4. No phase yet: the iOS App Store app. The build approach is open (`docs/product/Platforms_iOS_And_Web.md` § 3).
+4. 044 — Native Swift/SwiftUI iOS app through App Store release, approved 2026-10-06. Inventory → native board/local audio → desktop/native sync including media → full parity → accessibility/device proof → release (`docs/phases/044_Native_iOS_App.md`). Lasting architecture: `docs/product/Platforms_iOS_And_Web.md`.
 
 Phase numbers here follow `docs/phases/`; the "Later" list below predates them and reuses 003–005 for other work.
 

@@ -16,9 +16,10 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | 027 founder review — seed curation on `public/preview-blocks.html`, then the CHILDES starter table on the founder's machine (both listed at the end of 027); the phase retires after | `docs/phases/027_Occasion_Boards.md` |
-| **P2** | User-testing readiness — `app.pipaac.org` is live (deployed 2026-10-01); remaining: the first-open people question | `docs/phases/019_User_Testing_Readiness.md` |
-| **P3** | 010 slice 2 — the art (review page built; generation gated on founder, one image at a time) | `docs/phases/010_Extended_Picture_Library.md` |
+| **P1** | 044 A — inventory the working web flows, resolve launch/device scope and define native parity proof before the first Swift feature slice | `docs/phases/044_Native_iOS_App.md` |
+| **P2** | 027 founder review — seed curation on `public/preview-blocks.html`, then the CHILDES starter table on the founder's machine (both listed at the end of 027); the phase retires after | `docs/phases/027_Occasion_Boards.md` |
+| **P3** | User-testing readiness — `app.pipaac.org` is live (deployed 2026-10-01); remaining: the first-open people question | `docs/phases/019_User_Testing_Readiness.md` |
+| **P4** | 010 slice 2 — the art (review page built; generation gated on founder, one image at a time) | `docs/phases/010_Extended_Picture_Library.md` |
 
 ## Live index
 
@@ -47,6 +48,7 @@ Executing phases only. Each row names the **next** slice.
 | [031 — The editor, rebuilt](031_Board_Editor.md) | Slices A–G built 2026-09-29. Open: Works Test 1 (first-timer stopwatch) and a real-tablet pass of the narrow layout |
 | [032 — Spotlight gets its own page](032_Spotlight_Page.md) | A–C built 2026-09-29, E (moves: ✨ / ❓ targets, Try it ✨, Progress counts) 2026-09-30 — founder review; D held until then |
 | [035 — Marketing site](035_Marketing_Site.md) | Slice A skeleton built 2026-10-02 (`site/` — separate `pipaac-site` project). Next: designer/copywriter pass; first `deploy:site` |
+| [044 — Native iOS app](044_Native_iOS_App.md) | Approved 2026-10-06; implementation not started. Next: A — code-derived inventory and launch/device decisions; desktop/native sync is an early B/C milestone |
 
 ## Proposals awaiting review
 
@@ -57,7 +59,7 @@ Executing phases only. Each row names the **next** slice.
 | [040 — Trial and the Lifetime page](040_Trial_And_Upgrade_Page.md) | Built 2026-10-04: 7-day trial replaces 039's pool (`trial.mjs`, one `entitled()` gate); the Lifetime page tops Settings; Buy is a no-account code checkout that auto-redeems in-app; site audited to the § 3 table. Owed: founder sign-off on page/toast strings + a listen of `demo-sentence`, then `--ship` + deploy + Works Test |
 | [042 — Help](042_Help.md) | **Deployed 2026-10-04**: Help page in Settings, one search by meaning over answers + Settings rows (37/39 probe), Write to us → hello@pipaac.org, site FAQ generated from the same answers with search. Open: founder read of "Is this normal?" + inbox check of the smoke message |
 | [034 — Leave the panned document after the welcome](034_Welcome_Page.md) | Reviewed; ready to build: `location.replace` after Continue + one-shot tour flag |
-| [043 — Foundation hardening](043_Foundation_Hardening.md) | Foundation slices built. Open: device prototype + ops-alerting verification; sync delivery-order repair and versioned-backup cleanup. Resumable rotation is implemented in the working tree; testing, commit and deployment handed to the other developer (founder, 2026-10-04). |
+| [043 — Foundation hardening](043_Foundation_Hardening.md) | Foundation slices built. Native architecture decided 2026-10-06; device proof continues in 044. Open: ops-alerting verification; sync delivery-order repair and versioned-backup cleanup. Resumable rotation is implemented in the working tree; testing, commit and deployment handed to the other developer (founder, 2026-10-04). |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

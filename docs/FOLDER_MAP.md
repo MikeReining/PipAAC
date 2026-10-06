@@ -9,6 +9,12 @@ PipAAC/
   AGENTS.md
   CLAUDE.md
   wrangler.jsonc
+  apps/
+    PipAAC/
+      PipAAC.xcodeproj/
+      PipAAC/
+      PipAACTests/
+      PipAACUITests/
   docs/
     WORKING_RULES.md
     FOLDER_MAP.md
@@ -90,7 +96,9 @@ PipAAC/
 - `docs/product/Core_Coordinate_Map.md` — slot assignments per named layout (`grid60`, `grid90`).
 - `docs/product/Personal_Entities.md` — personal entity records and the on-device add.
 - `docs/product/Word_Library.md` — Word Library, word card, add paths, voices and recordings, suggested words.
-- `docs/product/Platforms_iOS_And_Web.md` — the iOS app and the web app.
+- `apps/PipAAC/` — native iOS Xcode starter; implementation in phase 044.
+- `docs/product/Platforms_iOS_And_Web.md` — lasting native iOS/web architecture, local recordings and desktop customization.
+- `docs/phases/044_Native_iOS_App.md` — temporary native implementation and release plan; deleted at closeout.
 - `docs/product/Sync_And_Web_Editing.md` — sync without accounts, web editing (design proposed).
 - `docs/product/Language_And_Voice_Schema.md` — catalog/device schema, playback rules.
 - `scripts/test.sh` — protected test runner.
