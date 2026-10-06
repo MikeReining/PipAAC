@@ -142,11 +142,13 @@ export function gmail({ dir, sender, fromName }) {
     const d = await call('/drafts', { method: 'POST', body: JSON.stringify({ message: { raw } }) });
     const check = await verify(d.id, msg);
     if (check.problems.length) {
-      await call(`/drafts/${d.id}`, { method: 'DELETE' });
+      await deleteDraft(d.id);
       throw new Error(`draft failed checks and was deleted: ${check.problems.join('; ')}`);
     }
     return { draftId: d.id, ...check };
   }
 
-  return { auth, createDraft };
+  const deleteDraft = (id) => call(`/drafts/${id}`, { method: 'DELETE' });
+
+  return { auth, createDraft, deleteDraft };
 }

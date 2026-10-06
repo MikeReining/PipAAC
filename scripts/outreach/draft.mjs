@@ -5,6 +5,7 @@
 // Procedure and voice: docs/strategy/SLP_Outreach_System.md § Fast lane.
 //
 //   node scripts/outreach/draft.mjs --to a@b.com --subject "..." --source URL < body.txt
+//   ... --force --replace <draftId>                  (new version; old draft deleted after the new one verifies)
 //   node scripts/outreach/draft.mjs --check a@b.com     (exit 1 if already contacted)
 //   node scripts/outreach/draft.mjs --list
 //   node scripts/outreach/draft.mjs --auth              (one-time Google sign-in)
@@ -72,6 +73,8 @@ if (hit && !flag('force')) {
 }
 
 const { draftId, from } = await mail.createDraft({ to, subject, body });
+const replace = flag('replace');
+if (typeof replace === 'string') await mail.deleteDraft(replace);
 mkdirSync(DIR, { recursive: true });
 appendFileSync(LOG, JSON.stringify({ at: new Date().toISOString(), to, subject, source, body, draftId }) + '\n');
 console.log(`draft saved and read back: from ${from}, to ${to}, links verbatim`);

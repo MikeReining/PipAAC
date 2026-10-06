@@ -57,6 +57,14 @@ agent, in one pass:
    Token: `~/.pipaac-outreach/token.json` (mode 600). Revoke any time at
    myaccount.google.com/permissions.
 
+**Founding Voices** (founder 2026-10-06): reviewers, AAC users and advocates
+get a Pip Lifetime code in the first email, given with no strings ("yours
+whether or not you write anything"). Never tie it to a mention or review (that
+makes it a paid endorsement). One single-use code per person, never a shared
+promo code: mint with `POST /admin/v1/license-codes` on app.pipaac.org,
+`{"count":1,"batch":"founding-voices:<name-site>"}`. Redeem: Pip Settings →
+"Have a code?". The batch label is the record of who got one.
+
 Tone rules: never call Pip "free" or imply it is fully free — there is a
 price. Say "new AAC app". No price, no trial, no "download now", no urgency.
 If cost comes up, the honest line is the vision: far cheaper than today's
