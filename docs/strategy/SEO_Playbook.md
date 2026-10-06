@@ -69,11 +69,11 @@ disagrees with those two files is wrong, even if it sounds sharper.
 checks each claim, drafts the note, and names the one destination URL.
 The agent writes only what it opened that week. An empty email, an
 unknown price, and a missing domain score stay empty. The agent does
-not send mail, does not buy a placement, and does not run a script
-that loops a paid chat API to "refresh the source map." Asking the
-buyer questions is a manual monthly pass. A hand-rolled loop over a
-paid endpoint is a batch run and needs the same founder approval as
-bulk art or voice.
+not send mail and does not buy a placement. The monthly source map is
+the local collector in `docs/strategy/seo/Source_Map_Collector.md`:
+a browser on this Mac, reading the pages a person would see. It makes
+no API calls. A hand-rolled loop over a paid endpoint is still a batch
+run and needs the same founder approval as bulk art or voice.
 
 **The founder.** Sends every email from `mike@pipaac.org` and approves
 every placement. Drafts wait in `docs/strategy/seo/drafts/` until then.
@@ -143,9 +143,16 @@ same words.
 
 ## 3. The source map
 
-Once a month, ask every buyer question in ChatGPT, Gemini, Perplexity,
-and Google — both the AI overview and the ordinary results. Open every
-cited URL and every result on the first page. Record one row per URL:
+Once a month, run the collector specified in
+`docs/strategy/seo/Source_Map_Collector.md`. It reads the buyer
+questions, expands them from Google's own suggestion box, People Also
+Ask, and related searches, then records the links on Google's first
+page, the AI overview when it is shown, and a fresh ChatGPT answer.
+It uses the local browser. It does not call an API. Gemini and
+Perplexity join that run when a local app for them is installed.
+TikTok stays a manual pass on the phone.
+
+Record one row per URL:
 
 | Column | What goes in it |
 | --- | --- |
@@ -158,9 +165,10 @@ cited URL and every result on the first page. Record one row per URL:
 | destination | The one Pip URL that page would deserve, from the table in § 5 |
 | checked | The date the page was opened |
 
-File it at `docs/strategy/seo/source-map.md`. Replace the rows for an
-engine when that month's pass is done, and keep a short note of what
-changed. Create the folder on the first pass.
+The living map is `docs/strategy/seo/source-map.md`. Each monthly run
+also writes `docs/strategy/seo/runs/YYYY-MM-DD.md`. The collector may
+add rows. It must not delete them or overwrite a destination or a
+`realistic` value a person has set.
 
 **Realistic** means a person edits that page and might update it
 because we showed them something true. Reddit, YouTube, Wikipedia, the
@@ -319,6 +327,7 @@ landed, and where the evidence is.
 
 - [ ] `robots.txt`, `sitemap.xml`, and canonicals, deployed with the site
 - [ ] Search Console verified for `https://pipaac.org`, sitemap submitted, founder can open it
+- [ ] Source-map collector built and smoke-checked (`docs/strategy/seo/Source_Map_Collector.md`)
 - [ ] First source map filed at `docs/strategy/seo/source-map.md`
 - [ ] Reclaim pass written down, including "none" if that is the truth
 - [ ] Ten gift drafts in `docs/strategy/seo/drafts/`, each verified, none sent until the founder sends them

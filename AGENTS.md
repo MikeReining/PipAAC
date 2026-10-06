@@ -36,6 +36,7 @@ files touched, proof state, and next action.
 | Tile voice library, on-demand mint of typed words, review page | `docs/phases/028_Tile_Voice_Library.md` |
 | Marketing site (pipaac.org), designer/copywriter handoff | `site/README.md` + `docs/phases/035_Marketing_Site.md` |
 | Marketing discovery: search, AI answers, link outreach | `docs/strategy/SEO_Playbook.md` |
+| Source-map collector (local browser, no APIs) | `docs/strategy/seo/Source_Map_Collector.md` |
 | Add a word: sheet, new-word card, picture/voice states | `docs/phases/029_Add_A_Word.md` |
 | Picture reuse by meaning, drawing once, allowance, calibration | `docs/phases/030_Picture_Finder_And_Drawing.md` |
 | Spotlight page, try-it demo, suggested lists | `docs/phases/032_Spotlight_Page.md` |
