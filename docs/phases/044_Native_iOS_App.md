@@ -1,7 +1,7 @@
 # 044 — Native iOS app, through App Store release
 
 **Status:** APPROVED — implementation not started, 2026-10-06.
-**Next:** A0 — the three device tests (§ 5), on the base A16 iPad.
+**Next:** A0 — the three device tests (§ 6), on the base A16 iPad.
 **Platforms:** iOS app; shared core build (`scripts/ios/`); backend
 (`apple-app-site-association` on the site, App Store notifications on the
 Worker).
@@ -28,7 +28,7 @@ iPhone pocket mode and other proposals are not silently added.
 | --- | --- |
 | Architecture | Native SwiftUI screens; the shared JavaScript rules run in JavaScriptCore (platform § 2). A0 verifies it on the floor device. |
 | Minimum OS | iOS/iPadOS 26. Raise it as versions ship. |
-| Slowest supported device | Base iPad (A16, 2025). Budgets in § 6 are measured on it. Older iPads that can install are not tested. |
+| Slowest supported device | Base iPad (A16, 2025). Budgets in § 7 are measured on it. Older iPads that can install are not tested. |
 | Devices in 1.0 | iPad only. iPhone follows once its layout is decided. |
 | SQLite | Bundle the same SQLite version the web uses (`@sqlite.org/sqlite-wasm` 3.53.x, built from the amalgamation), not the system library. Same engine, same results. |
 | Audio | `.playback` session; speaks with the silent switch on; stops other audio; recovers on route change. No Apple TTS anywhere. |
@@ -41,24 +41,39 @@ iPhone pocket mode and other proposals are not silently added.
 | Moving from Safari | QR card restore (free) or linking (Lifetime); no file export. |
 | Shipping cadence | Every slice ends with a TestFlight build on a real iPad — the native form of "always deploy". |
 
-**Founder to confirm before the first TestFlight upload** (permanent once
-uploaded): bundle ID `com.HappyMooseApps.PipAAC` and the seller name shown
-on the App Store, both set by developer team `LP5YNK7A36` in the starter
-project.
+**App identity (set 2026-10-06):** bundle ID `org.pipaac`, developer team
+`LP5YNK7A36`; the app record exists in App Store Connect. Test targets
+use `org.pipaac.tests` and `org.pipaac.uitests`.
 
-## 3. Start now — founder admin (long lead times)
+## 3. Founder admin
 
-- [ ] Apple Developer Program enrolled as the organization that should
-  appear as the seller (needs a D-U-N-S number; can take one to two
-  weeks).
-- [ ] App Store Connect: create the app record and reserve the name
-  "Pip AAC"; create an internal TestFlight group.
+- [x] Apple Developer Program account (team `LP5YNK7A36`).
+- [x] App Store Connect app record, bundle ID `org.pipaac`.
+- [ ] Add the developer to the team with App Manager access, and to an
+  internal TestFlight group.
 - [ ] Enroll in the App Store Small Business Program (15% instead of 30%).
-- [ ] Buy a base iPad (A16). The founder's iPad 10th generation (A14,
-  2022) is kept as a comparison device for A0, not a supported floor.
-- [ ] Add the developer to the team with App Manager access.
+- [ ] Buy a base iPad (A16). Until it arrives, A0 is built and run on
+  the simulator and the founder's iPad 10th generation (A14, 2022); the
+  pass/fail run waits for the A16.
 
-## 4. Release scope
+## 4. Getting started (developer)
+
+1. Read `AGENTS.md` (workflow, commit rules, Always deploy), then
+   `docs/product/Platforms_iOS_And_Web.md`, then this file.
+2. Tools: Xcode 26 or later; Node 24 (`.nvmrc`), `npm ci`. Web preview
+   for comparison: `npm run dev:agent` (never `npm run dev`, the
+   founder's copy). Tests: `scripts/test.sh <paths>`; rules in
+   `docs/operations/Testing.md`.
+3. Xcode project: `apps/PipAAC/PipAAC.xcodeproj`.
+4. Passkeys only work on `pipaac.org` domains and there is no staging
+   domain, so passkey tests (A0 S2, C, F) use test accounts on
+   production `app.pipaac.org`. Delete them after.
+5. Questions that change product behavior go to the founder; anything
+   the owners in § 8 already answer does not. Leave a progress note in
+   § 10 whenever work stops (`docs/operations/Execution-Playbook.md`
+   § Progress Note Format).
+
+## 5. Release scope
 
 **1.0 (iPad):**
 - First run, multiple users (people), Settings behind the PIN.
@@ -80,21 +95,21 @@ synced tables), so supporters use them on desktop meanwhile.
 **Later:** iPhone layout; anything the A inventory marks secondary,
 listed by name for founder approval.
 
-## 5. Slices
+## 6. Slices
 
 Rough effort for one senior iOS developer: about four to five months to
 1.0. Re-estimate after A0.
 
 | Slice | Deliverable | Advances when |
 | --- | --- | --- |
-| **A0** | Three device tests: shared core, crypto + passkeys, tap to sound | Pass criteria below met on the A16 iPad, results in § 8 |
+| **A0** | Three device tests: shared core, crypto + passkeys, tap to sound | Pass criteria below met on the A16 iPad, results in § 10 |
 | **A** | Inventory file, parity fixtures, build/test commands, CI, platform-label lint, TestFlight pipeline | Every web workflow has a row; first TestFlight build installs |
 | **B** | Native SQLite + core host, bundled catalog/audio, first board and groups speaking offline | P1, P2 on the A16 iPad; TestFlight |
 | **C** | Pairing, two-way sync, media transfer, accounts/passkeys, QR card restore | P3, P4, P5; desktop customization works before the rest of the port |
 | **D** | Smart bar, keyboard, forms, sentence buttons, expressive voice, voice/speed, people | P6; cloud failure leaves local speech working |
 | **E** | Supporter flows: Settings/PIN, word card, photos, recording, picture finder, Library, first run, Help | Matching inventory rows verified on device; desktop and iPad edits stay compatible |
 | **F** | Team roles, invites, removal, rotation, account deletion, StoreKit + Worker notifications endpoint | P7, P9 purchase cases; one entitlement owner |
-| **G** | Whole-app acceptance, accessibility pass, upgrades, interrupted downloads | P1–P9 and § 6 budgets on the A16 iPad |
+| **G** | Whole-app acceptance, accessibility pass, upgrades, interrupted downloads | P1–P9 and § 7 budgets on the A16 iPad |
 | **H** | Store material, privacy answers, review notes, submission, release | Approved build installed from the App Store passes P1, P3, P7 |
 
 Accessibility (VoiceOver labels, Switch Control order, larger text,
@@ -123,23 +138,29 @@ Run on the A16 iPad in a Release build. Also run on the founder's iPad
      `src/board/sync_merge.test.mjs` scenarios (several seeds, including
      the seed-install op and non-idempotent swaps), and the expected
      sorted dump of every table in `SYNCED_TABLES` after drain.
-   - **Heavy use:** a deterministic scripted history of six months of
-     daily taps, plus 500 probe taps with the Smart bar contents and
-     forms node expects after each.
+   - **Heavy use:** six months of daily taps built deterministically
+     with `scripts/taps/sim.mjs` (it already drives the real catalog,
+     `stripRanked`, `groupRanked` and `formFor`), plus 500 probe taps
+     with the Smart bar contents (`stripCandidates`) and forms
+     (`formFor`) node returns after each. Include the existing golden
+     cases in `scripts/prediction/bar_examples.json` and
+     `form_examples.json`.
 4. iPad harness (Swift Testing target, Release configuration): replay
    and compare dumps; run the probes, timing each with `ContinuousClock`
    and Instruments signposts. These timings diagnose compute cost; the
    user-facing latency claims are P-tests with external instruments.
-5. Baseline: the same probes in the web app in Safari on the same iPad
-   (`performance.now()`), so the cost of JavaScriptCore without JIT is
-   visible.
+5. Optional baseline: the same probes in Safari on the same iPad
+   against `npm run dev:agent`, to show what JavaScriptCore without JIT
+   costs. Skip it if it needs a deployed page.
 
 Pass: zero byte differences on every replay fixture and probe; core load
 (evaluate bundle + open database) ≤ 300 ms; Smart bar + forms per tap
 p95 ≤ 30 ms and p99 ≤ 60 ms; one edit with its op record p95 ≤ 30 ms; a
 1,000-op catch-up ≤ 3 s off the main actor with the board still
-responsive. If a module misses its budget, move only that module to
-Swift against the same fixtures; ops replay stays in the core.
+responsive. A byte difference is a bug to fix (host shim, SQLite
+build), never a reason to change the fixture. If a module misses its
+speed budget, move only that module to Swift against the same fixtures;
+ops replay stays in the core.
 
 **S2 — crypto and passkeys.**
 
@@ -149,9 +170,12 @@ Swift against the same fixtures; ops replay stays in the core.
   its own; a node test opens and verifies those. Both directions, every
   primitive.
 - Serve `apple-app-site-association` from
-  `https://pipaac.org/.well-known/` on the site (deploy + smoke: `curl`
-  the file and Apple's CDN copy at
-  `https://app-site-association.cdn-apple.com/a/v1/pipaac.org`).
+  `https://pipaac.org/.well-known/` on the site (`site/public/`, served
+  as `application/json`, no redirect) with
+  `{"webcredentials":{"apps":["LP5YNK7A36.org.pipaac"]}}`, and add
+  `webcredentials:pipaac.org` to the app's Associated Domains. Deploy the
+  site and smoke it: `curl` the file and Apple's CDN copy at
+  `https://app-site-association.cdn-apple.com/a/v1/pipaac.org`.
 - Create a passkey on the web, use it in the app: the PRF output opens
   the account key. Then the reverse.
 
@@ -174,7 +198,7 @@ Pass: p95 ≤ 100 ms on the A16 iPad; audible in every condition.
   traced from its entrypoint — gesture, web call path, core vs Swift
   split, data/API/media effect, release (1.0 / 1.1 / later), slice,
   proof ID, status (planned / implemented / verified on device /
-  released). Starting call paths are in § 7. Built behavior is separated
+  released). Starting call paths are in § 8. Built behavior is separated
   from proposals and known bugs; do not port a bug to make clients match.
 - Parity fixtures from A0 move to their permanent home and run in both
   `scripts/test.sh` and the Xcode test target.
@@ -225,7 +249,7 @@ Pass: p95 ≤ 100 ms on the A16 iPad; audible in every condition.
   Worker's App Store Server Notifications endpoint into `entitled()`.
   Deploy and smoke the Worker in the same slice.
 
-## 6. Works Tests and budgets
+## 7. Works Tests and budgets
 
 Record device, OS, build, inputs, how it was observed and where the
 evidence lives. UI messages and app logs are not proof of the outcome.
@@ -255,7 +279,7 @@ video or equivalent):
 Use fixtures, existing clips and the persistent paid-service tools; no
 ad-hoc paid fan-out to verify the port.
 
-## 7. Where the web behavior lives today
+## 8. Where the web behavior lives today
 
 Starting call paths for the A inventory (paths under `public/`):
 
@@ -288,13 +312,13 @@ Feature rules stay in their owners:
 Generated catalog and audio come from existing build inputs; do not
 hand-edit generated JSON or mint replacement assets for the port.
 
-## 8. Done and retirement
+## 9. Done and retirement
 
 - [ ] A0 passed (or named modules moved to Swift with fixtures) and the
-  results are recorded below.
+  results are recorded in § 10.
 - [ ] Every 1.0 inventory row implemented and verified on the A16 iPad;
   exclusions are named founder decisions.
-- [ ] P1–P9 pass and § 6 budgets are met, with preserved evidence.
+- [ ] P1–P9 pass and § 7 budgets are met, with preserved evidence.
 - [ ] The App Store build is installed from the store and passes P1, P3
   and P7.
 - [ ] Lasting decisions live in the platform owner; build commands in
@@ -303,10 +327,11 @@ hand-edit generated JSON or mint replacement assets for the port.
 - [ ] 1.1 scope moved to its own phase; this file and its index/router
   links removed per `docs/operations/Execution-Playbook.md`.
 
-## 9. Progress
+## 10. Progress
 
 **2026-10-06:** plan revised after review — shared JavaScript core,
 device floor (iOS 26, base A16 iPad), iPad-only 1.0, A0 device tests
 first, founder admin list. Documentation only; no native code, CI,
-fixtures or device results exist yet. Next: A0 on the A16 iPad (founder
-buys one; the iPad 10th gen runs it as a comparison).
+fixtures or device results exist yet. Bundle ID `org.pipaac` set in
+Xcode and App Store Connect. Next: A0 (§ 6), built on the simulator and
+the iPad 10th gen until the A16 arrives.
