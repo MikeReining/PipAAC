@@ -3,9 +3,27 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { registerHooks } from "node:module";
 
-import { deviceName, mountDevices } from "../../public/board/devices-ui.js";
 import { listUsers, memoryUserStore } from "../../public/shared/users.mjs";
+
+// devices-ui imports sync.mjs (setSyncAccountOps), which imports the
+// browser-only db.js (sqlite-wasm at an absolute URL). Stub it for node.
+registerHooks({
+  resolve(spec, ctx, next) {
+    return spec === "../db.js" && ctx.parentURL?.includes("/public/shared/sync.mjs")
+      ? { url: "virtual:devices-db", shortCircuit: true } : next(spec, ctx);
+  },
+  load(url, ctx, next) {
+    return url === "virtual:devices-db"
+      ? { format: "module", shortCircuit: true, source: `
+          export const loadBlobBytes = async () => null;
+          export const saveBlobBytes = async () => {};
+          export const setBlobFetcher = () => {};` }
+      : next(url, ctx);
+  },
+});
+const { deviceName, mountDevices } = await import("../../public/board/devices-ui.js");
 
 function el() {
   const node = {
