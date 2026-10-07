@@ -5,6 +5,10 @@ distribution channel"; not built). Intake:
 `docs/founder/2026-09-23_Accounts_And_Pricing.md`. Price and free limits:
 `docs/product/Pricing_And_Packaging.md` § 4. Build:
 `docs/phases/015_Accounts_And_One_Price.md`.
+**Amended 2026-10-06:** an SLP on a paying SLP Nest seat ($99 a year)
+gets Pip Lifetime free for every student they add
+(`docs/product/Pricing_And_Packaging.md` § 4.6). The free-supporter story
+below still holds for SLPs without a seat.
 
 ## 1. What an SLP needs
 

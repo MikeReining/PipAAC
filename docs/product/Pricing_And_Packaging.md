@@ -12,6 +12,9 @@ list (`docs/phases/040_Trial_And_Upgrade_Page.md` § 3).
 **Amended 2026-10-06:** free own words 20 → **10** (founder). The cap is
 constant from the first add — trial or no trial, it never moves; words
 stay structural and are never inside the trial.
+**Amended 2026-10-06:** a user added by an SLP on a paying SLP Nest seat
+gets Pip Lifetime free, granted on first board use and kept for good
+(founder; § 4.6). The public price does not change.
 Intake: `docs/founder/2026-09-22_Customization_Pricing_VoiceCloning.md`,
 `docs/founder/2026-09-23_Accounts_And_Pricing.md`.
 Fact map: `docs/product/SSOT.md`.
@@ -242,3 +245,28 @@ removing a teacher. Those stay behind Lifetime during the trial.
   sold in the app (App Review Guideline 3.1.3(b); schools 3.1.3(c)).
 - **Medicaid / insurance:** later, through a device partner that ships a
   dedicated device with a Pip Lifetime user. Not built, not scheduled.
+
+### 4.6 SLP Nest students
+
+**DECIDED 2026-10-06** (founder; not built). SLP Nest is the $99-a-year
+caseload product for school SLPs (SLP Nest repo, Vision § 1 and § 6).
+
+- **A user added to a paying Nest gets Pip Lifetime free.** The SLP pays
+  for the seat, not per child. The family never pays and never sees a
+  checkout on that path.
+- **Granted on first use, kept for good.** The license is written the first
+  time that child's board is used on the child's own device, not when the
+  SLP adds the student. Once granted it is never taken back, whether the
+  seat lapses or the child leaves the caseload. Same flag as a bought
+  license (§ 4.5).
+- **Why it fits § 1.** The grant is one-time, like the license itself, so a
+  lapsed seat cannot turn the extras into rent.
+- **Leak guard.** Only the Nest mints these grants, one per student code,
+  bound to one child's device. A seat over 100 active students asks why and
+  is reviewed by a person (SLP Nest repo, Vision § 6).
+- **Unchanged:** $49 for everyone else, codes for schools (§ 4.5), and
+  every supporter, including an SLP without a Nest seat, stays free
+  (`docs/strategy/SLP_Channel.md`).
+- **Cost to watch:** natural sentence voice and prediction for a heavy
+  user are the costs that grow with use. Measure one heavy user's year
+  before the Nest launches.
