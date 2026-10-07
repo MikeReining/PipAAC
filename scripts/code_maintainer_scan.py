@@ -33,6 +33,7 @@ DEFAULT_EXCLUDE_DIRS = {
     "experiments",
     "fixtures",
     "node_modules",
+    "site-packages",
     "target",
     "vendor",
 }

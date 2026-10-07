@@ -5,6 +5,7 @@ owner, expiry, and proof path back to green.
 
 | Item | Owner | Expiry | Proof to clear |
 | --- | --- | --- | --- |
+| Seed-repair op ids collide — "the shipped starter carries no applied boards" + "each device records its own seed install at boot" (`src/board/sync_seed_repair.test.mjs:82,92`). Red on clean HEAD 2026-10-07 (verified via `git worktree` at af1654b-era main); unrelated to the Nest-link slice. | founder | 2026-10-21 | `scripts/test.sh src/board/sync_seed_repair.test.mjs` green on a fresh clone |
 
 ## Cleared
 
