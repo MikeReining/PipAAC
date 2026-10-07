@@ -90,11 +90,20 @@ import { mountStrip } from "./board/strip.js";
 import { pictureClient } from "./shared/pictures.mjs";
 import qrcode from "../vendor/qrcode.mjs";
 import { kv } from "./shared/platform.mjs";
+import { captureNest, nestTargets, maybeEmitGoalWord } from "./shared/nest.mjs";
 
 const $ = (id) => document.getElementById(id);
 installViewportPin();
 const ALL = (db, sql, p = []) => db.all(sql, p);
 const RUN = (db, sql, p = []) => db.prepare(sql).run(...p);
+
+// A Nest family link carries ?nest=<student code> (Sibling_Contract.md):
+// the code stays on the device; targets prefetch for the emit path.
+if (new URLSearchParams(location.search).get("nest")) {
+  const nc = captureNest(location.search, kv);
+  history.replaceState(null, "", location.pathname);
+  if (nc) nestTargets(nc, { storage: kv, fetchImpl: fetch });
+}
 
 /* ------------------------------------------------------------------ *
  * Which user is this (015 slice 2): the registry holds one row per
@@ -666,6 +675,7 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
       const key = `${kind}:${id}`;
       syncSendModel(key, text);
       coachUi.onModeled(kind, id);
+      maybeEmitGoalWord(db, kind, id, "modeled", { storage: kv, fetchImpl: fetch });
       modelSent.add(key);
       renderGrid();
       rerenderView();
@@ -705,6 +715,7 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
       labelId: item.labelId ?? null,
       groupId: view === "group" ? groupsUi.getGroupKey() : null,
     });
+    maybeEmitGoalWord(db, kind, item.id ?? id, "independent", { storage: kv, fetchImpl: fetch });
   }
   if (hint && id) showGroupHint(kind, item.id ?? id);
   renderGrid(); // cells wear the new context's forms

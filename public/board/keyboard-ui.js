@@ -9,6 +9,8 @@ import { buildIndex, suggest } from "../shared/spelling.mjs";
 import { normalizeV1 } from "../shared/normalize.mjs";
 import { detachEvent, fillChosen, logSelection } from "../shared/funnel.mjs";
 import { setSetting } from "../shared/groups.mjs";
+import { kv } from "../shared/platform.mjs";
+import { maybeEmitGoalWord } from "../shared/nest.mjs";
 
 const $ = (id) => document.getElementById(id);
 const KB_DEV_TERM = /[\s.,!?¿¡]/;
@@ -157,6 +159,7 @@ export function mountKeyboard({
         sentenceId: getSentenceId(), position: null, source: "keyboard",
         spotlit: childTap(`sense:${s.id}`),
       });
+      maybeEmitGoalWord(db, "sense", s.id, "independent", { storage: kv, fetchImpl: fetch });
       await speakItem({ kind: "sense", id: s.id });
     });
     return el;
@@ -247,6 +250,7 @@ export function mountKeyboard({
         spotlit: childTap(`${item.kind}:${item.id}`),
         labelId: item.labelId ?? null,
       });
+      maybeEmitGoalWord(db, item.kind, item.id, "independent", { storage: kv, fetchImpl: fetch });
       grammar?.revisit?.(index); // "what do" + typed he -> does
       showGroupHint(item.kind, item.id);
     }
