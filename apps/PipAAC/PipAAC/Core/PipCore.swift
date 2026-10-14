@@ -33,6 +33,7 @@ public nonisolated final class PipCore: @unchecked Sendable {
     private var ctx: JSContext?
     private var dbs: [Int32: PipDatabase] = [:]
     private var nextDbId: Int32 = 1
+    private var hosts: [PipHost] = []
 
     public init() {}
 
@@ -50,7 +51,52 @@ public nonisolated final class PipCore: @unchecked Sendable {
         queue.async(execute: work)
     }
 
+    /// The serial queue every JS touch runs on. Host completions
+    /// re-enter ONLY through `post` / `queue.async` — never `sync`.
+    public var jsQueue: DispatchQueue { queue }
+
+    /// Async re-entry for host completions (URLSession, sockets, timers,
+    /// keychain results, NWPathMonitor). Callable from any thread; `work`
+    /// runs on the JS queue with the live context. This is the only way
+    /// a Swift completion may touch JavaScript.
+    public func post(_ work: @escaping @Sendable (JSContext) -> Void) {
+        queue.async { [self] in
+            dispatchPrecondition(condition: .onQueue(queue))
+            guard let ctx else { return }
+            work(ctx)
+        }
+    }
+
     // MARK: - Bundle + host (queue-only)
+
+    /// Runs `work` with the live context. Queue-only (a timer work item
+    /// already runs on the queue; this just hands it the context).
+    func withContext(_ work: (JSContext) -> Void) {
+        dispatchPrecondition(condition: .onQueue(queue))
+        if let ctx { work(ctx) }
+    }
+
+    /// Installs a PipHost (sync I/O: timers, fetch, sockets, crypto,
+    /// keychain, blobs) on `__pipHost`. Call inside sync(), BEFORE
+    /// evaluating pip-core.js so the shims see it. The core keeps the
+    /// host alive.
+    public func install(_ host: PipHost) throws {
+        try ensureContext()
+        host.install(into: ctx!)
+        hosts.append(host)
+    }
+
+    /// Evaluates source text (tests, probes). Queue-only.
+    @discardableResult
+    public func evaluate(source: String) throws -> JSValue {
+        try ensureContext()
+        let v = ctx!.evaluateScript(source)
+        if let ex = ctx!.exception {
+            ctx!.exception = nil
+            throw PipCoreError.evalFailed(ex.toString() ?? "?")
+        }
+        return v ?? JSValue(undefinedIn: ctx!)
+    }
 
     /// Creates the JSContext if needed, installs __pipHost, evaluates a
     /// bundle resource. Call inside sync(). `bundle` is the resource's

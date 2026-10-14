@@ -1,9 +1,10 @@
 /**
  * The iOS shared core (phase 044 § 6 A0-S1): the data-side modules of
  * public/shared/ bundled for JavaScriptCore — one file, evaluated once
- * per app process, never downloaded (App Review 2.5.2). Sync transport,
- * crypto, accounts, media and network clients stay native and are NOT
- * here — the platform doc's split table decides the boundary.
+ * per app process, never downloaded (App Review 2.5.2). The sync loop
+ * (sync/rotation/sync_client) is here unchanged; its I/O — crypto,
+ * key store, blobs, fetch, sockets, timers — is Swift behind __pipHost
+ * (build_core.mjs swaps the imports; Platforms § 2).
  *
  * Build: npm run ios:core (scripts/ios/build_core.mjs); the generated
  * pip-core.js is committed and gated by --check in check:fast.
@@ -55,6 +56,15 @@ export * as groupIcons from "../../public/shared/group-icon-library.mjs";
 export * as app from "./app.mjs";
 /** Edit mode + the word card (044 E1) — PIPCORE.edit.* */
 export * as edit from "./app_edit.mjs";
+
+/** The web's sync loop, unchanged, over host I/O (044 C2). */
+export * as sync from "./app_sync.mjs";
+
+/** Host crypto/key-store verbs (handles over Swift CryptoKit/keychain) and
+ *  the hostCall promise bridge — the surface pairing, recovery and media
+ *  slices call, and the Swift suite probes. */
+export * as hostCrypto from "./host/sync_crypto_host.mjs";
+export * as hostio from "./jsc_shims.mjs";
 
 /**
  * The db seam (Platforms § 2): the exact adapt() shape public/db.js

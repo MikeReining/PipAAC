@@ -79,3 +79,313 @@ if (typeof g.TextDecoder !== "function") {
     }
   };
 }
+
+/* ------------------------------------------------------------------ *
+ * 044 C2 — the sync loop's Web surface (Platforms § 2: "Swift supplies
+ * its I/O"). sync.mjs / rotation.mjs / sync_client.mjs / bounded.mjs run
+ * UNCHANGED; everything below is what they reach for that JSC lacks.
+ *
+ * ONE async mechanism: hostCall(op, args) allocates an id, parks
+ * {resolve, reject} in `pending`, and hands (op, id, argsJSON) to
+ * __pipHost.call. Swift finishes the work (any thread) and re-enters
+ * ONLY through queue.async -> __pipSettle(id, ok, json). Swift never
+ * holds a JSValue; a settled or aborted id is dropped from `pending`,
+ * so a late completion for an aborted call is ignored.
+ * Events (timer fire, socket frames, online/visible) re-enter the same
+ * way through __pipFire / __pipWsEvent / __pipPlatformEvent.
+ * ------------------------------------------------------------------ */
+
+const B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+const B64_INV = new Int16Array(128).fill(-1);
+for (let i = 0; i < 64; i++) B64_INV[B64.charCodeAt(i)] = i;
+
+/** Standard base64 of bytes (padding kept). */
+export function bytesToB64(bytes) {
+  const b = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  const out = [];
+  for (let i = 0; i < b.length; i += 3) {
+    const n = (b[i] << 16) | ((b[i + 1] ?? 0) << 8) | (b[i + 2] ?? 0);
+    out.push(B64[(n >> 18) & 63] + B64[(n >> 12) & 63]
+      + (i + 1 < b.length ? B64[(n >> 6) & 63] : "=")
+      + (i + 2 < b.length ? B64[n & 63] : "="));
+  }
+  return out.join("");
+}
+/** Base64 or base64url (padding optional) -> Uint8Array. */
+export function b64ToBytes(s) {
+  const clean = String(s).replace(/-/g, "+").replace(/_/g, "/").replace(/[=\s]+$/g, "");
+  const out = new Uint8Array(Math.floor(clean.length * 3 / 4));
+  let o = 0, acc = 0, bits = 0;
+  for (let i = 0; i < clean.length; i++) {
+    const v = B64_INV[clean.charCodeAt(i)];
+    if (v === undefined || v < 0) throw new Error("invalid base64");
+    acc = (acc << 6) | v; bits += 6;
+    if (bits >= 8) { bits -= 8; out[o++] = (acc >> bits) & 255; acc &= (1 << bits) - 1; }
+  }
+  return out.subarray(0, o);
+}
+export const bytesToB64u = (bytes) =>
+  bytesToB64(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+export const b64uToBytes = b64ToBytes;
+
+if (typeof g.btoa !== "function") {
+  g.btoa = (bin) => {
+    const s = String(bin);
+    const b = new Uint8Array(s.length);
+    for (let i = 0; i < s.length; i++) {
+      const c = s.charCodeAt(i);
+      if (c > 255) throw new Error("btoa: character out of range");
+      b[i] = c;
+    }
+    return bytesToB64(b);
+  };
+}
+if (typeof g.atob !== "function") {
+  g.atob = (b64) => {
+    const b = b64ToBytes(b64);
+    let s = "";
+    for (let i = 0; i < b.length; i++) s += String.fromCharCode(b[i]);
+    return s;
+  };
+}
+if (typeof g.queueMicrotask !== "function") {
+  g.queueMicrotask = (fn) => { Promise.resolve().then(fn); };
+}
+
+/** -> Uint8Array for the body shapes fetch accepts. */
+const toBytes = (body) => {
+  if (body instanceof Uint8Array) return body;
+  if (body instanceof ArrayBuffer) return new Uint8Array(body);
+  if (ArrayBuffer.isView(body)) return new Uint8Array(body.buffer, body.byteOffset, body.byteLength);
+  return new TextEncoder().encode(String(body));
+};
+
+/* -------- promise plumbing -------- */
+
+let nextHostId = 1;
+const pending = new Map(); // id -> { resolve, reject }
+
+/** Run a host operation -> Promise of its JSON result. `signal` aborts:
+ *  the promise rejects with signal.reason, Swift is told to cancel, and
+ *  any late completion is dropped. */
+export function hostCall(op, args = {}, signal = null) {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) { reject(signal.reason); return; }
+    const id = nextHostId++;
+    let onAbort = null;
+    const done = (fn) => (v) => {
+      if (onAbort) signal.removeEventListener("abort", onAbort);
+      fn(v);
+    };
+    pending.set(id, { resolve: done(resolve), reject: done(reject) });
+    if (signal) {
+      onAbort = () => {
+        if (!pending.delete(id)) return;
+        host().cancel?.(id);
+        reject(signal.reason);
+      };
+      signal.addEventListener("abort", onAbort, { once: true });
+    }
+    try { host().call(op, id, JSON.stringify(args)); }
+    catch (err) { pending.delete(id); done(reject)(err); }
+  });
+}
+g.__pipSettle = (id, ok, json) => {
+  const p = pending.get(id);
+  if (!p) return; // aborted or already settled
+  pending.delete(id);
+  if (ok) p.resolve(json === "" || json == null ? undefined : JSON.parse(json));
+  else p.reject(new Error(String(json)));
+};
+
+/* -------- timers -------- */
+
+const timers = new Map(); // id -> { fn, args, every }
+let nextTimerId = 1;
+const startTimer = (fn, ms, args, every) => {
+  const id = nextTimerId++;
+  const delay = Math.max(0, Number(ms) || 0);
+  timers.set(id, { fn, args, every: every ? delay : null });
+  host().timerStart(id, delay);
+  return id;
+};
+/* typeof-guarded like every shim here: under node (parity tests import
+ * these modules) the real timers stay. JSC has none, so these install. */
+if (typeof g.setTimeout !== "function") {
+  g.setTimeout = (fn, ms, ...args) => startTimer(fn, ms, args, false);
+  g.setInterval = (fn, ms, ...args) => startTimer(fn, ms, args, true);
+  g.clearTimeout = g.clearInterval = (id) => {
+    if (timers.delete(id)) host().timerCancel(id);
+  };
+}
+g.__pipFire = (id) => {
+  const t = timers.get(id);
+  if (!t) return; // cleared while the fire was in flight
+  if (t.every == null) timers.delete(id);
+  else host().timerStart(id, t.every);
+  try { t.fn(...t.args); }
+  catch (err) { console.error(`timer: ${err?.stack ?? err}`); }
+};
+
+/* -------- AbortController / AbortSignal -------- */
+
+const abortError = () => Object.assign(new Error("The operation was aborted."), { name: "AbortError" });
+class AbortSignal {
+  constructor() { this.aborted = false; this.reason = undefined; this.onabort = null; this._ls = []; }
+  addEventListener(type, fn, opts) {
+    if (type === "abort") this._ls.push({ fn, once: !!(opts && opts.once) });
+  }
+  removeEventListener(type, fn) {
+    if (type === "abort") this._ls = this._ls.filter((l) => l.fn !== fn);
+  }
+  throwIfAborted() { if (this.aborted) throw this.reason; }
+  _abort(reason) {
+    if (this.aborted) return;
+    this.aborted = true;
+    this.reason = reason === undefined ? abortError() : reason;
+    const ev = { type: "abort", target: this };
+    const ls = this._ls; this._ls = ls.filter((l) => !l.once);
+    for (const l of ls) { try { l.fn.call(this, ev); } catch (e) { console.error(`abort: ${e}`); } }
+    try { this.onabort?.(ev); } catch (e) { console.error(`abort: ${e}`); }
+  }
+  static abort(reason) { const s = new AbortSignal(); s._abort(reason); return s; }
+  static timeout(ms) {
+    const s = new AbortSignal();
+    setTimeout(() => s._abort(Object.assign(new Error("The operation timed out."), { name: "TimeoutError" })), ms);
+    return s;
+  }
+}
+class AbortController {
+  constructor() { this.signal = new AbortSignal(); }
+  abort(reason) { this.signal._abort(reason); }
+}
+if (typeof g.AbortController !== "function") { g.AbortController = AbortController; g.AbortSignal = AbortSignal; }
+
+/* -------- URL (sync_client.wsUrl: new URL, .search=, .protocol=, toString) -------- */
+
+if (typeof g.URL !== "function") {
+  g.URL = class URL {
+    constructor(href) {
+      const m = /^([a-zA-Z][a-zA-Z0-9+.-]*:)\/\/([^/?#]*)([^?#]*)(\?[^#]*)?(#.*)?$/.exec(String(href));
+      if (!m) throw new TypeError(`Invalid URL: ${href}`);
+      this.protocol = m[1].toLowerCase(); this.host = m[2];
+      this.pathname = m[3] || "/"; this.search = m[4] ?? ""; this.hash = m[5] ?? "";
+    }
+    get origin() { return `${this.protocol}//${this.host}`; }
+    get href() { return this.toString(); }
+    toString() { return `${this.protocol}//${this.host}${this.pathname}${this.search}${this.hash}`; }
+  };
+}
+
+/* -------- location / lifecycle globals sync.mjs gates on -------- */
+
+if (typeof g.location !== "object" || g.location === null) {
+  const origin = (typeof host()?.baseURL === "string" && host().baseURL) || "https://app.pipaac.org";
+  g.location = { origin, href: `${origin}/` };
+}
+/* sync.mjs wires onOnline/onVisible only behind these two typeof guards;
+ * the real wiring is host/platform_host.mjs (Swift -> __pipPlatformEvent). */
+if (typeof g.addEventListener !== "function") g.addEventListener = () => {};
+if (typeof g.document === "undefined") g.document = { visibilityState: "visible", addEventListener() {} };
+
+/* -------- fetch / Response / Headers -------- */
+
+class Headers {
+  constructor(init) {
+    this._m = new Map();
+    if (init instanceof Headers) init.forEach((v, k) => this.set(k, v));
+    else if (Array.isArray(init)) for (const [k, v] of init) this.set(k, v);
+    else if (init && typeof init === "object") for (const k of Object.keys(init)) this.set(k, init[k]);
+  }
+  set(k, v) { this._m.set(String(k).toLowerCase(), String(v)); }
+  append(k, v) {
+    const key = String(k).toLowerCase();
+    this._m.set(key, this._m.has(key) ? `${this._m.get(key)}, ${v}` : String(v));
+  }
+  get(k) { return this._m.get(String(k).toLowerCase()) ?? null; }
+  has(k) { return this._m.has(String(k).toLowerCase()); }
+  delete(k) { this._m.delete(String(k).toLowerCase()); }
+  forEach(fn) { for (const [k, v] of this._m) fn(v, k, this); }
+  entries() { return this._m.entries(); }
+  [Symbol.iterator]() { return this._m.entries(); }
+}
+class Response {
+  constructor(body = null, init = {}) {
+    this._bytes = body == null ? new Uint8Array(0) : toBytes(body);
+    this.status = init.status ?? 200;
+    this.statusText = init.statusText ?? "";
+    this.headers = new Headers(init.headers);
+    this.ok = this.status >= 200 && this.status < 300;
+    this.body = null; // no stream: callers use arrayBuffer/text/json
+    this.bodyUsed = false;
+  }
+  arrayBuffer() { return Promise.resolve(this._bytes.slice().buffer); }
+  text() { return Promise.resolve(new TextDecoder().decode(this._bytes)); }
+  json() { return this.text().then((t) => JSON.parse(t)); }
+}
+if (typeof g.Headers !== "function") g.Headers = Headers;
+if (typeof g.Response !== "function") g.Response = Response;
+
+if (typeof g.fetch !== "function") {
+  g.fetch = async (input, init = {}) => {
+    const url = String(input?.url ?? input);
+    const headers = {};
+    new Headers(init.headers).forEach((v, k) => { headers[k] = v; });
+    const r = await hostCall("fetch", {
+      url, method: String(init.method ?? "GET").toUpperCase(), headers,
+      body: init.body == null ? null : bytesToB64(toBytes(init.body)),
+    }, init.signal ?? null);
+    return new Response(b64ToBytes(r.body), {
+      status: r.status, statusText: r.statusText, headers: r.headers });
+  };
+}
+
+/* -------- WebSocket (text frames) -------- */
+
+const sockets = new Map();
+class WebSocket {
+  static CONNECTING = 0; static OPEN = 1; static CLOSING = 2; static CLOSED = 3;
+  constructor(url) {
+    this.url = String(url);
+    this.readyState = 0;
+    this.onopen = this.onmessage = this.onclose = this.onerror = null;
+    this._id = nextHostId++;
+    sockets.set(this._id, this);
+    host().wsOpen(this._id, this.url);
+  }
+  send(data) {
+    if (this.readyState !== 1) throw new Error("WebSocket is not open");
+    host().wsSend(this._id, String(data));
+  }
+  close() {
+    if (this.readyState >= 2) return;
+    this.readyState = 2;
+    host().wsClose(this._id);
+  }
+}
+WebSocket.prototype.CONNECTING = 0; WebSocket.prototype.OPEN = 1;
+WebSocket.prototype.CLOSING = 2; WebSocket.prototype.CLOSED = 3;
+if (typeof g.WebSocket !== "function") g.WebSocket = WebSocket;
+g.__pipWsEvent = (id, type, data) => {
+  const ws = sockets.get(id);
+  if (!ws) return;
+  const ev = { type, target: ws };
+  try {
+    if (type === "open") { if (ws.readyState === 0) { ws.readyState = 1; ws.onopen?.(ev); } }
+    else if (type === "message") { if (ws.readyState === 1) ws.onmessage?.({ ...ev, data }); }
+    else if (type === "error") ws.onerror?.(ev);
+    else if (type === "close") { ws.readyState = 3; sockets.delete(id); ws.onclose?.(ev); }
+  } catch (err) { console.error(`websocket: ${err?.stack ?? err}`); }
+};
+
+/* -------- crypto.subtle.digest (SHA-256 only; all else is host crypto) -------- */
+
+if (typeof g.crypto.subtle !== "object" || g.crypto.subtle === null) g.crypto.subtle = {};
+if (typeof g.crypto.subtle.digest !== "function") {
+  g.crypto.subtle.digest = async (alg, data) => {
+    const name = typeof alg === "string" ? alg : alg?.name;
+    if (name !== "SHA-256") throw new Error(`digest: ${name} unsupported (SHA-256 only)`);
+    const out = await hostCall("sha256", { b64: bytesToB64u(toBytes(data)) });
+    return b64ToBytes(out).slice().buffer;
+  };
+}

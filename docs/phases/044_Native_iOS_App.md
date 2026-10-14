@@ -579,3 +579,12 @@ Edits survive relaunch.
 - Web quirk seen (not fixed): `coremove.slotMap` — with an evicted
   person (seated on "mom"'s cell), swapping two words puts "mom" on a
   vacated cell that another word now claims (two words, one slot).
+
+**2026-10-14 (C2 — the web's sync loop in the core, Swift supplies the I/O):**
+
+- Scope: `sync.mjs`, `rotation.mjs`, `sync_client.mjs` (and `bounded.mjs`) run UNCHANGED in `pip-core.js`; the iOS build swaps three imports, not code. No pairing/account/media UI, no real relay (next slice).
+- Changed: `build_core.mjs` resolve plugin (`./sync_crypto.mjs`, `../db.js`, `./platform.mjs` -> `scripts/ios/host/{sync_crypto,db_blob,platform}_host.mjs` for importers in `public/shared/` only); `jsc_shims.mjs` (hostCall promise bridge, timers, AbortController, fetch/Response/Headers, WebSocket, URL, atob/btoa, location, `crypto.subtle.digest`); facade `app_sync.mjs` -> `PIPCORE.sync.syncStart(appId, userRow, baseUrl, opts)` / `syncHealth()` (results leave as `__pipHost.emit` events: `sync.started`, `sync.applied` = repaint, `sync.model`; registry `sync` patches go to `saveUser`); `PIPCORE.hostCrypto` / `hostio` exported for later slices. Swift: `PipHost.swift` (infra, queue rule), `PipHostCrypto.swift` (CryptoKit ops, handle table, keychain store by the web's names, blob files, saveUser), `PipHostNet.swift` (URLSession fetch, timers, URLSessionWebSocketTask); `PipCore` gained `post` (the only re-entry), `install`, `evaluate(source:)`.
+- Rule: every completion re-enters JS via `queue.async`; Swift holds no JSValue (resolve/reject live in JS's pending table, dropped on settle/abort); `dispatchPrecondition(.onQueue)` at every JS touch.
+- Verified: `scripts/ios/sync_host.test.mjs` (built bundle in a bare `node:vm`, fake `__pipHost`: catch-up, flush, WebSocket push + model frame, stalled fetch aborted by timedFetch's deadline, export-surface parity, signatures verified relay-side; asserts on table dumps); `PipHostTests` (openOp on every node.json op via the host module, fetch shim over URLProtocol, timers, keychain names, 600 overlapping promises with 64 concurrent `core.sync` calls, loopback WebSocket echo).
+- Left: nothing calls `syncStart` yet — the D1 registry owns the row, the `saveUser` hook and the call; scenePhase -> `PipHost.notifyVisible()` and `startNetworkMonitor()` wiring; blob fetcher consumers (PP-9); the real-relay end-to-end run.
+- Next: D1 (registry + start sync on launch), then pairing/recovery on `hostCrypto`.

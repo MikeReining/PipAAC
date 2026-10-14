@@ -105,6 +105,10 @@ export const appSession = S;
 export const appMeta = (s, senseId) => metaFor(s, senseId);
 export const appGeom = (s) => boardGeom(s);
 
+/** The session's db handle — the sync facade (app_sync.mjs) starts the
+ *  web's sync loop against it. */
+export const appDb = (appId) => S(appId).d;
+
 /* ---------------- shared lookups (board/meta-cache.js) ---------------- */
 
 function metaFor(s, senseId) {

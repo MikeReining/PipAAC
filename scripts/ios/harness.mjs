@@ -308,3 +308,26 @@ export function oneEdit(dbId, call, args) {
   fn(db(dbId), ...(args ?? []));
   return true;
 }
+
+/* ---- C2: host crypto probe ----------------------------------------- */
+
+/** For each { key, env, opJson } (node.json sealOp rows): import the raw
+ *  key as a Swift handle, open the envelope through the HOST MODULE
+ *  (hostCrypto.openOp -> PipHostCrypto -> PipCrypto) and check it equals
+ *  the fixture plaintext, both as raw text and as parsed JSON. Reports
+ *  through __pipHost.emit("probe.openOps", { rows: [{ ok, rawEqual }] }). */
+export function probeOpenOps(rowsJson) {
+  const { hostCrypto, hostio } = PIP();
+  const rows = parse(rowsJson);
+  (async () => {
+    const out = [];
+    for (const r of rows) {
+      const key = await hostio.hostCall("aes.import", { b64: r.key });
+      const raw = await hostio.hostCall("op.open", { key, env: r.env });
+      const opened = await hostCrypto.openOp(key, r.env);
+      out.push({ rawEqual: raw === r.opJson, ok: canon(opened) === canon(JSON.parse(r.opJson)) });
+    }
+    HOST().emit("probe.openOps", JSON.stringify({ rows: out }));
+  })().catch((e) => HOST().emit("probe.openOps", JSON.stringify({ error: String(e?.message ?? e) })));
+  return true;
+}
