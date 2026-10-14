@@ -278,6 +278,42 @@ test("sweepReplaced evicts exactly the listed hashes and returns next", async ()
   });
 });
 
+test("sweepReplaced runs for a trial-only user (no license) with the credential the Worker accepts", async () => {
+  await withEnv(async () => {
+    const vt = voiceTile();
+    const h = await tileTextHash("zebra");
+    await vt.remember("voi_default_en", "zebra", new Blob(["OLD"]));
+    const calls = [];
+    globalThis.fetch = async (u, init) => {
+      calls.push({ url: u, init });
+      return new Response(JSON.stringify({ ids: [h], next: 5 }));
+    };
+    // Trial: no license, trial running. handleTileReplaced -> trial.entitled
+    // reads x-pip-user and an EMPTY x-pip-license as "no token presented"
+    // and falls to the trial clock (a presented-but-wrong token is refused).
+    const res = await vt.sweepReplaced(
+      { userId: "u-1", license: undefined, trial: true, voice: "voi_default_en", since: 0 });
+    assert.deepEqual(res, { evicted: 1, next: 5 });
+    assert.equal(calls.length, 1, "the sweep was sent");
+    assert.equal(calls[0].init.headers["x-pip-user"], "u-1");
+    assert.equal(calls[0].init.headers["x-pip-license"], "");
+    assert.equal(await vt.cached("voi_default_en", "zebra"), null);
+
+    // Neither license nor trial: no request at all.
+    calls.length = 0;
+    assert.equal(await vt.sweepReplaced(
+      { userId: "u-1", license: undefined, trial: false, voice: "voi_default_en", since: 0 }), null);
+    assert.equal(calls.length, 0);
+
+    // A licensed user is unchanged: the license rides in the header.
+    await vt.remember("voi_default_en", "zebra", new Blob(["OLD"]));
+    const lic = await vt.sweepReplaced(
+      { userId: "u-1", license: "tok", voice: "voi_default_en", since: 0 });
+    assert.deepEqual(lic, { evicted: 1, next: 5 });
+    assert.equal(calls[0].init.headers["x-pip-license"], "tok");
+  });
+});
+
 test("the UTC day roll retries a budget-queued mint (fake clock)", async () => {
   assert.equal(msUntilUtcDayRoll(Date.UTC(2026, 8, 29, 23, 59, 0)), 60_000);
   assert.equal(msUntilUtcDayRoll(Date.UTC(2026, 8, 30, 0, 0, 0)), 86_400_000);

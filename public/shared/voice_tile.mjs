@@ -284,8 +284,8 @@ export function voiceTile({
   /** § 5.3 — run the sweep: evict every hash the Worker lists, return
    *  {evicted, next} so the caller can persist `next` as tomorrow's
    *  `since`. null when the call couldn't be made (offline, no license). */
-  async function sweepReplaced({ userId, license, voice, since }) {
-    const res = await replacedSince({ userId, license, voice, since });
+  async function sweepReplaced({ userId, license, trial = false, voice, since }) {
+    const res = await replacedSince({ userId, license, trial, voice, since });
     if (!res) return null;
     const ids = Array.isArray(res.ids) ? res.ids : [];
     for (const id of ids) await evict(voice, id);

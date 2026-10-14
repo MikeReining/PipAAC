@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.22-d8c67558948e",
-  "version": "1.1.22",
-  "payloadHash": "d8c67558948e",
+  "buildId": "1.1.23-06b7cdc914df",
+  "version": "1.1.23",
+  "payloadHash": "06b7cdc914df",
   "files": [
     {
       "path": "/board.js",
@@ -1050,8 +1050,8 @@
     },
     {
       "path": "/shared/voice_tile.mjs",
-      "bytes": 13972,
-      "sha256": "11cf797144a228a02a1b6a714d16328b5f4880ce4dbeea6d39dfe85fb8ce3c5a"
+      "bytes": 13994,
+      "sha256": "52a57ef18065c651c8e7443362213b967deda82da8c576b1561e5aeb9256455e"
     },
     {
       "path": "/shared/voice.mjs",
