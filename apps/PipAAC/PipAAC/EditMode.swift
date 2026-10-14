@@ -230,6 +230,11 @@ extension AppModel {
 nonisolated enum UITestHooks {
     private static let args = ProcessInfo.processInfo.arguments
 
+    /// A UI-test launch: no production traffic unless a stub base URL is given.
+    static var hermetic: Bool {
+        args.contains("-pipUITestReset") || args.contains("-PipDataDir")
+    }
+
     static func resetIfRequested() {
         guard args.contains("-pipUITestReset"),
               let base = try? PipAssets.dataBase() else { return }

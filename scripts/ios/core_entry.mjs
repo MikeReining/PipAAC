@@ -66,6 +66,10 @@ export * as voicepick from "./app_voice.mjs";
 /** Photos, recordings, person photo (044 E3) — PIPCORE.media.* */
 export * as media from "./app_media.mjs";
 
+/** The sentence buttons + cloud sentence/tile voice, over the web's own
+ *  shared clients (044 D4) — PIPCORE.say.* */
+export * as say from "./app_say.mjs";
+
 /** The web's sync loop, unchanged, over host I/O (044 C2). */
 export * as sync from "./app_sync.mjs";
 export * as mediasync from "./app_mediasync.mjs";

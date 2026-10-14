@@ -64,6 +64,9 @@ DEFAULT_EXCLUDE_FILES = {
 }
 
 DEFAULT_EXCLUDE_PATHS = {
+    # Generated iOS core bundles — freshness gated by ios:core:check.
+    "apps/PipAAC/PipAAC/Core/pip-core.js",
+    "apps/PipAAC/PipAACTests/pip-harness.js",
     "packages/curated-backgrounds/catalog/backgrounds.json",
     "packages/service-registry/data/p1-candidates.generated.json",
     "packages/service-registry/data/registry.json",

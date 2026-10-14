@@ -293,6 +293,7 @@ final class AppModel: ObservableObject {
         appId = opened.appId
         dbId = newDb
         activeId = id
+        sayIdentify(id)
         try registry.touchOpened(id)
         try refreshPeople()
         groupIndex = nil
@@ -438,9 +439,10 @@ final class AppModel: ObservableObject {
     func backspace() { mutate("appBackspace", []) }
     func clear() { mutate("appClear", []) }
 
-    /// ✨ ❓ ⏪ ⏩ — offline every press speaks the bar as built and toasts
-    /// why (the Worker transform lands with transport).
-    func transform(_ mode: String) { mutate("appTransform", [mode]) }
+    /// ✨ ❓ ⏪ ⏩ — the core asks the Worker (masked names, 15 s bound,
+    /// stale replies dropped) and speaks the result; offline it speaks the
+    /// bar as built and says why (SayBar.swift, Sentence_Bar.md).
+    func transform(_ mode: String) { sayTransform(mode) }
 
     // MARK: settings (settings-ui.js / settings-sync.js)
 
@@ -488,22 +490,9 @@ final class AppModel: ObservableObject {
     func kbPress(_ key: String) { mutate("appKbPress", [key]) }
     func kbPartner(_ senseId: String) { mutate("appKbPartner", [senseId]) }
 
-    func speak() {
-        let appId = self.appId
-        let core = self.core
-        Task { @MainActor [weak self] in
-            guard let self else { return }
-            do {
-                let st: PaintedState = try await Self.coreCall(core, "appSpeak", [appId])
-                speaker.playSentence((st.clips ?? []).map {
-                    .init(type: $0.type, key: $0.key, text: $0.text)
-                })
-                apply(st)
-            } catch {
-                NSLog("AppModel.speak failed: \(error)")
-            }
-        }
-    }
+    /// ▶ — the whole-sentence cloud clip when online, her word clips
+    /// otherwise (SayBar.swift).
+    func speak() { saySpeak() }
 
     // MARK: navigation
 

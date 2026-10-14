@@ -48,7 +48,7 @@ export function appOpen(dbId, catalogJson, phrasesJson, formTableJson) {
   const profile = one(d, "SELECT * FROM learner_profile WHERE id = 'prf_local'") ?? {};
   const id = `a${nextAppId++}`;
   apps.set(id, {
-    d, catalog,
+    appId: id, d, catalog,
     phrases: phrasesJson == null ? null : parse(phrasesJson),
     formTable: formTableJson == null ? null : parse(formTableJson),
     locale: profile.locale ?? "en",
@@ -576,7 +576,7 @@ export function appTap(appId, tap) {
     });
     speech = PIP().voice.resolveSlot(s.d, item, s.locale, s.voiceId);
   }
-  return { speech, ...state(s) };
+  return { speech: afterTap(s, speech), ...state(s) };
 }
 
 /** ⌫ — the last whole word; a logged pick detaches (its event stays as
@@ -612,10 +612,10 @@ export function appClear(appId) {
   return { speech: null, ...state(s) };
 }
 
-/** speakSentence — the EOS re-pick, then the clip list for every bar
- *  item (offline = the word-by-word path; the minted sentence voice
- *  lands with networking). Closes the sentence 'spoken'. */
-function speakNow(s) {
+/** speakSentence's EOS re-pick: the bar's last word may take its
+ *  sentence-final form ("my" -> "mine"). Run once, before the sentence
+ *  text is read or sent anywhere. */
+function prepareSpeak(s) {
   if (s.grammarHelp && s.sentence.length) {
     const last = s.sentence[s.sentence.length - 1];
     if (last.kind === "sense" && last.id) {
@@ -632,26 +632,32 @@ function speakNow(s) {
       }
     }
   }
-  const clips = s.sentence.map((item) =>
-    PIP().voice.resolveSlot(s.d, item, s.locale, s.voiceId));
+}
+
+/** Speaking ends the logged sentence; the bar keeps its words. */
+function finishSpeak(s) {
   if (s.sentenceId !== null) {
     PIP().funnel.closeSentence(s.d, s.sentenceId, Date.now(), "spoken");
     s.sentenceId = null; s.picks = 0;
     s.lastImpressionKey = null; s.openImpressionId = null;
   }
   s.freshNext = s.freshAfterSpeak;
-  return clips;
 }
 
-/** ▶ — the bar as built, never the model. On a past/future bar it first
- *  restores her exact taps (txbar.js — no model call, works offline). */
-export function appSpeak(appId) {
-  const s = S(appId);
-  PIP().txbar.restoreBar(s.sentence, s.barState);
-  // board.js: a spoken sentence refreshes today's totals -> put_stats_day ops (SY-15).
-  const out = { clips: speakNow(s), ...state(s) };
-  PIP().stats.refreshStatsDays(s.d);
-  return out;
+/** The word-by-word path: one resolveSlot per bar item. */
+const barSlots = (s) => s.sentence.map((item) =>
+  PIP().voice.resolveSlot(s.d, item, s.locale, s.voiceId));
+
+/** Pieces for app_say.mjs (D4) — one state, one owner. */
+export const appSpeakParts = { prepareSpeak, finishSpeak, barSlots, state, metaFor: (s, id) => metaFor(s, id) };
+
+/** A tapped word's sound. A shipped clip (or silence) plays at once; a
+ *  tile-library word (typed / personal, `tileclip`) is fetched behind the
+ *  tile deadline by PIPCORE.say and arrives as a "say" event (BS-10). Any
+ *  tap also retires a still-pending tile fetch — the newest tap owns the
+ *  audio. */
+function afterTap(s, speech) {
+  return PIP().say.tapSpeech(s, speech);
 }
 
 /* ---------------- keyboard (keyboard-ui.js) ---------------- */
@@ -753,6 +759,9 @@ function commitKbItem(s, index) {
   if (raw.punct) item.punct = raw.punct;
   if (raw.lead) item.lead = raw.lead;
   s.sentence[index] = item;
+  // 028 § 5.6 (KB-8): a committed typed word is the mint trigger — in the
+  // background; speech never waits on it and keystrokes never mint.
+  if (item.kind === "typed") PIP().say?.tileEnsure(s, item.text, "user_keyboard");
   const speech = PIP().voice.resolveSlot(s.d, item, s.locale, s.voiceId);
   if (item.id) {
     ensureSentence(s);
@@ -801,16 +810,16 @@ export function appKbPress(appId, key) {
     PIP().txbar.noteBarEdit(s.barState);
   }
   s.sentence.splice(0, s.sentence.length, ...res.state.items);
-  let speech = null, clips = null;
+  let speech = null;
   for (const e of res.effects) {
     if (e.type === "commit") {
       speech = commitKbItem(s, e.index);
       PIP().txbar.noteBarEdit(s.barState); // a typed word voids the snapshot
     } else if (e.type === "speak") {
-      clips = speakNow(s);
+      PIP().say.speakStart(s); // Enter speaks the sentence (cloud voice when online)
     }
   }
-  return { speech, clips, ...state(s) };
+  return { speech: afterTap(s, speech), ...state(s) };
 }
 
 /** The partner answer keys (yes/no): the tap speaks the word and
@@ -821,7 +830,7 @@ export function appKbPartner(appId, senseId) {
     sentenceId: s.sentenceId, position: null, source: "keyboard" });
   const speech = PIP().voice.resolveSlot(s.d,
     { kind: "sense", id: senseId }, s.locale, s.voiceId);
-  return { speech, ...state(s) };
+  return { speech: afterTap(s, speech), ...state(s) };
 }
 
 /* ---------------- settings (settings-sync.js + settings-ui.js) ---------------- */
@@ -868,25 +877,4 @@ export function appSetSetting(appId, key, value) {
     settings: settingsModel(s),
     ...state(s),
   };
-}
-
-/* ---------------- transform buttons (speech.js transformAndSpeak) ---------------- */
-
-/** ✨ ❓ ⏪ ⏩ — the press logs, then the Worker answers. Native has no
- *  transport yet, so every press takes the doc's offline path: it speaks
- *  the bar as built and says why (Sentence_Bar § 1d). A same-state press
- *  (❓ on a question, ⏪ on past, ⏩ on future) just re-speaks. */
-export function appTransform(appId, mode) {
-  const s = S(appId);
-  if (!s.sentence.length) return { speech: null, ...state(s) };
-  const settled = (mode === "question" && s.barState.question)
-    || (mode === "past" && s.barState.tense === "past")
-    || (mode === "future" && s.barState.tense === "future");
-  if (settled) return { clips: speakNow(s), ...state(s) };
-  PIP().funnel.logTransform(s.d, mode, 0);
-  const name = { fix: "Fix it", question: "Ask it",
-    past: "Say it in the past", future: "Say it in the future" }[mode]
-    ?? "That button";
-  const toast = `${name} needs the internet — spoke it as it was.`;
-  return { clips: speakNow(s), toast, ...state(s) };
 }

@@ -196,6 +196,8 @@ nonisolated extension PipHost {
             return FileManager.default.fileExists(atPath: try blobURL(str(a, "sha")).path)
         case "blob.load":
             return try blobRead(str(a, "sha")).map { C.b64u($0) } ?? NSNull()
+        case "cache":
+            return try cacheOp(a)
         case "saveUser":
             guard let patch = a["patch"] else { throw PipHostError("missing patch") }
             try onSaveUser(str(a, "userId"), Self.encode(patch))

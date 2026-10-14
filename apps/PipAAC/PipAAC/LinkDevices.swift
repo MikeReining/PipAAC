@@ -20,7 +20,12 @@ import SwiftUI
 nonisolated enum PipRelay {
     /// Production by default; `-PipBaseURL <url>` is for tests only.
     static var baseURL: String {
-        UserDefaults.standard.string(forKey: "PipBaseURL") ?? "https://app.pipaac.org"
+        if let o = UserDefaults.standard.string(forKey: "PipBaseURL") { return o }
+        // A hermetic UI run (reset / private data dir) with no stub base URL
+        // must never reach production: a loopback port that refuses at once.
+        // The core then takes its honest offline path.
+        if UITestHooks.hermetic { return "http://127.0.0.1:9" }
+        return "https://app.pipaac.org"
     }
     /// devices-ui.js deviceName(): "iPad · Safari" -> the app is no browser.
     static let deviceLabel = "iPad · Pip"
@@ -106,6 +111,7 @@ extension AppModel {
         case "sync.started":
             // A start that threw leaves the loop free to try again.
             if ev?.stage == nil, json.contains("\"ok\":false") { syncingId = nil }
+        case "say": handleSay(json)
         case "pair.offer": if let ev { offerEvent(ev) }
         case "pair.join": if let ev { joinEvent(ev) }
         default: break

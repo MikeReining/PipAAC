@@ -55,6 +55,10 @@ public nonisolated final class PipHost: @unchecked Sendable {
         public var keychainService: String
         /// Persistent media bytes, by sha. Never a cache directory.
         public var blobDirectory: URL
+        /// Cache Storage replacement (044 D4): the voice clients' named
+        /// caches as files - sentence and tile clips, kept so a repeat
+        /// plays offline. Follows `-PipDataDir` like the people files.
+        public var cacheDirectory: URL
         /// URLSession configuration for fetch (tests install a
         /// URLProtocol stub through it).
         public var sessionConfiguration: URLSessionConfiguration
@@ -62,10 +66,12 @@ public nonisolated final class PipHost: @unchecked Sendable {
         public init(baseURL: String = "https://app.pipaac.org",
                     keychainService: String = PipKeychain.defaultService,
                     blobDirectory: URL = PipHost.defaultBlobDirectory(),
+                    cacheDirectory: URL = PipHost.defaultCacheDirectory(),
                     sessionConfiguration: URLSessionConfiguration = PipHost.defaultSessionConfiguration()) {
             self.baseURL = baseURL
             self.keychainService = keychainService
             self.blobDirectory = blobDirectory
+            self.cacheDirectory = cacheDirectory
             self.sessionConfiguration = sessionConfiguration
         }
     }
@@ -118,6 +124,12 @@ public nonisolated final class PipHost: @unchecked Sendable {
         }
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         return base.appendingPathComponent("PipAAC/blobs", isDirectory: true)
+    }
+
+    public static func defaultCacheDirectory() -> URL {
+        let base = (try? PipAssets.dataBase())
+            ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        return base.appendingPathComponent("VoiceCache", isDirectory: true)
     }
 
     public static func defaultSessionConfiguration() -> URLSessionConfiguration {

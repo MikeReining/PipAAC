@@ -714,3 +714,42 @@ shows the open person's photo (Add / Change / Remove).
 - Verified: `scripts/test.sh src/board/sync_reliability.test.mjs` (4 new stop tests: start->stop->start another person->back with each person's ops on their own relay; armed timers never fire after stop; stop during a hung flush loses nothing and the next start resends; stop mid catch-up leaves the cursor); `scripts/ios/e2e_sync.sh <udid>` (local Worker behind `scripts/ios/e2e_proxy.mjs`, node web devices): both-ways, offline, **media** (peer sets a 68 KB photo, a recording and a webm take; the proxy cuts blob downloads mid-body; the iPad shows "Getting a photo or recording...", no file under the hash name; relay back -> file hashes to its name (shasum, read by the harness), tile draws the picture, tap plays the recording (file the speaker opened), webm tile says "Can't play this recording here."; the iPad's own photo and recording reach the peer, which pulls both by hash and opens them) and **two-people** (second linked person syncs without relaunch; 3 switches; edits made while a person was stopped arrive on switch; all four dumps IDENTICAL). `MediaHostTests` (blob.save refuses wrong-hash bytes).
 - Fixed on the way: `scripts/ios/app_pair.mjs` used `pollPair` without importing it (main, c2060645) - pairing failed with "Can't find variable: pollPair".
 - Left: a legacy-webm conversion (above); no per-file progress UI; `onOnline/onVisible` listeners from a stopped loop stay registered but inert (platform.mjs has no unsubscribe).
+### D4 — the sentence buttons and the cloud voice (2026-10-14)
+
+- Scope: SN-2, SN-6, SN-7, BS-6, BS-10, KB-8. SN-9 stays the web's client
+  behavior: no pre-check; the Worker's `bad_license` gets the once-per-
+  session toast ("... comes with Pip Lifetime - the free trial has ended.");
+  the purchase door and the trial-countdown nudges are slice F.
+- Changed: `scripts/ios/app_say.mjs` (`PIPCORE.say`: identify, transform,
+  speak, tapSpeech, speakStart, tileEnsure) is `speech.js`
+  transformAndSpeak / speakSentence / speakItem(tileclip) / tileApi.ensure /
+  refreshTrial running over the web's OWN clients, unchanged: `txbar.mjs`,
+  `name_shield.mjs`, `voice_sentence.mjs`, `voice_tile.mjs`. `jsc_shims.mjs`
+  gained `Blob`, `Response.blob()`, Cache Storage (`caches`, files behind
+  host op `cache`) and same-origin relative `fetch`. Swift: `SayBar.swift`
+  (press -> core, one "say" host event back), `Core/PipHostCache.swift`
+  (cache files, persistent, follow `-PipDataDir`). `app.mjs`: ▶ and the
+  transform moved to `say`; `appSpeak`/`appTransform` removed; Enter,
+  tile-library taps and typed-word commits route through `say`.
+- P6: an outcome arrives as an event only if still wanted. `speakSeq` (newest
+  speak owns the audio), `tapSeq` (a newer tap retires a pending tile
+  fetch), the web's `sourceText` staleness check, and an AbortController
+  deadline (15 s transform, 10 s sentence voice). Deliberate divergence from
+  `speech.js`: after a stale reply the web still speaks the CURRENT bar, and
+  re-speaks the new bar if it changed mid-speak; here the abandoned request
+  stays silent (the tap that changed the bar already spoke).
+- Hermetic UI runs: a launch with `-pipUITestReset` or `-PipDataDir` and no
+  `-PipBaseURL` points the relay at a refusing loopback port, so no test can
+  reach production (the core then takes its honest offline path).
+- Verified: `scripts/ios/app_say.test.mjs` (the BUILT core in a bare vm
+  realm; fake Worker + host; asserts the requests sent: masked text, exact
+  body keys, no license key when none stored, the cache file that plays, the
+  stale/late/stalled/offline/not-entitled paths, tile mint and overtaken
+  tile tap); XCUITests `SayUITests` against a stub Worker in the test
+  process (fix -> bar + played file bytes; late ⏪ reply discarded; offline
+  toast; typed word minted and spoken).
+- Left: face-button feelings (`speakFeeling`), trial-countdown nudges and the
+  Lifetime door (F), tile prefetch of entity names on boot (the family-name
+  mint at add/rename belongs to the word-card slice), media sync of cached
+  clips. Web bugs noted, not copied: `voice_tile.sweepReplaced` drops `trial`,
+  so a trialing user (no license) never runs the replaced-clip sweep.

@@ -309,12 +309,37 @@ class Headers {
   entries() { return this._m.entries(); }
   [Symbol.iterator]() { return this._m.entries(); }
 }
+/* Blob: bytes + a type, the shape the voice clients cache and replay.
+ * `_file` is the host path once the bytes live in the cache (044 D4):
+ * Swift plays that file; the core never decodes audio. */
+class Blob {
+  constructor(parts = [], opts = {}) {
+    const chunks = parts.map((p) => (p instanceof Blob ? p._bytes : toBytes(p)));
+    const out = new Uint8Array(chunks.reduce((n, c) => n + c.length, 0));
+    let o = 0;
+    for (const c of chunks) { out.set(c, o); o += c.length; }
+    this._bytes = out;
+    this.type = String(opts.type ?? "");
+    this._file = null;
+  }
+  get size() { return this._bytes.length; }
+  arrayBuffer() { return Promise.resolve(this._bytes.slice().buffer); }
+  text() { return Promise.resolve(new TextDecoder().decode(this._bytes)); }
+}
+if (typeof g.Blob !== "function") g.Blob = Blob;
+
 class Response {
   constructor(body = null, init = {}) {
-    this._bytes = body == null ? new Uint8Array(0) : toBytes(body);
+    this._blob = body instanceof Blob ? body : null;
+    this._bytes = body == null ? new Uint8Array(0)
+      : body instanceof Blob ? body._bytes : toBytes(body);
+    this._file = null;
     this.status = init.status ?? 200;
     this.statusText = init.statusText ?? "";
     this.headers = new Headers(init.headers);
+    if (this._blob?.type && !this.headers.has("content-type")) {
+      this.headers.set("content-type", this._blob.type);
+    }
     this.ok = this.status >= 200 && this.status < 300;
     this.body = null; // no stream: callers use arrayBuffer/text/json
     this.bodyUsed = false;
@@ -322,13 +347,21 @@ class Response {
   arrayBuffer() { return Promise.resolve(this._bytes.slice().buffer); }
   text() { return Promise.resolve(new TextDecoder().decode(this._bytes)); }
   json() { return this.text().then((t) => JSON.parse(t)); }
+  blob() {
+    const b = new Blob([this._bytes], { type: this.headers.get("content-type") ?? "" });
+    b._file = this._file;
+    return Promise.resolve(b);
+  }
 }
 if (typeof g.Headers !== "function") g.Headers = Headers;
 if (typeof g.Response !== "function") g.Response = Response;
 
 if (typeof g.fetch !== "function") {
   g.fetch = async (input, init = {}) => {
-    const url = String(input?.url ?? input);
+    let url = String(input?.url ?? input);
+    // The web fetches same-origin paths ("/api/v1/transform"); URLSession
+    // wants an absolute URL, so resolve against the app's origin.
+    if (url.startsWith("/")) url = `${g.location.origin}${url}`;
     const headers = {};
     new Headers(init.headers).forEach((v, k) => { headers[k] = v; });
     const r = await hostCall("fetch", {
@@ -337,6 +370,41 @@ if (typeof g.fetch !== "function") {
     }, init.signal ?? null);
     return new Response(b64ToBytes(r.body), {
       status: r.status, statusText: r.statusText, headers: r.headers });
+  };
+}
+
+/* -------- caches (044 D4) --------
+ * Cache Storage over files: voice_sentence.mjs / voice_tile.mjs keep every
+ * clip under https://voice.local/... in a named cache. Swift stores each
+ * entry as a file (PipHostCache.swift); put/match hand back the file path
+ * on `_file` so the speaker opens the very bytes the cache holds. */
+const cacheUrl = (req) => String(req?.url ?? req);
+if (typeof g.caches !== "object" || g.caches === null) {
+  g.caches = {
+    async open(name) {
+      return {
+        async match(req) {
+          const r = await hostCall("cache", { op: "get", cache: name, url: cacheUrl(req) });
+          if (!r) return undefined;
+          const res = new Response(b64ToBytes(r.body), { headers: { "content-type": r.type } });
+          res._file = r.file;
+          return res;
+        },
+        async put(req, res) {
+          const r = await hostCall("cache", {
+            op: "put", cache: name, url: cacheUrl(req),
+            type: res.headers.get("content-type") ?? "", body: bytesToB64(res._bytes) });
+          if (res._blob) res._blob._file = r.file;
+          res._file = r.file;
+        },
+        async delete(req) {
+          return !!(await hostCall("cache", { op: "delete", cache: name, url: cacheUrl(req) }));
+        },
+        async keys() {
+          return (await hostCall("cache", { op: "keys", cache: name })).map((url) => ({ url }));
+        },
+      };
+    },
   };
 }
 
