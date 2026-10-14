@@ -38,8 +38,9 @@ registerHooks({
   load(url, ctx, next) {
     const realCrypto = pathToFileURL(join(shared, "sync_crypto.mjs")).href;
     const src = {
-      "virtual:dbjs": `export const loadBlobBytes = async () => null;
-        export const saveBlobBytes = async () => {};
+      "virtual:dbjs": `globalThis.__peerBlobs ??= new Map();
+        export const loadBlobBytes = async (sha) => globalThis.__peerBlobs.get(sha) ?? null;
+        export const saveBlobBytes = async (sha, b) => { globalThis.__peerBlobs.set(sha, b); };
         export const setBlobFetcher = () => {};`,
       "virtual:platform": `export const onOnline = () => {}; export const onVisible = () => {};`,
       "virtual:crypto": `export * from ${JSON.stringify(realCrypto)};
@@ -87,8 +88,10 @@ const { importCatalog } = await import(pathToFileURL(join(shared, "import.mjs"))
 const groups = await import(pathToFileURL(join(shared, "groups.mjs")).href);
 const { seatSetupPeople } = await import(pathToFileURL(join(shared, "coremove.mjs")).href);
 const opsMod = await import(pathToFileURL(join(shared, "ops.mjs")).href);
-const { syncHealth, initSync } = await import(pathToFileURL(join(shared, "sync.mjs")).href);
+const { syncHealth, initSync, syncUploadBlob } = await import(pathToFileURL(join(shared, "sync.mjs")).href);
 const { dumpLines } = await import(pathToFileURL(join(root, "scripts/ios/e2e_dump.mjs")).href);
+const voiceMod = await import(pathToFileURL(join(shared, "voice.mjs")).href);
+const zlib = await import("node:zlib");
 const { licenseFor } = await import(pathToFileURL(join(root, "src/worker/license.mjs")).href);
 
 /** The app's own boot sequence (scripts/ios/app.mjs appOpen), in node. */
@@ -136,11 +139,12 @@ async function hostMode() {
   const db = openDb(join(dir, "peer.sqlite"));
   const store = peerStore();
   const identity = await sc.getDeviceIdentity(store);
-  const me = { id: crypto.randomUUID(), name: "Zed" };
+  const NAME = process.env.PEER_NAME ?? "Zed";
+  const me = { id: crypto.randomUUID(), name: NAME };
   opsMod.setDeviceId(identity.deviceId);
 
   // A person with one personal word, seated on the board (onboarding).
-  const { id: entityId } = groups.createEntity(db, { name: "Zed", role: "Yellow" });
+  const { id: entityId } = groups.createEntity(db, { name: NAME, role: "Yellow" });
   seatSetupPeople(db, [entityId], "en");
 
   // ensureUser (devices-ui.js): the relay user, recovery proof, lifetime.
@@ -164,7 +168,7 @@ async function hostMode() {
   await sleep(4000);
   log("health after start", JSON.stringify(syncHealth()),
     "pending ops:", db.prepare("SELECT COUNT(*) c FROM sync_op WHERE relay_seq IS NULL").all()[0].c);
-  put("person.json", JSON.stringify({ id: me.id, entityId }));
+  put("person.json", JSON.stringify({ id: me.id, entityId, userId: me.sync.userId }));
 
   // offerFlow (devices-ui.js): code -> wait claim -> addDevice -> grant.
   const { pair } = await pairClient(baseUrl).offer();
@@ -187,13 +191,15 @@ async function hostMode() {
 
   await waitFor("ui-linked");
   // Both edits go through the web's own write owners (they record the ops).
-  const NEW_NAME = "Zedd";
+  const NEW_NAME = NAME + "d";
   groups.renameEntity(db, entityId, NEW_NAME);
   groups.setSetting(db, "speech_rate", "faster");
   put("peer-edit.json", JSON.stringify({ t0: Date.now(), name: NEW_NAME, speech_rate: "faster" }));
   log("applied rename + setting");
 
   await waitFor("ui-saw-edit");
+  if (scenario === "person") return personFlow(db, entityId, NAME, dumpTo);
+  if (scenario === "media") return mediaFlow(db, entityId, client, userKey, dumpTo);
   if (scenario === "offline") {
     await waitFor("ui-done");
     await sleep(1500);
@@ -225,6 +231,146 @@ async function hostMode() {
   dumpTo(db, "peer.dump");
   put("host-done", Date.now());
   log("health", JSON.stringify({ ...syncHealth(), iPadCode }));
+  process.exit(0);
+}
+
+/* --- 044 C4: two linked people on one iPad. FLOW (per peer, own dir):
+ *   ui -> ui-go-edit2   -> peer renames again (the iPad has another person open)
+ *   host -> peer-edit2.json (written once the relay accepted the op)
+ *   ui -> ui-saw-edit2, ui-go-edit3 -> rename while this person is open
+ *   host -> peer-edit3.json; ui -> ui-saw-edit3; ui-done -> dump
+ */
+async function personFlow(db, entityId, NAME, dumpTo) {
+  const settle = async () => {
+    for (let i = 0; i < 100 && db.prepare("SELECT COUNT(*) c FROM sync_op WHERE relay_seq IS NULL").all()[0].c; i++) await sleep(100);
+  };
+  for (const [go, saw, file, suffix] of [
+    ["ui-go-edit2", "ui-saw-edit2", "peer-edit2.json", "dd"],
+    ["ui-go-edit3", "ui-saw-edit3", "peer-edit3.json", "ddd"],
+  ]) {
+    await waitFor(go, 400000);
+    groups.renameEntity(db, entityId, NAME + suffix);
+    await settle(); // the relay holds it before the iPad is told
+    put(file, JSON.stringify({ t0: Date.now(), name: NAME + suffix }));
+    log("applied", file);
+    await waitFor(saw, 400000);
+  }
+  await waitFor("ui-done");
+  await sleep(1500);
+  dumpTo(db, "peer.dump");
+  put("host-done", Date.now());
+  process.exit(0);
+}
+
+/* --- 044 C4: photos and recordings. FLOW:
+ *   ui -> ui-cut-on          the proxy now cuts every blob download mid-body
+ *   host sets a picture (noise PNG) and a recording (WAV) on the person's
+ *        word and a Chrome-style webm recording on a second word, writes the
+ *        files the iPad's test hook will attach (ipad-photo.png, ipad-voice.wav)
+ *        -> peer-media.json
+ *   ui -> ui-media-verified  the iPad drew, played, and said "can't play" for webm
+ *   ui -> ui-sent-media {photoSha, voiceSha}  (set on the iPad)
+ *   host pulls both from the relay BY HASH, opens (hash checked), compares
+ *        -> peer-verified-ipad-media.json
+ */
+const sha256 = async (bytes) => sc.sha256Hex(bytes);
+function makePng(w, h) {
+  const table = Array.from({ length: 256 }, (_, n) => {
+    let c = n;
+    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    return c >>> 0;
+  });
+  const crc = (buf) => {
+    let x = 0xffffffff;
+    for (const b of buf) x = table[(x ^ b) & 255] ^ (x >>> 8);
+    return (x ^ 0xffffffff) >>> 0;
+  };
+  const chunk = (type, data) => {
+    const len = Buffer.alloc(4); len.writeUInt32BE(data.length);
+    const td = Buffer.concat([Buffer.from(type), data]);
+    const c = Buffer.alloc(4); c.writeUInt32BE(crc(td));
+    return Buffer.concat([len, td, c]);
+  };
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(w, 0); ihdr.writeUInt32BE(h, 4); ihdr[8] = 8; ihdr[9] = 2;
+  const rowLen = 1 + w * 3;
+  const raw = Buffer.alloc(rowLen * h);
+  for (let y = 0; y < h; y++) crypto.getRandomValues(raw.subarray(y * rowLen + 1, (y + 1) * rowLen));
+  return Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+    chunk("IHDR", ihdr), chunk("IDAT", zlib.deflateSync(raw)), chunk("IEND", Buffer.alloc(0))]);
+}
+function makeWav(freq = 440, ms = 400) {
+  const rate = 8000, n = Math.floor(rate * ms / 1000), data = Buffer.alloc(n * 2);
+  for (let i = 0; i < n; i++) data.writeInt16LE(Math.round(8000 * Math.sin(2 * Math.PI * freq * i / rate)), i * 2);
+  const h = Buffer.alloc(44);
+  h.write("RIFF", 0); h.writeUInt32LE(36 + data.length, 4); h.write("WAVEfmt ", 8);
+  h.writeUInt32LE(16, 16); h.writeUInt16LE(1, 20); h.writeUInt16LE(1, 22); h.writeUInt32LE(rate, 24);
+  h.writeUInt32LE(rate * 2, 28); h.writeUInt16LE(2, 32); h.writeUInt16LE(16, 34);
+  h.write("data", 36); h.writeUInt32LE(data.length, 40);
+  return Buffer.concat([h, data]);
+}
+const makeWebm = () => Buffer.concat([
+  Buffer.from([0x1a, 0x45, 0xdf, 0xa3, 0x9f, 0x42, 0x86, 0x81, 0x01]), crypto.getRandomValues(Buffer.alloc(600))]);
+
+async function mediaFlow(db, entityId, client, userKey, dumpTo) {
+  await waitFor("ui-cut-on");
+  const photo = new Uint8Array(makePng(150, 150));
+  const rec = new Uint8Array(makeWav());
+  const webm = new Uint8Array(makeWebm());
+  const sent = {};
+  for (const [name, bytes] of [["photo", photo], ["rec", rec], ["webm", webm]]) {
+    sent[name] = await sha256(bytes);
+    globalThis.__peerBlobs.set(sent[name], bytes);
+    await syncUploadBlob(bytes); // the web's own queue -> sealed PUT /blobs/<sha>
+  }
+  for (let i = 0; i < 200 && syncHealth().mediaPending; i++) await sleep(100);
+  if (syncHealth().mediaPending) throw new Error("peer media never uploaded");
+  const web = groups.createEntity(db, { name: "Webby", role: "Green" });
+  seatSetupPeople(db, [web.id], "en");
+  const ipadPhoto = makePng(120, 120), ipadVoice = makeWav(660, 500);
+  writeFileSync(join(dir, "ipad-photo.png"), ipadPhoto);
+  writeFileSync(join(dir, "ipad-voice.wav"), ipadVoice);
+  // Edits through the web's own writers (they record the ops).
+  groups.setEntityPhoto(db, entityId, `blob:${sent.photo}`);
+  const ent = db.prepare("SELECT spoken_name FROM personal_entity WHERE id = ?").all(entityId)[0].spoken_name;
+  voiceMod.setOverride(db, { itemKind: "entity", itemId: entityId, key: `blob:${sent.rec}`, recordedText: ent });
+  voiceMod.setOverride(db, { itemKind: "entity", itemId: web.id, key: `blob:${sent.webm}`, recordedText: "Webby" });
+  put("peer-media.json", JSON.stringify({ photoSha: sent.photo, recSha: sent.rec, webmSha: sent.webm,
+    webEntity: web.id, photoBytes: photo.length }));
+  log("set photo", sent.photo.slice(0, 12), "recording", sent.rec.slice(0, 12), "webm", sent.webm.slice(0, 12));
+  await waitFor("ui-media-verified", 240000);
+
+  const want = JSON.parse(await waitFor("ui-sent-media", 240000));
+  const t0 = Date.now();
+  const checks = {};
+  for (const [label, sha] of [["photo", want.photoSha], ["voice", want.voiceSha]]) {
+    let bytes = null;
+    for (;;) {
+      try {
+        const env = await client.getBlob(sha);
+        bytes = await sc.openBlob(userKey, { sha, env }); // throws on a hash mismatch
+        break;
+      } catch (e) {
+        if (Date.now() - t0 > 90000) throw new Error(`iPad ${label} never reached the relay: ${e.message}`);
+        await sleep(500);
+      }
+    }
+    checks[label] = { sha, hashMatches: (await sha256(new Uint8Array(bytes))) === sha, bytes: bytes.length };
+  }
+  // The ops arrived too: the same keys sit in this peer's tables.
+  for (let i = 0; i < 100; i++) {
+    const img = db.prepare("SELECT COUNT(*) c FROM image_override WHERE photo_key = ?").all(`blob:${want.photoSha}`)[0].c;
+    const clip = db.prepare("SELECT COUNT(*) c FROM clip_override WHERE key = ?").all(`blob:${want.voiceSha}`)[0].c;
+    checks.opsArrived = { photoRows: img, clipRows: clip };
+    if (img && clip) break;
+    await sleep(200);
+  }
+  put("peer-verified-ipad-media.json", JSON.stringify(checks));
+  log("verified iPad media", JSON.stringify(checks));
+  await waitFor("ui-done");
+  await sleep(1500);
+  dumpTo(db, "peer.dump");
+  put("host-done", Date.now());
   process.exit(0);
 }
 

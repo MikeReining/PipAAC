@@ -68,6 +68,7 @@ export * as media from "./app_media.mjs";
 
 /** The web's sync loop, unchanged, over host I/O (044 C2). */
 export * as sync from "./app_sync.mjs";
+export * as mediasync from "./app_mediasync.mjs";
 
 /** Linking devices: offer a code / type a code (044 C3) - PIPCORE.pair */
 export * as pair from "./app_pair.mjs";

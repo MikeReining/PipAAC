@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.21-0088e5abe4d0",
-  "version": "1.1.21",
-  "payloadHash": "0088e5abe4d0",
+  "buildId": "1.1.22-d8c67558948e",
+  "version": "1.1.22",
+  "payloadHash": "d8c67558948e",
   "files": [
     {
       "path": "/board.js",
@@ -345,8 +345,8 @@
     },
     {
       "path": "/board/word-card-voice.js",
-      "bytes": 5775,
-      "sha256": "3450e37602de5a1cb0f2a2c36d49d9b00951872021b080bcf5e1b407d96540b1"
+      "bytes": 5998,
+      "sha256": "15eeab756418c66fab74a3190f7bcfdeb298f16ece50656d41da0afab2e95f7b"
     },
     {
       "path": "/board/word-card.css",
@@ -895,8 +895,8 @@
     },
     {
       "path": "/shared/mediatype.mjs",
-      "bytes": 2113,
-      "sha256": "f0c5943864d97ce4a0deb4c0b66c491d45442db54840c83680d893e85ca22a42"
+      "bytes": 2857,
+      "sha256": "3a98daca6f474a91deb7165991a68c8134b3f6e3f0cced739f6d70758c186b18"
     },
     {
       "path": "/shared/migrate.mjs",
@@ -1020,8 +1020,8 @@
     },
     {
       "path": "/shared/sync.mjs",
-      "bytes": 30159,
-      "sha256": "ed9d889165106691ffb2597faed6d870fd03bad2132811418a5db846d384b54a"
+      "bytes": 33737,
+      "sha256": "6ebb61336047e9bfdd406202e3b5e4af0e4a708af02bcb5ca1d3db34d806bce3"
     },
     {
       "path": "/shared/team_names.mjs",

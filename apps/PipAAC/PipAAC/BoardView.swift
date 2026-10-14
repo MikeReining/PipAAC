@@ -306,7 +306,7 @@ struct BoardView: View {
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("tile:\(cell?.id ?? "")")
-            .accessibilityValue((cell?.art ?? cell?.photoKey)?.hasPrefix("blob:") == true ? "family photo" : "")
+            .accessibilityValue(((cell?.art ?? cell?.photoKey).flatMap { PipBlobs.url(forKey: $0) }) != nil ? "family photo" : "")
         case "groups":
             AnchorTile(icon: "folder.fill", label: "Groups") { model.openGroups() }
         case "family":

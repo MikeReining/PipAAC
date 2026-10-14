@@ -21,7 +21,7 @@ import {
   ensureRecoveryRoot, exportDhPublic, exportPublicKey, getDeviceIdentity,
   getUserKey, openKeyStore, putUserKey, unwrapUserKey, wrapUserKey,
 } from "./host/sync_crypto_host.mjs"; // the iOS build of sync_crypto (Swift CryptoKit behind handles)
-import { pairClient, relayClient } from "../../public/shared/sync_client.mjs";
+import { pairClient, pollPair, relayClient } from "../../public/shared/sync_client.mjs";
 import { recoveryProof } from "../../public/shared/recovery.mjs";
 import { hostCall } from "./jsc_shims.mjs";
 

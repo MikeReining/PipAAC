@@ -78,6 +78,7 @@ export function cardSetPhoto(appId, { kind, id, key }) {
   if (!BLOB_KEY.test(key)) throw new Error("cardSetPhoto: not a blob key");
   if (kind === "entity") PIP().groups.setEntityPhoto(s.d, id, key);
   else PIP().images.setImageOverride(s.d, { senseId: id, photoKey: key });
+  PIP().mediasync.queueUpload(key); // the bytes follow the op (SY-6)
   forget(s, kind, id);
   return repaint(appId, kind, id);
 }
@@ -101,6 +102,7 @@ export function voiceSave(appId, { kind, id, key }) {
   if (!BLOB_KEY.test(key)) throw new Error("voiceSave: not a blob key");
   const before = PIP().voice.overrideFor(s.d, t.itemKind, t.itemId)?.key ?? null;
   PIP().voice.setOverride(s.d, { itemKind: t.itemKind, itemId: t.itemId, key, recordedText: t.text });
+  PIP().mediasync.queueUpload(key);
   const toast = PIP().edit.editToastWith(s, `Your voice plays for “${t.text}”`, () => {
     if (before) {
       PIP().voice.setOverride(s.d, {
@@ -142,6 +144,7 @@ export function personPhotoSet(appId, { key }) {
   const s = appSession(appId);
   if (key !== null && !BLOB_KEY.test(key)) throw new Error("personPhotoSet: not a blob key");
   PIP().personName.setProfilePhoto(s.d, key);
+  if (key) PIP().mediasync.queueUpload(key);
   return { photo: PIP().personName.profilePhoto(s.d) };
 }
 

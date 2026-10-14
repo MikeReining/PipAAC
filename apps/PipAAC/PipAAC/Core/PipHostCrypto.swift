@@ -192,6 +192,8 @@ nonisolated extension PipHost {
         case "blob.save":
             try blobWrite(str(a, "sha"), bytes(a, "b64"))
             return nil
+        case "blob.has":
+            return FileManager.default.fileExists(atPath: try blobURL(str(a, "sha")).path)
         case "blob.load":
             return try blobRead(str(a, "sha")).map { C.b64u($0) } ?? NSNull()
         case "saveUser":
@@ -269,7 +271,13 @@ nonisolated extension PipHost {
         return config.blobDirectory.appendingPathComponent(sha)
     }
 
+    /// A file is "available offline" only once its bytes hash to its name
+    /// (phase 044 section 6 B-C): the name IS the SHA-256, checked here, on
+    /// the way to disk, whoever asks. Writes are atomic - no partial file
+    /// ever carries a real name.
     func blobWrite(_ sha: String, _ data: Data) throws {
+        let digest = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+        guard digest == sha else { throw PipHostError("blob hash mismatch") }
         try FileManager.default.createDirectory(at: config.blobDirectory, withIntermediateDirectories: true)
         try data.write(to: blobURL(sha), options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
     }

@@ -55,6 +55,7 @@ private nonisolated struct HostEvent: Decodable {
     var userId: String?
     var epoch: Double?
     var status: Int?
+    var sha: String?
 }
 
 // MARK: - AppModel: sync + pairing
@@ -91,6 +92,15 @@ extension AppModel {
     func handleHostEvent(_ name: String, _ json: String) {
         let ev = try? JSONDecoder().decode(HostEvent.self, from: Data(json.utf8))
         switch name {
+        case "sync.stopped":
+            let ws = stopWaiters
+            stopWaiters = []
+            for w in ws { w.resume() }
+        case "media.ready":
+            // A photo or recording just landed on disk and passed its hash.
+            if syncingId != nil, syncingId == activeId { repaintFromCore() }
+        case "media.state":
+            if let m = try? JSONDecoder().decode(MediaState.self, from: Data(json.utf8)) { mediaState = m }
         case "sync.applied":
             if syncingId != nil, syncingId == activeId { repaintFromCore() }
         case "sync.started":
@@ -104,9 +114,31 @@ extension AppModel {
 
     // MARK: sync
 
+    /// End the running loop and wait until it has (the person's db handle
+    /// may close after). sync.mjs stopSync: socket closed, timers cancelled,
+    /// pending ops stay pending for the next start. Bounded: a core that
+    /// never answers cannot wedge a person switch.
+    func stopSyncLoop() async {
+        guard syncingId != nil else { return }
+        let core = self.core
+        await withCheckedContinuation { (c: CheckedContinuation<Void, Never>) in
+            stopWaiters.append(c)
+            core.enqueue { _ = try? core.call("PIPCORE.sync", "syncStop", ["{}"]) }
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(for: .seconds(10))
+                guard let self, !self.stopWaiters.isEmpty else { return }
+                let ws = self.stopWaiters
+                self.stopWaiters = []
+                for w in ws { w.resume() }
+            }
+        }
+        syncingId = nil
+        mediaState = MediaState()
+    }
+
     /// Start the web's loop for the open person when they are linked.
-    /// The loop is one-per-process (sync.mjs `running`): a second linked
-    /// person opened in the same run stays local until the next launch.
+    /// One loop at a time (sync.mjs `running`); switching people ends the
+    /// old one first (stopSyncLoop) and starts this person's.
     func startSyncIfLinked() {
         guard syncingId == nil, let id = activeId, let registry,
               let row = try? registry.list().first(where: { $0.id == id }),
@@ -262,6 +294,11 @@ struct TeamDevicesView: View {
                      : "Only on this device so far.")
                     .foregroundStyle(PipStyle.muted)
                     .accessibilityIdentifier("team:status")
+                if model.activeIsLinked, let line = model.mediaState.line {
+                    Text(line)
+                        .foregroundStyle(PipStyle.muted)
+                        .accessibilityIdentifier("team:media")
+                }
                 Button("Add a device") { model.startOffer() }
                     .accessibilityIdentifier("team:add")
                 Text("Add a device shows a code here — type it on the other device. A linked device sees and edits everything for this person. Removing one locks it out.")

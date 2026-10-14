@@ -137,19 +137,23 @@ async function runtime({
   epoch = 1,
   userKey = null,
   opts = {},
+  userId = "u1",       // the registry row id (key-store names)
+  relayId = "u-relay", // the relay user id
+  syncMod = null,      // reuse one module instance (the singleton) across runtimes
+  reuse = null,        // { db, store, user }: restart a person on the same replica
 } = {}) {
-  const db = openReplica();
-  const store = memoryKeyStore();
+  const db = reuse?.db ?? openReplica();
+  const store = reuse?.store ?? memoryKeyStore();
   const identity = await getDeviceIdentity(store);
-  const key = userKey ?? await getUserKey(store, "u1");
-  await putUserKey(store, "u1", key, epoch);
-  if (root) await ensureRecoveryRoot(store, "u1");
+  const key = userKey ?? await getUserKey(store, userId);
+  await putUserKey(store, userId, key, epoch);
+  if (root) await ensureRecoveryRoot(store, userId);
 
   const submits = [];
   const uploads = [];
   const fetches = [];
   const clients = [];
-  const user = { id: "u1", sync: { userId: "u-relay", epoch, cursor: 0 } };
+  const user = reuse?.user ?? { id: userId, sync: { userId: relayId, epoch, cursor: 0 } };
   shared.store = store;
   shared.loadBlobBytes = async () => null;
   // Each construction captures its sealing key — the same closure the
@@ -181,7 +185,8 @@ async function runtime({
     });
   };
 
-  const { initSync, syncHealth, setSyncAccountOps } = await loadSync();
+  const mod = syncMod ?? await loadSync();
+  const { initSync, syncHealth, setSyncAccountOps } = mod;
   const handle = await initSync(
     db, user,
     async (patch) => Object.assign(user.sync, patch.sync ?? {}),
@@ -193,7 +198,7 @@ async function runtime({
   );
   await settle();
   return { db, store, key, user, submits, uploads, fetches, clients,
-    handle, syncHealth, setSyncAccountOps };
+    handle, syncHealth, setSyncAccountOps, mod };
 }
 
 for (const kind of ["blob", "live"]) {
@@ -756,4 +761,123 @@ test("the regrant obligation waits for a signed-in session instead of draining u
   assert.deepEqual(grants, ["tok_a1"],
     "a later signed-in session did not drain the obligation");
   assert.equal(await r.store.get("regrant/u1"), undefined);
+});
+
+/* ------------------------------------------------------------------
+ * 044 C4 - stopSync: end the loop cleanly, start another. The web never
+ * calls it; iOS does on a person switch. Same seam, same stub relay.
+ * ------------------------------------------------------------------ */
+
+const unconfirmed = (db) => listOps(db).filter((o) => o.relay_seq === null);
+
+test("C4: start -> stop -> start another user -> back; every person's ops land on their own relay", { timeout: 20000 }, async () => {
+  const mod = await loadSync();
+  const a = await runtime({ syncMod: mod, userId: "uA", relayId: "relayA" });
+  const socketA = sockets.at(-1);
+  createEntity(a.db, { id: "ent_a", name: "Alpha" });
+  await sleep(500);
+  assert.equal(unconfirmed(a.db).length, 0, "A's edit reached A's relay");
+  assert.equal(a.syncHealth().running, true);
+
+  assert.equal(await mod.stopSync(), true);
+  assert.equal(a.syncHealth().running, false);
+  assert.equal(socketA.readyState, 3, "A's socket closed");
+  const aSubmits = a.submits.length;
+
+  // An edit after the stop is logged locally and waits - no loop carries it.
+  createEntity(a.db, { id: "ent_a2", name: "Alpha two" });
+  await sleep(500);
+  assert.equal(a.submits.length, aSubmits, "a stopped loop submits nothing");
+  assert.equal(unconfirmed(a.db).length, 1);
+
+  // B starts in the same process, on its own replica and relay user.
+  const b = await runtime({ syncMod: mod, userId: "uB", relayId: "relayB" });
+  assert.equal(b.syncHealth().running, true);
+  assert.notEqual(sockets.at(-1), socketA, "B has its own socket");
+  createEntity(b.db, { id: "ent_b", name: "Beta" });
+  await sleep(500);
+  assert.equal(unconfirmed(b.db).length, 0, "B's edit reached B's relay");
+  assert.equal(b.clients.at(-1).userId, "relayB");
+  assert.equal(a.submits.length, aSubmits, "B's session never submitted A's ops");
+  assert.equal(b.db.prepare("SELECT 1 FROM personal_entity WHERE id = 'ent_a'").all().length, 0);
+
+  // Back to A: the stranded edit goes out now, under A's relay user.
+  await mod.stopSync();
+  const a2 = await runtime({ syncMod: mod, reuse: a, userId: "uA", relayId: "relayA" });
+  await sleep(500);
+  assert.equal(unconfirmed(a.db).length, 0, "A's stranded edit was resent and confirmed");
+  assert.equal(a2.clients.at(-1).userId, "relayA");
+  assert.ok(a2.submits.flat().some((o) => o.kind === "create_entity" && JSON.stringify(o).length > 0),
+    "the resend carried A's op");
+  await mod.stopSync();
+});
+
+test("C4: stopSync is safe when nothing runs, and a stopped loop's armed timers never fire", { timeout: 10000 }, async () => {
+  const mod = await loadSync();
+  assert.equal(await mod.stopSync(), false);
+  const r = await runtime({ syncMod: mod });
+  createEntity(r.db, { id: "ent_t", name: "Timer" }); // arms the 300 ms debounce
+  const before = r.submits.length;
+  await mod.stopSync();
+  await sleep(800);
+  assert.equal(r.submits.length, before, "the armed debounce did not fire after stop");
+  assert.equal(unconfirmed(r.db).length > 0, true, "the edit is still pending");
+});
+
+test("C4: stop during a flush loses nothing - op stays pending, cursor stays put, the next start resends", { timeout: 15000 }, async () => {
+  const mod = await loadSync();
+  let release, enter;
+  const gate = new Promise((r) => { release = r; });
+  const entered = new Promise((r) => { enter = r; });
+  let calls = 0;
+  const r = await runtime({
+    syncMod: mod,
+    // call 1 = boot seed ops (acked); call 2 carries the user's edit and hangs
+    submit: async (ops) => {
+      calls++;
+      if (calls === 2) { enter(); await gate; throw new Error("connection dropped"); }
+      return { ops: ops.map((o, i) => ({ op_id: o.op_id, relay_seq: i + 1 })) };
+    },
+  });
+  const cursorBefore = r.user.sync.cursor;
+  createEntity(r.db, { id: "ent_flush", name: "Mid flush" });
+  await entered;
+  const t0 = Date.now();
+  await mod.stopSync({ waitMs: 300 });
+  assert.ok(Date.now() - t0 < 2000, "stop returned while the relay call was hung");
+  release(); // the relay call now fails, after the stop
+  await sleep(300);
+  const pending = unconfirmed(r.db);
+  assert.equal(pending.length, 1, "the edit is still pending");
+  assert.equal(r.user.sync.cursor, cursorBefore, "cursor did not move");
+  assert.equal(r.syncHealth().flushError, null, "a stopped loop reports no error");
+
+  // Same person starts again on the same replica: the op is resent.
+  const r2 = await runtime({ syncMod: mod, reuse: r });
+  await sleep(500);
+  assert.ok(r2.submits.flat().some((o) => o.op_id === pending[0].op_id), "the stranded op was resent");
+  assert.equal(unconfirmed(r.db).length, 0, "and is confirmed now");
+  await mod.stopSync();
+});
+
+test("C4: stop mid catch-up fetches nothing more and leaves the cursor where it was", { timeout: 15000 }, async () => {
+  const mod = await loadSync();
+  let enter, release;
+  const entered = new Promise((r) => { enter = r; });
+  const gate = new Promise((r) => { release = r; });
+  let fetches = 0;
+  const r = await runtime({
+    syncMod: mod,
+    fetchOps: async () => {
+      fetches++;
+      if (fetches === 1) { enter(); await gate; } // the first catch-up is in flight
+      return { ops: [], snap_seq: 0 };
+    },
+  });
+  await entered;
+  await mod.stopSync({ waitMs: 200 });
+  release();
+  await sleep(200);
+  assert.equal(r.user.sync.cursor, 0);
+  assert.equal(fetches, 1, "no further fetch after the stop");
 });

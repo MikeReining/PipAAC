@@ -54,41 +54,111 @@ xcodebuild build-for-testing -project apps/PipAAC/PipAAC.xcodeproj -scheme PipAA
   -parallel-testing-enabled NO > "$RUN/build.log" 2>&1 || { tail -30 "$RUN/build.log"; exit 3; }
 
 FAIL=0
-run_scenario() { # <name> <test> <peer-scenario> <dumps...>
-  local name="$1" test="$2" scn="$3"; shift 3
-  local D="$RUN/$name"; mkdir -p "$D"
-  echo; echo "== scenario: $name ($test)"
-  node scripts/ios/e2e_web_peer.mjs host "$D" "$BASE" "$SECRET" "$scn" > "$D/peer.log" 2>&1 &
-  local PEER=$!
-  TEST_RUNNER_PIP_E2E_DIR="$D" TEST_RUNNER_PIP_E2E_BASE="$BASE" \
+WORKER="http://127.0.0.1:$PORT"
+PROXY_PID=""
+# Every scenario talks to the Worker through scripts/ios/e2e_proxy.mjs: it
+# forwards, and the control file <dir>/proxy-mode can cut blob downloads
+# mid-transfer or take the relay "down" (044 C4).
+start_proxy() { # <dir>  -> sets BASE
+  echo pass > "$1/proxy-mode"
+  rm -f "$1/proxy.port"
+  node scripts/ios/e2e_proxy.mjs "$PORT" "$1/proxy-mode" "$1/proxy.port" > "$1/proxy.log" 2>&1 &
+  PROXY_PID=$!
+  for _ in $(seq 1 50); do [ -s "$1/proxy.port" ] && break; sleep 0.1; done
+  BASE="http://127.0.0.1:$(cat "$1/proxy.port")"; [ -n "${PIP_E2E_NOPROXY:-}" ] && BASE="$WORKER"
+}
+stop_proxy() { [ -n "$PROXY_PID" ] && kill "$PROXY_PID" 2>/dev/null; PROXY_PID=""; }
+
+# The iPad's SQLite FILE for a person (relay user id, or the home person).
+ipad_dump() { # <dir> <relayUserId|-> <out>
+  local ID
+  if [ "$2" = "-" ]; then
+    ID="$(python3 -c "import json;r=json.load(open('$1/ipad/people.json'))['users'];print(next(u['id'] for u in r if u.get('home')))")"
+  else
+    ID="$2"
+  fi
+  node scripts/ios/e2e_dump.mjs "$1/ipad/Users/$ID.sqlite" "$3"
+}
+
+compare() { # <peerdump> <ipaddump> <label>
+  wc -l "$1" "$2" | head -2 | awk '{print $2": "$1" lines"}'
+  if diff -u "$1" "$2" > "$1.diff"; then
+    echo "DIFF ipad vs $3: IDENTICAL"
+  else
+    echo "DIFF ipad vs $3: DIFFERENT"; head -40 "$1.diff"; FAIL=1
+  fi
+}
+
+xcode_test() { # <dir> <Class/test> [extra env...]
+  local D="$1" T="$2"; shift 2
+  env TEST_RUNNER_PIP_E2E_DIR="$D" TEST_RUNNER_PIP_E2E_BASE="$BASE" "$@" \
     xcodebuild test-without-building -project apps/PipAAC/PipAAC.xcodeproj -scheme PipAAC \
     -configuration Release -destination "id=$UDID" -derivedDataPath "$DD" \
     -parallel-testing-enabled NO \
-    -only-testing:"PipAACUITests/SyncE2ETests/$test" \
+    -only-testing:"PipAACUITests/$T" \
     -resultBundlePath "$D/result.xcresult" > "$D/xcodebuild.log" 2>&1
+}
+
+run_scenario() { # <name> <Class/test> <peer-scenario> <dumps...>
+  local name="$1" test="$2" scn="$3"; shift 3
+  local D="$RUN/$name"; mkdir -p "$D"
+  echo; echo "== scenario: $name ($test)"
+  start_proxy "$D"
+  node scripts/ios/e2e_web_peer.mjs host "$D" "$BASE" "$SECRET" "$scn" > "$D/peer.log" 2>&1 &
+  local PEER=$!
+  xcode_test "$D" "$test"
   local XC=$?
   grep -E "E2E-|Test Case.*(passed|failed)|error:" "$D/xcodebuild.log" | head -20
   wait "$PEER" 2>/dev/null
   tail -5 "$D/peer.log"
+  [ -s "$D/proxy-mode.log" ] && { echo "proxy log:"; cat "$D/proxy-mode.log"; }
+  stop_proxy
   [ "$XC" = 0 ] || { echo "XCUITest FAILED ($XC) - see $D/xcodebuild.log"; FAIL=1; return; }
 
-  local ID; ID="$(python3 -c "import json,sys;r=json.load(open('$D/ipad/people.json'))['users'];print(next(u for u in r if u.get('home'))['id'])")"
-  node scripts/ios/e2e_dump.mjs "$D/ipad/Users/$ID.sqlite" "$D/ipad.dump"
-  for f in "$@"; do wc -l "$D/$f.dump" | awk '{print $2": "$1" lines"}'; done
-  wc -l "$D/ipad.dump" | awk '{print $2": "$1" lines"}'
-  for f in "$@"; do
-    if diff -u "$D/$f.dump" "$D/ipad.dump" > "$D/$f.diff"; then
-      echo "DIFF ipad vs $f: IDENTICAL"
-    else
-      echo "DIFF ipad vs $f: DIFFERENT"; head -40 "$D/$f.diff"; FAIL=1
-    fi
-  done
+  ipad_dump "$D" - "$D/ipad.dump"
+  for f in "$@"; do compare "$D/$f.dump" "$D/ipad.dump" "$f"; done
   echo "stats_day lines on iPad: $(grep -c '^stats_day' "$D/ipad.dump")"
+  if [ "$name" = media ]; then
+    echo "blob files the app saved (name = sha256, checked here by shasum):"
+    for f in "$D"/ipad/blobs/*; do
+      [ "$(shasum -a 256 "$f" | cut -d' ' -f1)" = "$(basename "$f")" ] \
+        && echo "  OK   $(basename "$f") $(wc -c < "$f") bytes" || { echo "  BAD  $f"; FAIL=1; }
+    done
+  fi
 }
 
-# PIP_E2E_ONLY=both-ways|offline runs one scenario (debugging).
-[ "${PIP_E2E_ONLY:-both-ways}" = both-ways ] && run_scenario both-ways testLinkAndSyncBothWays both-ways peer peer2
-[ "${PIP_E2E_ONLY:-offline}" = offline ] && run_scenario offline testOfflineCatchUp offline peer
+# Two linked people on one iPad: two node "web devices", own dirs, one proxy.
+run_two_people() {
+  local D="$RUN/two-people"; mkdir -p "$D/A" "$D/B"
+  echo; echo "== scenario: two-people (SyncMediaE2ETests/testTwoPeopleSwitch)"
+  start_proxy "$D"
+  PEER_NAME=Alpha node scripts/ios/e2e_web_peer.mjs host "$D/A" "$BASE" "$SECRET" person > "$D/A/peer.log" 2>&1 &
+  local PA=$!
+  PEER_NAME=Beta node scripts/ios/e2e_web_peer.mjs host "$D/B" "$BASE" "$SECRET" person > "$D/B/peer.log" 2>&1 &
+  local PB=$!
+  mkdir -p "$D/A/ipad"   # the app's data dir is <A>/ipad
+  xcode_test "$D/A" "SyncMediaE2ETests/testTwoPeopleSwitch" TEST_RUNNER_PIP_E2E_DIR_B="$D/B"
+  local XC=$?
+  grep -E "E2E-|Test Case.*(passed|failed)|error:" "$D/A/xcodebuild.log" | head -20
+  wait "$PA" "$PB" 2>/dev/null
+  tail -3 "$D/A/peer.log"; tail -3 "$D/B/peer.log"
+  stop_proxy
+  [ "$XC" = 0 ] || { echo "XCUITest FAILED ($XC) - see $D/A/xcodebuild.log"; FAIL=1; return; }
+  local UA UB
+  UA="$(python3 -c "import json;print(json.load(open('$D/A/person.json'))['userId'])")"
+  UB="$(python3 -c "import json;print(json.load(open('$D/B/person.json'))['userId'])")"
+  ipad_dump "$D/A" "$UA" "$D/ipad-A.dump"
+  ipad_dump "$D/A" "$UB" "$D/ipad-B.dump"
+  compare "$D/A/peer.dump" "$D/ipad-A.dump" "person A's web device"
+  compare "$D/B/peer.dump" "$D/ipad-B.dump" "person B's web device"
+}
+
+# PIP_E2E_ONLY=both-ways|offline|media|two-people runs one scenario (debugging).
+only() { [ -z "${PIP_E2E_ONLY:-}" ] || [ "$PIP_E2E_ONLY" = "$1" ]; }
+only both-ways && run_scenario both-ways SyncE2ETests/testLinkAndSyncBothWays both-ways peer peer2
+only offline && run_scenario offline SyncE2ETests/testOfflineCatchUp offline peer
+only media && run_scenario media SyncMediaE2ETests/testMediaBothWays media peer
+only two-people && run_two_people
 
 echo; [ "$FAIL" = 0 ] && echo "E2E RESULT: PASS" || echo "E2E RESULT: FAIL"
 echo "artifacts: $RUN"

@@ -8,6 +8,7 @@
  * bytes stay (voice.mjs), so switching back costs nothing.
  */
 import { clearOverride, latestRecording, overrideFor, setOverride } from "../shared/voice.mjs";
+import { pickRecordingType } from "../shared/mediatype.mjs";
 
 const $ = (id) => document.getElementById(id);
 
@@ -109,7 +110,9 @@ export function mountCardVoice({
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const before = overrideFor(db, t.itemKind, t.itemId)?.key ?? null;
-      recorder = new MediaRecorder(stream);
+      // A type the iPad app can play, when this browser can record it (044 C4).
+      const mimeType = pickRecordingType();
+      recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
       recChunks = [];
       recorder.ondataavailable = (e) => { if (e.data.size) recChunks.push(e.data); };
       recorder.onstop = async () => {

@@ -208,6 +208,10 @@ final class AppModel: ObservableObject {
     /// The person the process-wide sync loop runs for (sync.mjs `running`).
     var syncingId: String?
     var syncDbId: Int32 = 0
+    /// Callers of stopSyncLoop() waiting for the core's "sync.stopped".
+    var stopWaiters: [CheckedContinuation<Void, Never>] = []
+    /// Photos/recordings the loop still owes or awaits (media.state).
+    @Published var mediaState = MediaState()
     var joinRole = "board"
     @Published var offerSheet: OfferSheetState?
     @Published var joinSheet: JoinSheetState?
@@ -240,6 +244,8 @@ final class AppModel: ObservableObject {
     func boot() {
         speaker.configure()
         speaker.onPlay = { [weak self] k in self?.lastClip = k }
+        wireMediaStates()
+        startMediaTestHook()
         Task { @MainActor in
             do {
                 UITestHooks.resetIfRequested()
@@ -270,11 +276,18 @@ final class AppModel: ObservableObject {
     func open(_ id: String) async throws {
         guard let registry else { return }
         let url = try registry.openableFile(id)
-        // The running sync loop holds its person's db handle: it stays open
-        // (sync.mjs has no stop - one loop per process).
-        let keepOld = syncingId != nil && dbId == syncDbId
-        let (opened, newDb, st, set) = try await Self.openCore(
-            core, url, loaded: coreLoaded, oldApp: appId, oldDb: dbId, keepOldDb: keepOld)
+        // The running loop holds its person's db handle: end it first
+        // (stopSync), so the old file can close and the next person's loop
+        // starts clean (044 C4; the web reloads the page instead).
+        await stopSyncLoop()
+        let opened: AppOpenResult, newDb: Int32, st: PaintedState, set: SettingsModel
+        do {
+            (opened, newDb, st, set) = try await Self.openCore(
+                core, url, loaded: coreLoaded, oldApp: appId, oldDb: dbId, keepOldDb: false)
+        } catch {
+            startSyncIfLinked() // the open failed: the current person keeps syncing
+            throw error
+        }
         coreLoaded = true
         speaker.rate = opened.speechRate ?? 1
         appId = opened.appId
@@ -408,7 +421,7 @@ final class AppModel: ObservableObject {
         if let msg = st.toast { showToast(msg) }
     }
 
-    private func showToast(_ msg: String) {
+    func showToast(_ msg: String) {
         toastSeq += 1
         let seq = toastSeq
         toast = msg

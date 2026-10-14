@@ -13,11 +13,14 @@
  * The registry row's `sync` state persists through
  * hostCall("saveUser", { userId, patch }) -> Swift `PipHost.onSaveUser`.
  */
-import { initSync, syncHealth as health } from "../../public/shared/sync.mjs";
+import { initSync, stopSync, syncHealth as health } from "../../public/shared/sync.mjs";
+import { resetMedia, scanMedia, setPuller } from "./app_mediasync.mjs";
 import { refreshStatsDays } from "../../public/shared/stats.mjs";
 import { hostCall } from "./jsc_shims.mjs";
 import { appDb } from "./app.mjs";
 
+/** Bumped by every start and stop: a start that resolves after a stop is stale. */
+let gen = 0;
 const parse = (x) => (typeof x === "string" ? JSON.parse(x) : x);
 const emit = (name, payload = {}) =>
   globalThis.__pipHost.emit(name, JSON.stringify(payload));
@@ -34,26 +37,33 @@ export function syncStart(appId, userRow, baseUrl, opts) {
 /** Same, against an explicit db handle (makeDb) — the node suite's door. */
 export function syncStartDb(db, userRow, baseUrl, opts) {
   const user = parse(userRow);
+  const myGen = ++gen;
   const saveUser = async (patch) => {
     if (patch?.sync) user.sync = patch.sync;
     await hostCall("saveUser", { userId: user.id, patch });
   };
   initSync(
     db, user, saveUser, baseUrl || globalThis.location.origin,
-    () => emit("sync.applied"),
+    () => { emit("sync.applied"); scanMedia(db); }, // ops may carry new blob: refs (C4)
     (plain) => emit("sync.model", plain),
     async () => true, // the native SQLite file is durable per statement
     opts ? parse(opts) : {},
   ).then(
     (handle) => {
+      if (myGen !== gen) return; // stopped (or restarted) while this start was in flight
       // board.js refreshes today's/yesterday's totals at boot, after the device
       // id is known; here the id is known once the loop is up (SY-15).
+      if (handle) {
+        // Photos/recordings: pull what the synced rows reference (PP-9).
+        setPuller((sha) => handle.pullBlob(sha));
+        scanMedia(db);
+      }
       if (handle) { try { refreshStatsDays(db); } catch (e) { console.error(`stats: ${e}`); } }
       emit("sync.started", handle
       ? { ok: true, linked: true, deviceId: handle.identity.deviceId, epoch: handle.getEpoch() }
         : { ok: true, linked: false });
     },
-    (err) => emit("sync.started", { ok: false, linked: true, error: String(err?.message ?? err) }),
+    (err) => myGen === gen && emit("sync.started", { ok: false, linked: true, error: String(err?.message ?? err) }),
   );
   return { accepted: true };
 }
@@ -64,4 +74,20 @@ export function syncHealth() {
   const msg = (e) => (e == null ? null : String(e.message ?? e));
   return { running: h.running, flushError: msg(h.flushError), ingestError: msg(h.ingestError),
     rotationError: msg(h.rotationError), mediaPending: h.mediaPending, mediaError: msg(h.mediaError) };
+}
+
+/**
+ * End the running loop (a person switch: the web reloads the page, the app
+ * stays alive). Returns at once; "sync.stopped" {ok} reports when the loop
+ * has ended and the person's db handle may close. Safe when nothing runs.
+ */
+export function syncStop(opts) {
+  gen++;
+  setPuller(null);
+  resetMedia();
+  stopSync(opts ? parse(opts) : {}).then(
+    () => emit("sync.stopped", { ok: true }),
+    (err) => emit("sync.stopped", { ok: false, error: String(err?.message ?? err) }),
+  );
+  return { accepted: true };
 }

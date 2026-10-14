@@ -31,6 +31,19 @@ final class PipSpeaker: NSObject, AVAudioPlayerDelegate {
     private(set) var lastPlayed: String? { didSet { if let k = lastPlayed { onPlay?(k) } } }
     var onPlay: ((String) -> Void)?
 
+    /// Why a family recording did not sound (PP-10): honest, never silent.
+    enum Unavailable { case cannotPlay, notHereYet }
+    var onUnavailable: ((String, Unavailable) -> Void)?
+
+    /// Containers AVAudioPlayer cannot open: a desktop Chrome/Firefox take
+    /// is webm/opus or ogg (mediatype.mjs sniffType says audio/webm / ogg).
+    static func playable(_ d: Data) -> Bool {
+        let b = [UInt8](d.prefix(4))
+        if b == [0x1a, 0x45, 0xdf, 0xa3] { return false }   // EBML: webm/mkv
+        if b == Array("OggS".utf8) { return false }          // ogg (opus/vorbis)
+        return true
+    }
+
     /// AVAudioPlayer cannot guess a type from extensionless bytes: sniff
     /// the container like mediatype.mjs sniffType (ftyp → m4a, RIFF → wav).
     private static func audioHint(_ d: Data) -> String? {
@@ -89,17 +102,27 @@ final class PipSpeaker: NSObject, AVAudioPlayerDelegate {
     private func playSlot(_ slot: SpeechSlot, generation: Int? = nil) {
         // The family's own recording: a `blob:<sha>` key in the blob store.
         if slot.type == "clip", let key = slot.key, key.hasPrefix("blob:") {
-            if let data = PipBlobs.data(forKey: key),
-               let p = try? AVAudioPlayer(data: data, fileTypeHint: Self.audioHint(data)) {
-                p.delegate = self
-                p.enableRate = true
-                p.rate = rate
-                player = p
-                p.play()
-                lastPlayed = key
-                return
+            if let data = PipBlobs.data(forKey: key) {
+                if Self.playable(data),
+                   let p = try? AVAudioPlayer(data: data, fileTypeHint: Self.audioHint(data)) {
+                    p.delegate = self
+                    p.enableRate = true
+                    p.rate = rate
+                    player = p
+                    if let u = PipBlobs.url(forKey: key) { PipAudioTrace.record(u) }
+                    p.play()
+                    lastPlayed = key
+                    return
+                }
+                // Bytes are here but this iPad cannot decode them (a Chrome
+                // webm/opus take). Say so; never silence, never device TTS.
+                NSLog("PipSpeaker: recording can't play \(key)")
+                onUnavailable?(key, .cannotPlay)
+            } else {
+                // Not downloaded yet (or still arriving): say that, honestly.
+                NSLog("PipSpeaker: recording not here yet \(key)")
+                onUnavailable?(key, .notHereYet)
             }
-            NSLog("PipSpeaker: recording failed \(key)")
         }
         // "file": an absolute path (a Hear-it preview of a voice that is
         // not downloaded yet) - never a tile slot.

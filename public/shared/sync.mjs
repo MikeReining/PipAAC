@@ -43,6 +43,9 @@ let mediaPending = 0;
 let mediaError = null;
 export const syncHealth = () =>
   ({ running: !!running, flushError, ingestError, rotationError, mediaPending, mediaError });
+/** 044 C4 — a stopSync in progress: a new start waits for it, so two
+ *  loops never overlap on the shared module state (op sink, blob fetcher). */
+let stopping = null;
 /**
  * `user` is the registry row (id, sync). `saveUser(patch)` persists
  * sync-state changes back to the row (epoch bumps on rotation).
@@ -56,8 +59,10 @@ export async function initSync(db, user, saveUser, baseUrl = location.origin, on
   // registration never succeeded — this device is local-only until a
   // later join clears the flag.
   if (!cfg?.userId || cfg.pendingJoin) return null;
-  running = startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, persist, opts)
-    .catch((err) => { running = null; throw err; });
+  const begin = () => startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, persist, opts);
+  const mine = (stopping ? stopping.then(begin) : begin())
+    .catch((err) => { if (running === mine) running = null; throw err; });
+  running = mine;
   return running;
 }
 
@@ -74,6 +79,9 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     ?? await store.get(`user/${user.id}/root`);
   if (!keyOrRoot) return null;
   let userKey = await getUserKey(store, user.id, epoch);
+  /* 044 C4 — set by stop(): every timer, socket callback and queued job
+   * below checks it, so a stopped loop never touches the db again. */
+  let stopped = false;
   let client = relayClient({ userId: cfg.userId, baseUrl, identity, userKey });
 
   /** Re-seal under a newer epoch after this device rotated the user
@@ -161,6 +169,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
    *  once via a repaint, then the tile keeps name + color. */
   const retried = new Set();
   setBlobFetcher(async (sha) => {
+    if (stopped) return null;
     try {
       const env = await client.getBlob(sha);
       return await openBlob(await keyFor(env.e ?? 1), { sha, env });
@@ -214,6 +223,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     const kept = [];
     let error = null;
     for (const e of q) {
+      if (stopped) { kept.push(e); continue; } // stopped: the obligation stays queued
       let hadBytes = false;
       try {
         const bytes = await loadBlobBytes(e.sha);
@@ -238,6 +248,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
       }
     }
     await store.put(BLOBQ, kept);
+    if (stopped) return;
     mediaPending = kept.length;
     mediaError = error;
     // Retry idle media obligations without waiting for socket traffic.
@@ -245,6 +256,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
   });
   let drainTimer = null;
   const scheduleDrain = (ms) => {
+    if (stopped) return;
     clearTimeout(drainTimer);
     drainTimer = setTimeout(() => enqueue(drainBlobs), ms);
     drainTimer.unref?.(); // same — re-arm only, never a keep-alive
@@ -276,6 +288,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
   const OPS_PAGE = 200;
   const flushStallMs = opts.flushStallMs ?? 45_000;
   let flushing = null;
+  let flushTicket = null;
   const runFlush = async (ticket) => {
     const ops = pendingOps(db, FLUSH_BATCH + 1);
     if (!ops.length) { flushError = null; return; }
@@ -313,8 +326,10 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
   const flush = () => {
     if (flushing) return flushing;
     const ticket = { dead: false };
+    flushTicket = ticket;
     flushing = withDeadline(runFlush(ticket), flushStallMs, "sync: flush", ticket)
       .catch((err) => {
+        if (stopped) throw err; // a stopped loop reports nothing and retries nothing
         flushError = String(err?.message ?? err);
         // A stranded edit is silent loss (audit F10): bounded retries
         // with linear backoff whichever caller raised the failure —
@@ -330,6 +345,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
   let flushTimer = null;
   let flushFails = 0;
   const scheduleFlush = (delay = 300) => {
+    if (stopped) return;
     clearTimeout(flushTimer);
     flushTimer = setTimeout(() => flush().catch(() => {}), delay);
     flushTimer.unref?.(); // a retry timer must not hold a process open
@@ -341,7 +357,8 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
    * push racing a catch-up could). A failed job must be loud — a silent
    * throw wedges the device with ops logged but never applied. */
   let chain = Promise.resolve();
-  const enqueue = (job) => (chain = chain.then(job).catch((err) => {
+  const enqueue = (job) => (chain = chain.then(() => (stopped ? undefined : job())).catch((err) => {
+    if (stopped) return;
     ingestError = String(err?.stack || err);
     console.warn("sync: ingest failed", err);
   }));
@@ -360,6 +377,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     for (const r of rows) {
       plain.push({ ...(await openOp(await keyFor(r.epoch ?? 1), r.env)), relay_seq: r.relay_seq });
     }
+    if (stopped) return; // nothing applied, nothing counted: the cursor stays put
     if (plain.length) {
       drainOps(db, plain, { fetched });
       ingestError = null;
@@ -499,6 +517,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     const self = await client.selfKey();
     if (self.current_epoch > epoch) await keyFor(self.current_epoch);
     for (;;) {
+      if (stopped) return;
       // Pages of OPS_PAGE — a long-offline device walks the backlog a
       // bounded slice at a time instead of one unbounded response.
       const { ops: rows, snap_seq: snapSeq = 0 } =
@@ -548,8 +567,10 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     } catch (err) {
       console.warn("sync: supporter regrant failed", err);
     }
+    if (stopped) return;
     await maybeSnapshot().catch(() => {});
     await flush();
+    if (stopped) return;
     // Ops applied above may carry new blob: refs, and the queue may
     // still owe the relay media from before this session — both are
     // reconciled + drained here, on every recovery pass.
@@ -560,6 +581,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
   /** Debounced catch-up: live pushes apply without moving the cursor,
    *  so a burst ends with one fetchOps that marks it honestly. */
   const scheduleRecover = () => {
+    if (stopped) return;
     clearTimeout(recoverTimer);
     recoverTimer = setTimeout(() => enqueue(recover), 2000);
   };
@@ -574,9 +596,10 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
   let live = null;
   let dialing = false;
   const connect = () => {
-    if (dialing || (live && live.readyState <= WebSocket.OPEN)) return;
+    if (stopped || dialing || (live && live.readyState <= WebSocket.OPEN)) return;
     dialing = true;
     client.wsUrl().then((url) => {
+      if (stopped) { dialing = false; return; }
       const ws = new WebSocket(url);
       live = ws;
       // Every (re)open may follow a gap — catch up before treating the
@@ -598,13 +621,13 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
       ws.onclose = () => {
         if (live === ws) live = null;
         dialing = false;
-        setTimeout(connect, 2000);
+        if (!stopped) setTimeout(connect, 2000);
       };
       ws.onerror = () => ws.close();
-    }).catch(() => { dialing = false; setTimeout(connect, 5000); });
+    }).catch(() => { dialing = false; if (!stopped) setTimeout(connect, 5000); });
   };
   connect();
-  const wakeup = () => { connect(); scheduleRecover(); };
+  const wakeup = () => { if (stopped) return; connect(); scheduleRecover(); };
   if (typeof addEventListener === "function") onOnline(wakeup);
   if (typeof document !== "undefined") onVisible(wakeup);
 
@@ -620,8 +643,66 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     live.send(JSON.stringify({ t: "model", e: sealingEpoch, env }));
     return true;
   };
+  /** 044 C4 — end this loop cleanly (the web never calls it: it reloads
+   *  the page to switch people). Closes the socket, cancels every timer,
+   *  gives an in-flight flush/ingest a bounded moment to land, then fences
+   *  whatever is still running out of every write. Nothing durable is
+   *  touched: unconfirmed ops stay pending (relay_seq NULL, resent by the
+   *  next start; the relay dedupes by op_id), the cursor only ever moved
+   *  with applied+saved ops, and the media queue stays in the key store. */
+  const stop = async ({ waitMs = 5000 } = {}) => {
+    stopped = true;
+    clearTimeout(flushTimer);
+    clearTimeout(recoverTimer);
+    clearTimeout(drainTimer);
+    setOpSink(null);
+    setBlobFetcher(null);
+    const ws = live;
+    live = null;
+    if (ws) {
+      ws.onopen = ws.onmessage = ws.onerror = ws.onclose = null;
+      try { ws.close(); } catch { /* already gone */ }
+    }
+    let timer;
+    const bound = new Promise((r) => { timer = setTimeout(r, waitMs); });
+    await Promise.race([
+      Promise.allSettled([chain, flushing, queueLock]),
+      bound,
+    ]);
+    clearTimeout(timer);
+    // Still going after the bound: fence it. A late relay ack still stamps
+    // its seqs (confirmOps is durable truth) but nothing else is written.
+    if (flushTicket) flushTicket.dead = true;
+  };
   return { get client() { return client; }, identity,
-    getEpoch: () => epoch, uploadBlob, queueBlob, sendLive, rekey };
+    getEpoch: () => epoch, uploadBlob, queueBlob, sendLive, rekey, stop,
+    /** 044 C4 - the same pull the lazy fetcher does, but errors surface
+     *  (status 404 = the relay does not hold it) so a caller can tell
+     *  "not there" from "could not reach". Hash is verified on open. */
+    pullBlob: async (sha) => {
+      const env = await client.getBlob(sha);
+      return openBlob(await keyFor(env.e ?? 1), { sha, env });
+    } };
+}
+
+/** 044 C4 — end the running sync loop (person switch on iOS, where the
+ *  app stays alive). Safe when nothing runs. A later initSync (for the
+ *  same or another user) waits for this to finish. Resolves true if a
+ *  loop was running. The web does not call this. */
+export function stopSync(opts = {}) {
+  const p = running;
+  if (!p) return stopping ?? Promise.resolve(false);
+  running = null;
+  flushError = ingestError = rotationError = mediaError = null;
+  mediaPending = 0;
+  const done = (async () => {
+    const handle = await p.catch(() => null);
+    await handle?.stop?.(opts);
+    return !!handle;
+  })();
+  const tracked = done.finally(() => { if (stopping === tracked) stopping = null; });
+  stopping = tracked;
+  return tracked;
 }
 
 /** Tell the running sync to re-seal under a rotated epoch (015 s5). */

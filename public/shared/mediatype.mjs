@@ -40,3 +40,16 @@ const ART_TYPES = new Set(["image/png", "image/webp", "image/gif"]);
 /** A blob: URL for `blob`, marked when it is art. */
 export const pictureURL = (blob) =>
   URL.createObjectURL(blob) + (ART_TYPES.has(blob.type) ? ART_MARK : "");
+
+/** The recording type to ask MediaRecorder for: one the iPad app can play.
+ *  Chrome/Edge/Firefox default to webm/opus, which AVAudioPlayer cannot
+ *  open, so a desktop recording would be silent on the iPad (044 C4).
+ *  MP4/AAC is what Safari and the iPad already record. undefined (= the
+ *  browser default, e.g. webm) only as the last resort. */
+export const PORTABLE_RECORDING_TYPES = ["audio/mp4;codecs=mp4a.40.2", "audio/mp4"];
+export const pickRecordingType = (MediaRecorderCtor = globalThis.MediaRecorder) => {
+  if (typeof MediaRecorderCtor?.isTypeSupported !== "function") return undefined;
+  return PORTABLE_RECORDING_TYPES.find((t) => {
+    try { return MediaRecorderCtor.isTypeSupported(t); } catch { return false; }
+  });
+};
