@@ -195,9 +195,12 @@ test("boot: the trial clock starts and is mirrored, the web's request shapes", a
   assert.equal(read.method, "GET");
   assert.equal(read.headers["x-pip-user"], USER);
   assert.equal(read.headers["x-pip-license"], "");
-  // (voice_tile.sweepReplaced drops `trial`, so a trialing user - no license -
-  // never sweeps: a web bug, noted in the 044 D4 report, not copied or fixed.)
-  assert.equal(worker.of("/api/v1/voice/tile/replaced").length, 0);
+  // A trialing user (no license) sweeps replaced clips too (fixed in
+  // voice_tile.sweepReplaced): user id + an empty license header.
+  const sweeps = worker.of("/api/v1/voice/tile/replaced");
+  assert.equal(sweeps.length, 1);
+  assert.equal(sweeps[0].headers["x-pip-user"], USER);
+  assert.equal(sweeps[0].headers["x-pip-license"], "");
 });
 
 test("fix it: names are masked on the wire, restored on the bar, and the cloud clip is what plays", async () => {
