@@ -310,7 +310,7 @@ test("the UTC day roll retries a budget-queued mint (fake clock)", async () => {
 test("supporter copy: badge is short, card message is full", () => {
   assert.equal(tileStateBadge("minting"), "making voice…");
   assert.equal(tileStateBadge("held"), "no voice yet");
-  assert.equal(tileStateMessage("budget", "Eve"),
-    "Eve's voice for this word will be ready tomorrow.");
-  assert.match(tileStateMessage("minting", "Eve"), /Making Eve's voice/);
+  assert.equal(tileStateMessage("budget", "Mia"),
+    "Mia's voice for this word will be ready tomorrow.");
+  assert.match(tileStateMessage("minting", "Mia"), /Making Mia's voice/);
 });

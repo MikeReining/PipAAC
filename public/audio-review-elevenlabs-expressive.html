@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pip AAC — Eleven v4 expressive probe</title>
   <style>
-    :root { --bg: #f6f4ef; --ink: #1a1a1a; --edge: #d8d3c7; --accent: #1a5f8a; --grok: #5c4d8a; --eve: #1a5f8a; }
+    :root { --bg: #f6f4ef; --ink: #1a1a1a; --edge: #d8d3c7; --accent: #1a5f8a; --grok: #5c4d8a; --mia: #1a5f8a; }
     * { box-sizing: border-box; }
     body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 0; background: var(--bg); color: var(--ink); }
     header { padding: 16px 20px; border-bottom: 1px solid var(--edge); background: #fff; }
@@ -19,7 +19,7 @@
     button.play { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--edge); background: #faf8f5; cursor: pointer; font: inherit; margin-top: 6px; }
     button.play[aria-current="true"] { border-color: var(--accent); background: #e3eef5; }
     button.play.grok[aria-current="true"] { border-color: var(--grok); background: #ece8f5; }
-    button.play.eve[aria-current="true"] { border-color: var(--eve); background: #e3eef5; }
+    button.play.mia[aria-current="true"] { border-color: var(--mia); background: #e3eef5; }
     code { font-size: 11px; word-break: break-word; display: block; margin-top: 4px; color: #4a4640; }
     .feel { font-weight: 600; text-transform: capitalize; }
     audio { width: 100%; margin-top: 16px; }
@@ -100,15 +100,15 @@
           code.textContent = synthText(g);
           tdGrok.appendChild(code);
         }
-        const tdEve = document.createElement("td");
+        const tdMia = document.createElement("td");
         const e = pair.elevenlabs;
         if (e) {
-          tdEve.appendChild(playBtn(e.takeRel, "eve"));
+          tdMia.appendChild(playBtn(e.takeRel, "mia"));
           const code = document.createElement("code");
           code.textContent = synthText(e);
-          tdEve.appendChild(code);
+          tdMia.appendChild(code);
         }
-        tr.append(tdFeel, tdGrok, tdEve);
+        tr.append(tdFeel, tdGrok, tdMia);
         tbody.appendChild(tr);
       }
     }

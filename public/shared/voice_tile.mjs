@@ -29,7 +29,7 @@ export async function tileTextHash(text) {
 export const tileCacheUrl = async (voice, text) =>
   `https://voice.local/tile/${voice}/${await tileTextHash(text)}`;
 
-/** "Eve" → "Eve's voice"; "Pip's voice" stays itself — `voiceName`
+/** "Mia" → "Mia's voice"; "Pip's voice" stays itself — `voiceName`
  *  answers "Pip's voice" for the default voice. */
 const possessiveVoice = (name) =>
   /voice/i.test(name ?? "") ? name : `${name ?? "Pip"}'s voice`;

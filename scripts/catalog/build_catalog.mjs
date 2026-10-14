@@ -60,10 +60,10 @@ const EXTRA_VOICES = [
     clipNs: "leo",
   },
   {
-    id: "voi_eve_en",
-    audioPlan: join(repoRoot, "data/catalog/generated_audio.eve.json"),
-    formsPlan: join(repoRoot, "data/catalog/forms_audio.eve.json"),
-    clipNs: "eve",
+    id: "voi_mia_en",
+    audioPlan: join(repoRoot, "data/catalog/generated_audio.mia.json"),
+    formsPlan: join(repoRoot, "data/catalog/forms_audio.mia.json"),
+    clipNs: "mia",
   },
   {
     id: "voi_sam_en",

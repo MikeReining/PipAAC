@@ -5,7 +5,7 @@
  * voice writes to its own seed lane (elevenlabs-tiles-<name>).
  *
  *   node scripts/catalog/mint_tile_voice_seed.mjs --limit 10
- *   node scripts/catalog/mint_tile_voice_seed.mjs --voice-key voi_eve_en --limit 10
+ *   node scripts/catalog/mint_tile_voice_seed.mjs --voice-key voi_mia_en --limit 10
  *   node scripts/catalog/mint_tile_voice_seed.mjs --limit 10 --offset 10
  *   node scripts/catalog/mint_tile_voice_seed.mjs --dry-run
  *   node scripts/catalog/mint_tile_voice_seed.mjs --all --run-id leo-final-c3-full-seed

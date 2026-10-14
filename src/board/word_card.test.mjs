@@ -242,8 +242,8 @@ test("a new word plays once when its voice is ready", async () => {
   let state = "minting";
   const tile = {
     status: () => state,
-    message: (s) => (s === "minting" ? "Making Eve's voice…" : ""),
-    name: () => "Eve",
+    message: (s) => (s === "minting" ? "Making Mia's voice…" : ""),
+    name: () => "Mia",
     onStatus: (cb) => { listener = cb; return () => {}; },
     ensure: async () => ({ ok: true }),
     flag: async () => true,
@@ -251,8 +251,8 @@ test("a new word plays once when its voice is ready", async () => {
   };
   const h = cardHarness({ tile });
   h.card.openWordCard({ item_kind: "entity", item_id: "ent_pip", label: "Pip" }, { justAdded: { groupName: "Mine" } });
-  assert.equal(h.$("wc-voice").textContent, "Making Eve's voice…");
-  assert.equal(h.$("wc-voicename").textContent, "Eve");
+  assert.equal(h.$("wc-voice").textContent, "Making Mia's voice…");
+  assert.equal(h.$("wc-voicename").textContent, "Mia");
   assert.equal(h.spoken.length, 0);
   state = "ready";
   listener();
@@ -266,7 +266,7 @@ test("028 WT14 — 'Sounds wrong' flags the shared clip and keeps playing", asyn
   const tile = {
     status: () => null,
     message: () => "",
-    name: () => "Eve",
+    name: () => "Mia",
     onStatus: () => () => {},
     ensure: async () => ({ ok: true }),
     flag: async (text) => { flagged.push(text); return true; },
@@ -284,7 +284,7 @@ test("028 — flag stays hidden for catalog words and device voices", () => {
   const tile = {
     status: () => null,
     message: () => "",
-    name: () => "Eve",
+    name: () => "Mia",
     onStatus: () => () => {},
     ensure: async () => ({ ok: true }),
     flag: async () => false,

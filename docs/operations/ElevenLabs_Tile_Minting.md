@@ -121,7 +121,7 @@ After `catalog:tiles:mint-gaps` or `mint_elevenlabs_tile_batch.mjs --mint-run`, 
 
 ### Leo seed (pilot — listen before bulk)
 
-Male tile voice **Leo** (`4sAJvpuF0iHhO9nptfOD`, custom clone — see `data/catalog/tile_voices.json`) was minted in a **separate sample lane** (`elevenlabs-tiles-leo`). **Mia** (`94pmIckCYkqYPVrgIvUH`, younger female; internal key `voi_eve_en`, lanes stay `*-eve`) shipped 2026-10-03 — full launch seed + forms (709 + 378) minted to `elevenlabs-{tiles,forms}-eve` after a 10-clip founder-approved pilot, published by `publish_tile_voice_seed.mjs`. **Sam** (`M5U4lAuMpwU8AGX0x6l2`, younger male) shipped 2026-10-03 — full launch seed + forms (709 + 378) minted to `elevenlabs-{tiles,forms}-sam` after a 10-clip + tricky-probe pilot, published by `publish_tile_voice_seed.mjs`. **Zoe** (`fkNQrdHI0J7vOhlSK5fE`, southern female), **Tom** (`RliWjSXK3mZtypIjNgvO`, British male), **Rey** (`eb1698hSoNbHSWKDmVLe`, Latino male), and **Joy** (`hdbWhKwBTlcfklhVvUW0`, British female) are `planned`. The lineup is Pip, Mia, Leo, Sam, Zoe, Tom, Rey, Joy (founder 2026-10-03, `public/shared/voices.mjs`).
+Male tile voice **Leo** (`4sAJvpuF0iHhO9nptfOD`, custom clone — see `data/catalog/tile_voices.json`) was minted in a **separate sample lane** (`elevenlabs-tiles-leo`). **Mia** (`94pmIckCYkqYPVrgIvUH`, younger female; internal key `voi_mia_en`, lanes stay `*-mia`) shipped 2026-10-03 — full launch seed + forms (709 + 378) minted to `elevenlabs-{tiles,forms}-mia` after a 10-clip founder-approved pilot, published by `publish_tile_voice_seed.mjs`. **Sam** (`M5U4lAuMpwU8AGX0x6l2`, younger male) shipped 2026-10-03 — full launch seed + forms (709 + 378) minted to `elevenlabs-{tiles,forms}-sam` after a 10-clip + tricky-probe pilot, published by `publish_tile_voice_seed.mjs`. **Zoe** (`fkNQrdHI0J7vOhlSK5fE`, southern female), **Tom** (`RliWjSXK3mZtypIjNgvO`, British male), **Rey** (`eb1698hSoNbHSWKDmVLe`, Latino male), and **Joy** (`hdbWhKwBTlcfklhVvUW0`, British female) are `planned`. The lineup is Pip, Mia, Leo, Sam, Zoe, Tom, Rey, Joy (founder 2026-10-03, `public/shared/voices.mjs`).
 
 Founder review: `npm run catalog:audio:review` → [tile review](http://127.0.0.1:3747/audio-review/elevenlabs-tiles) → **Voice: Leo** → **Show: mint run (spot check)** → pick the run → **↑ / ↓**. **Reload list** after an off-screen mint. Agents mint with:
 
@@ -132,7 +132,12 @@ npm run catalog:tiles:mint-leo-seed -- --words cough,laugh --run-id my-probe --f
 npm run catalog:tiles:mint-leo-seed -- --all --run-id leo-final-c3-full-seed
 ```
 
-Any `tile_voices.json` voice works the same way: `--voice-key voi_eve_en`.
+Any `tile_voices.json` voice works the same way: `--voice-key voi_mia_en`.
+Renaming a voice key (Eve → Mia, 2026-10-14) changes every ledger id, so
+the on-demand library needs `scripts/catalog/migrate_tile_voice_key.mjs
+--from voi_eve_en --to voi_mia_en` (copy + re-register, never deletes;
+`--dry-run` first), then `npm run tilevoice:seed-catalog`.
+
 The seed lane derives from the key — `elevenlabs-tiles-<name>` /
 `elevenlabs-forms-<name>` — and appears in the review Voice picker
 automatically. Same for `voi_sam_en` when his turn comes. Full ship per

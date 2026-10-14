@@ -73,23 +73,23 @@ final class VoiceStub: URLProtocol, @unchecked Sendable {
         let (packs, entry, root) = Self.fixture((0..<30).map { "e\($0)" })
         VoiceStub.failAfter = 12                       // the network drops midway
         await #expect(throws: (any Error).self) {
-            try await packs.install(voice: "voi_eve_en", entry: entry) { _, _ in }
+            try await packs.install(voice: "voi_mia_en", entry: entry) { _, _ in }
         }
-        #expect(!packs.isReady("voi_eve_en"))
-        #expect(!FileManager.default.fileExists(atPath: root.appendingPathComponent("voi_eve_en").path))
+        #expect(!packs.isReady("voi_mia_en"))
+        #expect(!FileManager.default.fileExists(atPath: root.appendingPathComponent("voi_mia_en").path))
         #expect(packs.clipURL(String(entry.files[0].dropFirst())) == nil)
         let fetchedBefore = VoiceStub.served.count
 
         VoiceStub.failAfter = nil                      // back online: resume
-        try await packs.install(voice: "voi_eve_en", entry: entry) { _, _ in }
-        #expect(packs.isReady("voi_eve_en"))
+        try await packs.install(voice: "voi_mia_en", entry: entry) { _, _ in }
+        #expect(packs.isReady("voi_mia_en"))
         #expect(VoiceStub.served.count - fetchedBefore <= 30 - fetchedBefore + 6,
                 "resume must not refetch what already verified")
         for f in entry.files {
             let u = try #require(packs.clipURL(String(f.dropFirst())))
-            #expect(u.path.contains("/voi_eve_en/"))
+            #expect(u.path.contains("/voi_mia_en/"))
         }
-        #expect(packs.installedHash("voi_eve_en") == "h1")
+        #expect(packs.installedHash("voi_mia_en") == "h1")
         let v = try root.resourceValues(forKeys: [.isExcludedFromBackupKey])
         #expect(v.isExcludedFromBackup == true)
     }

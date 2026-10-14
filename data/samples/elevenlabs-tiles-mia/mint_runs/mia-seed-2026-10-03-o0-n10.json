@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "runId": "eve-seed-2026-10-03-o0-n10",
-  "label": "Eve seed 1–10",
-  "note": "Pilot seed — Eve, plain only, not published",
-  "batch": "elevenlabs-tiles-eve",
+  "runId": "mia-seed-2026-10-03-o0-n10",
+  "label": "Mia seed 1–10",
+  "note": "Pilot seed — Mia, plain only, not published",
+  "batch": "elevenlabs-tiles-mia",
   "createdAt": "2026-10-03T22:29:31.845Z",
   "voice": {
-    "label": "Eve",
+    "label": "Mia",
     "voice_id": "94pmIckCYkqYPVrgIvUH",
     "model": "eleven_v4"
   },
@@ -15,7 +15,7 @@
       "slot": 1,
       "spokenText": "I",
       "slug": "i",
-      "takeRel": "elevenlabs-tiles-eve/takes/i_plain.mp3",
+      "takeRel": "elevenlabs-tiles-mia/takes/i_plain.mp3",
       "publishedAt": null,
       "review": null
     },
@@ -23,7 +23,7 @@
       "slot": 2,
       "spokenText": "you",
       "slug": "you",
-      "takeRel": "elevenlabs-tiles-eve/takes/you_plain.mp3",
+      "takeRel": "elevenlabs-tiles-mia/takes/you_plain.mp3",
       "publishedAt": null,
       "review": null
     },
@@ -31,7 +31,7 @@
       "slot": 3,
       "spokenText": "me",
       "slug": "me",
-      "takeRel": "elevenlabs-tiles-eve/takes/me_plain.mp3",
+      "takeRel": "elevenlabs-tiles-mia/takes/me_plain.mp3",
       "publishedAt": null,
       "review": null
     },
@@ -39,7 +39,7 @@
       "slot": 4,
       "spokenText": "my",
       "slug": "my",
-      "takeRel": "elevenlabs-tiles-eve/takes/my_plain.mp3",
+      "takeRel": "elevenlabs-tiles-mia/takes/my_plain.mp3",
       "publishedAt": null,
       "review": null
     },
@@ -47,7 +47,7 @@
       "slot": 5,
       "spokenText": "mine",
       "slug": "mine",
-      "takeRel": "elevenlabs-tiles-eve/takes/mine_plain.mp3",
+      "takeRel": "elevenlabs-tiles-mia/takes/mine_plain.mp3",
       "publishedAt": null,
       "review": null
     },
@@ -55,7 +55,7 @@
       "slot": 6,
       "spokenText": "he",
       "slug": "he",
-      "takeRel": "elevenlabs-tiles-eve/takes/he_plain.mp3",
+      "takeRel": "elevenlabs-tiles-mia/takes/he_plain.mp3",
       "publishedAt": null,
       "review": null
     },
@@ -63,7 +63,7 @@
       "slot": 7,
       "spokenText": "she",
       "slug": "she",
-      "takeRel": "elevenlabs-tiles-eve/takes/she_plain.mp3",
+      "takeRel": "elevenlabs-tiles-mia/takes/she_plain.mp3",
       "publishedAt": null,
       "review": null
     },
@@ -71,7 +71,7 @@
       "slot": 8,
       "spokenText": "it",
       "slug": "it",
-      "takeRel": "elevenlabs-tiles-eve/takes/it_plain.mp3",
+      "takeRel": "elevenlabs-tiles-mia/takes/it_plain.mp3",
       "publishedAt": null,
       "review": null
     },
@@ -79,7 +79,7 @@
       "slot": 9,
       "spokenText": "we",
       "slug": "we",
-      "takeRel": "elevenlabs-tiles-eve/takes/we_plain.mp3",
+      "takeRel": "elevenlabs-tiles-mia/takes/we_plain.mp3",
       "publishedAt": null,
       "review": null
     },
@@ -87,7 +87,7 @@
       "slot": 10,
       "spokenText": "they",
       "slug": "they",
-      "takeRel": "elevenlabs-tiles-eve/takes/they_plain.mp3",
+      "takeRel": "elevenlabs-tiles-mia/takes/they_plain.mp3",
       "publishedAt": null,
       "review": null
     }

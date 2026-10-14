@@ -4,7 +4,7 @@
   "layout": "compare",
   "roundKey": "compare-v1",
   "roundId": "compare-v1",
-  "title": "Grok Ara vs Eve — three winning feelings",
+  "title": "Grok Ara vs Mia — three winning feelings",
   "generatedAt": "2026-09-29T20:22:18.051Z",
   "sentence": "I want an apple",
   "grokVoice": {
@@ -12,7 +12,7 @@
     "voice_id": "ara"
   },
   "voice": {
-    "label": "Eve",
+    "label": "Mia",
     "voice_id": "WWMMC6k9tdar0BthUenK",
     "model": "eleven_v4"
   },
@@ -31,7 +31,7 @@
       "id": "happy_eleven",
       "feeling": "happy",
       "provider": "elevenlabs",
-      "label": "happy — Eve",
+      "label": "happy — Mia",
       "synthText": "[cheerful, bright voice] I want an apple!",
       "takeRel": "elevenlabs-expressive-probe/takes/i_want_an_apple_compare_happy_eleven.mp3",
       "bytes": 28047,
@@ -51,7 +51,7 @@
       "id": "sad_eleven",
       "feeling": "sad",
       "provider": "elevenlabs",
-      "label": "sad — Eve",
+      "label": "sad — Mia",
       "synthText": "[sad] I want an apple.",
       "takeRel": "elevenlabs-expressive-probe/takes/i_want_an_apple_compare_sad_eleven.mp3",
       "bytes": 33062,
@@ -71,7 +71,7 @@
       "id": "angry_eleven",
       "feeling": "angry",
       "provider": "elevenlabs",
-      "label": "angry — Eve",
+      "label": "angry — Mia",
       "synthText": "[frustrated] I want an apple!",
       "takeRel": "elevenlabs-expressive-probe/takes/i_want_an_apple_compare_angry_eleven.mp3",
       "bytes": 31808,

@@ -227,7 +227,7 @@ export async function mintExpressiveCompare(opts = {}) {
 
   const sentence = String(opts.sentence ?? DEFAULT_SENTENCE).trim();
   const force = Boolean(opts.force);
-  const eve = getCatalogTileVoice();
+  const mia = getCatalogTileVoice();
   const grokVoice = catalogGrokPrimaryVoice();
   const model = EXPRESSIVE_PROBE_MODEL;
   const slug = sentenceSlug(sentence);
@@ -259,9 +259,9 @@ export async function mintExpressiveCompare(opts = {}) {
         mint: async () =>
           synthesizeElevenLabs({
             text: elevenText,
-            voiceId: eve.voice_id,
+            voiceId: mia.voice_id,
             model,
-            voiceSettings: voiceSettingsForModel(model, eve.voice_settings ?? {}),
+            voiceSettings: voiceSettingsForModel(model, mia.voice_settings ?? {}),
           }),
       },
     ]) {
@@ -309,8 +309,8 @@ export async function mintExpressiveCompare(opts = {}) {
       voice_id: grokVoice.voice_id ?? "ara",
     },
     voice: {
-      label: eve.label ?? "Pip",
-      voice_id: eve.voice_id,
+      label: mia.label ?? "Pip",
+      voice_id: mia.voice_id,
       model,
     },
     variants,

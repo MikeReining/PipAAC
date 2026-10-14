@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.17-5edb110f296d",
-  "version": "1.1.17",
-  "payloadHash": "5edb110f296d",
+  "buildId": "1.1.18-0f728188827a",
+  "version": "1.1.18",
+  "payloadHash": "0f728188827a",
   "files": [
     {
       "path": "/board.js",
@@ -406,7 +406,7 @@
     {
       "path": "/catalog.json",
       "bytes": 3760064,
-      "sha256": "5519c3f9a2d200e304bd06bd56849f9c107ea5086d5b30e4759571af656b3d82"
+      "sha256": "1bd08b7730f860e4f220b3f45962e8349a3dfbfc7f6861fc7b7c28d123de0086"
     },
     {
       "path": "/db.js",
@@ -436,7 +436,7 @@
     {
       "path": "/fresh_db.sqlite",
       "bytes": 2555904,
-      "sha256": "0f51383bae0d4d0d2aec6e3f515345367922a4fa7abc18f07823bc813e998743"
+      "sha256": "2613caab2df6fa725711fc6294bb8af1b76dc126359c30ebb0c3191d70d2385f"
     },
     {
       "path": "/help.en.json",
@@ -1051,7 +1051,7 @@
     {
       "path": "/shared/voice_tile.mjs",
       "bytes": 13972,
-      "sha256": "2ed02fee46644e81b6bb821c2e1db17ab64bf0b2625598fdd92f0b3f4a1047f3"
+      "sha256": "11cf797144a228a02a1b6a714d16328b5f4880ce4dbeea6d39dfe85fb8ce3c5a"
     },
     {
       "path": "/shared/voice.mjs",
@@ -1061,7 +1061,7 @@
     {
       "path": "/shared/voices.mjs",
       "bytes": 2413,
-      "sha256": "2950627ad2177f5e25ebd12b5631a43e308db8bf661047e9ddf642977f00abc6"
+      "sha256": "6f4b6d9ef51cb4d75031fa93af1af254748dd0358b8eacaf88d35dd3c7543ae1"
     },
     {
       "path": "/shared/wincard.mjs",

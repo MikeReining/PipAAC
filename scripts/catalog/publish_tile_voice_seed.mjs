@@ -12,7 +12,7 @@
  *   data/samples/elevenlabs-tiles-<name>/takes/   — mint_tile_voice_seed.mjs
  *   data/samples/elevenlabs-forms-<name>/takes/   — mint_tile_voice_forms.mjs
  *
- *   node scripts/catalog/publish_tile_voice_seed.mjs --voice-key voi_eve_en --run-id eve-full-seed-2026-10-03 --dry-run
+ *   node scripts/catalog/publish_tile_voice_seed.mjs --voice-key voi_mia_en --run-id mia-full-seed-2026-10-03 --dry-run
  *   node scripts/catalog/publish_tile_voice_seed.mjs --no-r2     # local files only
  *   node scripts/catalog/publish_tile_voice_seed.mjs             # Leo full publish (historic run id)
  */

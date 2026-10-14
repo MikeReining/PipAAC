@@ -7,8 +7,8 @@
  * — local samples only, the publish step is publish_tile_voice_seed.mjs.
  *
  *   node scripts/catalog/mint_tile_voice_forms.mjs --dry-run
- *   node scripts/catalog/mint_tile_voice_forms.mjs --voice-key voi_eve_en --limit 10
- *   node scripts/catalog/mint_tile_voice_forms.mjs --voice-key voi_eve_en --all
+ *   node scripts/catalog/mint_tile_voice_forms.mjs --voice-key voi_mia_en --limit 10
+ *   node scripts/catalog/mint_tile_voice_forms.mjs --voice-key voi_mia_en --all
  *
  * Surfaces come from forms_audio.json `needed` — the same census
  * build_catalog.mjs's strict gate uses.

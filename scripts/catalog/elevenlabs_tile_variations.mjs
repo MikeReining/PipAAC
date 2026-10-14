@@ -14,7 +14,7 @@ export const ELEVENLABS_TILES_LEO_BATCH = "elevenlabs-tiles-leo";
 export const ELEVENLABS_FORMS_LEO_BATCH = "elevenlabs-forms-leo";
 
 /**
- * Sample lane for an extra tile voice: "voi_eve_en" → "elevenlabs-tiles-eve".
+ * Sample lane for an extra tile voice: "voi_mia_en" → "elevenlabs-tiles-mia".
  * Pip (voi_default_en) has no seed lane — the core review batches are hers.
  */
 export function tileSeedBatchForVoice(voiceKey) {
@@ -23,7 +23,7 @@ export function tileSeedBatchForVoice(voiceKey) {
   return `elevenlabs-tiles-${short}`;
 }
 
-/** @param {string} voiceKey e.g. "voi_eve_en" → "elevenlabs-forms-eve" */
+/** @param {string} voiceKey e.g. "voi_mia_en" → "elevenlabs-forms-mia" */
 export function formsSeedBatchForVoice(voiceKey) {
   return tileSeedBatchForVoice(voiceKey)?.replace("tiles", "forms") ?? null;
 }

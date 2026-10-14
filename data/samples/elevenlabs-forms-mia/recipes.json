@@ -1,6 +1,6 @@
 {
   "schema": "pippaac.elevenlabs-forms-recipes.v1",
-  "batch": "elevenlabs-forms-eve",
+  "batch": "elevenlabs-forms-mia",
   "generatedAt": "2026-10-03T22:51:44.365Z",
   "defaults": {
     "provider": "elevenlabs",
@@ -10,8 +10,8 @@
       "stability": 0.4,
       "similarity_boost": 0.8
     },
-    "voice_key": "voi_eve_en",
-    "display_name": "Eve"
+    "voice_key": "voi_mia_en",
+    "display_name": "Mia"
   },
   "words": [
     {

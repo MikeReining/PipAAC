@@ -14,16 +14,16 @@ test("listTileReviewVoices includes Pip and Leo", () => {
   const keys = voices.map((v) => v.voice_key);
   assert.ok(keys.includes("voi_default_en"));
   assert.ok(keys.includes("voi_leo_en"));
-  assert.ok(keys.includes("voi_eve_en"));
+  assert.ok(keys.includes("voi_mia_en"));
 });
 
-test("resolveTileReviewLane derives the voi_eve_en (Mia) seed lane", () => {
-  const lane = resolveTileReviewLane("voi_eve_en", "tiles");
-  assert.equal(lane.batch, tileSeedBatchForVoice("voi_eve_en"));
-  assert.equal(lane.batch, "elevenlabs-tiles-eve");
+test("resolveTileReviewLane derives the voi_mia_en (Mia) seed lane", () => {
+  const lane = resolveTileReviewLane("voi_mia_en", "tiles");
+  assert.equal(lane.batch, tileSeedBatchForVoice("voi_mia_en"));
+  assert.equal(lane.batch, "elevenlabs-tiles-mia");
   assert.equal(lane.canPublishCatalog, false);
-  const forms = resolveTileReviewLane("voi_eve_en", "forms");
-  assert.equal(forms.batch, "elevenlabs-forms-eve");
+  const forms = resolveTileReviewLane("voi_mia_en", "forms");
+  assert.equal(forms.batch, "elevenlabs-forms-mia");
 });
 
 test("resolveTileReviewLane maps Leo to leo batch", () => {

@@ -2,12 +2,12 @@
 //  VoiceUITests.swift
 //  PipAACUITests
 //
-//  D3 works test (phase 044 BS-23 / BS-25): choose Eve -> honest progress
-//  -> done -> tap a word -> the speaker opens the file inside Eve's pack
-//  -> relaunch with the network gone, still Eve.
+//  D3 works test (phase 044 BS-23 / BS-25): choose Mia -> honest progress
+//  -> done -> tap a word -> the speaker opens the file inside Mia's pack
+//  -> relaunch with the network gone, still Mia.
 //
 //  The network is a loopback server in this test process serving a SMALL
-//  slice of the real Eve clips (read from the repo's public/) under the
+//  slice of the real Mia clips (read from the repo's public/) under the
 //  web's own paths and sw-audio.json shape - no real voice pack is
 //  downloaded. The instruments are on disk: the app's played_clips.txt
 //  (the path AVAudioPlayer was given) and the person's SQLite file.
@@ -20,7 +20,7 @@ import XCTest
 final class VoiceUITests: XCTestCase {
     private var dir: URL!
     private var server: ClipServer!
-    private let eve = "voi_eve_en"
+    private let mia = "voi_mia_en"
 
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -54,12 +54,12 @@ final class VoiceUITests: XCTestCase {
         return out
     }
 
-    /// Eve's clip key for a word (what the core resolves on a tap).
-    private func eveKey(sense: String) -> String {
+    /// Mia's clip key for a word (what the core resolves on a tap).
+    private func miaKey(sense: String) -> String {
         query(publicDir.appendingPathComponent("fresh_db.sqlite").path, """
             SELECT c.key FROM clip c JOIN label l ON l.utterance_id = c.utterance_id
             WHERE l.sense_id = '\(sense)' AND l.kind = 'lemma' AND l.status = 'approved'
-              AND c.voice_id = '\(eve)' AND c.status = 'ready' LIMIT 1
+              AND c.voice_id = '\(mia)' AND c.status = 'ready' LIMIT 1
             """).first ?? ""
     }
 
@@ -86,45 +86,45 @@ final class VoiceUITests: XCTestCase {
     }
 
     func testChooseEveDownloadsPlaysFromPackAndSurvivesOffline() throws {
-        let keys = ["sns_0013", "sns_0128"].map(eveKey)    // want, apple (+ filler below)
-        XCTAssertFalse(keys.contains(""), "Eve clips for the sample words")
+        let keys = ["sns_0013", "sns_0128"].map(miaKey)    // want, apple (+ filler below)
+        XCTAssertFalse(keys.contains(""), "Mia clips for the sample words")
         let filler = query(publicDir.appendingPathComponent("fresh_db.sqlite").path,
-            "SELECT key FROM clip WHERE voice_id = '\(eve)' ORDER BY key LIMIT 40")
+            "SELECT key FROM clip WHERE voice_id = '\(mia)' ORDER BY key LIMIT 40")
         let files = Array(Set(keys + filler))
-        server = try ClipServer(publicDir: publicDir, voice: eve, keys: files, delayMs: 250)
+        server = try ClipServer(publicDir: publicDir, voice: mia, keys: files, delayMs: 250)
 
         var app = launch()
         XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
         app.buttons["settingsGear"].tap()
         XCTAssertTrue(app.buttons["voice:change"].waitForExistence(timeout: 10))
         app.buttons["voice:change"].tap()
-        let use = app.buttons["voice:use:\(eve)"]
+        let use = app.buttons["voice:use:\(mia)"]
         XCTAssertTrue(use.waitForExistence(timeout: 10))
         use.tap()
 
-        // Honest progress while it downloads, then Eve is in use.
-        XCTAssertTrue(app.progressIndicators["voice:progress:\(eve)"].waitForExistence(timeout: 10),
+        // Honest progress while it downloads, then Mia is in use.
+        XCTAssertTrue(app.progressIndicators["voice:progress:\(mia)"].waitForExistence(timeout: 10),
                       "download progress shows")
         shot(app, "voice-downloading")
-        XCTAssertTrue(app.staticTexts["voice:inuse:\(eve)"].waitForExistence(timeout: 60),
-                      "Eve in use after the pack verified")
-        shot(app, "voice-eve-in-use")
+        XCTAssertTrue(app.staticTexts["voice:inuse:\(mia)"].waitForExistence(timeout: 60),
+                      "Mia in use after the pack verified")
+        shot(app, "voice-mia-in-use")
 
         // The synced setting is on disk, written by the core.
         let pid = try personFile()
-        XCTAssertEqual(query(pid, "SELECT preferred_voice_id FROM learner_profile").first, eve)
+        XCTAssertEqual(query(pid, "SELECT preferred_voice_id FROM learner_profile").first, mia)
 
         app.navigationBars.buttons.firstMatch.tap()
         app.buttons["settingsDone"].tap()
         app.buttons["tile:sns_0013"].tap()
-        let want = dir.appendingPathComponent("VoicePacks/\(eve)").path + "/" + eveKey(sense: "sns_0013")
+        let want = dir.appendingPathComponent("VoicePacks/\(mia)").path + "/" + miaKey(sense: "sns_0013")
         try waitFor { self.played().last == want }
-        XCTAssertEqual(played().last, want, "the speaker opened Eve's file inside her pack")
+        XCTAssertEqual(played().last, want, "the speaker opened Mia's file inside her pack")
         // Packs are not in backups.
         let v = try dir.appendingPathComponent("VoicePacks").resourceValues(forKeys: [.isExcludedFromBackupKey])
         XCTAssertEqual(v.isExcludedFromBackup, true)
 
-        // Relaunch with the network gone: still Eve, still her file.
+        // Relaunch with the network gone: still Mia, still her file.
         app.terminate()
         server.stop()
         let before = played().count
@@ -132,8 +132,8 @@ final class VoiceUITests: XCTestCase {
         XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
         app.buttons["tile:sns_0013"].tap()
         try waitFor { self.played().count > before }
-        XCTAssertEqual(played().last, want, "offline relaunch still speaks Eve")
-        XCTAssertEqual(query(try personFile(), "SELECT preferred_voice_id FROM learner_profile").first, eve)
+        XCTAssertEqual(played().last, want, "offline relaunch still speaks Mia")
+        XCTAssertEqual(query(try personFile(), "SELECT preferred_voice_id FROM learner_profile").first, mia)
     }
 
     /// Manual only (TEST_RUNNER_PIP_REAL_VOICE=voi_sam_en): downloads ONE

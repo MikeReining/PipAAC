@@ -1,6 +1,6 @@
 {
   "schema": "pippaac.elevenlabs-tiles-recipes.v1",
-  "batch": "elevenlabs-tiles-eve",
+  "batch": "elevenlabs-tiles-mia",
   "generatedAt": "2026-10-03T22:46:15.382Z",
   "defaults": {
     "provider": "elevenlabs",
@@ -10,8 +10,8 @@
       "stability": 0.4,
       "similarity_boost": 0.8
     },
-    "voice_key": "voi_eve_en",
-    "display_name": "Eve"
+    "voice_key": "voi_mia_en",
+    "display_name": "Mia"
   },
   "words": [
     {

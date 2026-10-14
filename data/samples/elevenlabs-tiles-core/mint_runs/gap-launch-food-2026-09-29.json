@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "runId": "gap-launch-food-2026-09-29",
-  "label": "Launch food/drink gaps (32) — Eve",
+  "label": "Launch food/drink gaps (32) — Mia",
   "note": "Retroactive manifest for spot-check; clips were mint+published before mint-run UI existed.",
   "batch": "elevenlabs-tiles-core",
   "createdAt": "2026-09-29T16:10:50.891Z",
   "voice": {
-    "label": "Eve",
+    "label": "Mia",
     "voice_id": "WWMMC6k9tdar0BthUenK",
     "model": "eleven_v4"
   },

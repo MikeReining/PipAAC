@@ -240,13 +240,13 @@ test("gates: bad ids, bad license, bad voice (Joy is planned), bad text", async 
 });
 
 test("tile_voices.json agrees with voices.json tiles (one truth)", () => {
-  const eve = tileVoices.voices.find((v) => v.voice_key === "voi_default_en");
-  assert.equal(eve.voice_id, catalogVoices.tiles.voice_id);
-  assert.equal(eve.model, catalogVoices.tiles.model);
-  assert.equal(eve.voice_settings.stability, catalogVoices.tiles.voice_settings.stability);
-  assert.equal(eve.voice_settings.similarity_boost,
+  const mia = tileVoices.voices.find((v) => v.voice_key === "voi_default_en");
+  assert.equal(mia.voice_id, catalogVoices.tiles.voice_id);
+  assert.equal(mia.model, catalogVoices.tiles.model);
+  assert.equal(mia.voice_settings.stability, catalogVoices.tiles.voice_settings.stability);
+  assert.equal(mia.voice_settings.similarity_boost,
     catalogVoices.tiles.voice_settings.similarity_boost);
-  assert.equal(eve.status, "active");
+  assert.equal(mia.status, "active");
   const leo = tileVoices.voices.find((v) => v.voice_key === "voi_leo_en");
   assert.equal(leo.status, "active"); // slice 6: seeded + published
 });
