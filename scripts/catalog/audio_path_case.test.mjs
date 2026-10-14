@@ -24,3 +24,18 @@ for (const file of ["public/catalog.json", "public/sw-audio.json"]) {
     assert.deepEqual(missing, []);
   });
 }
+
+// Clip files are content-addressed: the name is the first 12 hex of the
+// SHA-256 of the bytes. A truncated or swapped file (2026-10-14: a 0-byte
+// climbs clip was committed) fails here instead of shipping silence.
+test("every hash-named clip's bytes match its name", async () => {
+  const { createHash } = await import("node:crypto");
+  const bad = [];
+  for (const rel of tracked) {
+    const name = rel.slice(rel.lastIndexOf("/") + 1, -".mp3".length);
+    if (!/^[0-9a-f]{12}$/.test(name)) continue;
+    const sha = createHash("sha256").update(readFileSync(join(root, "public", rel))).digest("hex");
+    if (!sha.startsWith(name)) bad.push(rel);
+  }
+  assert.deepEqual(bad, []);
+});
