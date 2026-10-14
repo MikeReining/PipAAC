@@ -256,27 +256,42 @@ export function pairClient(baseUrl) {
 
 const NETWORK_RE = /fetch|network|timed out|Failed|offline|Load failed/i;
 
-/** Plain-words message for a pairing poll error that will not fix itself,
- *  or null when polling again may succeed (offline, relay 5xx/408/429). */
-export function pairPollFailure(e) {
+/** Transient (null) vs permanent (a message from `copy`) for any relay
+ *  poll: offline, 408, 429 and 5xx retry; everything else is final. */
+function pollFailure(e, copy) {
   const s = e?.status;
   if (s === undefined) {
-    return e instanceof TypeError || NETWORK_RE.test(String(e?.message)) ? null
-      : "That code didn't work. Ask for a new code on the other device.";
+    return e instanceof TypeError || NETWORK_RE.test(String(e?.message)) ? null : copy.other;
   }
   if (s === 408 || s === 429 || s >= 500) return null;
-  return s === 410 ? "That code ran out. Make a new one on the other device."
-    : s === 409 ? "That code was already used. Make a new one on the other device."
-    : s === 404 ? "That code isn't open — check the letters, or make a new one."
-    : "That code didn't work. Ask for a new code on the other device.";
+  return copy[s] ?? copy.other;
 }
+
+const PAIR_COPY = {
+  410: "That code ran out. Make a new one on the other device.",
+  409: "That code was already used. Make a new one on the other device.",
+  404: "That code isn't open — check the letters, or make a new one.",
+  other: "That code didn't work. Ask for a new code on the other device.",
+};
+const INVITE_COPY = {
+  410: "That invite ran out. Ask them to send a new one.",
+  404: "That invite isn't open any more. Ask them to send a new one.",
+  other: "That invite didn't work. Ask them to send a new one.",
+};
+
+/** Plain-words message for a pairing poll error that will not fix itself,
+ *  or null when polling again may succeed (offline, relay 5xx/408/429). */
+export const pairPollFailure = (e) => pollFailure(e, PAIR_COPY);
+/** The same for the supporter-invite wait. */
+export const invitePollFailure = (e) => pollFailure(e, INVITE_COPY);
 
 /** Poll `step` every `intervalMs` until it returns a value (anything but
  *  undefined). Transient errors retry on the same cadence; a permanent
  *  one stops at once. `cancelled()` ends it quietly.
  *  → { value } | { error, cause } | { cancelled: true } */
 export async function pollPair(step, { intervalMs = 2000,
-  sleep = (ms) => new Promise((r) => setTimeout(r, ms)), cancelled = () => false } = {}) {
+  sleep = (ms) => new Promise((r) => setTimeout(r, ms)), cancelled = () => false,
+  classify = pairPollFailure } = {}) {
   for (;;) {
     await sleep(intervalMs);
     if (cancelled()) return { cancelled: true };
@@ -284,7 +299,7 @@ export async function pollPair(step, { intervalMs = 2000,
       const value = await step();
       if (value !== undefined) return { value };
     } catch (cause) {
-      const error = pairPollFailure(cause);
+      const error = classify(cause);
       if (error) return { error, cause };
     }
   }

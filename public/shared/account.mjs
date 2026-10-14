@@ -33,13 +33,13 @@ const post = async (path, body) => {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify(body) });
   const j = await r.json().catch(() => null);
-  if (!r.ok) throw new Error(j?.error ?? `http ${r.status}`);
+  if (!r.ok) throw Object.assign(new Error(j?.error ?? `http ${r.status}`), { status: r.status });
   return j;
 };
 const get = async (path) => {
   const r = await fetch(path);
   const j = await r.json().catch(() => null);
-  if (!r.ok) throw new Error(j?.error ?? `http ${r.status}`);
+  if (!r.ok) throw Object.assign(new Error(j?.error ?? `http ${r.status}`), { status: r.status });
   return j;
 };
 
@@ -61,7 +61,7 @@ export const deleteAccount = async (acctId, session) => {
     `/accounts/${acctId}?session=${encodeURIComponent(session)}`,
     { method: "DELETE" });
   const j = await r.json().catch(() => null);
-  if (!r.ok) throw new Error(j?.error ?? `http ${r.status}`);
+  if (!r.ok) throw Object.assign(new Error(j?.error ?? `http ${r.status}`), { status: r.status });
   return j;
 };
 

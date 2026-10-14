@@ -10,7 +10,7 @@ import {
 import { recoveryProof } from "../shared/recovery.mjs";
 import { completeRemovalRotation, resumeSupporterRegrant } from "../shared/rotation.mjs";
 import { setSyncAccountOps } from "../shared/sync.mjs";
-import { joinDeviceWithToken, pairClient, relayClient } from "../shared/sync_client.mjs";
+import { invitePollFailure, joinDeviceWithToken, pairClient, pollPair, relayClient } from "../shared/sync_client.mjs";
 import {
   accountPub, accountState, claimInvite, claimToken, createInvite,
   declineInvite, deleteAccount, grantInvite, importAccountUsers, inviteStatus,
@@ -652,26 +652,26 @@ export function mountDevices({
       if (!r) return;
       say("Signed in — waiting for the family to Allow this share…");
       await claimInvite(token, r.session);
-      pairPoll = setInterval(async () => {
-        try {
-          const st = await inviteStatus(token, r.session);
-          if (st.status === "granted" && st.grant) {
-            clearInterval(pairPoll);
-            pairPoll = null;
-            say("Allowed — bringing the user over…");
-            await importAccountUsers({
-              bundle: { users: [st.grant] }, priv: r.priv,
-              keyStore: openKeyStore(), userStore, putUserKey, addUser,
-              joinDevice: joinWithToken });
-            say("Done — the user is on this device.");
-            await renderUsers();
-          } else if (st.status === "declined" || st.status === "revoked") {
-            clearInterval(pairPoll);
-            pairPoll = null;
-            say("The family did not approve this share.");
-          }
-        } catch { /* relay hiccup — poll again */ }
-      }, 2500);
+      const w = await pollPair(async () => {
+        const st = await inviteStatus(token, r.session);
+        if (st.status === "granted" && st.grant) return st;
+        if (st.status === "declined" || st.status === "revoked") return st;
+        return undefined;
+      }, { intervalMs: 2500, classify: invitePollFailure, cancelled: startPoll() });
+      if (w.cancelled) return;
+      pairPoll = null;
+      if (w.error) { say(w.error); return; }
+      if (w.value.status !== "granted") {
+        say("The family did not approve this share.");
+        return;
+      }
+      say("Allowed — bringing the user over…");
+      await importAccountUsers({
+        bundle: { users: [w.value.grant] }, priv: r.priv,
+        keyStore: openKeyStore(), userStore, putUserKey, addUser,
+        joinDevice: joinWithToken });
+      say("Done — the user is on this device.");
+      await renderUsers();
     } catch (e) {
       say(`Invite failed — ${e.message}.`);
     }
