@@ -202,15 +202,10 @@ nonisolated enum UITestHooks {
 
     static func resetIfRequested() {
         guard args.contains("-pipUITestReset"),
-              let dir = try? FileManager.default.url(
-                for: .applicationSupportDirectory, in: .userDomainMask,
-                appropriateFor: nil, create: false)
-                .appendingPathComponent("Users", isDirectory: true)
-        else { return }
-        for suffix in ["", "-wal", "-shm"] {
-            try? FileManager.default.removeItem(
-                at: dir.appendingPathComponent("default.sqlite\(suffix)"))
-        }
+              let base = try? PipAssets.dataBase() else { return }
+        // The people registry and every person's file (PeopleRegistry).
+        try? FileManager.default.removeItem(at: base.appendingPathComponent("people.json"))
+        try? FileManager.default.removeItem(at: base.appendingPathComponent("Users", isDirectory: true))
         UserDefaults.standard.removeObject(forKey: "pip.pin.device") // PipPin's key
     }
 

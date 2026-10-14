@@ -30,6 +30,19 @@ struct SettingsView: View {
                         }
                         .accessibilityIdentifier("editBoard")
                     }
+                    Section {
+                        NavigationLink {
+                            PeopleView()
+                        } label: {
+                            HStack {
+                                Text("People on this device")
+                                Spacer()
+                                Text("\(model.people.count)")
+                                    .foregroundStyle(PipStyle.muted)
+                            }
+                        }
+                        .accessibilityIdentifier("settings:people")
+                    }
                     Section("Talking") {
                         toggle("Grammar help", "grammar_help", s.grammarHelp)
                         toggle("Start fresh after speaking", "fresh_after_speak",

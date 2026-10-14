@@ -57,25 +57,25 @@ nonisolated enum PipAssets {
         return img
     }
 
-    // MARK: - User database file
+    // MARK: - People (PeopleRegistry.swift)
 
-    /// `Application Support/Users/<name>.sqlite` — the family's data.
-    /// First run copies the shipped fresh_db; a failed copy/open is
-    /// reported, never silently re-seeded over existing bytes (043 A).
-    static func userDbURL(_ name: String = "default") throws -> URL {
-        let dir = try FileManager.default.url(
-            for: .applicationSupportDirectory, in: .userDomainMask,
-            appropriateFor: nil, create: true)
-            .appendingPathComponent("Users", isDirectory: true)
-        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        let target = dir.appendingPathComponent("\(name).sqlite")
-        if !FileManager.default.fileExists(atPath: target.path) {
-            guard let seed = url("fresh_db.sqlite") else {
-                throw NSError(domain: "org.pipaac", code: 2,
-                              userInfo: [NSLocalizedDescriptionKey: "fresh_db.sqlite missing from bundle"])
-            }
-            try FileManager.default.copyItem(at: seed, to: target)
+    /// Where people.json and Users/<id>.sqlite live: Application Support,
+    /// or the `-PipDataDir <path>` launch argument (UI tests read the
+    /// files they assert on from there).
+    static func dataBase() throws -> URL {
+        let base: URL
+        if let o = UserDefaults.standard.string(forKey: "PipDataDir") {
+            base = URL(fileURLWithPath: o, isDirectory: true)
+        } else {
+            base = try FileManager.default.url(
+                for: .applicationSupportDirectory, in: .userDomainMask,
+                appropriateFor: nil, create: true)
         }
-        return target
+        try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
+        return base
+    }
+
+    static func makeRegistry() throws -> PeopleRegistry {
+        PeopleRegistry(base: try dataBase(), seed: url("fresh_db.sqlite"))
     }
 }

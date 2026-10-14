@@ -162,7 +162,7 @@ nonisolated struct AppOpenResult: Decodable, Sendable {
 
 @MainActor
 final class AppModel: ObservableObject {
-    enum Surface { case boot, board, index, group }
+    enum Surface { case boot, picker, board, index, group }
 
     @Published private(set) var surface: Surface = .boot
     @Published var board: BoardModel?
@@ -186,9 +186,15 @@ final class AppModel: ObservableObject {
     @Published var editToast: EditToastModel?
     var editToastSeq = 0
     @Published private(set) var settings: SettingsModel?
+    /// The device's people (PeopleRegistry), last opened first, and who is open.
+    @Published private(set) var people: [PersonRecord] = []
+    @Published private(set) var activeId: String?
+    @Published var peopleError: String?
     private var toastSeq = 0
 
     nonisolated let core = PipCore()
+    private var registry: PeopleRegistry?
+    private var coreLoaded = false
     private(set) var appId = ""
     private var dbId: Int32 = 0
     let speaker = PipSpeaker()
@@ -213,42 +219,127 @@ final class AppModel: ObservableObject {
 
     // MARK: boot
 
+    /// web board.js: the home person opens; a lone person opens; many
+    /// people and no home asks "Who's talking?" first.
     func boot() {
         speaker.configure()
         Task { @MainActor in
             do {
-                let (opened, dbId, st) = try await Self.bootCore(core)
-                speaker.rate = opened.speechRate ?? 1
-                self.appId = opened.appId
-                self.dbId = dbId
-                apply(st)
-                surface = .board
+                UITestHooks.resetIfRequested()
+                let reg = try PipAssets.makeRegistry()
+                try reg.bootstrap()
+                registry = reg
+                try refreshPeople()
+                if let me = PeopleRegistry.resolveActive(people) {
+                    try await open(me.id)
+                } else {
+                    surface = .picker
+                }
             } catch {
                 bootError = "\(error)"
             }
         }
     }
 
-    /// Boot's heavy lane — the bundle eval + catalog import must not
-    /// run on the main actor, so this is `async` (suspends to the pool)
-    /// even though nothing inside awaits.
-    nonisolated private static func bootCore(_ core: PipCore) async throws -> (AppOpenResult, Int32, PaintedState) {
-        UITestHooks.resetIfRequested()
-        let dbURL = try PipAssets.userDbURL()
+    func refreshPeople() throws {
+        people = try registry?.list() ?? []
+    }
+
+    /// Opens a person's file and makes them the one on screen. The new
+    /// file opens first; the old one closes only once it did, so a
+    /// failed open leaves the current person untouched (never a fresh
+    /// catalog over anyone's data - phase 044 section 6 B-C).
+    private func open(_ id: String) async throws {
+        guard let registry else { return }
+        let url = try registry.openableFile(id)
+        let (opened, newDb, st, set) = try await Self.openCore(
+            core, url, loaded: coreLoaded, oldApp: appId, oldDb: dbId)
+        coreLoaded = true
+        speaker.rate = opened.speechRate ?? 1
+        appId = opened.appId
+        dbId = newDb
+        activeId = id
+        try registry.touchOpened(id)
+        try refreshPeople()
+        groupIndex = nil
+        groupPage = nil
+        toast = nil
+        tense = "present"
+        question = false
+        controls = Set(set.barControls)
+        settings = set
+        showSettings = false
+        apply(st)
+        surface = .board
+    }
+
+    /// Switch to another person (people-ui.js `switchTo`).
+    func openPerson(_ id: String) {
+        guard id != activeId else { return }
+        Task { @MainActor in
+            do { try await open(id) } catch { peopleError = "\(error)" }
+        }
+    }
+
+    /// Settings > People > Add a person: a name, then straight to
+    /// their board (devices-ui.js `usr-add`).
+    func addPerson(name: String) {
+        Task { @MainActor in
+            do {
+                guard let registry else { return }
+                let added = try registry.add(name: name)
+                try await open(added.id)
+            } catch { peopleError = "\(error)" }
+        }
+    }
+
+    func removePerson(_ id: String) {
+        guard id != activeId else { return }
+        do {
+            try registry?.remove(id)
+            try refreshPeople()
+        } catch { peopleError = "\(error)" }
+    }
+
+    /// "When Pip opens": a person, or nil for the list.
+    func setHomePerson(_ id: String?) {
+        do {
+            try registry?.setHome(id)
+            try refreshPeople()
+        } catch { peopleError = "\(error)" }
+    }
+
+    /// Open heavy lane - bundle eval (once) + catalog import must not
+    /// run on the main actor. The previous person's session and file
+    /// close after the new one opened.
+    nonisolated private static func openCore(
+        _ core: PipCore, _ dbURL: URL, loaded: Bool, oldApp: String, oldDb: Int32
+    ) async throws -> (AppOpenResult, Int32, PaintedState, SettingsModel) {
         let catalog = try PipAssets.text("catalog.json")
         let phrases = try PipAssets.text("suggest_answers.en.json")
         let forms = try PipAssets.text("form_answers.en.json")
         return try core.sync {
-            _ = try core.evaluate(resource: "pip-core", bundle: .main)
+            if !loaded { _ = try core.evaluate(resource: "pip-core", bundle: .main) }
             let dbId = try core.openDatabase(path: dbURL.path)
-            let opened: AppOpenResult = try decodeRaw(
-                core.call("PIPCORE.app", "appOpen", [dbId, catalog, phrases, forms]))
-            UITestHooks.seedIfRequested(core, appId: opened.appId)
-            let st = PaintedState(
-                bar: try decodeRaw(core.call("PIPCORE.app", "appBar", [opened.appId])),
-                strip: try decodeRaw(core.call("PIPCORE.app", "appStrip", [opened.appId])),
-                board: try decodeRaw(core.call("PIPCORE.app", "appBoard", [opened.appId])))
-            return (opened, dbId, st)
+            do {
+                let opened: AppOpenResult = try decodeRaw(
+                    core.call("PIPCORE.app", "appOpen", [dbId, catalog, phrases, forms]))
+                if !loaded { UITestHooks.seedIfRequested(core, appId: opened.appId) }
+                let st = PaintedState(
+                    bar: try decodeRaw(core.call("PIPCORE.app", "appBar", [opened.appId])),
+                    strip: try decodeRaw(core.call("PIPCORE.app", "appStrip", [opened.appId])),
+                    board: try decodeRaw(core.call("PIPCORE.app", "appBoard", [opened.appId])))
+                let set: SettingsModel = try decodeRaw(
+                    core.call("PIPCORE.app", "appSettings", [opened.appId]))
+                if !oldApp.isEmpty {
+                    _ = try core.call("PIPCORE.app", "appClose", [oldApp])
+                    core.closeDatabase(id: oldDb)
+                }
+                return (opened, dbId, st, set)
+            } catch {
+                core.closeDatabase(id: dbId)
+                throw error
+            }
         }
     }
 

@@ -188,7 +188,7 @@ struct BoardView: View {
                 case .board: model.openGroups()
                 case .group: model.openGroups()
                 case .index: model.backToBoard()
-                case .boot: break
+                case .boot, .picker: break
                 }
             }
             AnchorTile(icon: "keyboard",
@@ -229,7 +229,7 @@ struct BoardView: View {
     private var gridArea: some View {
         GeometryReader { geo in
             switch model.surface {
-            case .boot:
+            case .boot, .picker:
                 ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
             case .board:
                 if let kb = model.kb {

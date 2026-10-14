@@ -23,6 +23,9 @@ struct ContentView: View {
                         .multilineTextAlignment(.center)
                 }
                 .padding()
+            } else if model.surface == .picker {
+                WhosTalkingView()
+                    .environmentObject(model)
             } else {
                 BoardView()
                     .environmentObject(model)
