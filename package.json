@@ -63,6 +63,8 @@
     "ios:core:check": "node scripts/ios/build_core.mjs --check",
     "ios:fixtures": "node scripts/ios/export_fixtures.mjs",
     "ios:fixtures:check": "node scripts/ios/export_fixtures.mjs --check",
+    "ios:crypto-fixtures": "node scripts/ios/export_crypto_fixtures.mjs",
+    "ios:crypto-fixtures:check": "node scripts/ios/export_crypto_fixtures.mjs --check",
     "ios:test": "xcodebuild test -project apps/PipAAC/PipAAC.xcodeproj -scheme PipAAC -configuration Release",
     "ios:test:unit": "xcodebuild test -project apps/PipAAC/PipAAC.xcodeproj -scheme PipAAC -configuration Release -destination 'platform=iOS Simulator,name=iPad (A16)' -only-testing:PipAACTests",
     "ios:assets":"node scripts/ios/bundle_assets.mjs",

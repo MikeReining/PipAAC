@@ -22,6 +22,7 @@ const GATES = [
   { name: "site:compare", cmd: process.execPath, args: ["scripts/site/build_compare.mjs", "--check"] },
   { name: "lint:platform-label", cmd: process.execPath, args: ["scripts/check_platform_label.mjs"] },
   { name: "ios:core", cmd: process.execPath, args: ["scripts/ios/build_core.mjs", "--check"] },
+  { name: "ios:crypto-fixtures", cmd: process.execPath, args: ["scripts/ios/export_crypto_fixtures.mjs", "--check"] },
   { name: "guard-liveness", cmd: "bash", args: ["scripts/check-test-guard-liveness.sh"] },
   // 043 J — checkJs on the platform seams (platform.mjs + sync_client.mjs).
   { name: "types:seams", cmd: process.execPath, args: ["node_modules/typescript/bin/tsc", "-p", "tsconfig.seams.json"] },
