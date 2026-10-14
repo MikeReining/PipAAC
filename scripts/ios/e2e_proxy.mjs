@@ -7,6 +7,9 @@
  *   cut-blobs   a GET /blobs/<sha> answers with the first half of its body
  *               and then the connection dies - a download interrupted
  *               mid-transfer. Every cut is appended to <ctl>.log.
+ *   cut-grant   a POST /accounts/invites/<token> {action:"grant"} answers 503
+ *               (the owner's regrant leg dies - 044 F2); every cut is logged.
+ *               Other invite actions (revoke, claim, decline) pass.
  *   down        the relay is gone: new connections die at once and every
  *               open one (the WebSocket too) is destroyed when the file
  *               flips to `down`.
@@ -26,6 +29,24 @@ const track = (s) => { live.add(s); s.on("close", () => live.delete(s)); s.on("e
 const server = http.createServer((req, res) => {
   const m = mode();
   if (m === "down") { req.socket.destroy(); return; }
+  if (m === "cut-grant" && req.method === "POST" && req.url.startsWith("/accounts/invites/")) {
+    const chunks = [];
+    req.on("data", (c) => chunks.push(c));
+    req.on("end", () => {
+      const body = Buffer.concat(chunks);
+      if (body.toString().includes('"action":"grant"')) {
+        appendFileSync(`${ctl}.log`, `CUT-GRANT ${req.url}\n`);
+        res.writeHead(503, { "content-type": "application/json" });
+        res.end('{"error":"relay_down"}');
+        return;
+      }
+      const up = http.request({ host: "127.0.0.1", port: target, method: req.method, path: req.url,
+        headers: req.headers, agent: false }, (ur) => { res.writeHead(ur.statusCode, ur.headers); ur.pipe(res); });
+      up.on("error", () => req.socket.destroy());
+      up.end(body);
+    });
+    return;
+  }
   const cut = m === "cut-blobs" && req.method === "GET" && req.url.includes("/blobs/");
   const up = http.request({ host: "127.0.0.1", port: target, method: req.method, path: req.url,
     headers: req.headers, agent: false }, (ur) => {

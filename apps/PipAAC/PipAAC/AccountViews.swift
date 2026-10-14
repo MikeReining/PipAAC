@@ -28,6 +28,7 @@ extension AppModel {
 struct AccountView: View {
     @EnvironmentObject var model: AppModel
     @ObservedObject var flow: AccountFlow
+    @ObservedObject var team: TeamFlow
     @State private var email = ""
     @State private var pasted = ""
 
@@ -88,9 +89,11 @@ struct AccountView: View {
                         .font(.footnote).foregroundStyle(PipStyle.muted)
                 }
             }
+            if !hidden { AccountExtrasSections(team: team, flow: flow) }
         }
         .navigationTitle("Your account")
-        .onAppear { flow.refreshAccount() }
+        .teamToast(team)
+        .onAppear { flow.refreshAccount(); team.refresh() }
     }
 }
 
@@ -99,6 +102,7 @@ struct AccountView: View {
 struct BackupView: View {
     @EnvironmentObject var model: AppModel
     @ObservedObject var flow: AccountFlow
+    @ObservedObject var team: TeamFlow
     @State private var showCard = false
     @State private var showRestore = false
 
@@ -122,8 +126,14 @@ struct BackupView: View {
                 Text("If this device is lost or reset, the card brings everything back. Print it and keep it somewhere safe. Without the card, a linked device, or a device backup, their words are gone for good.")
                     .font(.footnote).foregroundStyle(PipStyle.muted)
             }
+            DeleteFromPipSection(team: team)
         }
         .navigationTitle("Backup & privacy")
+        .teamToast(team)
+        .onAppear { team.refresh() }
+        .sheet(isPresented: Binding(get: { team.deleteSheet != nil }, set: { if !$0 { team.deleteSheet = nil } })) {
+            DeleteSheet(team: team)
+        }
         .sheet(isPresented: $showCard) { CardSheet(flow: flow) }
         .sheet(isPresented: $showRestore) { RestoreSheet(flow: flow).environmentObject(model) }
     }

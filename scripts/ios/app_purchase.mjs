@@ -195,6 +195,20 @@ export const productId = () => PRODUCT_ID;
 /** Refresh the Lifetime state for a person. -> {kind:"status", status:{licensed, endsAt, issue, issueText}} */
 export function sync(appId, baseUrl, userRowJson, label, ref = null) {
   (async () => {
+    // A refresh must not link anyone: opening a person is not a purchase (the web's ensureUser runs on
+    // a user action - a card, a first device, an invite, a purchase). Linking on open made every fresh
+    // install a relay user before it could join a code, restore, or sign in (044 F2 found it in the C3/C5 E2E).
+    const row = parse(userRowJson);
+    if (!row.sync?.userId) {
+      // Unlinked: nothing owned yet; only the trial clock (keyed by the person id, no relay user needed).
+      const res = await fetch(`${baseUrl}/api/v1/trial`, {
+        headers: { "x-pip-user": row.id, "x-pip-license": "" } }).catch(() => null);
+      const endsAt = res?.ok ? ((await res.json().catch(() => ({}))).endsAt ?? null) : null;
+      try { appSession(appId).licensed = false; } catch { /* session closed */ }
+      reply(ref, { kind: "status", ok: true, newlyLinked: false,
+        status: { userId: row.id, licensed: false, endsAt, issue: null, issueText: null } });
+      return;
+    }
     const { me, store, newlyLinked } = await ensure(baseUrl, userRowJson, label);
     reply(ref, { kind: "status", ok: true, newlyLinked, status: await readStatus(appId, baseUrl, me, store) });
   })().catch((e) => failed(ref, "status", e));

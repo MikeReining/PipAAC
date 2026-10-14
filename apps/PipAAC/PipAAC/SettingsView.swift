@@ -79,20 +79,20 @@ struct SettingsView: View {
                         .accessibilityIdentifier("settings:people")
                         .settingsRow("people", focus)
                         NavigationLink {
-                            TeamDevicesView()
+                            TeamDevicesView(team: model.team)
                         } label: {
                             Text("Team & devices")
                         }
                         .accessibilityIdentifier("settings:team")
                         .settingsRow("team", focus)
                         NavigationLink {
-                            BackupView(flow: model.flow)
+                            BackupView(flow: model.flow, team: model.team)
                         } label: {
                             Text("Backup & privacy")
                         }
                         .accessibilityIdentifier("settings:backup")
                         NavigationLink {
-                            AccountView(flow: model.flow)
+                            AccountView(flow: model.flow, team: model.team)
                         } label: {
                             Text("Your account")
                         }

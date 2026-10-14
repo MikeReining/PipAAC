@@ -83,6 +83,9 @@ export * as pair from "./app_pair.mjs";
 /** Supporter accounts + passkeys (044 C5) - PIPCORE.account */
 export * as account from "./app_account.mjs";
 
+/** Team, devices, removal + rotation, deletion (044 F2) - PIPCORE.team */
+export * as team from "./app_team.mjs";
+
 /** Pip Lifetime: render model, entitlement sync, App Store redeem, codes
  *  (044 F1) - PIPCORE.purchase */
 export * as purchase from "./app_purchase.mjs";

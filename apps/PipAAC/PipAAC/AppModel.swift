@@ -207,6 +207,8 @@ final class AppModel: ObservableObject {
     var host: PipHost?
     /// Supporter account + recovery card screens' state (044 C5).
     let flow = AccountFlow()
+    /// Team list, device list, deletion (044 F2).
+    let team = TeamFlow()
     /// The person the process-wide sync loop runs for (sync.mjs `running`).
     var syncingId: String?
     var syncDbId: Int32 = 0
@@ -259,6 +261,7 @@ final class AppModel: ObservableObject {
                 try reg.bootstrap()
                 registry = reg
                 try installHost(registry: reg)
+                if let svc = host?.config.keychainService { UITestHooks.seedAccountIfRequested(service: svc) }
                 try refreshPeople()
                 if let me = PeopleRegistry.resolveActive(people) {
                     try await open(me.id)

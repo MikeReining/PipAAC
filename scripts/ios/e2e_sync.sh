@@ -154,7 +154,7 @@ run_two_people() {
   compare "$D/B/peer.dump" "$D/ipad-B.dump" "person B's web device"
 }
 
-# PIP_E2E_ONLY=both-ways|offline|media|two-people|restore-words|restore-scan|account runs one scenario (debugging).
+# PIP_E2E_ONLY=both-ways|offline|media|two-people|restore-words|restore-scan|account|team runs one scenario (debugging).
 only() { [ -z "${PIP_E2E_ONLY:-}" ] || [ "$PIP_E2E_ONLY" = "$1" ]; }
 only both-ways && run_scenario both-ways SyncE2ETests/testLinkAndSyncBothWays both-ways peer peer2
 only offline && run_scenario offline SyncE2ETests/testOfflineCatchUp offline peer
@@ -185,6 +185,50 @@ run_account() {
   stop_proxy
 }
 only account && run_account
+
+# 044 F2: owner (the iPad) + two supporters + a second device, on the LOCAL Worker. Invite -> Allow ->
+# Owner/Team (the RELAY refuses a Team member) -> device list -> delete cloud data + undo -> remove a
+# supporter with the regrant cut and the app KILLED -> relaunch resumes -> remove a device -> delete the
+# account. The peers (node: real sync.mjs) assert every authority claim against the relay itself.
+run_team() {
+  if ! curl -s "$WORKER/accounts/dev/mailbox?email=probe@example.com" | grep -q no_mail; then
+    echo; echo "== scenario: team SKIPPED - the Worker's dev mailbox is closed (ENVIRONMENT is not development in .dev.vars)"
+    FAIL=1
+    return
+  fi
+  local D="$RUN/team"; mkdir -p "$D/ipad"
+  echo; echo "== scenario: team (TeamE2ETests)"
+  start_proxy "$D"
+  node scripts/ios/e2e_web_peer.mjs host "$D" "$BASE" "$SECRET" team > "$D/peer.log" 2>&1 &
+  local PEER=$!
+  xcode_test "$D" "TeamE2ETests"
+  local XC=$?
+  grep -E "E2E-|Test Case.*(passed|failed)|error:" "$D/xcodebuild.log" | head -20
+  if [ "$XC" != 0 ]; then   # the orchestrator would wait for a UI that is gone
+    kill "$PEER" 2>/dev/null; pkill -f "e2e_web_peer.mjs team-agent $D" 2>/dev/null
+  fi
+  wait "$PEER" 2>/dev/null
+  local PX=$?
+  echo "relay answers recorded by the peers:"
+  grep -hE "TEAM member|OWNER \(|TEAM again|REMOVED|pending deletion|deletion undone|regrant is cut|regrant|account deleted|lifetime granted|edit at epoch|sees the person" "$D/peer.log" | sed 's/^/  /'
+  [ -s "$D/proxy-mode.log" ] && { echo "proxy log:"; cat "$D/proxy-mode.log"; }
+  stop_proxy
+  [ "$XC" = 0 ] || { echo "XCUITest FAILED ($XC) - see $D/xcodebuild.log"; FAIL=1; return; }
+  [ "$PX" = 0 ] || { echo "peer FAILED ($PX) - see $D/peer.log"; FAIL=1; return; }
+  ipad_dump "$D" - "$D/ipad.dump"
+  compare "$D/d2.dump" "$D/ipad.dump" "device 2 (removed later, after convergence)"
+  compare "$D/s2.dump" "$D/ipad.dump" "supporter 2 (regranted)"
+  if diff -q "$D/s1.dump" "$D/ipad.dump" > /dev/null; then
+    echo "REMOVED supporter's dump is IDENTICAL to the iPad's - it should be stale"; FAIL=1
+  else
+    echo "REMOVED supporter's dump DIFFERS from the iPad's (stale, as it must be): $(diff "$D/s1.dump" "$D/ipad.dump" | grep -c '^>') line(s) it never received"
+    grep -q "Mayaa" "$D/ipad.dump" && ! grep -q "Mayaa" "$D/s1.dump" && echo "  the post-removal rename 'Mayaa' is on the iPad and NOT on the removed supporter" || { echo "  expected the post-removal rename to be missing from the removed supporter"; FAIL=1; }
+  fi
+  for f in s1-check-1 s1-check-2 s1-check-3 s1-secrecy.json d2-removed-ok s2-stale-ok s2-regrant-ok account-delete-check.json; do
+    [ -f "$D/$f" ] && echo "  $f: $(cat "$D/$f")" || { echo "  MISSING $f"; FAIL=1; }
+  done
+}
+only team && run_team
 
 echo; [ "$FAIL" = 0 ] && echo "E2E RESULT: PASS" || echo "E2E RESULT: FAIL"
 echo "artifacts: $RUN"

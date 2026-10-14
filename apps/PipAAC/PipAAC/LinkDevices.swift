@@ -89,6 +89,7 @@ extension AppModel {
             },
             passkeys: { op, req in try await PasskeyCeremony.shared.run(op, req) })
         flow.model = self
+        team.model = self
         try core.sync { try core.install(host) }
         self.host = host
         host.startNetworkMonitor()
@@ -148,6 +149,8 @@ extension AppModel {
         case "pair.join": if let ev { joinEvent(ev) }
         case "account.link", "account.landing", "recovery.linked", "recovery.card", "recovery.restore":
             flow.handle(name, json)
+        case "team.state", "team.toast", "team.account", "team.myname", "team.deleted":
+            team.handle(name, json)
         default: break
         }
     }
@@ -317,6 +320,10 @@ extension AppModel {
 /// Settings -> "Team & devices" (index.html data-sec="team").
 struct TeamDevicesView: View {
     @EnvironmentObject var model: AppModel
+    @ObservedObject private var team: TeamFlow
+    private let tick = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
+
+    init(team: TeamFlow) { _team = ObservedObject(wrappedValue: team) }
 
     var body: some View {
         Form {
@@ -339,13 +346,20 @@ struct TeamDevicesView: View {
                         .foregroundStyle(PipStyle.muted)
                         .accessibilityIdentifier("team:media")
                 }
-                Button("Add a device") { model.startOffer() }
-                    .accessibilityIdentifier("team:add")
+                if team.state?.owner ?? true {
+                    Button("Add a device") { model.startOffer() }
+                        .accessibilityIdentifier("team:add")
+                }
                 Text("Add a device shows a code here — type it on the other device. A linked device sees and edits everything for this person. Removing one locks it out.")
                     .font(.footnote).foregroundStyle(PipStyle.muted)
+                DeviceListRows(team: team)
             }
+            TeamListSections(team: team)
         }
         .navigationTitle("Team & devices")
+        .teamToast(team)
+        .onAppear { team.refresh() }
+        .onReceive(tick) { _ in team.refresh() }
         .sheet(item: Binding(
             get: { model.offerSheet.map { _ in SheetTag(id: "offer") } },
             set: { if $0 == nil { model.endOffer() } })) { _ in

@@ -18,6 +18,7 @@ import { resetMedia, scanMedia, setPuller } from "./app_mediasync.mjs";
 import { refreshStatsDays } from "../../public/shared/stats.mjs";
 import { hostCall } from "./jsc_shims.mjs";
 import { appDb } from "./app.mjs";
+import { noteBase } from "./app_team.mjs";
 
 /** Bumped by every start and stop: a start that resolves after a stop is stale. */
 let gen = 0;
@@ -38,6 +39,7 @@ export function syncStart(appId, userRow, baseUrl, opts) {
 export function syncStartDb(db, userRow, baseUrl, opts) {
   const user = parse(userRow);
   const myGen = ++gen;
+  noteBase(baseUrl || globalThis.location?.origin); // the regrant drain (F2) runs inside this loop
   const saveUser = async (patch) => {
     if (patch?.sync) user.sync = patch.sync;
     await hostCall("saveUser", { userId: user.id, patch });

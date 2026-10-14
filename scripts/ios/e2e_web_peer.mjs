@@ -20,6 +20,7 @@ import { registerHooks } from "node:module";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DatabaseSync } from "node:sqlite";
+import { makeTeamPeer } from "./e2e_team_peer.mjs";
 
 const root = new URL("../../", import.meta.url).pathname;
 const shared = join(root, "public/shared");
@@ -81,7 +82,7 @@ async function waitFor(name, ms = 120000) {
 const log = (...a) => console.log(`[peer:${mode}]`, ...a);
 
 const sc = await import(pathToFileURL(join(shared, "sync_crypto.mjs")).href);
-const { relayClient, pairClient } = await import(pathToFileURL(join(shared, "sync_client.mjs")).href);
+const { relayClient, pairClient, joinDeviceWithToken } = await import(pathToFileURL(join(shared, "sync_client.mjs")).href);
 const { recoveryProof } = await import(pathToFileURL(join(shared, "recovery.mjs")).href);
 const migrate = await import(pathToFileURL(join(shared, "migrate.mjs")).href);
 const { importCatalog } = await import(pathToFileURL(join(shared, "import.mjs")).href);
@@ -437,12 +438,21 @@ async function joinMode() {
   process.exit(0);
 }
 
+/* 044 F2: the `team` scenario lives in e2e_team_peer.mjs (this file's seams are handed over). */
+const team = makeTeamPeer({
+  dir, baseUrl, secret, scenario, put, waitFor, sleep, spawn, readFileSync, join, shared, pathToFileURL,
+  sc, pairClient, relayClient, joinDeviceWithToken, groups, opsMod, openDb, peerStore, startSync, dumpTo,
+  selfPath: new URL(import.meta.url).pathname,
+});
+
 try {
-  if (mode === "host") await hostMode();
+  if (mode === "host" && scenario === "team") await team.teamOrchestrator();
+  else if (mode === "team-agent") await team.teamAgent(scenario);
+  else if (mode === "host") await hostMode();
   else if (mode === "join") await joinMode();
-  else throw new Error("usage: host|join <dir> <baseUrl> [secret]");
+  else throw new Error("usage: host|join|team-agent <dir> <baseUrl> [secret]");
 } catch (e) {
   console.error(`[peer:${mode}] FAILED`, e);
-  put(`${mode}-failed`, e?.stack ?? e);
+  put(mode === "team-agent" ? "host-failed" : `${mode}-failed`, `[${mode}:${scenario}] ${e?.stack ?? e}`);
   process.exit(1);
 }

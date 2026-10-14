@@ -248,6 +248,16 @@ nonisolated enum UITestHooks {
         try? PipKeychain.delete("account/state") // 044 C5: signed-in state is device-only
     }
 
+    /// F2: a signed-in supporter account, without the passkey ceremony the
+    /// simulator cannot run. `-pipUITestSeedAccount <file>` holds the
+    /// {acct_id, email, session} the local Worker issued; it lands in the
+    /// keychain exactly where app_account.mjs keeps the real sign-in.
+    static func seedAccountIfRequested(service: String) {
+        guard let i = args.firstIndex(of: "-pipUITestSeedAccount"), i + 1 < args.count,
+              let data = FileManager.default.contents(atPath: args[i + 1]) else { return }
+        try? PipKeychain.put("account/state", data, service: service)
+    }
+
     static func seedIfRequested(_ core: PipCore, appId: String) {
         guard let i = args.firstIndex(of: "-pipUITestSeedPerson"),
               i + 1 < args.count else { return }
