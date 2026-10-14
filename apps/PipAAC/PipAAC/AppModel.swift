@@ -424,6 +424,28 @@ final class AppModel: ObservableObject {
         mutate("appSetSetting", [key, value])
     }
 
+    /// Same write, awaited (the voice picker switches only once the write
+    /// landed) - D3.
+    func setSettingAwait(_ key: String, _ value: String) async throws {
+        let st: PaintedState = try await Self.coreCall(core, "appSetSetting", [appId, key, value] as [Any])
+        apply(st)
+    }
+
+    /// One core call outside the app facade (PIPCORE.<object>) - D3.
+    func coreValue<T: Decodable & Sendable>(
+        _ object: String, _ method: String, _ args: [String]
+    ) async throws -> T {
+        let core = self.core
+        let all: [Any] = [appId] + args
+        return try await Self.coreSend(core, object, method, all)
+    }
+
+    nonisolated private static func coreSend<T: Decodable & Sendable>(
+        _ core: PipCore, _ object: String, _ method: String, _ args: sending [Any]
+    ) async throws -> T {
+        try core.sync { try decodeRaw(core.call(object, method, args)) }
+    }
+
     // MARK: keyboard
 
     func toggleKeyboard() {

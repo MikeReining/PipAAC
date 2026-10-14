@@ -70,7 +70,16 @@ final class PipSpeaker: NSObject, AVAudioPlayerDelegate {
     }
 
     private func playSlot(_ slot: SpeechSlot, generation: Int? = nil) {
-        if slot.type == "clip", let key = slot.key, let u = PipAssets.clipURL(key) {
+        // "file": an absolute path (a Hear-it preview of a voice that is
+        // not downloaded yet) - never a tile slot.
+        let resolved: URL? = {
+            guard let key = slot.key else { return nil }
+            if slot.type == "clip" { return PipAssets.clipURL(key) }
+            if slot.type == "file" { return URL(fileURLWithPath: key) }
+            return nil
+        }()
+        if let u = resolved, let key = slot.key {
+            PipAudioTrace.record(u)
             do {
                 let p = try AVAudioPlayer(contentsOf: u)
                 p.delegate = self

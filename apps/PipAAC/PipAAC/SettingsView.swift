@@ -16,6 +16,11 @@ struct SettingsView: View {
     @State private var pinEditor = false
     @State private var pinOn = PipPin.isSet
     @State private var note: String?
+    @StateObject private var voice: VoiceSettings
+
+    init(model: AppModel) {
+        _voice = StateObject(wrappedValue: VoiceSettings(model: model))
+    }
 
     var body: some View {
         NavigationStack {
@@ -44,6 +49,7 @@ struct SettingsView: View {
                         .accessibilityIdentifier("settings:people")
                     }
                     Section("Talking") {
+                        VoiceRow(voice: voice)
                         toggle("Grammar help", "grammar_help", s.grammarHelp)
                         toggle("Start fresh after speaking", "fresh_after_speak",
                                s.freshAfterSpeak)
@@ -141,7 +147,7 @@ struct SettingsView: View {
             }
             .presentationDetents([.medium])
         }
-        .onAppear { pinOn = PipPin.isSet }
+        .onAppear { pinOn = PipPin.isSet; voice.load() }
     }
 
     private func flash(_ msg: String) {

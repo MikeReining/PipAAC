@@ -34,7 +34,10 @@ nonisolated enum PipAssets {
         return url(key)
     }
 
-    static func clipURL(_ key: String) -> URL? { url(key) }
+    /// Pip's bundled clips first, then a downloaded voice pack (D3).
+    static func clipURL(_ key: String) -> URL? {
+        url(key) ?? VoicePacks.shared.clipURL(key)
+    }
 
     static func text(_ rel: String) throws -> String {
         guard let u = url(rel) else {

@@ -34,7 +34,7 @@ struct BoardView: View {
             .presentationDetents([.medium])
         }
         .sheet(isPresented: $model.showSettings) {
-            SettingsView()
+            SettingsView(model: model)
                 .environmentObject(model)
         }
         .sheet(isPresented: $model.showLibrary) {

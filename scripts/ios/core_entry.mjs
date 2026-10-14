@@ -60,6 +60,9 @@ export * as edit from "./app_edit.mjs";
  *  — PIPCORE.lib.* (`library` is already public/shared/library.mjs). */
 export * as lib from "./app_library.mjs";
 
+/** Voice picker model + sample slots (044 D3) — PIPCORE.voicepick.* */
+export * as voicepick from "./app_voice.mjs";
+
 /** The web's sync loop, unchanged, over host I/O (044 C2). */
 export * as sync from "./app_sync.mjs";
 
