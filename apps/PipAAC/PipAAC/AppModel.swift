@@ -199,10 +199,18 @@ final class AppModel: ObservableObject {
     private var toastSeq = 0
 
     nonisolated let core = PipCore()
-    private var registry: PeopleRegistry?
+    var registry: PeopleRegistry?
     private var coreLoaded = false
+    // Sync + pairing (LinkDevices.swift)
+    var host: PipHost?
+    /// The person the process-wide sync loop runs for (sync.mjs `running`).
+    var syncingId: String?
+    var syncDbId: Int32 = 0
+    var joinRole = "board"
+    @Published var offerSheet: OfferSheetState?
+    @Published var joinSheet: JoinSheetState?
     private(set) var appId = ""
-    private var dbId: Int32 = 0
+    private(set) var dbId: Int32 = 0
     let speaker = PipSpeaker()
 
     // MARK: bridge
@@ -217,7 +225,7 @@ final class AppModel: ObservableObject {
     /// One bridge call, awaited. Runs on the cooperative pool — the
     /// serial core queue is the only ordering rule, so concurrent taps
     /// serialize there, not on the main actor.
-    nonisolated private static func coreCall<T: Decodable & Sendable>(
+    nonisolated static func coreCall<T: Decodable & Sendable>(
         _ core: PipCore, _ method: String, _ args: sending [Any]
     ) async throws -> T {
         try core.sync { try decodeRaw(core.call("PIPCORE.app", method, args)) }
@@ -235,6 +243,7 @@ final class AppModel: ObservableObject {
                 let reg = try PipAssets.makeRegistry()
                 try reg.bootstrap()
                 registry = reg
+                try installHost(registry: reg)
                 try refreshPeople()
                 if let me = PeopleRegistry.resolveActive(people) {
                     try await open(me.id)
@@ -255,11 +264,14 @@ final class AppModel: ObservableObject {
     /// file opens first; the old one closes only once it did, so a
     /// failed open leaves the current person untouched (never a fresh
     /// catalog over anyone's data - phase 044 section 6 B-C).
-    private func open(_ id: String) async throws {
+    func open(_ id: String) async throws {
         guard let registry else { return }
         let url = try registry.openableFile(id)
+        // The running sync loop holds its person's db handle: it stays open
+        // (sync.mjs has no stop - one loop per process).
+        let keepOld = syncingId != nil && dbId == syncDbId
         let (opened, newDb, st, set) = try await Self.openCore(
-            core, url, loaded: coreLoaded, oldApp: appId, oldDb: dbId)
+            core, url, loaded: coreLoaded, oldApp: appId, oldDb: dbId, keepOldDb: keepOld)
         coreLoaded = true
         speaker.rate = opened.speechRate ?? 1
         appId = opened.appId
@@ -277,7 +289,11 @@ final class AppModel: ObservableObject {
         showSettings = false
         apply(st)
         surface = .board
+        startSyncIfLinked()
     }
+
+    /// The open person's name, for copy ("Everyone who helps ...").
+    var activeName: String { people.first { $0.id == activeId }?.displayName ?? "this person" }
 
     /// Switch to another person (people-ui.js `switchTo`).
     func openPerson(_ id: String) {
@@ -319,7 +335,8 @@ final class AppModel: ObservableObject {
     /// run on the main actor. The previous person's session and file
     /// close after the new one opened.
     nonisolated private static func openCore(
-        _ core: PipCore, _ dbURL: URL, loaded: Bool, oldApp: String, oldDb: Int32
+        _ core: PipCore, _ dbURL: URL, loaded: Bool, oldApp: String, oldDb: Int32,
+        keepOldDb: Bool
     ) async throws -> (AppOpenResult, Int32, PaintedState, SettingsModel) {
         let catalog = try PipAssets.text("catalog.json")
         let phrases = try PipAssets.text("suggest_answers.en.json")
@@ -339,7 +356,7 @@ final class AppModel: ObservableObject {
                     core.call("PIPCORE.app", "appSettings", [opened.appId]))
                 if !oldApp.isEmpty {
                     _ = try core.call("PIPCORE.app", "appClose", [oldApp])
-                    core.closeDatabase(id: oldDb)
+                    if !keepOldDb { core.closeDatabase(id: oldDb) }
                 }
                 return (opened, dbId, st, set)
             } catch {
@@ -374,7 +391,7 @@ final class AppModel: ObservableObject {
         }
     }
 
-    private func apply(_ st: PaintedState) {
+    func apply(_ st: PaintedState) {
         bar = st.bar
         strip = st.strip
         board = st.board

@@ -532,6 +532,17 @@ const state = (s) => ({
   tense: s.barState.tense, question: s.barState.question,
 });
 
+/** Sync landed ops (044 C3): re-read what the synced tables feed — the
+ *  profile columns, caches, the whole painted state, the settings model.
+ *  The web repaints through its onApplied callbacks; this is the same
+ *  re-read in one call. Swift re-fetches an open group page itself. */
+export function appRepaint(appId) {
+  const s = S(appId);
+  applyProfile(s);
+  s.entRole.clear(); s.entPhoto.clear(); s.meta.clear();
+  return { ...state(s), settings: settingsModel(s) };
+}
+
 /** board.js tap() — the child path (no tour/demo/edit/pick/model).
  *  tap: { kind: 'sense'|'entity', id, text, source, groupId? } */
 export function appTap(appId, tap) {
@@ -637,7 +648,10 @@ function speakNow(s) {
 export function appSpeak(appId) {
   const s = S(appId);
   PIP().txbar.restoreBar(s.sentence, s.barState);
-  return { clips: speakNow(s), ...state(s) };
+  // board.js: a spoken sentence refreshes today's totals -> put_stats_day ops (SY-15).
+  const out = { clips: speakNow(s), ...state(s) };
+  PIP().stats.refreshStatsDays(s.d);
+  return out;
 }
 
 /* ---------------- keyboard (keyboard-ui.js) ---------------- */

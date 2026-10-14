@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var model = AppModel()
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         Group {
@@ -32,6 +33,9 @@ struct ContentView: View {
             }
         }
         .task { model.boot() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { model.sceneBecameActive() }
+        }
     }
 }
 

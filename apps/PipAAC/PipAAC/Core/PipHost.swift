@@ -162,7 +162,10 @@ public nonisolated final class PipHost: @unchecked Sendable {
     /// the context's exceptionHandler already logs.
     func call(_ ctx: JSContext, _ name: String, _ args: [Any]) {
         if let q = core?.jsQueue { dispatchPrecondition(condition: .onQueue(q)) }
-        ctx.objectForKeyedSubscript(name)?.call(withArguments: args)
+        // Before the bundle is evaluated the function does not exist yet (an
+        // early scene-active signal): skip rather than raise a TypeError.
+        guard let fn = ctx.objectForKeyedSubscript(name), fn.isObject else { return }
+        fn.call(withArguments: args)
     }
 
     /// Settles hostCall `id`. Callable from any thread: the JS touch is

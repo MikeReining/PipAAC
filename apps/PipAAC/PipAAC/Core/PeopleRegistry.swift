@@ -10,11 +10,53 @@
 //  is NOT stored (web: a tab-level override) — a relaunch follows
 //  `resolveActive`, exactly as a web reload does.
 //
-//  Not mirrored yet: `sync` ({userId, epoch, cursor}) — arrives with
-//  Slice C.
+//  `sync` ({userId, epoch, cursor, pendingJoin?, snap?}) is the row's
+//  link state; sync.mjs writes it back whole through `patch`.
 //
 
 import Foundation
+
+/// A JSON value kept verbatim - the row's `sync` object belongs to
+/// sync.mjs (it adds keys like `snap`), so the registry stores it
+/// whole instead of narrowing it to the fields Swift reads.
+public nonisolated enum JSONValue: Codable, Sendable, Equatable {
+    case null, bool(Bool), number(Double), string(String)
+    case array([JSONValue]), object([String: JSONValue])
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.singleValueContainer()
+        if c.decodeNil() { self = .null }
+        else if let v = try? c.decode(Bool.self) { self = .bool(v) }
+        else if let v = try? c.decode(Double.self) { self = .number(v) }
+        else if let v = try? c.decode(String.self) { self = .string(v) }
+        else if let v = try? c.decode([JSONValue].self) { self = .array(v) }
+        else { self = .object(try c.decode([String: JSONValue].self)) }
+    }
+    public func encode(to encoder: Encoder) throws {
+        var c = encoder.singleValueContainer()
+        switch self {
+        case .null: try c.encodeNil()
+        case .bool(let v): try c.encode(v)
+        case .number(let v): try c.encode(v)
+        case .string(let v): try c.encode(v)
+        case .array(let v): try c.encode(v)
+        case .object(let v): try c.encode(v)
+        }
+    }
+    /// From a Foundation graph (JSONSerialization output).
+    public static func from(_ any: Any?) -> JSONValue {
+        switch any {
+        case nil, is NSNull: return .null
+        case let n as NSNumber:
+            if CFGetTypeID(n) == CFBooleanGetTypeID() { return .bool(n.boolValue) }
+            return .number(n.doubleValue)
+        case let s as String: return .string(s)
+        case let a as [Any]: return .array(a.map { from($0) })
+        case let d as [String: Any]: return .object(d.mapValues { from($0) })
+        default: return .null
+        }
+    }
+}
 
 public nonisolated struct PersonRecord: Codable, Sendable, Equatable, Identifiable {
     public var id: String
@@ -23,8 +65,19 @@ public nonisolated struct PersonRecord: Codable, Sendable, Equatable, Identifiab
     public var home: Bool
     public var role: String?
     public var needsSetup: Bool
+    /// users.mjs `sync` - nil until the person is linked.
+    public var sync: [String: JSONValue]? = nil
+    /// person_name.mjs: the registry name is newer than the synced one.
+    public var nameDirty: Bool? = nil
     /// Epoch milliseconds, like `Date.now()` in users.mjs.
     public var lastOpened: Double
+
+    /// Linked and joined (sync.mjs initSync starts only for these).
+    public var syncUserId: String? {
+        guard case .string(let u)? = sync?["userId"] else { return nil }
+        if case .bool(true)? = sync?["pendingJoin"] { return nil }
+        return u
+    }
 
     /// people-ui.js `nameOf`.
     public var displayName: String {
@@ -118,6 +171,11 @@ public nonisolated final class PeopleRegistry: @unchecked Sendable {
                                name: name.trimmingCharacters(in: .whitespacesAndNewlines),
                                photo: nil, home: home, role: nil,
                                needsSetup: needsSetup, lastOpened: now())
+        return try insertLocked(row, rows: &rows)
+    }
+
+    private func insertLocked(_ row: PersonRecord, rows: inout [PersonRecord]) throws -> PersonRecord {
+        let home = row.home
         guard let seed else { throw PeopleError.seedMissing }
         try FileManager.default.createDirectory(at: usersDir, withIntermediateDirectories: true)
         let target = fileURL(row.id)
@@ -129,6 +187,56 @@ public nonisolated final class PeopleRegistry: @unchecked Sendable {
             throw error
         }
         return row
+    }
+
+    /// `saveUser(patch)` from the core: merges the keys sync.mjs / the
+    /// name follower write (sync, name, photo, nameDirty, role,
+    /// needsSetup) into the row and rewrites people.json atomically
+    /// (temp file + rename) under the lock. Throws if the row is gone.
+    public func patch(_ id: String, _ patch: [String: Any]) throws {
+        lock.lock(); defer { lock.unlock() }
+        var rows = try load()
+        guard let i = rows.firstIndex(where: { $0.id == id }) else { throw PeopleError.unknown(id) }
+        for (k, v) in patch {
+            switch k {
+            case "sync":
+                if case .object(let o) = JSONValue.from(v) { rows[i].sync = o } else { rows[i].sync = nil }
+            case "name": rows[i].name = (v as? String) ?? rows[i].name
+            case "photo": rows[i].photo = v as? String
+            case "nameDirty": rows[i].nameDirty = v as? Bool
+            case "role": rows[i].role = v as? String
+            case "needsSetup": rows[i].needsSetup = (v as? Bool) ?? rows[i].needsSetup
+            default: break
+            }
+        }
+        try save(rows)
+    }
+
+    /// users.mjs `addUser` with an id (joining a linked person): a
+    /// known id refreshes its sync state and role; a new one gets a
+    /// file seeded from fresh_db (sync then fills it from cursor 0).
+    @discardableResult
+    public func addLinked(id: String, sync: [String: JSONValue], role: String?, home: Bool) throws -> PersonRecord {
+        lock.lock(); defer { lock.unlock() }
+        var rows = try load()
+        if let i = rows.firstIndex(where: { $0.id == id }) {
+            rows[i].sync = sync
+            if let role { rows[i].role = role }
+            rows[i].lastOpened = now()
+            if home { for j in rows.indices { rows[j].home = j == i } }
+            try save(rows)
+            return rows[i]
+        }
+        let row = PersonRecord(id: id, name: "", photo: nil, home: home, role: role,
+                               needsSetup: false, sync: sync, lastOpened: now())
+        return try insertLocked(row, rows: &rows)
+    }
+
+    /// The row as the core's `me` (users.mjs shape).
+    public func rowJSON(_ id: String) throws -> String {
+        lock.lock(); defer { lock.unlock() }
+        guard let r = try load().first(where: { $0.id == id }) else { throw PeopleError.unknown(id) }
+        return String(decoding: try JSONEncoder().encode(r), as: UTF8.self)
     }
 
     /// An install from before the registry has its one database at

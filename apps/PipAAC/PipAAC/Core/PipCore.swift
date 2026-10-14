@@ -180,7 +180,7 @@ public nonisolated final class PipCore: @unchecked Sendable {
         let c = JSContext()!
         ctx = c
         c.exceptionHandler = { [weak self] _, ex in
-            self?.log.error("JS exception: \(ex?.toString() ?? "?")")
+            self?.log.error("JS exception: \(ex?.toString() ?? "?") line \(ex?.objectForKeyedSubscript("line")?.toString() ?? "?") \(ex?.objectForKeyedSubscript("stack")?.toString() ?? "")")
         }
         let host = JSValue(newObjectIn: c)!
 

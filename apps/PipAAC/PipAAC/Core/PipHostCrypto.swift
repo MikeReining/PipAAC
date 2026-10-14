@@ -164,8 +164,8 @@ nonisolated extension PipHost {
             return ["eph": g.eph, "iv": g.iv, "wrapped": g.wrapped]
         case "key.unwrap":
             guard case .dhPriv(let k) = try box(a["key"]),
-                  let g = a["grant"] as? [String: String],
-                  let eph = g["eph"], let iv = g["iv"], let w = g["wrapped"]
+                  let g = a["grant"] as? [String: Any],  // grants carry extras (epoch, keys, user_id)
+                  let eph = g["eph"] as? String, let iv = g["iv"] as? String, let w = g["wrapped"] as? String
             else { throw PipHostError("bad unwrap arguments") }
             return handle(.aes(try C.unwrapUserKey(k, C.Grant(eph: eph, iv: iv, wrapped: w))))
         case "account.gen":

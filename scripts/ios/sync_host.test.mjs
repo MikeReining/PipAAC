@@ -316,9 +316,15 @@ test("flush: a local edit is sealed with the keychain key and reaches the relay"
   d.run(`PIPCORE.groups.createEntity(PIPCORE.makeDb(1), { id: "ent_local", name: "Local pup" })`);
   assert.deepEqual(dumpOps(d.db), [["create_entity", null]], "edit not pending before flush");
   await until(() => dumpOps(d.db)[0]?.[1] != null, "op confirmed");
-  assert.equal(relay.log.length, 1);
+  // C3: the loop's start also refreshes today's/yesterday's stats days (put_stats_day, SY-15),
+  // so the relay holds those ops too - the edit under test is the create_entity one.
+  const opened = [];
+  for (const r of relay.log) opened.push(await real.openOp(userKey, r.env));
+  assert.equal(opened.filter((o) => o.kind === "create_entity").length, 1);
+  assert.ok(opened.every((o) => o.kind === "create_entity" || o.kind === "put_stats_day"),
+    opened.map((o) => o.kind).join());
   // The relay holds ciphertext only: open it with the independently held key.
-  const plain = await real.openOp(userKey, relay.log[0].env);
+  const plain = opened.find((o) => o.kind === "create_entity");
   assert.equal(plain.kind, "create_entity");
   assert.equal(JSON.parse(plain.args).id, "ent_local");
   assert.equal(relay.badSig.length, 0);

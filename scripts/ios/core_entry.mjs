@@ -66,6 +66,9 @@ export * as voicepick from "./app_voice.mjs";
 /** The web's sync loop, unchanged, over host I/O (044 C2). */
 export * as sync from "./app_sync.mjs";
 
+/** Linking devices: offer a code / type a code (044 C3) - PIPCORE.pair */
+export * as pair from "./app_pair.mjs";
+
 /** Host crypto/key-store verbs (handles over Swift CryptoKit/keychain) and
  *  the hostCall promise bridge — the surface pairing, recovery and media
  *  slices call, and the Swift suite probes. */

@@ -14,6 +14,7 @@
  * hostCall("saveUser", { userId, patch }) -> Swift `PipHost.onSaveUser`.
  */
 import { initSync, syncHealth as health } from "../../public/shared/sync.mjs";
+import { refreshStatsDays } from "../../public/shared/stats.mjs";
 import { hostCall } from "./jsc_shims.mjs";
 import { appDb } from "./app.mjs";
 
@@ -44,9 +45,14 @@ export function syncStartDb(db, userRow, baseUrl, opts) {
     async () => true, // the native SQLite file is durable per statement
     opts ? parse(opts) : {},
   ).then(
-    (handle) => emit("sync.started", handle
+    (handle) => {
+      // board.js refreshes today's/yesterday's totals at boot, after the device
+      // id is known; here the id is known once the loop is up (SY-15).
+      if (handle) { try { refreshStatsDays(db); } catch (e) { console.error(`stats: ${e}`); } }
+      emit("sync.started", handle
       ? { ok: true, linked: true, deviceId: handle.identity.deviceId, epoch: handle.getEpoch() }
-      : { ok: true, linked: false }),
+        : { ok: true, linked: false });
+    },
     (err) => emit("sync.started", { ok: false, linked: true, error: String(err?.message ?? err) }),
   );
   return { accepted: true };

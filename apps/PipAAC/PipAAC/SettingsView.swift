@@ -47,6 +47,12 @@ struct SettingsView: View {
                             }
                         }
                         .accessibilityIdentifier("settings:people")
+                        NavigationLink {
+                            TeamDevicesView()
+                        } label: {
+                            Text("Team & devices")
+                        }
+                        .accessibilityIdentifier("settings:team")
                     }
                     Section("Talking") {
                         VoiceRow(voice: voice)
