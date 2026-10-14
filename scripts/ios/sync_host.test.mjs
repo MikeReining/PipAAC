@@ -346,9 +346,10 @@ test("incoming WebSocket op: a live push applies, and a model frame reaches onMo
   assert.deepEqual(dumpEntities(d.db), [["ent_live", "Live wire"]]);
   // A sealed live-model message from a supporter's device.
   relay.sockets[0].push({ t: "model", from: "dev_other", e: 1,
-    env: await real.sealOp(userKey, { k: "model", t: "ent_live", w: "dog" }) });
-  await until(() => d.events.some(([n]) => n === "sync.model"), "model delivered");
-  assert.deepEqual(d.events.find(([n]) => n === "sync.model")[1], { k: "model", t: "ent_live", w: "dog" });
+    env: await real.sealOp(userKey, { k: "model", t: "entity:ent_live", w: "dog" }) });
+  // 044 D5: onModel is the spotlight layer (app_spotlight.mjs) - a modeled word asks Swift to re-read
+  // PIPCORE.spot.state (the cell-level proof is app_spotlight.test.mjs).
+  await until(() => d.events.some(([n]) => n === "spot.changed"), "model delivered");
   // The online/visible lifecycle re-enters through platform_host.
   const before = relay.fetchOpsCalls;
   d.run(`__pipPlatformEvent("online")`);

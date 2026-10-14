@@ -21,6 +21,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DatabaseSync } from "node:sqlite";
 import { makeTeamPeer } from "./e2e_team_peer.mjs";
+import { makeSpotPeer } from "./e2e_spot_peer.mjs";
 
 const root = new URL("../../", import.meta.url).pathname;
 const shared = join(root, "public/shared");
@@ -89,7 +90,8 @@ const { importCatalog } = await import(pathToFileURL(join(shared, "import.mjs"))
 const groups = await import(pathToFileURL(join(shared, "groups.mjs")).href);
 const { seatSetupPeople } = await import(pathToFileURL(join(shared, "coremove.mjs")).href);
 const opsMod = await import(pathToFileURL(join(shared, "ops.mjs")).href);
-const { syncHealth, initSync, syncUploadBlob } = await import(pathToFileURL(join(shared, "sync.mjs")).href);
+const { syncHealth, initSync, syncUploadBlob, syncSendModel, syncSendLive } = await import(pathToFileURL(join(shared, "sync.mjs")).href);
+const spotMod = await import(pathToFileURL(join(shared, "spotlight.mjs")).href);
 const { dumpLines } = await import(pathToFileURL(join(root, "scripts/ios/e2e_dump.mjs")).href);
 const voiceMod = await import(pathToFileURL(join(shared, "voice.mjs")).href);
 const zlib = await import("node:zlib");
@@ -117,9 +119,11 @@ const dumpTo = (db, name) => {
   log(`${name}: ${lines.length} lines`);
 };
 
+/** Every live message (013 s4) this peer receives, opened: the child's taps land here (044 D5). */
+const liveInbox = [];
 async function startSync(db, me) {
   const saveUser = async (patch) => { Object.assign(me, patch); };
-  await initSync(db, me, saveUser, baseUrl, () => {}, null, async () => true);
+  await initSync(db, me, saveUser, baseUrl, () => {}, (m) => liveInbox.push(m), async () => true);
 }
 
 /* ----------------------------------------------------------------------
@@ -213,6 +217,8 @@ async function hostMode() {
   log("granted the iPad");
 
   await waitFor("ui-linked");
+  if (scenario === "spotlight") return spot.spotlightFlow(db, dumpTo);
+  if (scenario === "spotlight-supporter") return spot.spotlightSupporterFlow(db, dumpTo);
   // Both edits go through the web's own write owners (they record the ops).
   const NEW_NAME = NAME + "d";
   groups.renameEntity(db, entityId, NEW_NAME);
@@ -437,6 +443,9 @@ async function joinMode() {
   put("join-done", Date.now());
   process.exit(0);
 }
+
+/* 044 D5: the `spotlight` scenarios live in e2e_spot_peer.mjs. */
+const spot = makeSpotPeer({ put, has, waitFor, sleep, log, spotMod, syncSendModel, syncSendLive, liveInbox });
 
 /* 044 F2: the `team` scenario lives in e2e_team_peer.mjs (this file's seams are handed over). */
 const team = makeTeamPeer({

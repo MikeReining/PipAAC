@@ -374,7 +374,8 @@ export function transform(appId, mode) {
     || (mode === "future" && s.barState.tense === "future");
   if (settled) { speakStart(s); return painted(s); }
   x.busy = true;
-  logTransform(s.d, mode, 0);
+  // speech.js: her press is the move Progress counts - lit when pressed (044 D5).
+  logTransform(s.d, mode, globalThis.PIPCORE.spot.childTap(`control:${mode}`));
   void transformCore(s, x, mode).then(
     ({ toast, play }) => {
       x.busy = false;

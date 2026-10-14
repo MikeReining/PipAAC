@@ -166,11 +166,13 @@ final class AppModel: ObservableObject {
     enum Surface { case boot, picker, board, index, group }
 
     @Published private(set) var surface: Surface = .boot
-    @Published var board: BoardModel?
+    @Published var board: BoardModel? { didSet { refreshSpot() } }
+    /// The attention layer (Spotlight.swift, 044 D5): the core's render model.
+    @Published var spot = SpotModel()
     @Published private(set) var strip: StripModel?
     @Published private(set) var bar: [ChipModel] = []
     @Published private(set) var groupIndex: GroupIndexModel?
-    @Published var groupPage: GroupPageModel?
+    @Published var groupPage: GroupPageModel? { didSet { refreshSpot() } }
     @Published private(set) var bootError: String?
     @Published private(set) var typing: String?
     @Published private(set) var kb: KeyboardModel?
@@ -307,6 +309,9 @@ final class AppModel: ObservableObject {
         Task { await lifetime.refresh() }
         try registry.touchOpened(id)
         try refreshPeople()
+        spot = SpotModel()
+        let me = people.first { $0.id == id }
+        bindSpot(role: me?.role, name: me?.displayName ?? "")
         groupIndex = nil
         groupPage = nil
         toast = nil
@@ -444,6 +449,8 @@ final class AppModel: ObservableObject {
     }
 
     func tap(kind: String, id: String, text: String, source: String = "grid") {
+        // A supporter's spotlight: the tap lights the word on the child's board.
+        if spot.modeling { modelTap(kind: kind, id: id, text: text); return }
         mutate("appTap", [["kind": kind, "id": id, "text": text, "source": source]])
     }
 
@@ -453,7 +460,10 @@ final class AppModel: ObservableObject {
     /// ✨ ❓ ⏪ ⏩ — the core asks the Worker (masked names, 15 s bound,
     /// stale replies dropped) and speaks the result; offline it speaks the
     /// bar as built and says why (SayBar.swift, Sentence_Bar.md).
-    func transform(_ mode: String) { sayTransform(mode) }
+    func transform(_ mode: String) {
+        if spot.modeling, mode == "fix" || mode == "question" { modelControl(mode); return }
+        sayTransform(mode)
+    }
 
     // MARK: settings (settings-ui.js / settings-sync.js)
 

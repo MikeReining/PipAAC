@@ -143,6 +143,7 @@ extension AppModel {
         case "sync.started":
             // A start that threw leaves the loop free to try again.
             if ev?.stage == nil, json.contains("\"ok\":false") { syncingId = nil }
+        case "spot.changed", "spot.speak": handleSpotEvent(name, json)
         case "say": handleSay(json)
         case "purchase": lifetimeBackend.handle(json)
         case "pair.offer": if let ev { offerEvent(ev) }

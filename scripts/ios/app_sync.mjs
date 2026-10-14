@@ -9,7 +9,8 @@
  * JSC caller cannot await a Promise:
  *   "sync.started"  { ok, linked, deviceId?, epoch?, error? }
  *   "sync.applied"  {}                 ops landed -> Swift repaints
- *   "sync.model"    <plain live msg>   a supporter's modeled word
+ *   "spot.changed"  {}                 a live message or session change (044 D5):
+ *                                      Swift re-reads PIPCORE.spot.state
  * The registry row's `sync` state persists through
  * hostCall("saveUser", { userId, patch }) -> Swift `PipHost.onSaveUser`.
  */
@@ -19,6 +20,7 @@ import { refreshStatsDays } from "../../public/shared/stats.mjs";
 import { hostCall } from "./jsc_shims.mjs";
 import { appDb } from "./app.mjs";
 import { noteBase } from "./app_team.mjs";
+import { applied as spotApplied, attach as spotAttach, onLive as spotOnLive } from "./app_spotlight.mjs";
 
 /** Bumped by every start and stop: a start that resolves after a stop is stale. */
 let gen = 0;
@@ -40,14 +42,16 @@ export function syncStartDb(db, userRow, baseUrl, opts) {
   const user = parse(userRow);
   const myGen = ++gen;
   noteBase(baseUrl || globalThis.location?.origin); // the regrant drain (F2) runs inside this loop
+  spotAttach(db, user.role); // live messages (D5) need the db + role before any screen binds
   const saveUser = async (patch) => {
     if (patch?.sync) user.sync = patch.sync;
     await hostCall("saveUser", { userId: user.id, patch });
   };
   initSync(
     db, user, saveUser, baseUrl || globalThis.location.origin,
-    () => { emit("sync.applied"); scanMedia(db); }, // ops may carry new blob: refs (C4)
-    (plain) => emit("sync.model", plain),
+    // ops may carry new blob: refs (C4); a session started/ended elsewhere lands (D5)
+    () => { emit("sync.applied"); scanMedia(db); spotApplied(db); },
+    (plain) => spotOnLive(plain), // live modeling + the child's taps (013 s4); never logged
     async () => true, // the native SQLite file is durable per statement
     opts ? parse(opts) : {},
   ).then(

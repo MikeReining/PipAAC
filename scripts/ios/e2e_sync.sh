@@ -112,6 +112,7 @@ run_scenario() { # <name> <Class/test> <peer-scenario> <dumps...>
   grep -E "E2E-|Test Case.*(passed|failed)|error:" "$D/xcodebuild.log" | head -20
   wait "$PEER" 2>/dev/null
   tail -5 "$D/peer.log"
+  grep -hE "child taps via the relay|supporter's tap via the relay|saw the iPad end" "$D/peer.log" | sed 's/^/  /'
   [ -s "$D/proxy-mode.log" ] && { echo "proxy log:"; cat "$D/proxy-mode.log"; }
   stop_proxy
   [ "$XC" = 0 ] || { echo "XCUITest FAILED ($XC) - see $D/xcodebuild.log"; FAIL=1; return; }
@@ -154,7 +155,7 @@ run_two_people() {
   compare "$D/B/peer.dump" "$D/ipad-B.dump" "person B's web device"
 }
 
-# PIP_E2E_ONLY=both-ways|offline|media|two-people|restore-words|restore-scan|account|team runs one scenario (debugging).
+# PIP_E2E_ONLY=both-ways|offline|media|two-people|restore-words|restore-scan|account|team|spotlight|spotlight-supporter runs one scenario (debugging).
 only() { [ -z "${PIP_E2E_ONLY:-}" ] || [ "$PIP_E2E_ONLY" = "$1" ]; }
 only both-ways && run_scenario both-ways SyncE2ETests/testLinkAndSyncBothWays both-ways peer peer2
 only offline && run_scenario offline SyncE2ETests/testOfflineCatchUp offline peer
@@ -163,6 +164,13 @@ only two-people && run_two_people
 # 044 C5: restore a fresh iPad from the recovery card - typed words, then a scanned card image.
 only restore-words && run_scenario restore-words SyncE2ETests/testRestoreFromWords restore peer
 only restore-scan && run_scenario restore-scan SyncE2ETests/testRestoreByScanningTheCard restore peer
+
+# 044 D5: live modeling + the Spotlight glow. The iPad is the child's board; the node peer is the adult's desktop.
+# A session started on the peer glows/dims the iPad (read through accessibility values on the cells), survives a kill
+# with the relay dead, a helper's tap lights a word, and the child's taps are asserted AT THE PEER from the relay's
+# live frames (not from the iPad's screen). The second scenario is the iPad as a supporter's device (tip, counts).
+only spotlight && run_scenario spotlight SpotlightE2ETests/testChildBoardGlowModelAndTaps spotlight peer
+only spotlight-supporter && run_scenario spotlight-supporter SpotlightE2ETests/testSupporterModelsAndSeesTheTipAndCounts spotlight-supporter peer
 
 # 044 C5: Settings -> Your account against the local Worker (no peer). The simulator cannot finish a
 # passkey ceremony, so this proves link -> claim -> the passkey step, and a clean failure after it.

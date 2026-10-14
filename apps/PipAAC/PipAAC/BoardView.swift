@@ -127,12 +127,14 @@ struct BoardView: View {
             }
             if model.controls.contains("fix") {
                 TxButton(system: "wand.and.stars", label: "Fix it",
-                         enabled: !model.bar.isEmpty) { model.transform("fix") }
+                         enabled: !model.bar.isEmpty,
+                         spot: model.spot.controls["fix"]) { model.transform("fix") }
             }
             if model.controls.contains("question") {
                 TxButton(system: "questionmark", label: "Ask it",
                          selected: model.question,
-                         enabled: !model.bar.isEmpty) { model.transform("question") }
+                         enabled: !model.bar.isEmpty,
+                         spot: model.spot.controls["question"]) { model.transform("question") }
             }
             if model.controls.contains("past") {
                 TxButton(system: "backward.fill", label: "Say it in the past",
@@ -146,6 +148,7 @@ struct BoardView: View {
                          selected: model.tense == "future",
                          enabled: !model.bar.isEmpty) { model.transform("future") }
             }
+            SpotChip()               // Spotlight.swift - "🔦 Name · End" while a glow runs
         }
         .frame(height: 64)
     }
@@ -187,15 +190,20 @@ struct BoardView: View {
         HStack(spacing: 8) {
             let cap = model.strip?.cap ?? 4
             let cards = model.strip?.cards ?? []
-            ForEach(0..<cap, id: \.self) { i in
-                if i < cards.count {
-                    stripButton(cards[i])
-                } else {
-                    EmptyCell().frame(maxHeight: .infinity)
+            if model.spot.modeling {
+                // A supporter's spotlight: the line sits where the suggestions were.
+                ModelBar(spot: model.spot)
+            } else {
+                ForEach(0..<cap, id: \.self) { i in
+                    if i < cards.count {
+                        stripButton(cards[i])
+                    } else {
+                        EmptyCell().frame(maxHeight: .infinity)
+                    }
                 }
+                .frame(maxWidth: .infinity)
             }
-            .frame(maxWidth: .infinity)
-            AnchorTile(icon: "folder.fill", label: "Groups") {
+            AnchorTile(icon: "folder.fill", label: "Groups", glow: model.spot.groups) {
                 switch model.surface {
                 case .board: model.openGroups()
                 case .group: model.openGroups()
@@ -302,6 +310,7 @@ struct BoardView: View {
 
     @ViewBuilder
     private func plainCell(_ cell: CellModel?) -> some View {
+        let spotMark = model.spot.mark(cell?.kind ?? "sense", cell?.id)
         switch cell?.type {
         case "word":
             Button {
@@ -315,10 +324,14 @@ struct BoardView: View {
                          role: cell?.role, art: cell?.art ?? cell?.photoKey)
             }
             .buttonStyle(.plain)
+            .spotMark(spotMark, dim: model.spot.dim)
             .accessibilityIdentifier("tile:\(cell?.id ?? "")")
-            .accessibilityValue(((cell?.art ?? cell?.photoKey).flatMap { PipBlobs.url(forKey: $0) }) != nil ? "family photo" : "")
+            .accessibilityValue([
+                ((cell?.art ?? cell?.photoKey).flatMap { PipBlobs.url(forKey: $0) }) != nil ? "family photo" : nil,
+                spotMark?.a11y,
+            ].compactMap { $0 }.joined(separator: ", "))
         case "groups":
-            AnchorTile(icon: "folder.fill", label: "Groups") { model.openGroups() }
+            AnchorTile(icon: "folder.fill", label: "Groups", glow: model.spot.groups) { model.openGroups() }
         case "family":
             ChromeTile(label: cell?.glyph ?? cell?.label ?? "?") {
                 if let f = cell?.familyId { model.openFamily(f) }
@@ -412,6 +425,8 @@ struct AnchorTile: View {
     let icon: String
     let label: String
     var dimmed = false
+    /// Spotlight (D5): a target sits inside a group - the Groups button glows.
+    var glow = false
     var action: () -> Void
     var body: some View {
         Button(action: action) {
@@ -429,8 +444,10 @@ struct AnchorTile: View {
         }
         .buttonStyle(.plain)
         .disabled(dimmed)
+        .spotMark(glow ? SpotMark(glow: true) : nil, dim: 1)
         .frame(width: 92)
         .accessibilityLabel(label)
+        .accessibilityValue(glow ? "glowing" : "")
     }
 }
 
@@ -496,6 +513,8 @@ struct TxButton: View {
     let label: String
     var selected = false
     var enabled = true
+    /// Spotlight (D5): ✨ / ❓ as targets get the same ring as a word.
+    var spot: SpotControl?
     var action: () -> Void
     var body: some View {
         Button(action: action) {
@@ -512,7 +531,9 @@ struct TxButton: View {
         }
         .buttonStyle(.plain)
         .disabled(!enabled)
+        .spotMark(spot.map { SpotMark(glow: $0.glow, modeled: $0.modeled, count: $0.count) }, dim: 1)
         .accessibilityLabel(label)
+        .accessibilityValue(spot?.modeled == true ? "modeled" : (spot?.glow == true ? "glowing" : ""))
     }
 }
 

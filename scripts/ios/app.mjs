@@ -571,6 +571,7 @@ export function appTap(appId, tap) {
     PIP().funnel.fillChosen?.(s.d, s.sentenceId, { kind, id: item.id ?? id, source });
     PIP().funnel.logSelection(s.d, kind, item.id ?? id, Date.now(), {
       sentenceId: s.sentenceId, position: s.picks++, source,
+      spotlit: PIP().spot.childTap(`${kind}:${id}`), // board.js attention.childTap (044 D5)
       labelId: item.labelId ?? null,
       groupId: s.view === "group" ? s.groupId : null,
     });
@@ -770,6 +771,7 @@ function commitKbItem(s, index) {
       { kind: item.kind, id: item.id, source: "keyboard" });
     PIP().funnel.logSelection(s.d, item.kind, item.id, Date.now(), {
       sentenceId: s.sentenceId, position, source: "keyboard",
+      spotlit: PIP().spot.childTap(`${item.kind}:${item.id}`),
       labelId: item.labelId ?? null,
     });
     revisitPrev(s, index); // "what do" + typed he -> does
@@ -827,7 +829,8 @@ export function appKbPress(appId, key) {
 export function appKbPartner(appId, senseId) {
   const s = S(appId);
   PIP().funnel.logSelection(s.d, "sense", senseId, Date.now(), {
-    sentenceId: s.sentenceId, position: null, source: "keyboard" });
+    sentenceId: s.sentenceId, position: null, source: "keyboard",
+    spotlit: PIP().spot.childTap(`sense:${senseId}`) });
   const speech = PIP().voice.resolveSlot(s.d,
     { kind: "sense", id: senseId }, s.locale, s.voiceId);
   return { speech: afterTap(s, speech), ...state(s) };

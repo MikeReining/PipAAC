@@ -60,6 +60,10 @@ export * as edit from "./app_edit.mjs";
  *  — PIPCORE.lib.* (`library` is already public/shared/library.mjs). */
 export * as lib from "./app_library.mjs";
 
+/** Live modeling + the Spotlight glow/dim/tip on the board (044 D5) -
+ *  PIPCORE.spot.* */
+export * as spot from "./app_spotlight.mjs";
+
 /** Voice picker model + sample slots (044 D3) — PIPCORE.voicepick.* */
 export * as voicepick from "./app_voice.mjs";
 
