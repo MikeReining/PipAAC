@@ -10,6 +10,29 @@
 
 import SwiftUI
 
+/// Profile_Presentation_Modes § 2.2 "Words only": a display filter over the
+/// same coordinate map. learner_profile.presentation_mode == 'label' hides
+/// every picture; each button keeps its place and its role color, the word
+/// gets bigger (base.css .words-only). The core owns the value
+/// (SettingsModel.look); views only read it from here.
+private struct WordsOnlyKey: EnvironmentKey { static let defaultValue = false }
+extension EnvironmentValues {
+    var wordsOnly: Bool {
+        get { self[WordsOnlyKey.self] }
+        set { self[WordsOnlyKey.self] = newValue }
+    }
+}
+
+/// The accessibility value a tile reports: what is true of how it is drawn
+/// (family photo, words only, and the 30-day count in Edit mode).
+func tileValue(photo: Bool, wordsOnly: Bool, count: Int?) -> String {
+    var parts: [String] = []
+    if photo { parts.append("family photo") }
+    if wordsOnly { parts.append("words only") }
+    if let count { parts.append("\(count) \(count == 1 ? "tap" : "taps")") }
+    return parts.joined(separator: ", ")
+}
+
 enum PipStyle {
     static func border(_ role: String?) -> Color {
         switch role {
@@ -39,53 +62,68 @@ enum PipStyle {
     static let muted = Color(red: 0.357, green: 0.325, blue: 0.282)
 }
 
-/// The person's "Words only" look (learner_profile.presentation_mode =
-/// 'label'; base.css .words-only hides every picture, no cell moves).
-private struct WordsOnlyKey: EnvironmentKey { static let defaultValue = false }
-extension EnvironmentValues {
-    var pipWordsOnly: Bool {
-        get { self[WordsOnlyKey.self] }
-        set { self[WordsOnlyKey.self] = newValue }
-    }
-}
-
 /// grid.js wordTile: label strip on top (role fill), art on white.
 struct WordTile: View {
     let label: String
     let role: String?
     let art: String?
-    @Environment(\.pipWordsOnly) private var wordsOnly
+    /// 018 D10 / BS-21: the child's own 30-day taps (Edit mode + the badge).
+    var count: Int? = nil
+    @Environment(\.wordsOnly) private var wordsOnly
 
     var body: some View {
-        VStack(spacing: 0) {
-            Text(label)
-                .font(.system(size: wordsOnly ? 22 : 17, weight: .semibold))
-                .foregroundStyle(PipStyle.inkText)
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .minimumScaleFactor(0.55)
-                .padding(.horizontal, 4)
-                .frame(maxWidth: .infinity)
-                .frame(height: wordsOnly ? nil : 34)
-                .frame(maxHeight: wordsOnly ? .infinity : nil)
-                .background(PipStyle.fill(role))
-            if !wordsOnly {
-                ZStack {
-                    Color.white
-                    if let ui = PipAssets.image(art) {
-                        Image(uiImage: ui)
-                            .resizable()
-                            .scaledToFit()
-                            .padding(4)
+        Group {
+            if wordsOnly {
+                // base.css .words-only .tlabel: the label fills the tile.
+                Text(label)
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundStyle(PipStyle.inkText)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(3)
+                    .minimumScaleFactor(0.45)
+                    .padding(.horizontal, 6)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(PipStyle.fill(role))
+            } else {
+                VStack(spacing: 0) {
+                    Text(label)
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(PipStyle.inkText)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.55)
+                        .padding(.horizontal, 4)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 34)
+                        .background(PipStyle.fill(role))
+                    ZStack {
+                        Color.white
+                        if let ui = PipAssets.image(art) {
+                            Image(uiImage: ui)
+                                .resizable()
+                                .scaledToFit()
+                                .padding(4)
+                        }
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .overlay(RoundedRectangle(cornerRadius: 10)
             .stroke(PipStyle.border(role), lineWidth: 2))
+        .overlay(alignment: .bottomTrailing) {
+            if let count {
+                Text("\(count)")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(Color.white)
+                    .padding(.horizontal, 7).padding(.vertical, 2)
+                    .background(PipStyle.ink)
+                    .clipShape(Capsule())
+                    .padding(4)
+            }
+        }
     }
 }
 
@@ -94,25 +132,25 @@ struct StripCard: View {
     let label: String
     let role: String?
     let art: String?
-    @Environment(\.pipWordsOnly) private var wordsOnly
+    @Environment(\.wordsOnly) private var wordsOnly
 
     var body: some View {
         HStack(spacing: 0) {
             if !wordsOnly {
-                ZStack {
-                    Color.white
-                    if let ui = PipAssets.image(art) {
-                        Image(uiImage: ui)
-                            .resizable()
-                            .scaledToFit()
-                            .padding(3)
-                    } else {
-                        Text(label.prefix(1).uppercased())
-                            .font(.system(size: 24, weight: .bold))
-                            .foregroundStyle(PipStyle.muted)
-                    }
+            ZStack {
+                Color.white
+                if let ui = PipAssets.image(art) {
+                    Image(uiImage: ui)
+                        .resizable()
+                        .scaledToFit()
+                        .padding(3)
+                } else {
+                    Text(label.prefix(1).uppercased())
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(PipStyle.muted)
                 }
-                .frame(width: 56)
+            }
+            .frame(width: 56)
             }
             Text(label)
                 .font(.system(size: 17, weight: .semibold))
@@ -136,7 +174,7 @@ struct StripCard: View {
 struct BarChip: View {
     let display: String
     let art: String?
-    @Environment(\.pipWordsOnly) private var wordsOnly
+    @Environment(\.wordsOnly) private var wordsOnly
 
     var body: some View {
         VStack(spacing: 0) {

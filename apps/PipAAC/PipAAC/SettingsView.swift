@@ -2,216 +2,129 @@
 //  SettingsView.swift
 //  PipAAC
 //
-//  The settings sheet (settings-ui.js) + the PIN gate (pin.js — 023
-//  §1e). Every row is a synced learner_profile column written through
-//  appSetSetting (groups.setSetting records the op); the PIN is the
-//  device's own and lives in PipPin.
+//  Settings (settings-ui.js, 044 E4 ST-4/ST-5): full screen, the section
+//  list beside one page; under 760 pt the list, then the page with Back.
+//  Section names, order, intros and row labels are index.html's `.set-sec`
+//  blocks, verbatim. Every row is a synced learner_profile column written
+//  through appSetSetting (groups.setSetting records the op); the PIN is
+//  the device's own and lives in PipPin. What the sections say about
+//  themselves (summaries, checklist, glance, search over Settings rows)
+//  comes from PIPCORE.settingsUi — Swift renders, never re-derives.
+//
+//  Pages live in SettingsPages.swift; the PIN sheet is at the bottom.
 //
 
 import SwiftUI
 
+// MARK: - Render models (scripts/ios/app_settings.mjs)
+
+nonisolated struct HubSection: Decodable, Sendable, Identifiable {
+    let id: String
+    let title: String
+    var intro: String?
+    var group: String = "person"
+    let summary: String
+}
+
+nonisolated struct HubChecklistItem: Decodable, Sendable, Identifiable {
+    let id: String
+    let done: Bool
+    let label: String
+    let hint: String
+}
+
+nonisolated struct HubChecklist: Decodable, Sendable {
+    let visible: Bool
+    let title: String
+    let items: [HubChecklistItem]
+}
+
+nonisolated struct HubGlance: Decodable, Sendable, Identifiable {
+    let sec: String
+    let title: String
+    let summary: String
+    var id: String { sec }
+}
+
+nonisolated struct HubModel: Decodable, Sendable {
+    let person: String
+    let unnamed: Bool
+    let sections: [HubSection]
+    let checklist: HubChecklist
+    let glance: [HubGlance]
+}
+
+private let sectionIcons: [String: String] = [
+    "overview": "house", "words": "square.grid.2x2", "board": "rectangle.split.3x3",
+    "talking": "speaker.wave.2", "lang": "character.bubble", "team": "person.2",
+    "backup": "lock.shield", "lifetime": "star", "account": "person.crop.circle", "help": "questionmark.circle",
+]
+
+// MARK: - The shell
+
 struct SettingsView: View {
     @EnvironmentObject var model: AppModel
-    @Environment(\.dismiss) private var dismiss
-    @State private var pinEditor = false
-    @State private var pinOn = PipPin.isSet
-    @State private var note: String?
-    @StateObject private var voice: VoiceSettings
-    @StateObject private var help: HelpModel
-    /// Pushed screens, so Help's "Show me" can pop back to a row (E5).
-    @State private var path: [SettingsDest] = []
+    @Environment(\.dismiss) var dismiss
+    @State var pinEditor = false
+    @State var pinOn = PipPin.isSet
+    @State var note: String?
+    @StateObject var voice: VoiceSettings
+    // settings-ui.js: which page shows, and what the search says.
+    @State var section = "overview"
+    @State var query = ""
+    @State var hub: HubModel?
+    @State var narrowOnPage = false
+    @State var nameText = ""
+    @FocusState var nameFocused: Bool
+    /// Help (E5): answers + the shared search; one box searches Settings
+    /// and Help together.
+    @StateObject var help: HelpModel
     /// The row Help pointed at (SettingsRoute ids); lit for a moment.
-    @State private var focus: String?
-    @State private var query = ""
+    @State var focus: String?
 
-    enum SettingsDest: Hashable { case help }
+    /// E5 route id -> the section page that holds the row.
+    static let routeSection: [String: String] = [
+        "voice": "talking", "speed": "talking", "bar": "talking",
+        "grammar": "lang", "keyboard": "board", "cells": "board",
+        "pin": "backup", "research": "backup",
+        "editBoard": "overview", "people": "team", "team": "team", "lifetime": "lifetime",
+    ]
 
     init(model: AppModel) {
         _voice = StateObject(wrappedValue: VoiceSettings(model: model))
         _help = StateObject(wrappedValue: HelpModel(core: model.core))
     }
 
+    private var searching: Bool { !query.trimmingCharacters(in: .whitespaces).isEmpty }
+    private var me: PersonRecord? { model.people.first { $0.id == model.activeId } }
+
+    /// Everything the hub's text depends on; a change reloads it.
+    private var hubKey: String {
+        "\(me?.name ?? "")|\(pinOn)|\(model.lifetime.licensed)|\(model.settings.map { "\($0)" } ?? "")|\(voice.pick?.currentName ?? "")"
+    }
+
     var body: some View {
-        NavigationStack(path: $path) {
-            if let s = model.settings {
-              ScrollViewReader { proxy in
-                Group {
-                  if !query.trimmingCharacters(in: .whitespaces).isEmpty {
-                    // settings-ui.js: the top box searches Settings and Help
-                    // together (shared two-pass search).
-                    Form {
-                        Section {
-                            if let r = help.result {
-                                HelpResults(result: r, onShow: show) { _ in
-                                    query = ""
-                                    path = [.help]
-                                }
-                            }
+        GeometryReader { geo in
+            let narrow = geo.size.width < 760
+            VStack(spacing: 0) {
+                header(narrow: narrow)
+                Divider()
+                if model.settings != nil {
+                    if narrow {
+                        if narrowOnPage || searching { detail(narrow: true) } else { sidebar }
+                    } else {
+                        HStack(spacing: 0) {
+                            sidebar.frame(width: 300)
+                            Divider()
+                            detail(narrow: false)
                         }
                     }
-                  } else {
-                Form {
-                    Section {
-                        // index.html #edit-groups — Edit mode is reached
-                        // from Settings, so the PIN gate already passed.
-                        Button("Edit the board") {
-                            dismiss()
-                            model.enterEdit()
-                        }
-                        .accessibilityIdentifier("editBoard")
-                        .settingsRow("editBoard", focus)
-                    }
-                    Section {
-                        LifetimeRow(life: model.lifetime)
-                            .settingsRow("lifetime", focus)
-                    }
-                    Section {
-                        NavigationLink {
-                            PeopleView()
-                        } label: {
-                            HStack {
-                                Text("People on this device")
-                                Spacer()
-                                Text("\(model.people.count)")
-                                    .foregroundStyle(PipStyle.muted)
-                            }
-                        }
-                        .accessibilityIdentifier("settings:people")
-                        .settingsRow("people", focus)
-                        NavigationLink {
-                            TeamDevicesView(team: model.team)
-                        } label: {
-                            Text("Team & devices")
-                        }
-                        .accessibilityIdentifier("settings:team")
-                        .settingsRow("team", focus)
-                        NavigationLink {
-                            BackupView(flow: model.flow, team: model.team)
-                        } label: {
-                            Text("Backup & privacy")
-                        }
-                        .accessibilityIdentifier("settings:backup")
-                        NavigationLink {
-                            AccountView(flow: model.flow, team: model.team)
-                        } label: {
-                            Text("Your account")
-                        }
-                        .accessibilityIdentifier("settings:account")
-                    }
-                    Section("Talking") {
-                        VoiceRow(voice: voice)
-                            .settingsRow("voice", focus)
-                        toggle("Grammar help", "grammar_help", s.grammarHelp)
-                            .settingsRow("grammar", focus)
-                        toggle("Start fresh after speaking", "fresh_after_speak",
-                               s.freshAfterSpeak)
-                        Picker("Speaking speed", selection: rateBinding(s)) {
-                            Text("Slower").tag("slower")
-                            Text("Normal").tag("normal")
-                            Text("Faster").tag("faster")
-                        }
-                        .pickerStyle(.segmented)
-                        .settingsRow("speed", focus)
-                    }
-                    Section("Sentence bar") {
-                        ForEach(s.barPresets, id: \.id) { p in
-                            Button {
-                                model.setSetting("bar_controls", p.controls)
-                            } label: {
-                                HStack {
-                                    Text(p.name).foregroundStyle(PipStyle.ink)
-                                    Spacer()
-                                    if Set(p.controls) == Set(s.barControls) {
-                                        Image(systemName: "checkmark")
-                                            .foregroundStyle(PipStyle.ink)
-                                    }
-                                }
-                            }
-                            .settingsRow(p.id == s.barPresets.first?.id ? "bar" : nil, focus)
-                        }
-                        ForEach(s.allControls, id: \.self) { c in
-                            Toggle(controlName(s, c), isOn: controlBinding(s, c))
-                        }
-                    }
-                    Section("Keyboard") {
-                        Picker("Letter order", selection: strBinding(
-                            "keyboard_order", s.keyboardOrder)) {
-                            Text(s.keyboardStandardName).tag("standard")
-                            Text("ABC").tag("abc")
-                        }
-                        .pickerStyle(.segmented)
-                        .settingsRow("keyboard", focus)
-                    }
-                    Section("Board") {
-                        Picker("Cells", selection: strBinding(
-                            "board_layout", s.boardLayout)) {
-                            ForEach(s.layouts, id: \.self) { l in
-                                Text(cellName(l)).tag(l)
-                            }
-                        }
-                        .settingsRow("cells", focus)
-                        toggle("Top row on group pages", "group_top_row",
-                               s.groupTopRow)
-                        toggle("Occasions in Groups", "occasions_visible",
-                               s.occasionsVisible)
-                    }
-                    Section("Privacy") {
-                        toggle("Help improve Pip — share anonymous use",
-                               "share_research", s.shareResearch)
-                            .settingsRow("research", focus)
-                    }
-                    Section("Settings PIN") {
-                        Text(pinOn
-                             ? "Settings is locked with a PIN."
-                             : "No PIN yet: Settings opens with one tap.")
-                            .foregroundStyle(PipStyle.muted)
-                            .settingsRow("pin", focus)
-                        Button(pinOn ? "Change PIN" : "Lock Settings with a PIN") {
-                            pinEditor = true
-                        }
-                        .accessibilityIdentifier("pin:change")
-                        if pinOn {
-                            Button("Turn the PIN off") {
-                                PipPin.clear()
-                                pinOn = false
-                                flash("PIN turned off. Settings opens with one tap.")
-                            }
-                            .accessibilityIdentifier("pin:off")
-                        }
-                        if let note {
-                            Text(note).foregroundStyle(PipStyle.muted)
-                        }
-                    }
-                    Section {
-                        // settings-ui.js: Help is a Settings page (042).
-                        NavigationLink(value: SettingsDest.help) {
-                            Text("Help")
-                        }
-                        .accessibilityIdentifier("settings:help")
-                    }
-                }
-                  }
-                }
-                .onChange(of: focus) { _, r in
-                    if let r { withAnimation { proxy.scrollTo(r, anchor: .center) } }
-                }
-              }
-                .searchable(text: $query,
-                            placement: .navigationBarDrawer(displayMode: .always),
-                            prompt: "Search or ask: feelings, teacher, bigger…")
-                .onChange(of: query) { _, q in help.setQuery(q) }
-                .navigationDestination(for: SettingsDest.self) { _ in
-                    HelpView(help: help, onShow: show)
-                }
-                .navigationTitle("Settings")
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button("Done") { dismiss() }
-                            .accessibilityIdentifier("settingsDone")
-                    }
+                } else {
+                    Spacer()
                 }
             }
         }
+        .background(PipStyle.cream.ignoresSafeArea())
         .sheet(isPresented: $pinEditor) {
             PinSheet(change: true) { saved in
                 // pin.js: the toast names what just changed — "changed"
@@ -226,16 +139,177 @@ struct SettingsView: View {
             .presentationDetents([.medium])
         }
         .onAppear {
-            pinOn = PipPin.isSet; voice.load()
+            pinOn = PipPin.isSet; voice.load(); nameText = me?.name ?? ""
             Task { await help.load(childName: model.activeName == "this person" ? "" : model.activeName) }
+        }
+        .task(id: hubKey) { await loadHub() }
+        .onReceive(model.lifetime.objectWillChange) { _ in Task { await loadHub() } }
+        .onChange(of: query) { _, q in help.setQuery(q) }
+        .onChange(of: me?.name) { _, n in if !nameFocused { nameText = n ?? "" } }
+    }
+
+    // MARK: header (settings-ui.js .set-top)
+
+    private func header(narrow: Bool) -> some View {
+        HStack(spacing: 14) {
+            if let me {
+                PersonAvatar(person: me, size: 40)
+            }
+            VStack(alignment: .leading, spacing: 0) {
+                Text(hub?.unnamed == false ? (hub?.person ?? "Settings") : "Settings")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(PipStyle.ink)
+                    .accessibilityIdentifier("settingsPerson")
+                Text("Settings").font(.caption).foregroundStyle(PipStyle.muted)
+            }
+            .accessibilityElement(children: .combine)
+            TextField("Search or ask: feelings, teacher, bigger…", text: $query)
+                .textFieldStyle(.roundedBorder)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .submitLabel(.search)
+                .frame(maxWidth: 520)
+                .accessibilityLabel("Search settings and help")
+                .accessibilityIdentifier("settingsSearch")
+            Spacer(minLength: 0)
+            Button("Done") { dismiss() }
+                .buttonStyle(.borderedProminent)
+                .tint(PipStyle.ink)
+                .accessibilityIdentifier("settingsDone")
+        }
+        .padding(.horizontal, 20).padding(.vertical, 12)
+    }
+
+    // MARK: sidebar (renderNav)
+
+    private var sidebar: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 4) {
+                ForEach(hub?.sections ?? []) { sec in
+                    // settings-ui.js renderNav: a heading where the group changes.
+                    if sec.id == hub?.sections.first?.id || sec.group != group(before: sec) {
+                        Text(sec.group == "you" ? "You"
+                             : (hub?.unnamed == false ? (hub?.person ?? "") : "This person"))
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundStyle(PipStyle.muted)
+                            .textCase(.uppercase)
+                            .padding(.horizontal, 12).padding(.top, 10).padding(.bottom, 4)
+                    }
+                    Button {
+                        query = ""
+                        section = sec.id
+                        narrowOnPage = true
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: sectionIcons[sec.id] ?? "gearshape")
+                                .font(.system(size: 18))
+                                .frame(width: 26)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(sec.title).font(.system(size: 17, weight: .semibold))
+                                if !sec.summary.isEmpty {
+                                    Text(sec.summary)
+                                        .font(.system(size: 13))
+                                        .foregroundStyle(PipStyle.muted)
+                                        .lineLimit(2)
+                                        .multilineTextAlignment(.leading)
+                                }
+                            }
+                            Spacer(minLength: 0)
+                        }
+                        .foregroundStyle(PipStyle.ink)
+                        .padding(.horizontal, 12).padding(.vertical, 10)
+                        .background(section == sec.id && !searching
+                                    ? PipStyle.ink.opacity(0.10) : Color.clear)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityAddTraits(section == sec.id ? .isSelected : [])
+                    .accessibilityIdentifier("settingsSection:\(sec.id)")
+                }
+            }
+            .padding(10)
+        }
+        .background(PipStyle.cream)
+    }
+
+    private func group(before sec: HubSection) -> String? {
+        guard let s = hub?.sections, let i = s.firstIndex(where: { $0.id == sec.id }), i > 0
+        else { return nil }
+        return s[i - 1].group
+    }
+
+    // MARK: detail
+
+    @ViewBuilder
+    private func detail(narrow: Bool) -> some View {
+        NavigationStack {
+            ScrollViewReader { proxy in
+                Group {
+                    if searching { resultsPage } else { page(section) }
+                }
+                .onChange(of: focus) { _, r in
+                    if let r { withAnimation { proxy.scrollTo(r, anchor: .center) } }
+                }
+            }
+            .toolbar {
+                if narrow {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("‹ Settings") { query = ""; narrowOnPage = false }
+                            .accessibilityIdentifier("settingsBack")
+                    }
+                }
+            }
+        }
+        .id(searching ? "results" : section)
+    }
+
+    @ViewBuilder
+    func page(_ id: String) -> some View {
+        if let s = model.settings {
+            switch id {
+            case "words": wordsPage()
+            case "board": boardPage(s)
+            case "talking": talkingPage(s)
+            case "lang": langPage(s)
+            case "team": teamPage()
+            case "backup": backupPage(s)
+            case "account": AccountView(flow: model.flow, team: model.team)
+            case "help": HelpView(help: help, onShow: show)
+            case "lifetime": LifetimeView(life: model.lifetime)
+            default: overviewPage()
+            }
         }
     }
 
-    /// Help -> a Settings row: back to the list, scroll there, light the
-    /// row for a moment (help-ui.js goTo).
-    private func show(_ route: String) {
+    // MARK: search (runSearch)
+
+    /// settings-ui.js: the top box searches Settings and Help together
+    /// (E5's shared two-pass search): answers, and the Settings rows that
+    /// exist natively.
+    private var resultsPage: some View {
+        Form {
+            Section {
+                if let r = help.result {
+                    HelpResults(result: r, onShow: show) { _ in
+                        query = ""
+                        section = "help"
+                        narrowOnPage = true
+                    }
+                }
+            }
+        }
+        .navigationTitle("Results for “\(query.trimmingCharacters(in: .whitespaces))”")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    /// Help -> a Settings row (help-ui.js goTo): open its section page,
+    /// scroll there, light the row for a moment.
+    func show(_ route: String) {
         query = ""
-        path = []
+        section = Self.routeSection[route] ?? section
+        narrowOnPage = true
         Task {
             try? await Task.sleep(for: .milliseconds(450))
             focus = route
@@ -244,7 +318,13 @@ struct SettingsView: View {
         }
     }
 
-    private func flash(_ msg: String) {
+    private func loadHub() async {
+        let h: HubModel? = try? await model.coreValueAny(
+            "PIPCORE.settingsUi", "hub", [["name": me?.name ?? "", "pinOn": pinOn, "licensed": model.lifetime.licensed]])
+        if let h { hub = h }
+    }
+
+    func flash(_ msg: String) {
         note = msg
         Task { [msg] in
             try? await Task.sleep(for: .seconds(3))
@@ -252,83 +332,47 @@ struct SettingsView: View {
         }
     }
 
-    /* Each binding reads the rendered `s` — a write republishes
-       model.settings and the view re-renders with the shared layer's
-       answer, so the sheet never shows a value the db doesn't hold. */
-    private func toggle(_ title: String, _ key: String,
-                        _ value: Bool) -> some View {
-        Toggle(title, isOn: Binding(
-            get: { value },
-            set: { model.setSetting(key, $0 ? 1 : 0) }))
-    }
-
-    private func strBinding(_ key: String, _ value: String) -> Binding<String> {
-        Binding(get: { value }, set: { model.setSetting(key, $0) })
-    }
-
-    private func rateBinding(_ s: SettingsModel) -> Binding<String> {
-        strBinding("speech_rate", s.speechRate)
-    }
-
-    private func controlBinding(_ s: SettingsModel, _ c: String) -> Binding<Bool> {
-        Binding(
-            get: { s.barControls.contains(c) },
-            set: { on in
-                var set = Set(s.barControls)
-                if on { set.insert(c) } else { set.remove(c) }
-                // bar.mjs keeps at least one edit control on the bar —
-                // the shared layer adds Clear back if both are gone.
-                model.setSetting("bar_controls",
-                                 s.allControls.filter { set.contains($0) })
-            })
-    }
-
-    private func controlName(_ s: SettingsModel, _ c: String) -> String {
-        s.controlNames[c] ?? c
-    }
-
-    private func cellName(_ layout: String) -> String {
-        layout.replacingOccurrences(of: "grid", with: "") + " cells"
-    }
-}
-
-extension View {
-    /// A Settings row Help can point at: a stable scroll id and a quiet
-    /// highlight while `focus` names it (the web's `set-found`).
-    func settingsRow(_ route: String?, _ focus: String?) -> some View {
-        modifier(SettingsRowMark(route: route, focus: focus))
-    }
-}
-
-private struct SettingsRowMark: ViewModifier {
-    let route: String?
-    let focus: String?
-    @ViewBuilder func body(content: Content) -> some View {
-        let lit = route != nil && route == focus
-        if let route {
-            content.id(route)
-                .modifier(Lit(lit: lit, route: route))
-        } else {
-            content
+    /// Close Settings, then do `then` once the cover is gone (a sheet or
+    /// Edit mode opens on the board underneath).
+    func leaveSettings(then: @escaping @MainActor () -> Void) {
+        dismiss()
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(450))
+            then()
         }
     }
 }
 
-private struct Lit: ViewModifier {
-    let lit: Bool
-    let route: String
-    func body(content: Content) -> some View {
-        content
-            .listRowBackground(lit ? Color.yellow.opacity(0.35) : nil)
-            .overlay(alignment: .topLeading) {
-                if lit {
-                    Color.clear.frame(width: 1, height: 1)
-                        .accessibilityElement()
-                        .accessibilityIdentifier("found:\(route)")
-                }
-            }
+
+extension AppModel {
+    /// One core call into any PIPCORE object with structured arguments.
+    func coreValueAny<T: Decodable & Sendable>(
+        _ object: String, _ method: String, _ args: sending [Any]
+    ) async throws -> T {
+        let core = self.core
+        let id = appId
+        nonisolated(unsafe) let all: [Any] = [id] + args
+        return try await Self.editCore(core, method, all, object: object)
+    }
+
+    /// person-card.js #person-name change: the synced person_name (core)
+    /// and the people list's copy (device) move together. Blank is refused.
+    func setPersonName(_ name: String) {
+        let clean = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !clean.isEmpty, let id = activeId else { return }
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                let _: PersonNameAnswer = try await coreValueAny(
+                    "PIPCORE.settingsUi", "nameSet", [["name": clean]])
+                try registry?.patch(id, ["name": clean])
+                try refreshPeople()
+            } catch { peopleError = "\(error)" }
+        }
     }
 }
+
+nonisolated struct PersonNameAnswer: Decodable, Sendable { let name: String? }
 
 // MARK: - PIN sheet (pin.js gatePin)
 
@@ -462,3 +506,41 @@ struct PinSheet: View {
         }
     }
 }
+extension View {
+    /// A Settings row Help can point at: a stable scroll id and a quiet
+    /// highlight while `focus` names it (the web's `set-found`).
+    func settingsRow(_ route: String?, _ focus: String?) -> some View {
+        modifier(SettingsRowMark(route: route, focus: focus))
+    }
+}
+
+private struct SettingsRowMark: ViewModifier {
+    let route: String?
+    let focus: String?
+    @ViewBuilder func body(content: Content) -> some View {
+        let lit = route != nil && route == focus
+        if let route {
+            content.id(route)
+                .modifier(Lit(lit: lit, route: route))
+        } else {
+            content
+        }
+    }
+}
+
+private struct Lit: ViewModifier {
+    let lit: Bool
+    let route: String
+    func body(content: Content) -> some View {
+        content
+            .listRowBackground(lit ? Color.yellow.opacity(0.35) : nil)
+            .overlay(alignment: .topLeading) {
+                if lit {
+                    Color.clear.frame(width: 1, height: 1)
+                        .accessibilityElement()
+                        .accessibilityIdentifier("found:\(route)")
+                }
+            }
+    }
+}
+

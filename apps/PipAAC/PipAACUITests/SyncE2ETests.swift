@@ -107,6 +107,8 @@ final class SyncE2ETests: XCTestCase {
     /// Settings -> Team & devices -> Join with a code -> role -> code.
     private func joinWithCode(_ app: XCUIApplication, _ code: String) {
         app.buttons["settingsGear"].tap()
+        XCTAssertTrue(app.buttons["settingsSection:team"].waitForExistence(timeout: 10))
+        app.buttons["settingsSection:team"].tap()   // E4: the Team & devices page
         XCTAssertTrue(app.buttons["settings:team"].waitForExistence(timeout: 10))
         app.buttons["settings:team"].tap()
         XCTAssertTrue(app.buttons["team:join"].waitForExistence(timeout: 10))
@@ -191,6 +193,7 @@ final class SyncE2ETests: XCTestCase {
 
         // SY-3: this iPad offers a code; a third device (node) joins with it.
         app.buttons["settingsGear"].tap()
+        app.buttons["settingsSection:team"].tap()   // E4: the Team & devices page
         app.buttons["settings:team"].tap()
         XCTAssertEqual(app.staticTexts["team:status"].label,
                        "Linked — this board syncs with the devices you added.")
@@ -257,8 +260,8 @@ final class SyncE2ETests: XCTestCase {
     /// Settings -> Backup & privacy -> Restore from a card.
     private func openRestore(_ app: XCUIApplication) {
         app.buttons["settingsGear"].tap()
-        XCTAssertTrue(app.buttons["settings:backup"].waitForExistence(timeout: 10))
-        app.buttons["settings:backup"].tap()
+        XCTAssertTrue(app.buttons["settingsSection:backup"].waitForExistence(timeout: 10))
+        app.buttons["settingsSection:backup"].tap()
         XCTAssertTrue(app.buttons["backup:restore"].waitForExistence(timeout: 10))
         app.buttons["backup:restore"].tap()
     }
@@ -290,8 +293,8 @@ final class SyncE2ETests: XCTestCase {
 
         // The card on this iPad: same 12 words as the card that restored it.
         app.buttons["settingsGear"].tap()
-        XCTAssertTrue(app.buttons["settings:backup"].waitForExistence(timeout: 10))
-        app.buttons["settings:backup"].tap()
+        XCTAssertTrue(app.buttons["settingsSection:backup"].waitForExistence(timeout: 10))
+        app.buttons["settingsSection:backup"].tap()
         app.buttons["backup:card"].tap()
         XCTAssertTrue(app.images["rec:qr"].waitForExistence(timeout: 30))
         let before = words.trimmingCharacters(in: .whitespacesAndNewlines)

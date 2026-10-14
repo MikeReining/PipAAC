@@ -62,8 +62,8 @@ final class AccountUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
         app.buttons["settingsGear"].tap()
-        XCTAssertTrue(app.buttons["settings:account"].waitForExistence(timeout: 10))
-        app.buttons["settings:account"].tap()
+        XCTAssertTrue(app.buttons["settingsSection:account"].waitForExistence(timeout: 10))
+        app.buttons["settingsSection:account"].tap()
         XCTAssertEqual(app.staticTexts["acct:state"].label, "Not signed in.")
 
         let email = "c5-\(UUID().uuidString.prefix(8).lowercased())@example.com"

@@ -55,7 +55,7 @@ final class LifetimeUITests: XCTestCase {
         XCTAssertTrue(app.buttons["want"].waitForExistence(timeout: 30))
         app.buttons["settingsGear"].tap()
         XCTAssertTrue(el(app, "settingsDone").waitForExistence(timeout: 10))
-        let row = el(app, "settings:lifetime")
+        let row = el(app, "settingsSection:lifetime")   // E4: first in the section list, as on the web
         XCTAssertTrue(row.waitForExistence(timeout: 10), "Settings has a Pip Lifetime row")
         row.tap()
     }
@@ -155,6 +155,7 @@ final class LifetimeUITests: XCTestCase {
         XCTAssertTrue(app.buttons["want"].waitForExistence(timeout: 30))
         app.buttons["settingsGear"].tap()
         XCTAssertTrue(el(app, "settingsDone").waitForExistence(timeout: 10))
+        el(app, "settingsSection:team").tap()   // E4: the Team & devices page
         el(app, "settings:team").tap()
         el(app, "team:add").tap()
         let door = el(app, "pair:lifetime")

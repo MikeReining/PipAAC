@@ -99,12 +99,15 @@ struct AccountView: View {
 
 // MARK: - Backup & privacy (the recovery card half)
 
-struct BackupView: View {
+struct BackupView<Extra: View>: View {
     @EnvironmentObject var model: AppModel
     @ObservedObject var flow: AccountFlow
     @ObservedObject var team: TeamFlow
     @State private var showCard = false
     @State private var showRestore = false
+    /// The rest of the Backup & privacy page (044 E4): Settings PIN,
+    /// anonymous counts, the speaking voice - rows beside the recovery card.
+    @ViewBuilder var extra: () -> Extra
 
     var body: some View {
         Form {
@@ -126,6 +129,7 @@ struct BackupView: View {
                 Text("If this device is lost or reset, the card brings everything back. Print it and keep it somewhere safe. Without the card, a linked device, or a device backup, their words are gone for good.")
                     .font(.footnote).foregroundStyle(PipStyle.muted)
             }
+            extra()
             DeleteFromPipSection(team: team)
         }
         .navigationTitle("Backup & privacy")

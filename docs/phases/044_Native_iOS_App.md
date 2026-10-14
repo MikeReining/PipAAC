@@ -849,3 +849,52 @@ shows the open person's photo (Add / Change / Remove).
 - Verified: `app_pictures.test.mjs` (7) and `app_pictures_bulk.test.mjs` (5) on the built core with a fake Worker; `PicturesUITests` (5, in-process StubWorker, board cell accessibility + disk + request log); full xcodebuild suite; full `e2e_sync.sh`.
 - Web notes (not fixed): free boards with a started trial get pictures with no license (a3ffc23a; the facade inherits it, tests cover a licence-less find); the paste form reads the allowance once per page and never again; opening a personal word's card runs a find every time; draw stages cannot be live on iPad (host buffers a response), the line says "Drawing...".
 - Left: voice mint after a paste (web `tile.prefetch`), photo names from file names (PhotosPicker gives none, names start blank), no picture-sync e2e scenario, parked-offline picture list is in memory only. The "their world" foods and places (E7 `worldApply`) get no picture fill, same as the web (setup-ui.js never calls pictureFill); a card open fills them.
+
+**2026-10-14 (E4 — managing groups, and the Settings the web has):**
+Settings is now full screen: a section list beside one page (under 760 pt,
+the list then the page with Back) with the web's names and order -
+Overview, Words, Board, Talking, Language help, Team & devices, Backup &
+privacy - each row's label and help text verbatim, a one-line state under
+each section, and a search box over the web's Settings index. Groups can be
+created, renamed, hidden, deleted (Undo), reordered and given an icon.
+
+- Scope: LW-14, LW-15, ST-7, ST-4, ST-5, BS-22, BS-21.
+- Changed: `scripts/ios/app_groups.mjs` (`PIPCORE.groupsEdit`: createGroupNamed,
+  renameGroupTo, setGroupShown, setMealsShown, removeGroup, moveGroups,
+  setIcon, iconChoices, countsSet, undoGroups, groupFace) - every write is
+  the web's owner (createGroup / renameGroup / deleteGroupUndoable /
+  setGroupHidden / moveGroupBlock / setGroupGlyph / setSetting).
+  `app_settings.mjs` (`PIPCORE.settingsUi`: hub = sections + summaries +
+  checklist + glance, search = `help_search.localHits` over the bundled
+  `help.en.json` limited to rows a native page has, nameSet =
+  `person_name.nameToProfile`). `app_edit.mjs` paint carries the 30-day tap
+  count per home tile while the counts badge is on; `app.mjs` doors carry
+  their face and now honor `occasions_visible` (the web hides the meal
+  doors with it; native ignored it); `settingsModel.look`.
+  Swift: `SettingsView.swift` (shell, search, PIN sheet), `SettingsPages.swift`,
+  `GroupsEditView.swift` (editor: New group, row menu Rename / Move to the
+  top / Change icon / Hide-Show / Delete, grips), `GroupIconPicker.swift`
+  (icon sheet + Settings > Words > Show groups), `TileView.swift`
+  (`wordsOnly` environment: pictures leave tiles, strip cards and bar chips;
+  count pill), `EditMode.swift` (📊 button, "Edit groups" button),
+  `bundle_assets.mjs` (+`help.en.json`).
+- Moved rows (existing UI tests updated, nothing else): People, Team &
+  devices -> the Team & devices page; Voice, Sentence bar -> Talking; so the
+  tests tap `settingsSection:team` / `settingsSection:talking` first. The
+  "Occasions in Groups" switch is now the Meals row of Show groups, as on
+  the web; "Help improve Pip..." is "Share anonymous counts with Pip".
+- Verified: `scripts/ios/app_groups.test.mjs`; XCUITests `GroupsUITests`
+  (`testManageGroupsSurvivesRelaunch` create/rename/move first/icon, relaunch,
+  db read-back + door icon; `testHideShowGroupInSettings`;
+  `testWordsOnlyChangesTheLook`; `testCountsBadgeIsTheChildsOwnTaps` badge ==
+  `learner_event_log` count; `testSettingsSectionsOverviewAndSearch`). Shots
+  in /tmp/pipaac-shots-e4/.
+- Left: the web's extra online icons (library.json) are not offered; Spotlight,
+  Progress, Pip Lifetime, Your account, Help pages and the Overview's
+  Protect line / win card / tour / update card (no native feature yet); search
+  is the on-device pass only (no search by meaning), answers are not searched
+  (no Help page), a hit opens its page without highlighting the row; Keyboard
+  mode and "Outline likely next words" rows; "People & places" (setup flow).
+  The Show-groups switch is a button drawn as a switch: a list in reorder
+  mode swallowed a real Toggle's tap in XCUITest. Buttons-per-screen still
+  writes `board_layout` directly (no move-cost confirmation; pre-existing).

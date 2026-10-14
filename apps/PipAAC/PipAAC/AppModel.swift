@@ -33,6 +33,14 @@ nonisolated struct CellModel: Decodable, Sendable {
     var speaks: String?
     var name: String?
     var groupId: String?
+    /// BS-21: the child's own 30-day taps (Edit mode + the 📊 badge only).
+    var count: Int?
+    /// A group door's face (group-glyph.js): an ink icon, a picture key,
+    /// a seed emoji, or the initial — the core decides which.
+    var icon: String?
+    var picture: String?
+    var emoji: String?
+    var initial: String?
 }
 
 nonisolated struct BoardModel: Decodable, Sendable {
@@ -141,6 +149,8 @@ nonisolated struct SettingsModel: Decodable, Sendable {
     let groupTopRow: Bool
     let occasionsVisible: Bool
     let shareResearch: Bool
+    /// "symbol" (pictures and words) | "label" (words only) — BS-22.
+    var look: String = "symbol"
     let speechRate: String
     let keyboardOrder: String
     let keyboardStandardName: String
@@ -191,6 +201,9 @@ final class AppModel: ObservableObject {
     @Published var otherGroups: OtherGroupsModel?
     @Published var placeRequest: PlaceRequest?
     @Published var showLibrary = false
+    // E4: group management (GroupsEditView.swift) and the 📊 counts badge.
+    @Published var showGroupsEdit = false
+    @Published var countsOn = false
     @Published var editToast: EditToastModel?
     // E6: pictures (PicturesModel.swift) - the card's Picture row, the paste form, several photos.
     @Published var picRows: [String: PicRow] = [:]
@@ -287,6 +300,13 @@ final class AppModel: ObservableObject {
                 bootError = "\(error)"
             }
         }
+    }
+
+    /// A group write landed (GroupsEditView.swift): the child's index and
+    /// the Settings model follow the db.
+    func adopt(groupIndex idx: GroupIndexModel?, settings set: SettingsModel?) {
+        if let idx { groupIndex = idx }
+        if let set { settings = set }
     }
 
     func refreshPeople() throws {

@@ -398,15 +398,26 @@ export function appGroups(appId) {
   const home = new Map(PIP().coremove.coreCells(s.d, boardGeom(s).name, s.locale)
     .map((c) => [c.slot_index, c]));
   const mask = masked(s);
+  /* groups-ui.js hiddenBy: a door is hidden by its own switch, or with
+   * the meal groups when those are off (027 B8) — it keeps its slot. */
+  const mealsOn = (one(s.d,
+    "SELECT occasions_visible AS o FROM learner_profile WHERE id = 'prf_local'")?.o ?? 1) === 1;
+  const isMeal = (id) =>
+    (one(s.d, "SELECT occasion FROM group_meta WHERE group_id = ?", [id])?.occasion ?? 0) === 1;
   const doors = PIP().groups_shared.groupIndex(s.d)
-    .filter((g) => !g.hidden && PIP().groups_shared.shownOn(s.d, g.id, layout));
+    .filter((g) => !g.hidden && PIP().groups_shared.shownOn(s.d, g.id, layout)
+      && (mealsOn || !isMeal(g.id)));
   const byVisual = new Map();
   for (const g of doors) {
     const v = PIP().groups_shared.indexVisual(g.index_slot, geom.cells);
+    const name = PIP().groups.groupDisplayName(s.d, g, s.locale);
+    // group-glyph.js: the door's face — ink icon, pinned/first picture, or glyph.
+    const face = PIP().groupsEdit.groupFace(s.d, { ...g, name }, s.locale);
     byVisual.set(`${v.page}:${v.slot}`, {
-      type: "group", slot: v.slot, groupId: g.id,
-      name: PIP().groups.groupDisplayName(s.d, g, s.locale),
+      type: "group", slot: v.slot, groupId: g.id, name,
       glyph: g.glyph ?? null, photoKey: g.photo_key ?? null, kind: g.kind,
+      icon: face.icon ?? null, picture: face.picture ?? null,
+      emoji: face.emoji ?? null, initial: face.initial ?? null,
     });
   }
   const pages = Math.max(1, ...doors.map((g) =>
@@ -850,6 +861,8 @@ function settingsModel(s) {
     groupTopRow: !!p.group_top_row,
     occasionsVisible: p.occasions_visible !== 0,
     shareResearch: p.share_research !== 0,
+    // Profile_Presentation_Modes § 2: 'symbol' (pictures and words) | 'label' (words only)
+    look: p.presentation_mode === "label" ? "label" : "symbol",
     speechRate: p.speech_rate ?? "normal",
     keyboardOrder: p.keyboard_order ?? "standard",
     keyboardStandardName:

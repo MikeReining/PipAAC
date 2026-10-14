@@ -105,8 +105,14 @@ final class TeamE2ETests: XCTestCase {
     private func open(_ app: XCUIApplication, _ row: String) {
         XCTAssertTrue(app.buttons["settingsGear"].waitForExistence(timeout: 20))
         app.buttons["settingsGear"].tap()
-        XCTAssertTrue(app.buttons[row].waitForExistence(timeout: 20), "settings row \(row)")
-        app.buttons[row].tap()
+        // E4: Settings is sectioned - pick the section, then (Team) its Devices link.
+        let sec = row.replacingOccurrences(of: "settings:", with: "settingsSection:")
+        XCTAssertTrue(app.buttons[sec].waitForExistence(timeout: 20), "settings section \(sec)")
+        app.buttons[sec].tap()
+        if row == "settings:team" {
+            XCTAssertTrue(app.buttons[row].waitForExistence(timeout: 20), "settings row \(row)")
+            app.buttons[row].tap()
+        }
     }
 
     /// Back to the Settings list (a sub-page shows a back button).

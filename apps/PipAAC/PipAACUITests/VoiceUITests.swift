@@ -96,6 +96,8 @@ final class VoiceUITests: XCTestCase {
         var app = launch()
         XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
         app.buttons["settingsGear"].tap()
+        XCTAssertTrue(app.buttons["settingsSection:talking"].waitForExistence(timeout: 10))
+        app.buttons["settingsSection:talking"].tap()   // E4: Voice lives on the Talking page
         XCTAssertTrue(app.buttons["voice:change"].waitForExistence(timeout: 10))
         app.buttons["voice:change"].tap()
         let use = app.buttons["voice:use:\(mia)"]
@@ -151,6 +153,7 @@ final class VoiceUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
         app.buttons["settingsGear"].tap()
+        app.buttons["settingsSection:talking"].tap()   // E4: Voice lives on the Talking page
         app.buttons["voice:change"].tap()
         let t0 = Date()
         app.buttons["voice:use:\(voice)"].tap()

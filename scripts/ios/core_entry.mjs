@@ -106,6 +106,12 @@ export * as purchase from "./app_purchase.mjs";
 /** The recovery card: show, replace, restore (044 C5) - PIPCORE.recovery */
 export * as recovery from "./app_recovery.mjs";
 
+/** Group management, group faces, the counts flag (044 E4) - PIPCORE.groupsEdit */
+export * as groupsEdit from "./app_groups.mjs";
+
+/** Settings sections, Overview, search over Settings rows (044 E4) - PIPCORE.settingsUi */
+export * as settingsUi from "./app_settings.mjs";
+
 /** Host crypto/key-store verbs (handles over Swift CryptoKit/keychain) and
  *  the hostCall promise bridge — the surface pairing, recovery and media
  *  slices call, and the Swift suite probes. */

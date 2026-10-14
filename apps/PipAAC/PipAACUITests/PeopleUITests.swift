@@ -56,6 +56,8 @@ final class PeopleUITests: XCTestCase {
 
     private func openPeople(_ app: XCUIApplication) {
         app.buttons["settingsGear"].tap()
+        XCTAssertTrue(app.buttons["settingsSection:team"].waitForExistence(timeout: 10))
+        app.buttons["settingsSection:team"].tap()   // E4: People lives on the Team & devices page
         XCTAssertTrue(app.buttons["settings:people"].waitForExistence(timeout: 10))
         app.buttons["settings:people"].tap()
         XCTAssertTrue(app.buttons["people:add"].waitForExistence(timeout: 10))

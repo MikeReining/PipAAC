@@ -28,13 +28,27 @@ const one = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
 
 /* ---------------- render model ---------------- */
 
+/** grid.js renderGrid withCount (018 D10, BS-21): in Edit mode with 📊 on,
+ *  every home-board word tile carries the child's own 30-day taps — the
+ *  same useCounts map the placement sheet sorts by. */
+function withCounts(s, board) {
+  if (!s.editing || !s.countsOn) return board;
+  const counts = PIP().usecounts.useCounts(s.d);
+  return {
+    ...board,
+    cells: board.cells.map((c) => (c.type === "word"
+      ? { ...c, count: counts.get(`${c.kind}:${c.id}`) ?? 0 } : c)),
+  };
+}
+
 function paint(appId, extra = {}) {
   const s = appSession(appId);
   const group = s.view === "group" && s.groupId !== null;
   return {
     editing: !!s.editing,
+    countsOn: !!s.countsOn && !!s.editing,
     surface: group ? "group" : "board",
-    board: appBoard(appId),
+    board: withCounts(s, appBoard(appId)),
     groupPage: group ? appGroupPage(appId, s.groupId, s.page) : null,
     card: null,
     toast: null,
@@ -117,6 +131,7 @@ export function editOpen(appId) {
 export function editClose(appId) {
   const s = appSession(appId);
   s.editing = false;
+  s.countsOn = false; // 📊 leaves with Edit mode (edit-shared.js setEditing)
   invalidate(s);
   return paint(appId);
 }

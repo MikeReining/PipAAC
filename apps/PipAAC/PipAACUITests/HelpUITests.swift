@@ -51,7 +51,7 @@ final class HelpUITests: XCTestCase {
     private func openHelp(_ app: XCUIApplication) {
         app.buttons["settingsGear"].tap()
         XCTAssertTrue(el(app, "settingsDone").waitForExistence(timeout: 10))
-        reveal(app, "settings:help").tap()
+        el(app, "settingsSection:help").tap()   // E4: Help is a section page
         if !el(app, "help:q").waitForExistence(timeout: 10) { print("DEBUGTREE", app.debugDescription) }
         XCTAssertTrue(el(app, "help:q").exists)
     }
@@ -115,7 +115,7 @@ final class HelpUITests: XCTestCase {
     func testSettingsSearchFindsHelpAndRows() throws {
         let app = launch("-pipUITestHelpOffline")
         app.buttons["settingsGear"].tap()
-        let field = app.searchFields.firstMatch
+        let field = app.textFields["settingsSearch"]
         XCTAssertTrue(field.waitForExistence(timeout: 10))
         field.tap()
         field.typeText("voice")

@@ -33,9 +33,12 @@ struct BoardView: View {
             }
             .presentationDetents([.medium])
         }
-        .sheet(isPresented: $model.showSettings) {
+        // The web's Settings is a full-screen overlay: a section list
+        // beside one page (settings-ui.js).
+        .fullScreenCover(isPresented: $model.showSettings) {
             SettingsView(model: model)
                 .environmentObject(model)
+                .environment(\.wordsOnly, model.settings?.look == "label")
         }
         .sheet(isPresented: $model.showLifetime) {
             LifetimeSheet().environmentObject(model)
@@ -44,6 +47,12 @@ struct BoardView: View {
             LibraryView()                // LibraryView.swift
                 .environmentObject(model)
         }
+        .sheet(isPresented: $model.showGroupsEdit) {
+            GroupsEditView(model: model)  // GroupsEditView.swift
+                .environmentObject(model)
+        }
+        // Presentation mode (BS-22): one value, read by every tile.
+        .environment(\.wordsOnly, model.settings?.look == "label")
         // card / add a word / "Also in" / place — one sheet (AddWordView.swift)
         .modifier(EditSheets(inLibrary: false))
         .overlay(alignment: .bottom) { EditToastOverlay() }
@@ -338,9 +347,10 @@ struct BoardView: View {
             .spotMark(spotMark, dim: model.spot.dim)
             .accessibilityIdentifier("tile:\(cell?.id ?? "")")
             .accessibilityValue([
-                ((cell?.art ?? cell?.photoKey).flatMap { PipBlobs.url(forKey: $0) }) != nil ? "family photo" : nil,
+                tileValue(photo: ((cell?.art ?? cell?.photoKey).flatMap { PipBlobs.url(forKey: $0) }) != nil,
+                          wordsOnly: model.settings?.look == "label", count: nil),
                 spotMark?.a11y,
-            ].compactMap { $0 }.joined(separator: ", "))
+            ].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", "))
         case "groups":
             AnchorTile(icon: "folder.fill", label: "Groups", glow: model.spot.groups) { model.openGroups() }
         case "family":
@@ -348,7 +358,7 @@ struct BoardView: View {
                 if let f = cell?.familyId { model.openFamily(f) }
             }
         case "group":
-            GroupDoor(label: cell?.name ?? "", glyph: cell?.glyph) {
+            GroupDoor(label: cell?.name ?? "", glyph: cell?.glyph, face: cell) {
                 if let g = cell?.groupId { model.openGroup(g) }
             }
             .accessibilityIdentifier("group:\(cell?.groupId ?? "")")
@@ -462,15 +472,60 @@ struct AnchorTile: View {
     }
 }
 
-/// A group door on the index — name + glyph (or photo later).
+/// A group's face (group-glyph.js): the core says which — an ink icon, a
+/// picture (a pinned one, or a family group's first word), an emoji, or an
+/// initial. Swift only draws it.
+struct GroupFace: View {
+    let icon: String?
+    let picture: String?
+    let emoji: String?
+    let initial: String?
+    var size: CGFloat = 34
+
+    init(_ cell: CellModel?, size: CGFloat = 34) {
+        icon = cell?.icon; picture = cell?.picture
+        emoji = cell?.emoji ?? cell?.glyph; initial = cell?.initial
+        self.size = size
+    }
+    init(icon: String?, picture: String?, emoji: String?, initial: String?, size: CGFloat = 34) {
+        self.icon = icon; self.picture = picture; self.emoji = emoji
+        self.initial = initial; self.size = size
+    }
+
+    var body: some View {
+        Group {
+            if let ui = PipAssets.image(picture) {
+                Image(uiImage: ui).resizable().scaledToFit()
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+            } else if let ui = PipAssets.image(icon) {
+                Image(uiImage: ui).resizable().scaledToFit()
+            } else if let emoji, !emoji.isEmpty {
+                Text(emoji).font(.system(size: size * 0.78))
+            } else {
+                Text(initial ?? "•")
+                    .font(.system(size: size * 0.7, weight: .bold))
+                    .foregroundStyle(PipStyle.ink)
+            }
+        }
+        .frame(width: size, height: size)
+        .accessibilityHidden(true)
+    }
+}
+
+/// A group door on the index — name + face.
 struct GroupDoor: View {
     let label: String
     let glyph: String?
+    var face: CellModel? = nil
     var action: () -> Void
     var body: some View {
         Button(action: action) {
             VStack(spacing: 4) {
-                Text(glyph ?? "▸").font(.system(size: 26))
+                if face?.icon != nil || face?.picture != nil || face?.emoji != nil || face?.initial != nil {
+                    GroupFace(face, size: 54)
+                } else {
+                    Text(glyph ?? "▸").font(.system(size: 26))
+                }
                 Text(label)
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(PipStyle.ink)
@@ -486,6 +541,7 @@ struct GroupDoor: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(label)
+        .accessibilityValue(face?.icon ?? face?.picture ?? "")
     }
 }
 

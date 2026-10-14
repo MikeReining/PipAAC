@@ -245,6 +245,8 @@ final class MediaUITests: XCTestCase {
         let app = launch()
         XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
         app.buttons["settingsGear"].tap()
+        XCTAssertTrue(app.buttons["settingsSection:team"].waitForExistence(timeout: 10))
+        app.buttons["settingsSection:team"].tap()   // E4: People lives on the Team & devices page
         XCTAssertTrue(app.buttons["settings:people"].waitForExistence(timeout: 10))
         app.buttons["settings:people"].tap()
         let add = app.buttons["person-photo"]

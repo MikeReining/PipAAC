@@ -73,6 +73,7 @@ nonisolated struct EditToastModel: Decodable, Sendable {
 
 nonisolated struct EditPaint: Decodable, Sendable {
     let editing: Bool
+    var countsOn: Bool?
     let surface: String         // board | group
     let board: BoardModel
     var groupPage: GroupPageModel?
@@ -116,6 +117,7 @@ extension AppModel {
 
     func applyEdit(_ p: EditPaint, openCard: Bool) {
         editing = p.editing
+        countsOn = p.countsOn ?? false
         board = p.board
         if let gp = p.groupPage { groupPage = gp }
         if p.card != nil {
@@ -213,6 +215,12 @@ extension AppModel {
         guard let id = cell.id, let g = groupPage?.groupId else { return }
         editCall("groupDrop", [["groupId": g, "kind": cell.kind ?? "sense",
                                 "id": id, "toSlot": toSlot]])
+    }
+
+    /// 📊 (board.js #edit-counts, BS-21): the badge is the core's useCounts;
+    /// the answer is the repainted board, counts included.
+    func toggleCounts() {
+        editCall("countsSet", [["on": !countsOn]], object: "PIPCORE.groupsEdit")
     }
 
     func undo(_ t: EditToastModel) {
@@ -320,7 +328,9 @@ struct EditHeader: View {
         Button(action: action) {
             Label(title, systemImage: system)
                 .font(.system(size: 16, weight: .semibold))
-                .padding(.horizontal, 14)
+                .lineLimit(1)
+                .fixedSize()
+                .padding(.horizontal, 12)
                 .frame(height: 48)
                 .background(Color.white)
                 .foregroundStyle(PipStyle.ink)
@@ -351,7 +361,26 @@ struct EditHeader: View {
                 .font(.system(size: 16, weight: .medium))
                 .foregroundStyle(PipStyle.muted)
                 .lineLimit(2)
-            Spacer()
+                .minimumScaleFactor(0.7)
+            Spacer(minLength: 4)
+            // 018 D10: 📊 puts the child's own 30-day taps on every tile.
+            Button { model.toggleCounts() } label: {
+                Image(systemName: "chart.bar.fill")
+                    .font(.system(size: 18, weight: .semibold))
+                    .frame(width: 48, height: 48)
+                    .background(model.countsOn ? PipStyle.ink : Color.white)
+                    .foregroundStyle(model.countsOn ? Color.white : PipStyle.ink)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(RoundedRectangle(cornerRadius: 10)
+                        .stroke(PipStyle.ink.opacity(0.35), lineWidth: 1.5))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Show how often each word is used")
+            .accessibilityValue(model.countsOn ? "On" : "Off")
+            .accessibilityIdentifier("editCounts")
+            headerButton("Edit groups", system: "folder.badge.gearshape", id: "editGroupsManage") {
+                model.showGroupsEdit = true
+            }
             headerButton("Add a word", system: "plus", id: "editAdd") {
                 model.openAdd(groupId: model.surface == .group ? model.groupPage?.groupId : nil)
             }
@@ -363,7 +392,7 @@ struct EditHeader: View {
             } label: {
                 Label(model.surface == .board ? "Groups" : "Board",
                       systemImage: model.surface == .board ? "folder.fill" : "square.grid.3x3.fill")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 16, weight: .semibold)).lineLimit(1).fixedSize()
                     .padding(.horizontal, 14)
                     .frame(height: 48)
                     .background(Color.white)
@@ -386,6 +415,7 @@ struct EditCell: View {
     @EnvironmentObject var model: AppModel
     let cell: CellModel
     let slotAt: (CGPoint) -> Int?
+    @Environment(\.wordsOnly) private var wordsOnly
 
     @State private var offset: CGSize = .zero
     @State private var dragging = false
@@ -422,7 +452,8 @@ struct EditCell: View {
     }
 
     private var tile: some View {
-        WordTile(label: cell.label ?? "", role: cell.role, art: cell.art ?? cell.photoKey)
+        WordTile(label: cell.label ?? "", role: cell.role, art: cell.art ?? cell.photoKey,
+                 count: cell.count)
             .opacity(cell.hidden == true ? 0.4 : 1)
             .overlay(RoundedRectangle(cornerRadius: 10)
                 .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
@@ -450,13 +481,14 @@ struct EditCell: View {
             )
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(cell.label ?? "")
-            .accessibilityValue(cell.hidden == true ? "Hidden" : "")
             .accessibilityHint(reserved && cell.hidden != true
                                ? "Always here, from the main board"
                                : "Opens this word's card")
             .accessibilityAddTraits(.isButton)
             .accessibilityIdentifier("tile:\(cell.id ?? "")")
-            .accessibilityValue((cell.art ?? cell.photoKey)?.hasPrefix("blob:") == true ? "family photo" : "")
+            .accessibilityValue(tileValue(
+                photo: (cell.art ?? cell.photoKey)?.hasPrefix("blob:") == true,
+                wordsOnly: wordsOnly, count: cell.count))
     }
 }
 

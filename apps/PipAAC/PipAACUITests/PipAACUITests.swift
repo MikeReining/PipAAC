@@ -112,6 +112,8 @@ final class PipAACUITests: XCTestCase {
         // The corner gear opens the sheet — no PIN on a fresh install.
         app.buttons["settingsGear"].tap()
         XCTAssertTrue(app.buttons["settingsDone"].waitForExistence(timeout: 10))
+        // E4: the sentence bar lives on the Talking page.
+        app.buttons["settingsSection:talking"].tap()
 
         // Pick the "Play + Question" preset — the bar keeps only Play,
         // Ask it, and Clear. Settings is a scrolling Form, so the preset
