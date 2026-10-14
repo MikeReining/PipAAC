@@ -76,6 +76,8 @@ all targets, iPad only. Architecture: `docs/product/Platforms_iOS_And_Web.md`.
 | --- | --- |
 | `npm run ios:core` / `ios:core:check` | Build / verify the shared JS core bundle |
 | `npm run ios:fixtures` / `ios:fixtures:check` | Export / verify parity fixtures |
+| `npm run ios:crypto-fixtures` / `:check` | Write / verify `Fixtures/crypto/node.json` (WebCrypto envelopes) |
+| `npm run ios:crypto-fixtures:swift` | Rewrite `Fixtures/crypto/swift.json` from CryptoKit (opt-in; plain test runs never write it). Then `scripts/test.sh scripts/ios/crypto_parity.test.mjs` |
 | `npm run ios:assets` / `ios:assets:check` | Generate / verify gitignored `apps/PipAAC/SharedAssets/` (run before any Xcode build) |
 | `npm run ios:test` | All tests (parity + UI), Release |
 | `npm run ios:test:unit` | `PipAACTests` only, on the simulator |

@@ -10,6 +10,10 @@
 //     schema, same fixed keys) and scripts/ios/crypto_parity.test.mjs
 //     opens/verifies it with the JS. The simulator writes straight to the
 //     host checkout (path from #filePath).
+//   A default run writes NOTHING (it verifies node.json and round-trips
+//   fresh in-process seals). swift.json is rewritten only with
+//   PIP_WRITE_CRYPTO_FIXTURES=1 — `npm run ios:crypto-fixtures:swift`
+//   (xcodebuild forwards TEST_RUNNER_PIP_WRITE_CRYPTO_FIXTURES).
 //
 
 import Testing
@@ -167,7 +171,7 @@ struct PipCryptoTests {
     // MARK: swift -> node
 
     /// Seals every primitive with the node fixture's fixed keys, checks
-    /// Swift can open its own output, and writes swift.json for the JS to
+    /// Swift can open its own output, and (opt-in) writes swift.json for the JS to
     /// open (scripts/ios/crypto_parity.test.mjs).
     @Test func writeSwiftFixtures() throws {
         let doc = try NodeDoc()
@@ -256,6 +260,9 @@ struct PipCryptoTests {
         let out: [String: Any] = ["version": 1, "writer": "swift", "keys": doc.keys, "cases": cases]
         let data = try JSONSerialization.data(
             withJSONObject: out, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
+        // Swift output is random (IVs, signatures), so a default run writes
+        // nothing; `npm run ios:crypto-fixtures:swift` opts in.
+        guard ProcessInfo.processInfo.environment["PIP_WRITE_CRYPTO_FIXTURES"] == "1" else { return }
         try data.write(to: fixtureDir.appendingPathComponent("swift.json"))
     }
 
