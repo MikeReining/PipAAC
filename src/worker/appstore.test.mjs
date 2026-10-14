@@ -338,3 +338,38 @@ test("other notifications are logged, bad ones refused, other apps ignored", asy
 test("the product id is one constant the .storekit file and the app share", async () => {
   assert.equal(PIP_LIFETIME_PRODUCT_ID, "org.pipaac.lifetime.user");
 });
+
+test("/api/v1/trial agrees with entitled(): a refunded token is not licensed (App Store and Stripe)", async () => {
+  const { pki, env } = world();
+  const endsAt = Date.now() + 3 * 86_400_000;
+  env.TILE_LEDGER = { idFromName: (n) => n, get: () => ({
+    fetch: async () => new Response(JSON.stringify({ endsAt, active: true })) }) };
+  const license = await licenseFor(SECRET, UID);
+  const trial = async (u = UID, lic = license) => (await (await worker.fetch(new Request(
+    "http://localhost/api/v1/trial", { headers: { "x-pip-user": u, "x-pip-license": lic } }), env)).json());
+
+  // Licensed (App Store) and not refunded: unchanged.
+  await redeem(env, jws(pki, tx()));
+  assert.deepEqual(await trial(), { licensed: true, endsAt: null });
+  assert.equal(await entitled(env, UID, license), true);
+
+  // Refunded: the same still-valid token no longer reads as licensed anywhere.
+  await notify(env, notification(pki, "REFUND", tx()));
+  assert.equal(await entitled(env, UID, license), false);
+  assert.deepEqual(await trial(), { licensed: false, endsAt });
+
+  // Stripe-style refund flag, same answer.
+  const U2 = "aaaaaaaa-2222-3333-4444-555555555555";
+  const lic2 = await licenseFor(SECRET, U2);
+  const internal = (route, body) => env.RELAY.get(U2).fetch(new Request(
+    `https://relay/users/${U2}/internal/${route}`, {
+      method: "POST", headers: { "x-pip-internal": INTERNAL }, body: JSON.stringify(body) }));
+  await internal("entitlement", { source: "stripe", ref: "cs_1" });
+  assert.equal((await trial(U2, lic2)).licensed, true);
+  await internal("payment_issue", { issue: "refunded", revoke: true });
+  assert.equal(await entitled(env, U2, lic2), false);
+  assert.equal((await trial(U2, lic2)).licensed, false);
+
+  // A trial user (no license presented) is unchanged.
+  assert.deepEqual(await trial("bbbbbbbb-2222-3333-4444-555555555555", ""), { licensed: false, endsAt });
+});

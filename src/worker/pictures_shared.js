@@ -14,7 +14,7 @@
  *  (Fitzgerald role) and language — classifier only, it cannot write or
  *  translate. No user, device, or license id leaves this Worker (§ 8).
  */
-import { checkLicense } from "./license.mjs";
+import { licenseHolds } from "./trial.mjs";
 import { usageReserve } from "./voice.js";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import pictureFinder from "../../data/catalog/picture_finder.json" with { type: "json" };
@@ -261,7 +261,7 @@ export async function findOne(env, { text, description, locale, binding = "PICTU
 export async function findGuard(body, env, n = 1) {
   const uid = typeof body?.user_id === "string" ? body.user_id : null;
   if (!okUuid(uid)) return { err: json({ error: "bad_user_id" }, { status: 400 }) };
-  if (!(await checkLicense(env.PIP_LICENSE_SECRET, uid, body?.license))) {
+  if (!(await licenseHolds(env, uid, body?.license))) {
     return { err: json({ error: "bad_license" }, { status: 403 }) };
   }
   if (!env.AI || !env.PICTURES) {

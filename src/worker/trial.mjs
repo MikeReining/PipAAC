@@ -103,10 +103,15 @@ async function relayPaymentIssue(env, uid) {
  *  the relay has it revoked (043 K — refund/dispute); a presented-but-bad
  *  one is forged — callers answer bad_license; nothing presented → the
  *  trial decides. */
+export async function licenseHolds(env, uid, presented) {
+  if (!(await checkLicense(env.PIP_LICENSE_SECRET, uid, presented))) return false;
+  const issue = await relayPaymentIssue(env, uid);
+  return !(issue === "refunded" || issue === "dispute");
+}
+
 export async function entitled(env, uid, presented) {
   if (await checkLicense(env.PIP_LICENSE_SECRET, uid, presented)) {
-    const issue = await relayPaymentIssue(env, uid);
-    return !(issue === "refunded" || issue === "dispute");
+    return licenseHolds(env, uid, presented);
   }
   if (presented) return false;
   return (await trialStatusFetch(env, uid))?.active === true;
@@ -142,8 +147,9 @@ export async function handleTrial(request, env, url) {
   if (typeof uid !== "string" || !/^[0-9a-f-]{36}$/i.test(uid)) {
     return json({ error: "bad_user_id" }, { status: 400 });
   }
-  if (await checkLicense(
-    env.PIP_LICENSE_SECRET, uid, request.headers.get("x-pip-license"))) {
+  // The same owner as entitled(): a refunded/disputed user's still-valid
+  // token is not a license (the trial clock then answers as for anyone).
+  if (await licenseHolds(env, uid, request.headers.get("x-pip-license"))) {
     return json({ licensed: true, endsAt: null });
   }
   const res = await trialStatusFetch(env, uid);
