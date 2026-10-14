@@ -41,8 +41,6 @@
     "src/worker/relay.heavy.test.mjs": 605,
     "src/worker/relay.js": 959,
     "src/worker/tile.js": 779,
-    "apps/PipAAC/SharedAssets/catalog.json": 132886,
-    "apps/PipAAC/SharedAssets/manifest.json": 1974,
     "scripts/ios/app.mjs": 892
   }
 }

@@ -37,6 +37,7 @@ DEFAULT_EXCLUDE_DIRS = {
     "target",
     "vendor",
     "worktrees",
+    "SharedAssets",
 }
 
 DEFAULT_EXCLUDE_SUFFIXES = {
