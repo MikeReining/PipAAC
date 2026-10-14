@@ -114,8 +114,11 @@ final class PipAACUITests: XCTestCase {
         XCTAssertTrue(app.buttons["settingsDone"].waitForExistence(timeout: 10))
 
         // Pick the "Play + Question" preset — the bar keeps only Play,
-        // Ask it, and Clear.
-        app.buttons["Play + Question"].tap()
+        // Ask it, and Clear. Settings is a scrolling Form, so the preset
+        // may sit below the fold (rows above it grow as slices land).
+        let preset = app.buttons["Play + Question"]
+        for _ in 0..<8 where !preset.isHittable { app.swipeUp(velocity: .slow) }
+        preset.tap()
         app.buttons["settingsDone"].tap()
 
         XCTAssertTrue(app.buttons["want"].waitForExistence(timeout: 10))
