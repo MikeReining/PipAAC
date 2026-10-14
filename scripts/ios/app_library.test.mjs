@@ -9,6 +9,7 @@ import assert from "node:assert/strict";
 import { copyFileSync, mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import vm from "node:vm";
 import { DatabaseSync } from "node:sqlite";
 
 const root = new URL("../../", import.meta.url).pathname;
@@ -19,7 +20,10 @@ copyFileSync(join(root, "public/fresh_db.sqlite"), file);
 const writer = new DatabaseSync(file);
 const reader = new DatabaseSync(file);
 const bindable = (v) => (v === undefined ? null : typeof v === "boolean" ? (v ? 1 : 0) : v);
-globalThis.__pipHost = {
+const host = {
+  log: () => {},
+  randomUUID: () => crypto.randomUUID(),
+  randomBytes: (n) => [...crypto.getRandomValues(new Uint8Array(n))],
   dbExec: (_id, sql) => { writer.exec(sql); return null; },
   dbRun: (_id, sql, p = []) => ({ changes: Number(writer.prepare(sql).run(...p.map(bindable)).changes) }),
   dbAll: (_id, sql, p = []) => {
@@ -29,8 +33,19 @@ globalThis.__pipHost = {
       r[c] instanceof Uint8Array ? { __pipBytes: [...r[c]] } : r[c])) };
   },
 };
-globalThis.PIPCORE = await import("./core_entry.mjs");
-const { app, edit, lib } = globalThis.PIPCORE;
+// The BUILT bundle (what ships) in a bare vm realm.
+const ctx = vm.createContext({ __pipHost: host });
+vm.runInContext(readFileSync(join(root, "apps/PipAAC/PipAAC/Core/pip-core.js"), "utf8"), ctx);
+const facade = (ns) => new Proxy({}, {
+  get: (_, fn) => (...args) => {
+    ctx.__a = JSON.stringify(args);
+    const out = vm.runInContext(`JSON.stringify(PIPCORE.${ns}.${String(fn)}(...JSON.parse(__a)))`, ctx);
+    return out === undefined ? undefined : JSON.parse(out);
+  },
+});
+const app = facade("app");
+const edit = facade("edit");
+const lib = facade("lib");
 
 const catalog = readFileSync(join(root, "public/catalog.json"), "utf8");
 const { appId } = app.appOpen(1, catalog, null, null);
