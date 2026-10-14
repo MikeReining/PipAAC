@@ -36,6 +36,7 @@ DEFAULT_EXCLUDE_DIRS = {
     "site-packages",
     "target",
     "vendor",
+    "worktrees",
 }
 
 DEFAULT_EXCLUDE_SUFFIXES = {
