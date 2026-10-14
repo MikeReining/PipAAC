@@ -251,3 +251,41 @@ export function pairClient(baseUrl) {
     },
   };
 }
+
+/* ---- pairing poll: transient vs permanent (one owner for web + iOS) ---- */
+
+const NETWORK_RE = /fetch|network|timed out|Failed|offline|Load failed/i;
+
+/** Plain-words message for a pairing poll error that will not fix itself,
+ *  or null when polling again may succeed (offline, relay 5xx/408/429). */
+export function pairPollFailure(e) {
+  const s = e?.status;
+  if (s === undefined) {
+    return e instanceof TypeError || NETWORK_RE.test(String(e?.message)) ? null
+      : "That code didn't work. Ask for a new code on the other device.";
+  }
+  if (s === 408 || s === 429 || s >= 500) return null;
+  return s === 410 ? "That code ran out. Make a new one on the other device."
+    : s === 409 ? "That code was already used. Make a new one on the other device."
+    : s === 404 ? "That code isn't open — check the letters, or make a new one."
+    : "That code didn't work. Ask for a new code on the other device.";
+}
+
+/** Poll `step` every `intervalMs` until it returns a value (anything but
+ *  undefined). Transient errors retry on the same cadence; a permanent
+ *  one stops at once. `cancelled()` ends it quietly.
+ *  → { value } | { error, cause } | { cancelled: true } */
+export async function pollPair(step, { intervalMs = 2000,
+  sleep = (ms) => new Promise((r) => setTimeout(r, ms)), cancelled = () => false } = {}) {
+  for (;;) {
+    await sleep(intervalMs);
+    if (cancelled()) return { cancelled: true };
+    try {
+      const value = await step();
+      if (value !== undefined) return { value };
+    } catch (cause) {
+      const error = pairPollFailure(cause);
+      if (error) return { error, cause };
+    }
+  }
+}

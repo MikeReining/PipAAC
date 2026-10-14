@@ -69,39 +69,32 @@ export function join(baseUrl, codeArg, label) {
     }
     if (gen !== joinGen) return;
     emit("pair.join", { stage: "claimed", message: "Connected — finishing on the other device…" });
-    while (gen === joinGen) {
-      await sleep(POLL_MS);
-      if (gen !== joinGen) return;
-      try {
-        const st = await pairClient(baseUrl).status(code);
-        if (st.status === "refused") {
-          emit("pair.join", { stage: "refused",
-            message: st.grant?.refused ?? "The other device declined." });
-          return;
+    const r = await pollPair(async () => {
+      const st = await pairClient(baseUrl).status(code);
+      if (st.status === "refused") return st;
+      if (st.status !== "granted") return undefined;
+      const epoch = st.grant.epoch ?? 1;
+      if (Array.isArray(st.grant.keys) && st.grant.keys.length) {
+        for (const g of st.grant.keys) {
+          if (!Number.isInteger(g?.epoch)) continue;
+          const k = await unwrapUserKey(identity.dh.privateKey, g);
+          await putUserKey(store, st.grant.user_id, k, g.epoch);
         }
-        if (st.status !== "granted") continue;
-        const epoch = st.grant.epoch ?? 1;
-        if (Array.isArray(st.grant.keys) && st.grant.keys.length) {
-          for (const g of st.grant.keys) {
-            if (!Number.isInteger(g?.epoch)) continue;
-            const k = await unwrapUserKey(identity.dh.privateKey, g);
-            await putUserKey(store, st.grant.user_id, k, g.epoch);
-          }
-        } else {
-          const key = await unwrapUserKey(identity.dh.privateKey, st.grant);
-          await putUserKey(store, st.grant.user_id, key, epoch);
-        }
-        emit("pair.join", { stage: "granted", userId: st.grant.user_id, epoch });
-        return;
-      } catch (e) {
-        // The web swallows every poll error; a non-relay error here (not an HTTP
-        // status) is not going to fix itself - say it instead of waiting forever.
-        if (e?.status === undefined && !/fetch|network|timed out|Failed/i.test(String(e?.message))) {
-          emit("pair.join", { stage: "error", status: 0, message: `Could not finish joining: ${e?.message ?? e}` });
-          return;
-        }
+      } else {
+        const key = await unwrapUserKey(identity.dh.privateKey, st.grant);
+        await putUserKey(store, st.grant.user_id, key, epoch);
       }
+      return st;
+    }, { intervalMs: POLL_MS, sleep, cancelled: () => gen !== joinGen });
+    if (r.cancelled) return;
+    // Same classifier as the web: a permanent failure stops the wait and says so.
+    if (r.error) { emit("pair.join", { stage: "error", status: r.cause?.status ?? 0, message: r.error }); return; }
+    const st = r.value;
+    if (st.status === "refused") {
+      emit("pair.join", { stage: "refused", message: st.grant?.refused ?? "The other device declined." });
+      return;
     }
+    emit("pair.join", { stage: "granted", userId: st.grant.user_id, epoch: st.grant.epoch ?? 1 });
   })().catch((e) => emit("pair.join", { stage: "error", status: 0,
     message: `Could not reach Pip: ${e.message}` }));
   return { accepted: true };
@@ -154,40 +147,40 @@ export function offer(baseUrl, userRowJson, label) {
     emit("pair.offer", { stage: "code", code: pair, shown: showCode(pair), who,
       hint: `On the other device, go to ${new URL(baseUrl).host}/join and type this code.`,
       waiting: "Waiting for the other device… This code works for 10 minutes." });
-    while (gen === offerGen) {
-      await sleep(POLL_MS);
-      if (gen !== offerGen) return;
-      let st;
-      try {
-        st = await pairClient(baseUrl).status(pair);
-      } catch (e) {
-        if (e.status === 410) { emit("pair.offer", { stage: "expired", message: "This code ran out." }); return; }
-        continue; // relay hiccup — poll again
-      }
-      if (st.status !== "claimed") continue;
-      const name = st.label || "the other device";
-      try {
-        await client.addDevice(st.device_id, st.sig_pub, { dh_pub: st.dh_pub, label: st.label });
-      } catch (e) {
-        const msg = e.message === "upgrade_required"
-          ? "Pip Lifetime is needed for more than one device."
-          : `Pip refused the device: ${e.message}`;
-        await pairClient(baseUrl).grant(pair, { refused: msg }).catch(() => {});
-        emit("pair.offer", { stage: "refused", lines: [msg] });
-        return;
-      }
-      const wrapped = await wrapUserKey(userKey, st.dh_pub);
-      const keys = [];
-      for (let e = 1; e <= (me.sync.epoch ?? 1); e++) {
-        const k = await store.get(`user/${me.id}/key_e${e}`);
-        if (k) keys.push({ epoch: e, ...(await wrapUserKey(k, st.dh_pub)) });
-      }
-      await pairClient(baseUrl).grant(pair, {
-        user_id: me.sync.userId, by_device: identity.deviceId,
-        epoch: me.sync.epoch ?? 1, ...wrapped, keys });
-      emit("pair.offer", { stage: "done", message: `✓ ${who} is on ${name}.` });
+    const r = await pollPair(async () => {
+      const st = await pairClient(baseUrl).status(pair);
+      return st.status === "claimed" ? st : undefined;
+    }, { intervalMs: POLL_MS, sleep, cancelled: () => gen !== offerGen });
+    if (r.cancelled) return;
+    if (r.error) {
+      emit("pair.offer", r.cause?.status === 410
+        ? { stage: "expired", message: "This code ran out." }
+        : { stage: "error", message: r.error });
       return;
     }
+    const st = r.value;
+    const name = st.label || "the other device";
+    try {
+      await client.addDevice(st.device_id, st.sig_pub, { dh_pub: st.dh_pub, label: st.label });
+    } catch (e) {
+      const msg = e.message === "upgrade_required"
+        ? "Pip Lifetime is needed for more than one device."
+        : `Pip refused the device: ${e.message}`;
+      await pairClient(baseUrl).grant(pair, { refused: msg }).catch(() => {});
+      emit("pair.offer", { stage: "refused", lines: [msg] });
+      return;
+    }
+    const wrapped = await wrapUserKey(userKey, st.dh_pub);
+    const keys = [];
+    for (let e = 1; e <= (me.sync.epoch ?? 1); e++) {
+      const k = await store.get(`user/${me.id}/key_e${e}`);
+      if (k) keys.push({ epoch: e, ...(await wrapUserKey(k, st.dh_pub)) });
+    }
+    await pairClient(baseUrl).grant(pair, {
+      user_id: me.sync.userId, by_device: identity.deviceId,
+      epoch: me.sync.epoch ?? 1, ...wrapped, keys });
+    emit("pair.offer", { stage: "done", message: `✓ ${who} is on ${name}.` });
+    return;
   })().catch((e) => emit("pair.offer", { stage: "error", message: `Could not reach Pip: ${e.message}` }));
   return { accepted: true };
 }

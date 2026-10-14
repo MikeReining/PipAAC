@@ -80,7 +80,8 @@ export function mountDevices({
   const pairBody = $("pair-body");
   const pairTitle = $("pair-title");
   const pairGo = $("pair-go");
-  let pairPoll = null;
+  let pairPoll = null; // generation token: a new poll or closePair() cancels the old one
+  const startPoll = () => { const t = {}; pairPoll = t; return () => pairPoll !== t; };
 
   const openPair = (title) => {
     pairTitle.textContent = title;
@@ -89,7 +90,6 @@ export function mountDevices({
     pairOverlay.classList.add("open");
   };
   const closePair = () => {
-    clearInterval(pairPoll);
     pairPoll = null;
     pairOverlay.classList.remove("open");
     pairOverlay.classList.remove("over-welcome");
@@ -741,7 +741,10 @@ export function mountDevices({
         if (!input.isConnected) return;
         input.disabled = true;
         status.textContent = "Connected — finishing on the other device…";
-        waitForGrant(code, identity, store, status, role);
+        // A failed wait frees the box: the parent can type a new code.
+        waitForGrant(code, identity, store, status, role).then((failed) => {
+          if (failed) { input.disabled = false; busy = false; }
+        });
       } catch (e) {
         busy = false;
         status.textContent = e.status === 410
@@ -758,55 +761,62 @@ export function mountDevices({
     if (prefill) tryCode(); else input.focus();
   }
 
-  function waitForGrant(code, identity, store, status, role) {
-    pairPoll = setInterval(async () => {
-      try {
-        const st = await pairClient(relayBase).status(code);
-        if (st.status === "refused") {
-          clearInterval(pairPoll);
-          pairPoll = null;
-          status.textContent = st.grant?.refused ?? "The other device declined.";
-          return;
+  async function waitForGrant(code, identity, store, status, role) {
+    const cancelled = startPoll();
+    const r = await pollPair(async () => {
+      const st = await pairClient(relayBase).status(code);
+      if (st.status === "refused") return st;
+      if (st.status !== "granted") return undefined;
+      // The granter wrapped its CURRENT-epoch key — the grant carries
+      // which one; storing it as e1 would break post-rotation ops.
+      // Historical epochs ride along so the backlog under earlier
+      // rotations still opens; older granters send only the single
+      // wrapped key, which lands at `epoch`.
+      if (Array.isArray(st.grant.keys) && st.grant.keys.length) {
+        for (const g of st.grant.keys) {
+          if (!Number.isInteger(g?.epoch)) continue;
+          const k = await unwrapUserKey(identity.dh.privateKey, g);
+          await putUserKey(store, st.grant.user_id, k, g.epoch);
         }
-        if (st.status !== "granted") return;
-        clearInterval(pairPoll);
-        pairPoll = null;
-        // The granter wrapped its CURRENT-epoch key — the grant carries
-        // which one; storing it as e1 would break post-rotation ops.
-        const epoch = st.grant.epoch ?? 1;
-        // Historical epochs ride along so the backlog under earlier
-        // rotations still opens; older granters send only the single
-        // wrapped key, which lands at `epoch`.
-        if (Array.isArray(st.grant.keys) && st.grant.keys.length) {
-          for (const g of st.grant.keys) {
-            if (!Number.isInteger(g?.epoch)) continue;
-            const k = await unwrapUserKey(identity.dh.privateKey, g);
-            await putUserKey(store, st.grant.user_id, k, g.epoch);
-          }
-        } else {
-          const key = await unwrapUserKey(identity.dh.privateKey, st.grant);
-          await putUserKey(store, st.grant.user_id, key, epoch);
-        }
-        // A fresh device's untouched welcome person is a placeholder —
-        // the joined person replaces it instead of sitting beside it.
-        const fresh = me.needsSetup && me.id !== st.grant.user_id;
-        if (fresh) await removeUser(userStore, me.id);
-        // 015 slice 2: the linked user joins this device's registry — the
-        // relay id is the registry id — and the app opens it, in the role
-        // the person chose above.
-        const linked = await addUser(userStore, {
-          id: st.grant.user_id,
-          sync: { userId: st.grant.user_id, epoch, cursor: 0 },
-          role: roleValue(role),
-          home: fresh,
-        });
-        status.textContent = "Joined — opening the board…";
-        sessionStorage.setItem("pip_active_user", linked.id);
-        // Flushing would write the removed placeholder's database back.
-        if (!fresh) await flushDb();
-        location.replace("/");
-      } catch { /* expired or relay hiccup — poll again */ }
-    }, 2000);
+      } else {
+        const key = await unwrapUserKey(identity.dh.privateKey, st.grant);
+        await putUserKey(store, st.grant.user_id, key, st.grant.epoch ?? 1);
+      }
+      return st;
+    }, { cancelled });
+    if (r.cancelled) return;
+    pairPoll = null;
+    if (r.error) { status.textContent = r.error; return true; }
+    const st = r.value;
+    if (st.status === "refused") {
+      status.textContent = st.grant?.refused ?? "The other device declined.";
+      return true;
+    }
+    try {
+      const epoch = st.grant.epoch ?? 1;
+      // A fresh device's untouched welcome person is a placeholder —
+      // the joined person replaces it instead of sitting beside it.
+      const fresh = me.needsSetup && me.id !== st.grant.user_id;
+      if (fresh) await removeUser(userStore, me.id);
+      // 015 slice 2: the linked user joins this device's registry — the
+      // relay id is the registry id — and the app opens it, in the role
+      // the person chose above.
+      const linked = await addUser(userStore, {
+        id: st.grant.user_id,
+        sync: { userId: st.grant.user_id, epoch, cursor: 0 },
+        role: roleValue(role),
+        home: fresh,
+      });
+      status.textContent = "Joined — opening the board…";
+      sessionStorage.setItem("pip_active_user", linked.id);
+      // Flushing would write the removed placeholder's database back.
+      if (!fresh) await flushDb();
+      location.replace("/");
+    } catch {
+      status.textContent = "That code didn't work. Ask for a new code on the other device.";
+      return true;
+    }
+    return false;
   }
 
   /** Signed relay client for this user — shared by device management,
@@ -890,59 +900,51 @@ export function mountDevices({
     status.textContent = "Waiting for the other device… This code works for 10 minutes.";
     pairBody.append(code, qr, send, status);
 
-    let granting = false;
-    pairPoll = setInterval(async () => {
-      if (granting) return;
-      let st;
-      try {
-        st = await pairClient(relayBase).status(pair);
-      } catch (e) {
-        if (e.status === 410) {
-          clearInterval(pairPoll);
-          pairPoll = null;
-          status.textContent = "This code ran out.";
-          send.hidden = true;
-          pairGo.hidden = false;
-          pairGo.textContent = "New code";
-          pairGo.onclick = () => offerFlow().catch(() => {});
-        }
-        return; // relay hiccup — poll again
-      }
-      if (st.status !== "claimed") return;
-      granting = true;
-      clearInterval(pairPoll);
-      pairPoll = null;
-      const name = st.label || "the other device";
-      try {
-        await client.addDevice(st.device_id, st.sig_pub, { dh_pub: st.dh_pub, label: st.label });
-      } catch (e) {
-        // The relay refused — tell the new device too, not a silent wait.
-        const msg = e.message === "upgrade_required"
-          ? "Pip Lifetime is needed for more than one device."
-          : `Pip refused the device: ${e.message}`;
-        status.textContent = msg;
-        await pairClient(relayBase).grant(pair, { refused: msg }).catch(() => {});
-        return;
-      }
-      const wrapped = await wrapUserKey(userKey, st.dh_pub);
-      // Every epoch this device holds, wrapped to the newcomer — ops,
-      // snapshots and media sealed under earlier rotations must still
-      // open on the new device (audit F05.5). The single-key fields
-      // ride along for older receivers.
-      const keys = [];
-      for (let e = 1; e <= (me.sync?.epoch ?? 1); e++) {
-        const k = await store.get(`user/${me.id}/key_e${e}`);
-        if (k) keys.push({ epoch: e, ...(await wrapUserKey(k, st.dh_pub)) });
-      }
-      await pairClient(relayBase).grant(pair, {
-        user_id: me.sync.userId, by_device: identity.deviceId,
-        epoch: me.sync.epoch ?? 1, ...wrapped, keys });
-      const done = document.createElement("p");
-      done.className = "pair-done";
-      done.textContent = `✓ ${who} is on ${name}.`;
-      pairBody.replaceChildren(done);
-      await renderDevices();
-    }, 2000);
+    const r = await pollPair(async () => {
+      const st = await pairClient(relayBase).status(pair);
+      return st.status === "claimed" ? st : undefined;
+    }, { cancelled: startPoll() });
+    if (r.cancelled) return;
+    pairPoll = null;
+    if (r.error) {
+      status.textContent = r.cause?.status === 410 ? "This code ran out." : r.error;
+      send.hidden = true;
+      pairGo.hidden = false;
+      pairGo.textContent = "New code";
+      pairGo.onclick = () => offerFlow().catch(() => {});
+      return;
+    }
+    const st = r.value;
+    const name = st.label || "the other device";
+    try {
+      await client.addDevice(st.device_id, st.sig_pub, { dh_pub: st.dh_pub, label: st.label });
+    } catch (e) {
+      // The relay refused — tell the new device too, not a silent wait.
+      const msg = e.message === "upgrade_required"
+        ? "Pip Lifetime is needed for more than one device."
+        : `Pip refused the device: ${e.message}`;
+      status.textContent = msg;
+      await pairClient(relayBase).grant(pair, { refused: msg }).catch(() => {});
+      return;
+    }
+    const wrapped = await wrapUserKey(userKey, st.dh_pub);
+    // Every epoch this device holds, wrapped to the newcomer — ops,
+    // snapshots and media sealed under earlier rotations must still
+    // open on the new device (audit F05.5). The single-key fields
+    // ride along for older receivers.
+    const keys = [];
+    for (let e = 1; e <= (me.sync?.epoch ?? 1); e++) {
+      const k = await store.get(`user/${me.id}/key_e${e}`);
+      if (k) keys.push({ epoch: e, ...(await wrapUserKey(k, st.dh_pub)) });
+    }
+    await pairClient(relayBase).grant(pair, {
+      user_id: me.sync.userId, by_device: identity.deviceId,
+      epoch: me.sync.epoch ?? 1, ...wrapped, keys });
+    const done = document.createElement("p");
+    done.className = "pair-done";
+    done.textContent = `✓ ${who} is on ${name}.`;
+    pairBody.replaceChildren(done);
+    await renderDevices();
   }
 
   $("dev-add").onclick = () => offerFlow().catch((e) => {
