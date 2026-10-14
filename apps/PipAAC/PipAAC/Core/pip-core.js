@@ -1978,7 +1978,7 @@ var PIPCORE = (() => {
     for (const r of cat) {
       const o = byItem.get(keyOf("sense", r.sense_id));
       if (o === void 0) continue;
-      vacated.push(r.slot_index);
+      if (!claimed.has(r.slot_index)) vacated.push(r.slot_index);
       map.set(keyOf("sense", r.sense_id), o);
     }
     for (const r of cat) {

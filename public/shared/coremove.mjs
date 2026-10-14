@@ -44,7 +44,9 @@ function slotMap(db, layout) {
   for (const r of cat) {
     const o = byItem.get(keyOf("sense", r.sense_id));
     if (o === undefined) continue;
-    vacated.push(r.slot_index);
+    // A vacated cell another placement now claims is not free (a swap
+    // vacates and re-claims both cells): handing it out seats two words.
+    if (!claimed.has(r.slot_index)) vacated.push(r.slot_index);
     map.set(keyOf("sense", r.sense_id), o);
   }
   for (const r of cat) {

@@ -264,3 +264,36 @@ test("018 slice 3: setup's people take the mom/dad cells on every layout that ha
   assert.equal(cells.find((c) => c.slot_index === 30)?.entity_id, ids[0]);
   assert.equal(cells.find((c) => c.slot_index === 31)?.entity_id, ids[1]);
 });
+
+// Bug: a person seated on mom's cell evicts mom; two later core swaps
+// vacate cells that the swap itself re-claims — the evicted word must not
+// be handed one of those (two words, one cell).
+test("a swap after a seating never puts two words on one cell, and replays identically", () => {
+  const db = fresh();
+  const layout = "grid60";
+  const visible = () => coreCells(db, layout, "en");
+  const mom = db.prepare(
+    `SELECT sense_id FROM label WHERE text = 'mom' AND kind = 'lemma'
+       AND status = 'approved' AND locale = 'en'`).all()[0].sense_id;
+  const [a, b] = visible().filter((c) => c.kind === "sense" && c.sense_id !== mom).slice(0, 2);
+  const { id: maria } = createEntity(db, { name: "Maria" });
+  const before = new Set(visible().map((c) => c.sense_id ?? c.entity_id));
+
+  seatSetupPeople(db, [maria], "en");
+  placeOnBoard(db, layout, "sense", a.sense_id, b.slot_index, { op: "move_core" });
+
+  const shown = visible();
+  const slots = shown.map((c) => c.slot_index);
+  assert.equal(new Set(slots).size, slots.length, "every cell holds at most one word");
+  const ids = shown.map((c) => c.sense_id ?? c.entity_id);
+  assert.equal(new Set(ids).size, ids.length, "no word shown twice");
+  for (const id of before) {
+    if (id === mom) continue; // evicted by the seating, reachable in Groups
+    assert.ok(ids.includes(id), `${id} is still on the board`);
+  }
+  assert.ok(ids.includes(maria));
+
+  const replica = fresh();
+  for (const op of listOps(db)) applyOp(replica, op);
+  assert.deepEqual(coreCells(replica, layout, "en"), shown, "replica converges");
+});

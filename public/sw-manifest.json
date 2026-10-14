@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.18-0f728188827a",
-  "version": "1.1.18",
-  "payloadHash": "0f728188827a",
+  "buildId": "1.1.19-929cce61be90",
+  "version": "1.1.19",
+  "payloadHash": "929cce61be90",
   "files": [
     {
       "path": "/board.js",
@@ -810,8 +810,8 @@
     },
     {
       "path": "/shared/coremove.mjs",
-      "bytes": 8763,
-      "sha256": "98f5b22e69bd813c58a27bcbf49ff89079ae0a8a0bb57144d6400044e6a74090"
+      "bytes": 8940,
+      "sha256": "bb8bad29c008a0ccda03bae0d3cadd13fde20ba0b383311395ed9d117d1f16f2"
     },
     {
       "path": "/shared/dashboard.mjs",
