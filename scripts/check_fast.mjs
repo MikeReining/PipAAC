@@ -26,6 +26,8 @@ const GATES = [
   { name: "guard-liveness", cmd: "bash", args: ["scripts/check-test-guard-liveness.sh"] },
   // 043 J — checkJs on the platform seams (platform.mjs + sync_client.mjs).
   { name: "types:seams", cmd: process.execPath, args: ["node_modules/typescript/bin/tsc", "-p", "tsconfig.seams.json"] },
+  // A name used but never imported (pollPair, 2026-10-14) — tsc over public/, TS2304/TS2552 only.
+  { name: "lint:undefined-names", cmd: process.execPath, args: ["scripts/check_undefined_names.mjs"] },
   {
     name: "maintainer:line-budget",
     cmd: "python3",
