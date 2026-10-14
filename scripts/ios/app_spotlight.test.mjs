@@ -44,7 +44,7 @@ const CELL_B = "sense:sns_0014";
 
 /** Boot the iPad: fresh replica file + the bundle in a bare realm + the
  *  sync loop + appOpen + spot.bind, as AppModel.open does. */
-async function boot({ relay, userKey, role = null, file, name = "Zed", cursor = 0 }) {
+async function boot({ relay, userKey, role = null, file, name = "Zed", cursor = 0, now = null }) {
   if (!file) {
     file = join(mkdtempSync(join(tmpdir(), "pip-spot-")), "user.sqlite");
     copyFileSync(join(root, "public/fresh_db.sqlite"), file);
@@ -54,6 +54,8 @@ async function boot({ relay, userKey, role = null, file, name = "Zed", cursor = 
   const h = makeHost({ relay, dbs });
   h.provision("user/u1/key_e1", userKey);
   const ctx = vm.createContext({ __pipHost: h.host });
+  // A later launch: move the realm's clock, never the synced data (a catch-up rebuilds that from ops).
+  if (now != null) { const skew = now - Date.now(); vm.runInContext(`{ const n = Date.now; Date.now = () => n() + ${skew}; }`, ctx); }
   h.attach(ctx);
   vm.runInContext(BUNDLE, ctx);
   const run = (src) => vm.runInContext(src, ctx);
@@ -220,12 +222,8 @@ test("SP-2: the session survives a restart, and ends at midnight or at an old ro
   again.close();
   again.sqlite.close();
 
-  // Midnight passed while away: the row's end is in the past - the layer ends and the end syncs.
-  const late = new DatabaseSync(d.file);
-  const yesterdayEve = new Date(); yesterdayEve.setDate(yesterdayEve.getDate() - 1); yesterdayEve.setHours(23, 0, 0, 0);
-  late.prepare("UPDATE spotlight_session SET started_at = ?, ends_at = ?").run(yesterdayEve.getTime(), nextMidnight(yesterdayEve.getTime()));
-  late.close();
-  const gone = await fresh(same);
+  // Midnight passed while away: the next launch opens after the row's end - the layer ends and the end syncs.
+  const gone = await fresh({ ...same, now: row.ends_at + 60 * 60 * 1000 });
   assert.equal(gone.spot().on, false, "ended at midnight");
   assert.equal(gone.sqlite.prepare("SELECT COUNT(*) c FROM spotlight_session").all()[0].c, 0, "the row is deleted");
   assert.ok(gone.sqlite.prepare("SELECT kind FROM sync_op WHERE kind = 'spot_end'").all().length >= 1, "the end is a synced op");
@@ -234,11 +232,12 @@ test("SP-2: the session survives a restart, and ends at midnight or at an old ro
 
 test("SP-2: a running board notices the end by itself on the slow tick (an old row's timer)", async () => {
   const d = await fresh();
-  const soon = Date.now() + 100; // a row synced from an older device with a short timer
+  // A row synced from an older device with a short timer - long enough to be seen live under load.
+  const soon = Date.now() + 2000;
   await d.relay.addOps(sessionOps({ name: "Short", targets: [CELL_A], by_supporter: 0, started_at: Date.now() - 1000, ends_at: soon }));
-  await until(() => d.spot().on || d.sqlite.prepare("SELECT COUNT(*) c FROM spotlight_session").all()[0].c === 1, "row arrived");
+  await until(() => d.spot().on, "row arrived and lit");
   // The tick is 30 s (600 ms on the compressed clock); by then ends_at has passed.
-  await until(() => d.sqlite.prepare("SELECT COUNT(*) c FROM spotlight_session").all()[0].c === 0, "the tick ended it", 4000);
+  await until(() => d.sqlite.prepare("SELECT COUNT(*) c FROM spotlight_session").all()[0].c === 0, "the tick ended it", 6000);
   assert.equal(d.spot().on, false);
 });
 
@@ -264,12 +263,14 @@ test("SP-5/SY-5: the child's taps ride the relay as sealed 'tap' frames carrying
   tap("sns_0014", "go");     // dimmed
   tap("sns_0013", "more");
   await until(async () => (await d.sent()).filter((m) => m.k === "tap").length === 3, "three tap frames at the relay");
+  // Each frame seals on its own, so they may land in any order; the supporter only counts them.
+  const byWord = (fs) => fs.map((f) => JSON.stringify(f)).sort();
   const frames = (await d.sent()).filter((m) => m.k === "tap");
-  assert.deepEqual(frames, [
+  assert.deepEqual(byWord(frames), byWord([
     { k: "tap", t: CELL_A, s: startedAt },
     { k: "tap", t: CELL_B, s: startedAt },
     { k: "tap", t: CELL_A, s: startedAt },
-  ]);
+  ]));
   const log = d.sqlite.prepare("SELECT item_id, spotlit FROM learner_event_log ORDER BY rowid").all().map((r) => [r.item_id, r.spotlit]);
   assert.deepEqual(log, [["sns_0013", 1], ["sns_0014", 0], ["sns_0013", 1]]);
   assert.equal(spotOps(), spotOpsBefore, "a tap makes no op: live frames are not ops");
