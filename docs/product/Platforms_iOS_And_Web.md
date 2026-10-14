@@ -90,6 +90,19 @@ any feature slice. If one module is too slow in JavaScriptCore, only
 that module moves to Swift, held to the same golden fixtures. Sync
 replay stays in the shared core in every case.
 
+**The sync loop runs in the core; Swift supplies its I/O (decided
+2026-10-14).** `sync.mjs`, `rotation.mjs` and `sync_client.mjs` run
+unchanged in JavaScriptCore — the cursor, fence and obligation logic
+that 043 repaired has one copy. The iOS core build swaps their imports,
+not their code: `sync_crypto.mjs` becomes a host module backed by the
+CryptoKit port (`PipCrypto.swift`, held to two-way fixtures), the key
+store is the keychain, `db.js` blob calls and `platform.mjs` are host
+modules, and `fetch`, `AbortController`, `WebSocket`, timers and
+`crypto.subtle.digest` are host shims over URLSession and the core's
+serial queue. Every host completion re-enters JavaScript with an async
+hop onto that queue — never a synchronous call. The seam is the same
+one `src/board/sync_reliability.test.mjs` already stubs.
+
 **Native stack.** SwiftUI and Observation (`@Observable`), Swift 6
 language mode with strict concurrency; UI state on the main actor;
 UIKit only where a native capability needs it. The template's SwiftData
