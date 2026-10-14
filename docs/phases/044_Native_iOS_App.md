@@ -544,3 +544,11 @@ sync lands (Slice C).
 - Still not built: keyboard_mode=device (system keyboard), voice
   picker, person photo/name, sync/account/purchase sections (Slice
   C+), expressive-voice faces row (needs the strip faces first).
+
+**2026-10-14 (A — inventory file):** `docs/phases/044_Native_iOS_Inventory.md` exists.
+
+- Scope: slice A inventory only — docs, no code, fixtures or CI.
+- Changed: new inventory, 156 rows in 13 areas, each traced from its web entrypoint (`board.js` and the mounts). Release: 149 at 1.0, 5 at 1.1 (Spotlight page, Progress, report), 2 later. Status: 46 implemented (B1–B3: board, groups, tap, Smart bar, keyboard, transform chrome, Settings, PIN), 110 planned, 0 verified on device, 0 released. Also lists web-only items with no native counterpart, known bugs not to port, and proposals.
+- Verified: `npm run check:fast` (doc lints). No device proof; "implemented" rows rest on `scripts/ios/app.mjs`, the Swift files and the notes above.
+- Left: Zero rows from Library & word cards, Pictures, Accounts, Purchases, Help are built. The "Someone else pays" unlock link (PU-9) conflicts with "no web checkout link in the app" and needs a founder decision.
+- Next: A0 device tests, then the rest of slice A (fixtures home, build commands, CI, TestFlight); flip row status as slices land.
