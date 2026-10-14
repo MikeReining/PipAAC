@@ -588,3 +588,30 @@ Edits survive relaunch.
 - Verified: `scripts/ios/sync_host.test.mjs` (built bundle in a bare `node:vm`, fake `__pipHost`: catch-up, flush, WebSocket push + model frame, stalled fetch aborted by timedFetch's deadline, export-surface parity, signatures verified relay-side; asserts on table dumps); `PipHostTests` (openOp on every node.json op via the host module, fetch shim over URLProtocol, timers, keychain names, 600 overlapping promises with 64 concurrent `core.sync` calls, loopback WebSocket echo).
 - Left: nothing calls `syncStart` yet — the D1 registry owns the row, the `saveUser` hook and the call; scenePhase -> `PipHost.notifyVisible()` and `startNetworkMonitor()` wiring; blob fetcher consumers (PP-9); the real-relay end-to-end run.
 - Next: D1 (registry + start sync on launch), then pairing/recovery on `hostCrypto`.
+
+**2026-10-14 (D1 — several people on one iPad):** Settings -> "People on
+this device" adds (name prompt), switches and removes people; with two or
+more and no "opens first", launch shows "Who's talking?".
+
+- Scope: PF-5, PF-6, PF-7. Not in D1: person photo (PP-8), rename, locked /
+  not-linked states (need sync), welcome tour, per-person voice.
+- Changed: `Core/PeopleRegistry.swift` (new, `nonisolated`): `people.json`
+  beside `Users/<id>.sqlite`, rows exactly users.mjs's (id, name, photo,
+  home, role, needsSetup, lastOpened ms; `sync` arrives with Slice C);
+  last-opened first; `resolveActive` = home, else a lone person, else the
+  list; add seeds the person's file from fresh_db first; remove deletes
+  row then file (+ -wal/-shm/.prev). Which person is open is in memory
+  only (web: tab override), so a relaunch follows `resolveActive`. A
+  missing person file is an error, never a re-seed. A pre-registry
+  `Users/default.sqlite` becomes the first (home) person. `PeopleView.swift`
+  (new): launch list + Settings > People + "When Pip opens". `AppModel`:
+  `open(id)` opens the new file, then `appClose`s the old (a failed open
+  leaves the current person); `-PipDataDir <path>` launch arg moves the
+  data dir for tests. No JS changes; pip-core.js unchanged.
+- Verified: `PeopleRegistryTests` (6 rules tests); XCUITest
+  `PeopleUITests.testSeveralPeopleOnOneIPad` reads people.json and each
+  SQLite file from disk (Sam's tap lands only in Sam's learner_event_log;
+  relaunch opens the home person; "Show the list" -> launch list; Remove
+  Sam -> file gone).
+- Left: remove has no second PIN prompt (Settings itself asks on every
+  open); rename a person; sync states.
