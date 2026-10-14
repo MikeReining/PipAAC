@@ -14,6 +14,15 @@ import UIKit
 import Vision
 import VisionKit
 
+/// settings-ui.js personWords: the name, or "this person" when there is none
+/// (the web never says "Unnamed" in a sentence).
+extension AppModel {
+    func who(cap: Bool) -> String {
+        let n = people.first(where: { $0.id == activeId })?.name.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return n.isEmpty ? (cap ? "This person" : "this person") : n
+    }
+}
+
 // MARK: - Your account
 
 struct AccountView: View {
@@ -33,12 +42,12 @@ struct AccountView: View {
     var body: some View {
         Form {
             Section {
-                Text("About you, the adult. \(model.activeName) never needs an account.")
+                Text("About you, the adult. \(model.who(cap: true)) never needs an account.")
                     .foregroundStyle(PipStyle.muted)
             }
             if hidden {
                 Section {
-                    Text("This is \(model.activeName)'s own device. Sign in on a supporter's device.")
+                    Text("This is \(model.who(cap: false))'s own device. Sign in on a supporter's device.")
                         .foregroundStyle(PipStyle.muted)
                         .accessibilityIdentifier("acct:hidden")
                 }
@@ -96,7 +105,7 @@ struct BackupView: View {
     var body: some View {
         Form {
             Section {
-                Text("Keep \(model.activeName)'s words safe, and choose what leaves this device.")
+                Text("Keep \(model.who(cap: false))'s words safe, and choose what leaves this device.")
                     .foregroundStyle(PipStyle.muted)
             }
             Section("Recovery card") {
