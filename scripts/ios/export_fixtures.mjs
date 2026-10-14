@@ -17,7 +17,7 @@
  */
 import { spawnSync } from "node:child_process";
 import {
-  copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync,
+  copyFileSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync,
 } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -90,6 +90,7 @@ globalThis.__pipHost = {
       r[c] instanceof Uint8Array ? { __pipBytes: [...r[c]] } : r[c])) };
   },
 };
+(await import("./host_swaps.mjs")).registerHostSwaps();
 globalThis.PIPCORE = await import("./core_entry.mjs");
 const H = await import("./harness.mjs");
 
@@ -97,7 +98,12 @@ const H = await import("./harness.mjs");
 
 const tmpDir = join(repoRoot, "out/ios-fixtures-tmp");
 rmSync(tmpDir, { recursive: true, force: true });
-rmSync(OUT, { recursive: true, force: true });
+// Write mode clears only this exporter's own top-level files; --check
+// never deletes, and subfolders (crypto/ — export_crypto_fixtures.mjs)
+// belong to other exporters.
+if (!CHECK) {
+  for (const e of readdirSync(OUT, { withFileTypes: true })) if (e.isFile()) rmSync(join(OUT, e.name));
+}
 mkdirSync(tmpDir, { recursive: true });
 mkdirSync(OUT, { recursive: true });
 let stale = 0;

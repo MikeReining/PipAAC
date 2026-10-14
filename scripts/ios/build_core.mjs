@@ -9,37 +9,20 @@
  *   node scripts/ios/build_core.mjs --check  read-only verify, exit 1 on drift
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, relative, resolve, sep } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as esbuild from "esbuild";
+import { hostSwapTarget } from "./host_swaps.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const check = process.argv.includes("--check");
 
-/**
- * The sync loop runs UNCHANGED in the core (Platforms § 2: "The sync loop
- * runs in the core; Swift supplies its I/O"): the iOS build swaps three
- * IMPORTS of public/shared modules, never their code. Keyed by the
- * specifier those modules write; applied only when the importer lives in
- * public/shared/ (the host modules themselves import the real files).
- */
-const HOST_SWAPS = {
-  "./sync_crypto.mjs": "scripts/ios/host/sync_crypto_host.mjs",
-  "../db.js": "scripts/ios/host/db_blob_host.mjs",
-  "./platform.mjs": "scripts/ios/host/platform_host.mjs",
-};
-const sharedDir = join(repoRoot, "public/shared") + sep;
 const hostSwapPlugin = {
   name: "pip-host-swap",
   setup(build) {
     build.onResolve({ filter: /^\.\.?\/(sync_crypto\.mjs|db\.js|platform\.mjs)$/ }, (args) => {
-      const target = HOST_SWAPS[args.path];
-      if (!target || !args.importer.startsWith(sharedDir)) return undefined;
-      // ../db.js is only db.js from public/shared/ (one level below public/).
-      if (args.path === "../db.js" && resolve(args.resolveDir, args.path) !== join(repoRoot, "public/db.js")) {
-        return undefined;
-      }
-      return { path: join(repoRoot, target) };
+      const target = hostSwapTarget(args.path, args.importer);
+      return target ? { path: target } : undefined;
     });
   },
 };
