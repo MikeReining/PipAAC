@@ -120,7 +120,7 @@ struct LibraryView: View {
     private func row(_ r: LibraryRow) -> some View {
         Button { model.openCard(kind: r.kind, id: r.id) } label: {
             HStack(spacing: 12) {
-                MatchPic(label: r.label, role: r.role, art: r.art)
+                MatchPic(label: r.label, role: r.role, art: r.art ?? r.photoKey)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(r.label)
                         .font(.system(size: 19, weight: .semibold))

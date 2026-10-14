@@ -136,6 +136,16 @@ public nonisolated final class PeopleRegistry: @unchecked Sendable {
 
     // MARK: users.mjs
 
+    /// `saveUser({ photo })` (person-card.js setPhoto): a `blob:<sha>`
+    /// key, or nil to remove it.
+    public func setPhoto(_ id: String, _ key: String?) throws {
+        lock.lock(); defer { lock.unlock() }
+        var rows = try load()
+        guard let i = rows.firstIndex(where: { $0.id == id }) else { throw PeopleError.unknown(id) }
+        rows[i].photo = key
+        try save(rows)
+    }
+
     /// `listUsers` — last-opened first (stable for ties).
     public func list() throws -> [PersonRecord] {
         lock.lock(); defer { lock.unlock() }

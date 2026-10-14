@@ -82,7 +82,7 @@ struct BoardView: View {
                                 .padding(.horizontal, 10)
                         } else {
                             ForEach(Array(model.bar.enumerated()), id: \.offset) { i, chip in
-                                BarChip(display: chip.display ?? "", art: chip.art)
+                                BarChip(display: chip.display ?? "", art: chip.art ?? chip.photoKey)
                                     .id(i)
                             }
                             if let typing = model.typing {
@@ -219,7 +219,7 @@ struct BoardView: View {
                 }
             } label: {
                 StripCard(label: card.label ?? "",
-                          role: card.role, art: card.art)
+                          role: card.role, art: card.art ?? card.photoKey)
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("strip:\(card.id ?? card.label ?? "?")")
@@ -302,10 +302,11 @@ struct BoardView: View {
                 }
             } label: {
                 WordTile(label: cell?.label ?? "",
-                         role: cell?.role, art: cell?.art)
+                         role: cell?.role, art: cell?.art ?? cell?.photoKey)
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("tile:\(cell?.id ?? "")")
+            .accessibilityValue((cell?.art ?? cell?.photoKey)?.hasPrefix("blob:") == true ? "family photo" : "")
         case "groups":
             AnchorTile(icon: "folder.fill", label: "Groups") { model.openGroups() }
         case "family":

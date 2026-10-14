@@ -30,7 +30,7 @@ struct WordCardView: View {
                             .accessibilityIdentifier("wc-added")
                     }
                     Button { model.speakCard(card) } label: {
-                        WordTile(label: card.label, role: card.role, art: card.art)
+                        WordTile(label: card.label, role: card.role, art: card.art ?? card.photoKey)
                             .frame(width: 150, height: 170)
                             .opacity(card.hidden ? 0.45 : 1)
                     }
@@ -55,6 +55,9 @@ struct WordCardView: View {
                             .accessibilityLabel("Name")
                             .accessibilityIdentifier("wc-name")
                     }
+
+                    CardPictureRow(card: card)
+                    CardVoiceRow(card: card)
 
                     alsoIn
 

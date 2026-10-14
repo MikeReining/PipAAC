@@ -21,6 +21,7 @@
 import {
   appBoard, appGeom, appGroupPage, appMeta, appSession,
 } from "./app.mjs";
+import { mediaFor } from "./app_media.mjs";
 
 const PIP = () => globalThis.PIPCORE;
 const one = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
@@ -70,6 +71,7 @@ function cardModel(s, kind, id) {
     : PIP().groups.senseGroups(d, id, s.locale);
   return {
     kind, id, ...base,
+    media: mediaFor(s, kind, id),
     isEntity: isEnt,
     canRename: isEnt,
     canHide: !isEnt,

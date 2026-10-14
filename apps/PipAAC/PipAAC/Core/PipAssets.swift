@@ -52,6 +52,7 @@ nonisolated enum PipAssets {
     private nonisolated(unsafe) static let cache = NSCache<NSString, UIImage>()
 
     static func image(_ key: String?) -> UIImage? {
+        if let key, key.hasPrefix("blob:") { return PipBlobs.image(forKey: key) } // a family photo
         guard let u = artURL(key) else { return nil }
         let path = u.path as NSString
         if let hit = cache.object(forKey: path) { return hit }

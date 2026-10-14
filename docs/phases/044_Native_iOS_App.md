@@ -665,3 +665,42 @@ Add a word).
 - Verified: `scripts/ios/e2e_sync.sh <udid>` - local Worker (`npm run dev:agent`), `e2e_web_peer.mjs` (real sync.mjs + sync_crypto.mjs in node, own node:sqlite db), `SyncE2ETests` (XCUITest) both-ways + offline catch-up; dumps of all SYNCED_TABLES from the node peer, a third node device and the iPad's SQLite file (read by `e2e_dump.mjs`, not the app) are identical. `app_pair.test.mjs`, `PeopleRegistryTests`.
 - Left: Lifetime purchase for the 2nd device (free = one device, shown as the web's message); device list; rename a person; E2E latency is polled at ~50 ms by XCUITest.
 
+
+
+**2026-10-14 (E3 — photos and voice for a word):** the word card gains the
+web's Picture row (Photo: Take a photo / Choose a photo; "Use our picture"
+when a catalog word wears a family photo) and Voice row (board voice /
+Your voice / Record your voice -> Stop · 0:07 -> plays back once -> "Your
+voice plays for ..." with Undo; "Again" re-records). Settings > People
+shows the open person's photo (Add / Change / Remove).
+
+- Scope: PP-4, PP-7, PP-8, LW-19 (recording part). Not in E3: finder and
+  Draw it (PP-1..3), bulk photos, media upload/download (PP-9), voice mint.
+- Changed: `scripts/ios/app_media.mjs` (`PIPCORE.media`: cardSetPhoto,
+  cardUseOurPicture, voiceSave, voiceChoose, personPhotoSet; `mediaFor`
+  rides on the card model). Every write is the web's owner
+  (setImageOverride / setEntityPhoto / voice.setOverride / clearOverride /
+  setProfilePhoto). Swift: `Core/PipBlobs.swift` (blob store = the sync
+  host's folder, file name = SHA-256 of the raw bytes, key `blob:<sha>`;
+  `-PipDataDir` now moves it for tests), `PhotoPickerView.swift`,
+  `VoiceRecorder.swift` (injectable capture source; mic open only between
+  Record and Stop), `MediaModel.swift`; `PipSpeaker` plays `blob:` clips;
+  tiles/strip/bar/library draw `blob:` photos; Info.plist camera and
+  microphone descriptions.
+- Web formats found: photo = the picked file's raw bytes, no resize, no
+  re-encode, no size cap (`db.js savePhoto`); recording = MediaRecorder's
+  default (Chrome webm/opus, Safari/iPad MP4/AAC), no length cap; both
+  stored as `blob:<sha256 of raw bytes>`, type sniffed on read
+  (`mediatype.mjs`). iOS writes upright JPEG (long side <= 1600) and
+  AAC .m4a (the Safari format) - both read by the web.
+- Verified: `scripts/ios/app_media.test.mjs`; XCUITests
+  `MediaUITests.testPickPhotoForAWordSurvivesRelaunch` (real PhotosPicker,
+  blob on disk under its hash, relaunch), `testRecordAVoiceForAWord`,
+  `testPersonPhoto`. The photo tests need a known image in the sim library
+  (`xcrun simctl addmedia <udid> <png>`; the picker is tapped by position,
+  first cell).
+- Left: sync upload/download of these blobs (PP-9). Gap for that slice: a
+  recording made in Chrome is webm/opus, which AVAudioPlayer cannot play -
+  needs a decision when media sync lands. Real camera and microphone not
+  exercised (simulator); the capture seam is tested. Entity photo "replaced"
+  picture-learning note (web `replaced()`) is not recorded.

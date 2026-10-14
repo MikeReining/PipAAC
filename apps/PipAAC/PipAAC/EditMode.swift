@@ -26,6 +26,8 @@ nonisolated struct WordCardModel: Decodable, Sendable, Identifiable {
     let role: String?
     let art: String?
     let photoKey: String?
+    /// Picture and Voice rows' state (scripts/ios/app_media.mjs mediaFor).
+    var media: CardMedia?
     let isEntity: Bool
     let canRename: Bool
     let canHide: Bool
@@ -37,6 +39,18 @@ nonisolated struct WordCardModel: Decodable, Sendable, Identifiable {
     /// Set only on the add's step 2 ("✓ Added to …").
     var justAdded: JustAdded?
     var sheetID: String { "\(kind):\(id)" }
+}
+
+nonisolated struct CardMedia: Decodable, Sendable {
+    let canUseOurs: Bool
+    var voice: CardVoice?
+}
+
+nonisolated struct CardVoice: Decodable, Sendable {
+    let name: String
+    let text: String
+    let hasRecording: Bool
+    let mineOn: Bool
 }
 
 nonisolated struct JustAdded: Decodable, Sendable {
@@ -347,7 +361,7 @@ struct EditCell: View {
     }
 
     private var tile: some View {
-        WordTile(label: cell.label ?? "", role: cell.role, art: cell.art)
+        WordTile(label: cell.label ?? "", role: cell.role, art: cell.art ?? cell.photoKey)
             .opacity(cell.hidden == true ? 0.4 : 1)
             .overlay(RoundedRectangle(cornerRadius: 10)
                 .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
@@ -381,6 +395,7 @@ struct EditCell: View {
                                : "Opens this word's card")
             .accessibilityAddTraits(.isButton)
             .accessibilityIdentifier("tile:\(cell.id ?? "")")
+            .accessibilityValue((cell.art ?? cell.photoKey)?.hasPrefix("blob:") == true ? "family photo" : "")
     }
 }
 

@@ -112,6 +112,10 @@ public nonisolated final class PipHost: @unchecked Sendable {
     }
 
     public static func defaultBlobDirectory() -> URL {
+        // `-PipDataDir <path>` (UI tests read what they assert on from there).
+        if let o = UserDefaults.standard.string(forKey: "PipDataDir") {
+            return URL(fileURLWithPath: o, isDirectory: true).appendingPathComponent("blobs", isDirectory: true)
+        }
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         return base.appendingPathComponent("PipAAC/blobs", isDirectory: true)
     }

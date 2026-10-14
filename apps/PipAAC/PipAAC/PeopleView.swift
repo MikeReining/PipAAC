@@ -14,16 +14,7 @@ import SwiftUI
 
 private struct Avatar: View {
     let person: PersonRecord
-    var body: some View {
-        Text(String(person.displayName.prefix(1)).uppercased())
-            .font(.system(size: 20, weight: .bold))
-            .foregroundStyle(PipStyle.ink)
-            .frame(width: 44, height: 44)
-            .background(Color.white)
-            .clipShape(Circle())
-            .overlay(Circle().stroke(PipStyle.ink.opacity(0.3), lineWidth: 1.5))
-            .accessibilityHidden(true)
-    }
+    var body: some View { PersonAvatar(person: person) }
 }
 
 /// Many people on a device where nobody opens first (people-ui.js
@@ -79,6 +70,7 @@ struct PeopleView: View {
 
     var body: some View {
         Form {
+            PersonPhotoSection()
             Section {
                 ForEach(model.people) { p in
                     HStack(spacing: 12) {

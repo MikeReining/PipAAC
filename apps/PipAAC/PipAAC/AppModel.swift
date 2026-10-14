@@ -200,6 +200,8 @@ final class AppModel: ObservableObject {
 
     nonisolated let core = PipCore()
     var registry: PeopleRegistry?
+    /// The last clip the speaker played (UI-test probe: `-pipUITestProbe`).
+    @Published private(set) var lastClip: String?
     private var coreLoaded = false
     // Sync + pairing (LinkDevices.swift)
     var host: PipHost?
@@ -237,6 +239,7 @@ final class AppModel: ObservableObject {
     /// people and no home asks "Who's talking?" first.
     func boot() {
         speaker.configure()
+        speaker.onPlay = { [weak self] k in self?.lastClip = k }
         Task { @MainActor in
             do {
                 UITestHooks.resetIfRequested()

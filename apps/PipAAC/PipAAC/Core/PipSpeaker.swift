@@ -26,6 +26,23 @@ final class PipSpeaker: NSObject, AVAudioPlayerDelegate {
         let text: String?
     }
 
+    /// The key of the last clip handed to the player (catalog path or
+    /// `blob:<sha>`) — the UI test's instrument for "which clip played".
+    private(set) var lastPlayed: String? { didSet { if let k = lastPlayed { onPlay?(k) } } }
+    var onPlay: ((String) -> Void)?
+
+    /// AVAudioPlayer cannot guess a type from extensionless bytes: sniff
+    /// the container like mediatype.mjs sniffType (ftyp → m4a, RIFF → wav).
+    private static func audioHint(_ d: Data) -> String? {
+        let b = [UInt8](d.prefix(12))
+        guard b.count >= 12 else { return nil }
+        let s = String(decoding: b, as: UTF8.self)
+        if Array(b[4..<8]) == Array("ftyp".utf8) { return AVFileType.m4a.rawValue }
+        if s.hasPrefix("RIFF") { return AVFileType.wav.rawValue }
+        if s.hasPrefix("ID3") || (b[0] == 0xff && (b[1] & 0xe0) == 0xe0) { return AVFileType.mp3.rawValue }
+        return nil
+    }
+
     func configure() {
         do {
             let session = AVAudioSession.sharedInstance()
@@ -70,6 +87,20 @@ final class PipSpeaker: NSObject, AVAudioPlayerDelegate {
     }
 
     private func playSlot(_ slot: SpeechSlot, generation: Int? = nil) {
+        // The family's own recording: a `blob:<sha>` key in the blob store.
+        if slot.type == "clip", let key = slot.key, key.hasPrefix("blob:") {
+            if let data = PipBlobs.data(forKey: key),
+               let p = try? AVAudioPlayer(data: data, fileTypeHint: Self.audioHint(data)) {
+                p.delegate = self
+                p.enableRate = true
+                p.rate = rate
+                player = p
+                p.play()
+                lastPlayed = key
+                return
+            }
+            NSLog("PipSpeaker: recording failed \(key)")
+        }
         // "file": an absolute path (a Hear-it preview of a voice that is
         // not downloaded yet) - never a tile slot.
         let resolved: URL? = {
@@ -80,6 +111,7 @@ final class PipSpeaker: NSObject, AVAudioPlayerDelegate {
         }()
         if let u = resolved, let key = slot.key {
             PipAudioTrace.record(u)
+            if slot.type == "clip" { lastPlayed = key }
             do {
                 let p = try AVAudioPlayer(contentsOf: u)
                 p.delegate = self

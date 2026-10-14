@@ -63,6 +63,9 @@ export * as lib from "./app_library.mjs";
 /** Voice picker model + sample slots (044 D3) — PIPCORE.voicepick.* */
 export * as voicepick from "./app_voice.mjs";
 
+/** Photos, recordings, person photo (044 E3) — PIPCORE.media.* */
+export * as media from "./app_media.mjs";
+
 /** The web's sync loop, unchanged, over host I/O (044 C2). */
 export * as sync from "./app_sync.mjs";
 
