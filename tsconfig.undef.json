@@ -1,5 +1,5 @@
 {
-  "//": "Gate: a name used but never imported or declared (TS2304/TS2552) across public/. Only those codes are read; types stay unchecked. scripts/check_undefined_names.mjs.",
+  "//": "Gate: a name used but never imported or declared (TS2304/TS2552) across public/ and the iOS core modules. Only those codes are read; types stay unchecked. scripts/check_undefined_names.mjs.",
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
@@ -9,8 +9,22 @@
     "target": "ES2022",
     "module": "ES2022",
     "moduleResolution": "bundler",
-    "lib": ["ES2022", "DOM", "DOM.Iterable", "WebWorker.ImportScripts"]
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable",
+      "WebWorker.ImportScripts"
+    ]
   },
-  "include": ["public/**/*.js", "public/**/*.mjs"],
-  "exclude": ["public/vendor/**"]
+  "include": [
+    "public/**/*.js",
+    "public/**/*.mjs",
+    "scripts/ios/*.mjs",
+    "scripts/ios/host/*.mjs"
+  ],
+  "exclude": [
+    "public/vendor/**",
+    "scripts/ios/*.test.mjs",
+    "scripts/ios/e2e_*.mjs"
+  ]
 }
