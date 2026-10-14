@@ -66,6 +66,7 @@
     "ios:crypto-fixtures": "node scripts/ios/export_crypto_fixtures.mjs",
     "ios:crypto-fixtures:check": "node scripts/ios/export_crypto_fixtures.mjs --check",
     "ios:test": "xcodebuild test -project apps/PipAAC/PipAAC.xcodeproj -scheme PipAAC -configuration Release",
+    "ios:archive": "node scripts/ios/bundle_assets.mjs && node scripts/ios/bundle_assets.mjs --check && xcodebuild archive -project apps/PipAAC/PipAAC.xcodeproj -scheme PipAAC -configuration Release -destination 'generic/platform=iOS' -allowProvisioningUpdates",
     "ios:test:unit": "xcodebuild test -project apps/PipAAC/PipAAC.xcodeproj -scheme PipAAC -configuration Release -destination 'platform=iOS Simulator,name=iPad (A16)' -only-testing:PipAACTests",
     "ios:crypto-fixtures:swift": "TEST_RUNNER_PIP_WRITE_CRYPTO_FIXTURES=1 xcodebuild test -project apps/PipAAC/PipAAC.xcodeproj -scheme PipAAC -configuration Release -destination 'platform=iOS Simulator,name=iPad (A16)' -only-testing:PipAACTests/PipCryptoTests",
     "ios:assets":"node scripts/ios/bundle_assets.mjs",

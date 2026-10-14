@@ -84,10 +84,12 @@ all targets, iPad only. Architecture: `docs/product/Platforms_iOS_And_Web.md`.
 
 Simulator destination: `platform=iOS Simulator,name=iPad (A16)`.
 
-Release archive:
+Release archive — always through the script, which refreshes the
+gitignored `SharedAssets/` bundle first (a stale bundle ships an old
+catalog and audio):
 
 ```text
-xcodebuild archive -project apps/PipAAC/PipAAC.xcodeproj -scheme PipAAC -configuration Release -destination 'generic/platform=iOS' -archivePath <path> -allowProvisioningUpdates
+npm run ios:archive -- -archivePath <path> CURRENT_PROJECT_VERSION=<build>
 ```
 
 CI: `.github/workflows/ios.yml` (fixtures/core checks + `PipAACTests`).
