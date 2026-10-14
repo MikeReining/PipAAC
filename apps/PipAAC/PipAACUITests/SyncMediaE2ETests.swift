@@ -106,6 +106,8 @@ final class SyncMediaE2ETests: XCTestCase {
     /// Settings -> Team & devices -> Join with a code -> role -> code.
     private func joinWithCode(_ app: XCUIApplication, _ code: String, first: Bool) {
         app.buttons["settingsGear"].tap()
+        XCTAssertTrue(app.buttons["settingsSection:team"].waitForExistence(timeout: 10))
+        app.buttons["settingsSection:team"].tap()   // E4: the Team & devices page
         XCTAssertTrue(app.buttons["settings:team"].waitForExistence(timeout: 10))
         app.buttons["settings:team"].tap()
         XCTAssertTrue(app.buttons["team:join"].waitForExistence(timeout: 10))
@@ -171,6 +173,7 @@ final class SyncMediaE2ETests: XCTestCase {
 
         // PP-10: pending is said honestly in Team & devices.
         app.buttons["settingsGear"].tap()
+        app.buttons["settingsSection:team"].tap()   // E4: the Team & devices page
         app.buttons["settings:team"].tap()
         let media = app.staticTexts["team:media"]
         XCTAssertTrue(media.waitForExistence(timeout: 10), "pending media is shown, not hidden")
@@ -275,6 +278,8 @@ final class SyncMediaE2ETests: XCTestCase {
 
         func switchPerson() {
             app.buttons["settingsGear"].tap()
+            XCTAssertTrue(app.buttons["settingsSection:team"].waitForExistence(timeout: 10))
+            app.buttons["settingsSection:team"].tap()   // E4: People lives on the Team & devices page
             XCTAssertTrue(app.buttons["settings:people"].waitForExistence(timeout: 10))
             app.buttons["settings:people"].tap()
             let sw = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Switch to'")).firstMatch
