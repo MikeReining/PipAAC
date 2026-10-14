@@ -53,6 +53,8 @@ export * as groupIcons from "../../public/shared/group-icon-library.mjs";
  *  path and the SwiftUI render models; bundled with the core so the app
  *  and the fixtures run the same rules. */
 export * as app from "./app.mjs";
+/** Edit mode + the word card (044 E1) — PIPCORE.edit.* */
+export * as edit from "./app_edit.mjs";
 
 /**
  * The db seam (Platforms § 2): the exact adapt() shape public/db.js

@@ -552,3 +552,30 @@ sync lands (Slice C).
 - Verified: `npm run check:fast` (doc lints). No device proof; "implemented" rows rest on `scripts/ios/app.mjs`, the Swift files and the notes above.
 - Left: Zero rows from Library & word cards, Pictures, Accounts, Purchases, Help are built. The "Someone else pays" unlock link (PU-9) conflicts with "no web checkout link in the app" and needs a founder decision.
 - Next: A0 device tests, then the rest of slice A (fixtures home, build commands, CI, TestFlight); flip row status as slices land.
+
+**2026-10-14 (E1 — Edit mode + word card):** an adult enters Edit through
+Settings (behind the PIN) -> "Edit the board", taps a word to open its
+card, and can rename, hide/show, remove (undo toast) and drag-move/swap.
+Edits survive relaunch.
+
+- Scope: LW-1, 6, 7, 9, 10, 11. Home board and group pages. Not in E1:
+  add words, pictures/voice/colour/Swap rows, groups management, the
+  on-demand clip mint after a rename (no transport).
+- Changed: `scripts/ios/app_edit.mjs` (`PIPCORE.edit`, new) — each write
+  is one call into the web's owner (`renameEntity`, `setMask`,
+  `retireEntity`/`restoreEntity`, `removeItemUndoable`, `moveCore`/
+  `placeOnBoard`, `moveItem`/`swapItems`) and returns the repainted edit
+  state + a toast with an undo token. `app.mjs`: `s.editing` makes the
+  board/group paint show hidden words as ghosts; 3 tiny exports
+  (`appSession`, `appMeta`, `appGeom`). Swift: `EditMode.swift`,
+  `WordCardView.swift` (new); small hooks in `AppModel`, `BoardView`,
+  `SettingsView`. Test-only launch args `-pipUITestReset`,
+  `-pipUITestSeedPerson <name>` (a personal word to act on).
+- Verified: `scripts/ios/app_edit.test.mjs` (sync_op rows read through a
+  second connection); XCUITests `testEditRenameSurvivesRelaunch`,
+  `testEditRemoveWithUndo`, `testEditHideShowAndMove`; all earlier tests
+  green (they now launch with `-pipUITestReset`).
+- Left: Swap/Replace, colour, pictures, voice rows (later slices).
+- Web quirk seen (not fixed): `coremove.slotMap` — with an evicted
+  person (seated on "mom"'s cell), swapping two words puts "mom" on a
+  vacated cell that another word now claims (two words, one slot).

@@ -15,8 +15,12 @@ struct BoardView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            topBar
-            stripRow
+            if model.editing {
+                EditHeader()           // EditMode.swift — Done, Groups/Board
+            } else {
+                topBar
+                stripRow
+            }
             gridArea
         }
         .padding(.horizontal, 10)
@@ -33,6 +37,12 @@ struct BoardView: View {
             SettingsView()
                 .environmentObject(model)
         }
+        .sheet(item: $model.card) { card in
+            WordCardView(card: card)     // WordCardView.swift
+                .environmentObject(model)
+        }
+        .overlay(alignment: .bottom) { EditToastOverlay() }
+        .animation(.easeInOut(duration: 0.2), value: model.editToast?.text)
         .overlay(alignment: .top) {
             if let toast = model.toast {
                 Text(toast)
@@ -243,22 +253,39 @@ struct BoardView: View {
         let gap: CGFloat = 6
         let w = (size.width - gap * CGFloat(cols - 1)) / CGFloat(cols)
         let h = (size.height - gap * CGFloat(rows - 1)) / CGFloat(rows)
+        // Edit mode: the slot under a release point (EditCell drag).
+        let slotAt: (CGPoint) -> Int? = { p in
+            let c = Int(p.x / (w + gap)), r = Int(p.y / (h + gap))
+            guard p.x >= 0, p.y >= 0, c < cols, r < rows else { return nil }
+            return r * cols + c
+        }
         return VStack(spacing: gap) {
             ForEach(0..<rows, id: \.self) { r in
                 HStack(spacing: gap) {
                     ForEach(0..<cols, id: \.self) { c in
                         let slot = r * cols + c
-                        cellView(cells.first(where: { $0.slot == slot }))
+                        cellView(cells.first(where: { $0.slot == slot }), slotAt: slotAt)
                             .frame(width: w, height: h)
                     }
                 }
+                .zIndex(model.editing ? Double(rows - r) : 0)
             }
         }
+        .coordinateSpace(name: "slotgrid")
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     @ViewBuilder
-    private func cellView(_ cell: CellModel?) -> some View {
+    private func cellView(_ cell: CellModel?, slotAt: @escaping (CGPoint) -> Int?) -> some View {
+        if model.editing, let cell, cell.type == "word" {
+            EditCell(cell: cell, slotAt: slotAt)
+        } else {
+            plainCell(cell)
+        }
+    }
+
+    @ViewBuilder
+    private func plainCell(_ cell: CellModel?) -> some View {
         switch cell?.type {
         case "word":
             Button {

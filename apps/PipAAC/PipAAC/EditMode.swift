@@ -1,0 +1,382 @@
+//
+//  EditMode.swift
+//  PipAAC
+//
+//  Edit mode (044 E1; inventory LW-1, 6, 7, 9, 10, 11). Rendering and
+//  gestures only: every write is one bridge call into PIPCORE.edit
+//  (scripts/ios/app_edit.mjs), which calls the same shared owner the web
+//  calls, records the sync op, and answers with the whole repainted
+//  state. Nothing here knows a rule — not what a catalog word may do,
+//  not where a drop lands.
+//
+
+import SwiftUI
+
+// MARK: - Render models (scripts/ios/app_edit.mjs)
+
+nonisolated struct WordCardGroupModel: Decodable, Sendable, Hashable {
+    let id: String
+    let name: String
+}
+
+nonisolated struct WordCardModel: Decodable, Sendable, Identifiable {
+    let kind: String            // sense | entity
+    let id: String
+    let label: String
+    let role: String?
+    let art: String?
+    let photoKey: String?
+    let isEntity: Bool
+    let canRename: Bool
+    let canHide: Bool
+    let canRemove: Bool
+    let hidden: Bool
+    let hint: String
+    let onMainBoard: Bool
+    let groups: [WordCardGroupModel]
+    var sheetID: String { "\(kind):\(id)" }
+}
+
+nonisolated struct EditToastModel: Decodable, Sendable {
+    let text: String
+    var undo: String?
+}
+
+nonisolated struct EditPaint: Decodable, Sendable {
+    let editing: Bool
+    let surface: String         // board | group
+    let board: BoardModel
+    var groupPage: GroupPageModel?
+    var card: WordCardModel?
+    var toast: EditToastModel?
+}
+
+nonisolated struct CardSpeech: Decodable, Sendable {
+    var speech: SpeechSlotModel?
+}
+
+// MARK: - AppModel: Edit mode
+
+extension AppModel {
+    nonisolated static func editCore<T: Decodable & Sendable>(
+        _ core: PipCore, _ method: String, _ args: sending [Any]
+    ) async throws -> T {
+        try core.sync { try decodeRaw(core.call("PIPCORE.edit", method, args)) }
+    }
+
+    /// One edit call, awaited off the main actor, applied on it.
+    /// `openCard` is true only for the call that is meant to show the card.
+    private func editCall(_ method: String, _ args: [Any], openCard: Bool = false,
+                          clearToast: Bool = false,
+                          then: (@MainActor () -> Void)? = nil) {
+        let appId = self.appId
+        let core = self.core
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                let p: EditPaint = try await Self.editCore(core, method, [appId] + args)
+                if clearToast { editToast = nil }
+                applyEdit(p, openCard: openCard)
+                then?()
+            } catch {
+                NSLog("AppModel.edit.\(method) failed: \(error)")
+            }
+        }
+    }
+
+    private func applyEdit(_ p: EditPaint, openCard: Bool) {
+        editing = p.editing
+        board = p.board
+        if let gp = p.groupPage { groupPage = gp }
+        if p.card != nil {
+            // A rename answered after the sheet was dismissed must not
+            // reopen it.
+            if openCard || card != nil { card = p.card }
+        } else {
+            card = nil
+        }
+        if let t = p.toast { showEditToast(t) }
+    }
+
+    private func showEditToast(_ t: EditToastModel) {
+        editToastSeq += 1
+        let seq = editToastSeq
+        editToast = t
+        Task { [weak self] in
+            try? await Task.sleep(for: .seconds(6))      // edit-shared.js toast: 6 s
+            if self?.editToastSeq == seq { self?.editToast = nil }
+        }
+    }
+
+    // MARK: mode (LW-1)
+
+    /// Settings → "Edit the board" (already behind the PIN gate).
+    func enterEdit() {
+        editCall("editOpen", [])
+    }
+
+    /// ✓ Done — the same view, repainted for the child.
+    func exitEdit() {
+        editToast = nil
+        card = nil
+        editCall("editClose", []) { [weak self] in
+            guard let self else { return }
+            switch surface {
+            case .group:
+                if let gp = groupPage { openGroup(gp.groupId, page: gp.page) }
+            case .index: openGroups()
+            default: backToBoard()
+            }
+        }
+    }
+
+    // MARK: the card (LW-6)
+
+    func openCard(kind: String, id: String) {
+        editCall("cardOpen", [["kind": kind, "id": id]], openCard: true)
+    }
+
+    func speakCard(_ c: WordCardModel) {
+        let appId = self.appId
+        let core = self.core
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                let r: CardSpeech = try await Self.editCore(
+                    core, "cardSpeech",
+                    [appId, ["kind": c.kind, "id": c.id, "text": c.label]])
+                if let s = r.speech {
+                    speaker.play(slot: .init(type: s.type, key: s.key, text: s.text))
+                }
+            } catch { NSLog("AppModel.edit.cardSpeech failed: \(error)") }
+        }
+    }
+
+    // MARK: writes (LW-7, 9, 10, 11)
+
+    func renameCard(_ c: WordCardModel, to name: String) {
+        editCall("cardRename", [["kind": c.kind, "id": c.id, "name": name]])
+    }
+
+    func toggleHidden(_ c: WordCardModel) {
+        editCall("cardToggleHidden", [["id": c.id]])
+    }
+
+    func removeWord(_ c: WordCardModel) {
+        editCall("cardRemove", [["id": c.id]])
+    }
+
+    /// The ✕ on a group tile (`fromCard` false) or on the card's chip.
+    func leaveGroup(kind: String, id: String, groupId: String,
+                    label: String, fromCard: Bool) {
+        editCall("leaveGroup", [["kind": kind, "id": id, "groupId": groupId,
+                                 "label": label, "fromCard": fromCard]])
+    }
+
+    func dropOnBoard(_ cell: CellModel, toSlot: Int) {
+        guard let id = cell.id else { return }
+        editCall("boardDrop", [["kind": cell.kind ?? "sense", "id": id,
+                                "toSlot": toSlot, "label": cell.label ?? ""]])
+    }
+
+    func dropOnGroup(_ cell: CellModel, toSlot: Int) {
+        guard let id = cell.id, let g = groupPage?.groupId else { return }
+        editCall("groupDrop", [["groupId": g, "kind": cell.kind ?? "sense",
+                                "id": id, "toSlot": toSlot]])
+    }
+
+    func undo(_ t: EditToastModel) {
+        guard let token = t.undo else { return }
+        editToast = nil
+        editCall("editUndo", [["token": token]])
+    }
+}
+
+// MARK: - UI-test launch hooks
+
+/// Launch arguments only the XCUITests pass: a clean data file, and one
+/// personal word seated on the board (adding words is a later slice;
+/// rename and remove need one to act on). Never set in a shipped launch.
+nonisolated enum UITestHooks {
+    private static let args = ProcessInfo.processInfo.arguments
+
+    static func resetIfRequested() {
+        guard args.contains("-pipUITestReset"),
+              let dir = try? FileManager.default.url(
+                for: .applicationSupportDirectory, in: .userDomainMask,
+                appropriateFor: nil, create: false)
+                .appendingPathComponent("Users", isDirectory: true)
+        else { return }
+        for suffix in ["", "-wal", "-shm"] {
+            try? FileManager.default.removeItem(
+                at: dir.appendingPathComponent("default.sqlite\(suffix)"))
+        }
+        UserDefaults.standard.removeObject(forKey: "pip.pin.device") // PipPin's key
+    }
+
+    static func seedIfRequested(_ core: PipCore, appId: String) {
+        guard let i = args.firstIndex(of: "-pipUITestSeedPerson"),
+              i + 1 < args.count else { return }
+        _ = try? core.call("PIPCORE.edit", "testSeedPerson",
+                           [appId, ["name": args[i + 1]]])
+    }
+}
+
+// MARK: - Views
+
+/// The strip row's place while editing (body.editing: the corner is
+/// "Done editing"; the groups way in stays one tap away).
+struct EditHeader: View {
+    @EnvironmentObject var model: AppModel
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button { model.exitEdit() } label: {
+                Label("Done", systemImage: "checkmark")
+                    .font(.system(size: 18, weight: .semibold))
+                    .padding(.horizontal, 16)
+                    .frame(height: 48)
+                    .background(PipStyle.ink)
+                    .foregroundStyle(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Done editing")
+            .accessibilityIdentifier("editDone")
+            Text("Editing the board. Tap a word to change it; drag to move it.")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(PipStyle.muted)
+                .lineLimit(2)
+            Spacer()
+            Button {
+                if model.surface == .board { model.openGroups() } else { model.backToBoard() }
+            } label: {
+                Label(model.surface == .board ? "Groups" : "Board",
+                      systemImage: model.surface == .board ? "folder.fill" : "square.grid.3x3.fill")
+                    .font(.system(size: 16, weight: .semibold))
+                    .padding(.horizontal, 14)
+                    .frame(height: 48)
+                    .background(Color.white)
+                    .foregroundStyle(PipStyle.ink)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(RoundedRectangle(cornerRadius: 10)
+                        .stroke(PipStyle.ink.opacity(0.35), lineWidth: 1.5))
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("editGroups")
+        }
+        .frame(height: 64)
+    }
+}
+
+/// A word tile in Edit mode: tap opens its card, a drag moves it (the
+/// release point's slot decides; the core decides whether it lands).
+/// Dashed ring = the editing look; a hidden word is a faded ghost.
+struct EditCell: View {
+    @EnvironmentObject var model: AppModel
+    let cell: CellModel
+    let slotAt: (CGPoint) -> Int?
+
+    @State private var offset: CGSize = .zero
+    @State private var dragging = false
+
+    private var inGroup: Bool { model.surface == .group }
+    /// Reserved cells on a group page show the home board's word: not
+    /// group content, never movable — only a hidden one opens its card.
+    private var reserved: Bool { cell.reserved == true }
+    private var movable: Bool { !reserved }
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            tile
+            if inGroup && !reserved, let id = cell.id,
+               let g = model.groupPage {
+                Button {
+                    model.leaveGroup(kind: cell.kind ?? "sense", id: id,
+                                     groupId: g.groupId,
+                                     label: cell.label ?? "", fromCard: false)
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 22))
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(Color.white, PipStyle.ink)
+                        .padding(4)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Remove from \(g.name)")
+                .accessibilityIdentifier("x:\(id)")
+            }
+        }
+        .offset(offset)
+        .zIndex(dragging ? 5 : 0)
+    }
+
+    private var tile: some View {
+        WordTile(label: cell.label ?? "", role: cell.role, art: cell.art)
+            .opacity(cell.hidden == true ? 0.4 : 1)
+            .overlay(RoundedRectangle(cornerRadius: 10)
+                .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+                .foregroundStyle(PipStyle.ink.opacity(0.55)))
+            .shadow(color: .black.opacity(dragging ? 0.25 : 0), radius: 8, y: 4)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if reserved && cell.hidden != true { return }
+                if let id = cell.id { model.openCard(kind: cell.kind ?? "sense", id: id) }
+            }
+            .gesture(
+                DragGesture(minimumDistance: 10, coordinateSpace: .named("slotgrid"))
+                    .onChanged { v in
+                        guard movable else { return }
+                        dragging = true
+                        offset = v.translation
+                    }
+                    .onEnded { v in
+                        defer { dragging = false; offset = .zero }
+                        guard movable, let to = slotAt(v.location), to != cell.slot
+                        else { return }
+                        if inGroup { model.dropOnGroup(cell, toSlot: to) }
+                        else { model.dropOnBoard(cell, toSlot: to) }
+                    }
+            )
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(cell.label ?? "")
+            .accessibilityValue(cell.hidden == true ? "Hidden" : "")
+            .accessibilityHint(reserved && cell.hidden != true
+                               ? "Always here, from the main board"
+                               : "Opens this word's card")
+            .accessibilityAddTraits(.isButton)
+            .accessibilityIdentifier("tile:\(cell.id ?? "")")
+    }
+}
+
+/// The one-at-a-time undo toast (edit-shared.js toast): text, Undo for
+/// six seconds.
+struct EditToastOverlay: View {
+    @EnvironmentObject var model: AppModel
+
+    var body: some View {
+        if let t = model.editToast {
+            HStack(spacing: 14) {
+                Text(t.text)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(PipStyle.ink)
+                    .accessibilityIdentifier("editToastText")
+                if t.undo != nil {
+                    Button("Undo") { model.undo(t) }
+                        .font(.system(size: 16, weight: .bold))
+                        .accessibilityIdentifier("toast-undo")
+                }
+            }
+            .padding(.horizontal, 18).padding(.vertical, 12)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(RoundedRectangle(cornerRadius: 12)
+                .stroke(PipStyle.ink.opacity(0.3), lineWidth: 1.5))
+            .shadow(color: .black.opacity(0.12), radius: 8, y: 3)
+            .padding(.bottom, 24)
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("editToast")
+        }
+    }
+}

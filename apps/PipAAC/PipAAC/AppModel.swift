@@ -25,6 +25,7 @@ nonisolated struct CellModel: Decodable, Sendable {
     var art: String?
     var photoKey: String?
     var reserved: Bool?
+    var hidden: Bool?
     // family / group / anchors
     var familyId: String?
     var glyph: String?
@@ -164,11 +165,11 @@ final class AppModel: ObservableObject {
     enum Surface { case boot, board, index, group }
 
     @Published private(set) var surface: Surface = .boot
-    @Published private(set) var board: BoardModel?
+    @Published var board: BoardModel?
     @Published private(set) var strip: StripModel?
     @Published private(set) var bar: [ChipModel] = []
     @Published private(set) var groupIndex: GroupIndexModel?
-    @Published private(set) var groupPage: GroupPageModel?
+    @Published var groupPage: GroupPageModel?
     @Published private(set) var bootError: String?
     @Published private(set) var typing: String?
     @Published private(set) var kb: KeyboardModel?
@@ -179,18 +180,23 @@ final class AppModel: ObservableObject {
     @Published private(set) var question = false
     @Published private(set) var toast: String?
     @Published var showSettings = false
+    // Edit mode + word card (EditMode.swift) — render state only.
+    @Published var editing = false
+    @Published var card: WordCardModel?
+    @Published var editToast: EditToastModel?
+    var editToastSeq = 0
     @Published private(set) var settings: SettingsModel?
     private var toastSeq = 0
 
-    private nonisolated let core = PipCore()
-    private var appId = ""
+    nonisolated let core = PipCore()
+    private(set) var appId = ""
     private var dbId: Int32 = 0
     let speaker = PipSpeaker()
 
     // MARK: bridge
 
     /// Decodes a JSValue's Foundation object into a render model.
-    nonisolated private static func decodeRaw<T: Decodable>(_ raw: Any?) throws -> T {
+    nonisolated static func decodeRaw<T: Decodable>(_ raw: Any?) throws -> T {
         guard let raw else { throw PipCoreError.evalFailed("bridge returned nothing") }
         let data = try JSONSerialization.data(withJSONObject: raw)
         return try JSONDecoder().decode(T.self, from: data)
@@ -227,6 +233,7 @@ final class AppModel: ObservableObject {
     /// run on the main actor, so this is `async` (suspends to the pool)
     /// even though nothing inside awaits.
     nonisolated private static func bootCore(_ core: PipCore) async throws -> (AppOpenResult, Int32, PaintedState) {
+        UITestHooks.resetIfRequested()
         let dbURL = try PipAssets.userDbURL()
         let catalog = try PipAssets.text("catalog.json")
         let phrases = try PipAssets.text("suggest_answers.en.json")
@@ -236,6 +243,7 @@ final class AppModel: ObservableObject {
             let dbId = try core.openDatabase(path: dbURL.path)
             let opened: AppOpenResult = try decodeRaw(
                 core.call("PIPCORE.app", "appOpen", [dbId, catalog, phrases, forms]))
+            UITestHooks.seedIfRequested(core, appId: opened.appId)
             let st = PaintedState(
                 bar: try decodeRaw(core.call("PIPCORE.app", "appBar", [opened.appId])),
                 strip: try decodeRaw(core.call("PIPCORE.app", "appStrip", [opened.appId])),

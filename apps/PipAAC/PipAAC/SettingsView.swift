@@ -21,6 +21,15 @@ struct SettingsView: View {
         NavigationStack {
             if let s = model.settings {
                 Form {
+                    Section {
+                        // index.html #edit-groups — Edit mode is reached
+                        // from Settings, so the PIN gate already passed.
+                        Button("Edit the board") {
+                            dismiss()
+                            model.enterEdit()
+                        }
+                        .accessibilityIdentifier("editBoard")
+                    }
                     Section("Talking") {
                         toggle("Grammar help", "grammar_help", s.grammarHelp)
                         toggle("Start fresh after speaking", "fresh_after_speak",

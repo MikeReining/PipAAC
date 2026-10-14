@@ -99,6 +99,11 @@ const S = (appId) => {
   if (!s) throw new Error(`appClose: no session ${appId}`);
   return s;
 };
+/** The session accessor for sibling facade modules (app_edit.mjs) —
+ *  one state, one owner; they never copy it. */
+export const appSession = S;
+export const appMeta = (s, senseId) => metaFor(s, senseId);
+export const appGeom = (s) => boardGeom(s);
 
 /* ---------------- shared lookups (board/meta-cache.js) ---------------- */
 
@@ -174,8 +179,17 @@ function homeSlot(s, c, mask) {
       role: c.fitzgerald_role ?? "None", photoKey: photoFor(s, c.entity_id),
     });
   }
-  if (mask.has(c.sense_id)) return { type: "empty" };
-  const label = shownLabel(s, c.sense_id, c.label);
+  /* Edit mode (grid.js): the adult's view reveals a hidden word as a
+   *  ghost that still takes taps and drops; the child sees an empty cell. */
+  if (mask.has(c.sense_id)) {
+    if (!s.editing) return { type: "empty" };
+    return { ...wordModel(s, {
+      kind: "sense", id: c.sense_id, label: c.label,
+      role: c.fitzgerald_role, art: metaFor(s, c.sense_id).art,
+    }), hidden: true };
+  }
+  // The adult's view always shows the lemma (board.js shownLabel).
+  const label = s.editing ? c.label : shownLabel(s, c.sense_id, c.label);
   return wordModel(s, {
     kind: "sense", id: c.sense_id, label,
     role: c.fitzgerald_role, art: metaFor(s, c.sense_id).art,
@@ -440,7 +454,11 @@ export function appGroupPage(appId, groupId, page = 0) {
     const c = cells.get(slot);
     if (!c) { slots.push({ type: "empty", slot }); continue; }
     if (c.item_kind === "sense" && mask.has(c.item_id)) {
-      slots.push({ type: "empty", slot });
+      if (!s.editing) { slots.push({ type: "empty", slot }); continue; }
+      slots.push({ ...wordModel(s, {
+        kind: "sense", id: c.item_id, label: c.label,
+        role: c.fitzgerald_role, art: c.art,
+      }), hidden: true, slot });
       continue;
     }
     if (c.item_kind === "entity") {
