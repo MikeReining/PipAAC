@@ -67,6 +67,29 @@ shell profile changes.
 | `python3 scripts/commit_handoff_queue.py request ...` | Codex commit handoff |
 | `npx wrangler deploy` | Production: `https://app.pipaac.org` (custom domain) + `pippaac.emailmike.workers.dev` |
 
+## iOS app
+
+Xcode 26. Project `apps/PipAAC/PipAAC.xcodeproj`, scheme `PipAAC`, Swift 6 on
+all targets, iPad only. Architecture: `docs/product/Platforms_iOS_And_Web.md`.
+
+| Command | Purpose |
+| --- | --- |
+| `npm run ios:core` / `ios:core:check` | Build / verify the shared JS core bundle |
+| `npm run ios:fixtures` / `ios:fixtures:check` | Export / verify parity fixtures |
+| `npm run ios:assets` / `ios:assets:check` | Generate / verify gitignored `apps/PipAAC/SharedAssets/` (run before any Xcode build) |
+| `npm run ios:test` | All tests (parity + UI), Release |
+| `npm run ios:test:unit` | `PipAACTests` only, on the simulator |
+
+Simulator destination: `platform=iOS Simulator,name=iPad (A16)`.
+
+Release archive:
+
+```text
+xcodebuild archive -project apps/PipAAC/PipAAC.xcodeproj -scheme PipAAC -configuration Release -destination 'generic/platform=iOS' -archivePath <path> -allowProvisioningUpdates
+```
+
+CI: `.github/workflows/ios.yml` (fixtures/core checks + `PipAACTests`).
+
 ## Production
 
 Live 2026-10-01. `app.pipaac.org` is a Workers custom domain on `pippaac` —

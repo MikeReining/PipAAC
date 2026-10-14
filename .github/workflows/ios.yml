@@ -1,0 +1,39 @@
+name: iOS
+
+on:
+  push:
+    paths:
+      - "apps/PipAAC/**"
+      - "scripts/ios/**"
+      - "public/shared/**"
+      - ".github/workflows/ios.yml"
+  pull_request:
+    paths:
+      - "apps/PipAAC/**"
+      - "scripts/ios/**"
+      - "public/shared/**"
+      - ".github/workflows/ios.yml"
+
+jobs:
+  ios:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # Best effort: pick the newest installed Xcode if the image default is older.
+      - run: sudo xcode-select -s "$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)" || true
+      - run: npm ci
+      - run: npm run ios:core:check
+      - run: npm run ios:fixtures:check
+      - run: npm run ios:assets
+      - run: >-
+          xcodebuild test
+          -project apps/PipAAC/PipAAC.xcodeproj
+          -scheme PipAAC
+          -configuration Release
+          -destination 'platform=iOS Simulator,name=iPad (A16)'
+          -only-testing:PipAACTests
+          CODE_SIGNING_ALLOWED=NO

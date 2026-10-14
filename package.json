@@ -64,7 +64,8 @@
     "ios:fixtures": "node scripts/ios/export_fixtures.mjs",
     "ios:fixtures:check": "node scripts/ios/export_fixtures.mjs --check",
     "ios:test": "xcodebuild test -project apps/PipAAC/PipAAC.xcodeproj -scheme PipAAC -configuration Release",
-    "ios:assets": "node scripts/ios/bundle_assets.mjs",
+    "ios:test:unit": "xcodebuild test -project apps/PipAAC/PipAAC.xcodeproj -scheme PipAAC -configuration Release -destination 'platform=iOS Simulator,name=iPad (A16)' -only-testing:PipAACTests",
+    "ios:assets":"node scripts/ios/bundle_assets.mjs",
     "ios:assets:check": "node scripts/ios/bundle_assets.mjs --check"
   },
   "devDependencies": {
