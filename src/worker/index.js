@@ -20,6 +20,7 @@ import {
   handlePick, handlePictureImage, handlePicturesAdmin, handleReject,
 } from "./pictures.js";
 import { licenseFor } from "./license.mjs";
+import { handleAppStoreRedeem, handleAppStoreNotification } from "./appstore.mjs";
 import { UsageLedger } from "./usage_ledger.mjs";
 
 export { UserRelay, PairingLobby, SupporterAccounts, TileLedger, UsageLedger };
@@ -519,6 +520,15 @@ export default {
     }
     if (path === "/api/v1/stripe/webhook" && request.method === "POST") {
       return handleStripeWebhook(request, env);
+    }
+    // 044 F1 — Apple in-app purchase: the iPad redeems the signed
+    // transaction; Apple's server notifications refund/revoke it. Both
+    // land in the same relay entitlement as Stripe and codes.
+    if (path === "/api/v1/appstore/redeem" && request.method === "POST") {
+      return handleAppStoreRedeem(request, env);
+    }
+    if (path === "/api/v1/appstore/notifications" && request.method === "POST") {
+      return handleAppStoreNotification(request, env);
     }
     // Code redeem is bearer — the code is the authority, like the QR
     // card. The dir marks it spent, then the relay grants; a failed

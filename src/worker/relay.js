@@ -453,6 +453,59 @@ export class UserRelay {
       return json({ ok: true });
     }
 
+    // 044 F1 — App Store purchases, per originalTransactionId, so a
+    // replayed redeem grants nothing new and a refund removes only what
+    // that transaction granted. {op:"grant"|"revoke"|"restore", otid}.
+    // The entitlement itself is the same meta the Stripe and code paths
+    // write (one owner); apple_txns is the ledger beside it.
+    if (method === "POST" && route === "internal/appstore") {
+      const secret = this.env.PIP_INTERNAL_SECRET ?? this.env.PIP_LICENSE_SECRET;
+      if (!secret) return bad("internal_unavailable", 503);
+      if (request.headers.get("x-pip-internal") !== secret) {
+        return bad("forbidden", 403);
+      }
+      let parsed = null;
+      try { parsed = JSON.parse(td.decode(bodyBytes)); } catch { /* fall */ }
+      const otid = String(parsed?.otid ?? "");
+      if (!otid || !["grant", "revoke", "restore"].includes(parsed?.op)) return bad("bad_request");
+      let txns = {};
+      try { txns = JSON.parse(this.metaGet("apple_txns") ?? "{}"); } catch { /* fresh */ }
+      const grantNow = () => {
+        // Already lifetime from Stripe or a code: that grant stays the
+        // record, so an App Store refund cannot take it back.
+        if (this.entitlement() !== "lifetime") {
+          this.metaSet("license_source", "appstore");
+          this.metaSet("license_ref", otid);
+          this.metaSet("licensed_at", Date.now());
+        }
+        this.metaSet("entitlement", "lifetime");
+        this.ctx.storage.sql.exec("DELETE FROM meta WHERE k = 'payment_issue'");
+      };
+      let duplicate = false;
+      if (parsed.op === "grant") {
+        // A known transaction — granted before, or refunded before its
+        // redeem arrived — never grants again.
+        if (txns[otid]) duplicate = true;
+        else { txns[otid] = "active"; grantNow(); }
+      } else if (parsed.op === "restore") {
+        if (txns[otid] === "revoked") { txns[otid] = "active"; grantNow(); }
+        else if (!txns[otid]) txns[otid] = "active";
+      } else {
+        if (txns[otid] === "revoked") duplicate = true;
+        txns[otid] = "revoked";
+        // Only an App Store grant is taken back by an App Store refund:
+        // a user who also holds a Stripe or code license keeps it.
+        const stillActive = Object.values(txns).includes("active");
+        if (!duplicate && this.metaGet("license_source") === "appstore" && !stillActive) {
+          this.metaSet("payment_issue", "refunded");
+          this.ctx.storage.sql.exec(
+            "DELETE FROM meta WHERE k IN ('entitlement','license_source','license_ref','licensed_at')");
+        }
+      }
+      this.metaSet("apple_txns", JSON.stringify(txns));
+      return json({ ok: true, duplicate, entitlement: this.entitlement() });
+    }
+
     const device = await this.verify(request, bodyBytes);
     if (!device) return bad("forbidden", 403);
     // last_seen BEFORE this request — a long-absent device refreshing it

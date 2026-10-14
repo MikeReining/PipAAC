@@ -37,6 +37,9 @@ struct BoardView: View {
             SettingsView(model: model)
                 .environmentObject(model)
         }
+        .sheet(isPresented: $model.showLifetime) {
+            LifetimeSheet().environmentObject(model)
+        }
         .sheet(isPresented: $model.showLibrary) {
             LibraryView()                // LibraryView.swift
                 .environmentObject(model)
@@ -47,9 +50,16 @@ struct BoardView: View {
         .animation(.easeInOut(duration: 0.2), value: model.editToast?.text)
         .overlay(alignment: .top) {
             if let toast = model.toast {
-                Text(toast)
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(PipStyle.ink)
+                HStack(spacing: 12) {
+                    Text(toast)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(PipStyle.ink)
+                    if LifetimeDoor.matches(toast) {
+                        Button("See Pip Lifetime") { model.openLifetime() }
+                            .font(.system(size: 15, weight: .bold))
+                            .accessibilityIdentifier("toast-lifetime")
+                    }
+                }
                     .padding(.horizontal, 16).padding(.vertical, 10)
                     .background(Color.white)
                     .clipShape(RoundedRectangle(cornerRadius: 12))

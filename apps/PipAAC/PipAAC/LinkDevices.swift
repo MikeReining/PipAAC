@@ -117,7 +117,11 @@ extension AppModel {
     }
 
     /// scenePhase became active (web: visibilitychange).
-    func sceneBecameActive() { host?.notifyVisible() }
+    func sceneBecameActive() {
+        host?.notifyVisible()
+        // A refund or a purchase made elsewhere shows up on the next read.
+        if activeId != nil { Task { await lifetime.refresh(); await lifetime.sweepUnfinished() } }
+    }
 
     // MARK: events
 
@@ -139,6 +143,7 @@ extension AppModel {
             // A start that threw leaves the loop free to try again.
             if ev?.stage == nil, json.contains("\"ok\":false") { syncingId = nil }
         case "say": handleSay(json)
+        case "purchase": lifetimeBackend.handle(json)
         case "pair.offer": if let ev { offerEvent(ev) }
         case "pair.join": if let ev { joinEvent(ev) }
         case "account.link", "account.landing", "recovery.linked", "recovery.card", "recovery.restore":
@@ -377,6 +382,10 @@ private struct OfferSheet: View {
                             .foregroundStyle(s.done ? PipStyle.ink : PipStyle.muted)
                             .multilineTextAlignment(.center)
                             .accessibilityIdentifier(s.done ? "pair:done" : "pair:line")
+                    }
+                    if s.lines.contains(where: LifetimeDoor.matches) {
+                        Button("See Pip Lifetime") { model.openLifetime() }
+                            .accessibilityIdentifier("pair:lifetime")
                     }
                     if s.canRetry {
                         Button("New code") { model.startOffer() }

@@ -428,6 +428,7 @@ struct AddWordView: View {
     private func run(_ m: AddMatch) {
         let g = target.id
         switch m.kind {
+        case "make" where m.capped == true: model.openLifetime() // "See Pip Lifetime"
         case "make": model.addMake(groupId: g, cell: cell, text: text.trimmingCharacters(in: .whitespaces))
         default:
             if m.here { model.addOpenExisting(m) }

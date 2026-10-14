@@ -1,0 +1,38 @@
+{
+  "identifier" : "A0F10C1E",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "48.99",
+      "familyShareable" : false,
+      "internalID" : "6747000001",
+      "localizations" : [
+        {
+          "description" : "Unlocks Pip Lifetime for one user, forever. Buy again to unlock another user.",
+          "displayName" : "Pip Lifetime for one user",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "org.pipaac.lifetime.user",
+      "referenceName" : "Pip Lifetime for one user",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+
+    ]
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

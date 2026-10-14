@@ -84,6 +84,10 @@ function build(out) {
     copy(out, rel); note(rel);
   }
 
+  // 044 F1 — the Lifetime page's "Hear the difference": the shipped
+  // natural-sentence clip (the free side plays the word clips above).
+  copy(out, "audio/onramp/demo-sentence.mp3"); note("audio/onramp/demo-sentence.mp3");
+
   // Tile art — webp copies as-is; every svg gets a 512 px raster twin
   // (<name>.svg.png) which the loader prefers for .svg keys.
   for (const rel of walk(join(PUB, "symbols"))) {

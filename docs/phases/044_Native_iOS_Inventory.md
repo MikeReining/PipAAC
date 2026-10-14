@@ -195,14 +195,14 @@ Not-a-spec rule: a row says what the web does today (traced), never what it ough
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | PU-1 Trial clock starts and counts down | First launch online | `speech.js:refreshTrial` 511 → `POST /api/v1/trial/start`, `GET /api/v1/trial` | Swift | Worker trial record | 1.0 | F | P9 | planned |
 | PU-2 Trial nudges (last two days, expiry) | Launch near end | `speech.js:trialNudge` 537; `lifetime-ui.js:mountTrialClock` 108 | Swift | Local marks `pip-trial-nudge` | 1.0 | F | UI test | planned |
-| PU-3 Lifetime page: what it adds, hear the difference, countdown | Settings → Lifetime; any paid-feature door | `board/lifetime-ui.js:mountLifetime` 21 | Swift; shipped clips | None | 1.0 | F | UI test | planned |
-| PU-4 Buy Lifetime | Lifetime page | Web: `unlock.js:checkoutFromUrl` 87 → `POST /api/v1/checkout`/`/checkout/codes` (Stripe). iOS: StoreKit consumable, server-validated | Swift StoreKit | Worker validation endpoint → `entitled()` | 1.0 | F | P9 | planned (no web checkout link in the app) |
-| PU-5 Redeem a code | Lifetime page "Have a code?" | `devices-ui.js:activateLicense` 973 → `account.mjs:redeemLicense` → `POST /api/v1/license/redeem` | Swift | License on relay + device | 1.0 | F | P9 | planned |
-| PU-6 Restore purchase | Lifetime page | New (phase § 2); web uses `claimPurchasedLicense` 1046 / `GET /api/v1/license/order` | Swift StoreKit | Entitlement refresh | 1.0 | F | P9 | planned |
-| PU-7 Refund / revocation removes access | Apple notification | New: App Store Server Notifications endpoint → `entitled()` | Worker | Entitlement revoked | 1.0 | F | P9 | planned |
-| PU-8 Free limits (words, supporters, devices) gate with a Lifetime door | Add past limit | `add-flow.js:ownLeft` 33; `board.js:wordLicensed` 1120; `devices-ui.js` walls | Both | Reads entitlement | 1.0 | F | P9 | planned |
+| PU-3 Lifetime page: what it adds, hear the difference, countdown | Settings → Lifetime; any paid-feature door | `board/lifetime-ui.js:mountLifetime` 21 | Swift; shipped clips | None | 1.0 | F | UI test | implemented (F1: LifetimeUITests, PurchaseTests) |
+| PU-4 Buy Lifetime | Lifetime page | Web: `unlock.js:checkoutFromUrl` 87 → `POST /api/v1/checkout`/`/checkout/codes` (Stripe). iOS: StoreKit consumable, server-validated | Swift StoreKit | Worker validation endpoint → `entitled()` | 1.0 | F | P9 | implemented (F1: PurchaseTests, LifetimeUITests, appstore.test.mjs; no web checkout link) |
+| PU-5 Redeem a code | Lifetime page "Have a code?" | `devices-ui.js:activateLicense` 973 → `account.mjs:redeemLicense` → `POST /api/v1/license/redeem` | Swift | License on relay + device | 1.0 | F | P9 | implemented (F1: LifetimeUITests, PurchaseTests) |
+| PU-6 Restore purchase | Lifetime page | New (phase § 2); web uses `claimPurchasedLicense` 1046 / `GET /api/v1/license/order` | Swift StoreKit | Entitlement refresh | 1.0 | F | P9 | implemented (F1: LifetimeUITests, PurchaseTests) |
+| PU-7 Refund / revocation removes access | Apple notification | New: App Store Server Notifications endpoint → `entitled()` | Worker | Entitlement revoked | 1.0 | F | P9 | implemented (F1: appstore.test.mjs REFUND, PurchaseTests) |
+| PU-8 Free limits (words, supporters, devices) gate with a Lifetime door | Add past limit | `add-flow.js:ownLeft` 33; `board.js:wordLicensed` 1120; `devices-ui.js` walls | Both | Reads entitlement | 1.0 | F | P9 | implemented (F1: LifetimeUITests, PurchaseTests) |
 | PU-9 Someone else pays ("Copy unlock link" for an SLP or grandparent) | Lifetime page `#life-link` | `index.html` `#life-link-row`; `lifetime-ui.js` link builder | Swift | A web checkout link — conflicts with phase § 2 "no web checkout link in the app" | later | F | — | planned (needs founder decision; see Proposals) |
-| PU-10 Parent gate before purchases and outside links | Tap Buy / external link | New (phase § 2) | Swift | None | 1.0 | F | UI test | planned |
+| PU-10 Parent gate before purchases and outside links | Tap Buy / external link | New (phase § 2) | Swift | None | 1.0 | F | UI test | implemented (F1: LifetimeUITests, PurchaseTests) |
 
 ## Help
 

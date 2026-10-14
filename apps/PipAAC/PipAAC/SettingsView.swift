@@ -62,6 +62,10 @@ struct SettingsView: View {
                         .settingsRow("editBoard", focus)
                     }
                     Section {
+                        LifetimeRow(life: model.lifetime)
+                            .settingsRow("lifetime", focus)
+                    }
+                    Section {
                         NavigationLink {
                             PeopleView()
                         } label: {

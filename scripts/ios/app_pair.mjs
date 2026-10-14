@@ -100,6 +100,29 @@ export function join(baseUrl, codeArg, label) {
   return { accepted: true };
 }
 
+/** devices-ui.js ensureUser: create the relay user (registry id = relay
+ *  id) and persist the registry row's `sync`. Mutates `me.sync`. Shared by
+ *  the offer flow and the Lifetime purchase (044 F1). */
+export async function ensureRelayUser(baseUrl, me, label, store = openKeyStore(), identity = null) {
+  if (me.sync?.userId) return me;
+  identity ??= await getDeviceIdentity(store);
+  const root = await ensureRecoveryRoot(store, me.id);
+  const res = await fetch(`${baseUrl}/users`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      user_id: me.id, device_id: identity.deviceId,
+      pubkey: await exportPublicKey(identity.verify),
+      dh_pub: await exportDhPublic(identity.dh.publicKey),
+      recovery_proof: await recoveryProof(root), label,
+    }),
+  });
+  if (!res.ok) throw new Error(`user create: ${res.status}`);
+  const { user_id } = await res.json();
+  me.sync = { userId: user_id, epoch: 1, cursor: 0 };
+  await hostCall("saveUser", { userId: me.id, patch: { sync: me.sync } });
+  return me;
+}
+
 /* ---------------- this device HAS the person: offer a code ---------------- */
 
 /** userRow = { id, name, sync? }. Creates the relay user first when this
@@ -111,20 +134,7 @@ export function offer(baseUrl, userRowJson, label) {
     const store = openKeyStore();
     const identity = await getDeviceIdentity(store);
     if (!me.sync?.userId) {
-      const root = await ensureRecoveryRoot(store, me.id);
-      const res = await fetch(`${baseUrl}/users`, {
-        method: "POST", headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          user_id: me.id, device_id: identity.deviceId,
-          pubkey: await exportPublicKey(identity.verify),
-          dh_pub: await exportDhPublic(identity.dh.publicKey),
-          recovery_proof: await recoveryProof(root), label,
-        }),
-      });
-      if (!res.ok) throw new Error(`user create: ${res.status}`);
-      const { user_id } = await res.json();
-      me.sync = { userId: user_id, epoch: 1, cursor: 0 };
-      await hostCall("saveUser", { userId: me.id, patch: { sync: me.sync } });
+      await ensureRelayUser(baseUrl, me, label, store, identity);
       emit("pair.offer", { stage: "linked", sync: me.sync });
     }
     const userKey = await getUserKey(store, me.id, me.sync.epoch ?? 1);

@@ -265,8 +265,7 @@ final class HelpModel: ObservableObject {
             "Device": "iPad · iOS \(UIDevice.current.systemVersion)",
             "Screen": "\(Int(size.width))×\(Int(size.height))",
             "Online": online ? "yes" : "no",
-            // Pip Lifetime is a web purchase; the app has no purchase yet.
-            "Pip Lifetime": "no",
+            "Pip Lifetime": LifetimeModel.licensedNow ? "yes" : "no",
             "This device": "the user's own",
         ]
     }

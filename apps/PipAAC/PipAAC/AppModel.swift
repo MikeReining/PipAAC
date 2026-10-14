@@ -216,6 +216,10 @@ final class AppModel: ObservableObject {
     @Published var mediaState = MediaState()
     var joinRole = "board"
     @Published var offerSheet: OfferSheetState?
+    // Pip Lifetime: buy / restore / the plan (Purchases.swift, LifetimeView.swift).
+    let lifetimeBackend = CoreLifetimeBackend()
+    lazy var lifetime: LifetimeModel = makeLifetime()
+    @Published var showLifetime = false
     @Published var joinSheet: JoinSheetState?
     private(set) var appId = ""
     private(set) var dbId: Int32 = 0
@@ -296,6 +300,8 @@ final class AppModel: ObservableObject {
         dbId = newDb
         activeId = id
         sayIdentify(id)
+        lifetime.start()
+        Task { await lifetime.refresh() }
         try registry.touchOpened(id)
         try refreshPeople()
         groupIndex = nil

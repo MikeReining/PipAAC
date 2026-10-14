@@ -235,6 +235,9 @@ nonisolated enum UITestHooks {
         args.contains("-pipUITestReset") || args.contains("-PipDataDir")
     }
 
+    /// F1: a UI-test launch whose "App Store" is the in-process fake.
+    static var fakeStore: Bool { args.contains("-PipFakeStore") }
+
     static func resetIfRequested() {
         guard args.contains("-pipUITestReset"),
               let base = try? PipAssets.dataBase() else { return }
@@ -417,6 +420,11 @@ struct EditToastOverlay: View {
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(PipStyle.ink)
                     .accessibilityIdentifier("editToastText")
+                if LifetimeDoor.matches(t.text) {
+                    Button("See Pip Lifetime") { model.openLifetime() }
+                        .font(.system(size: 16, weight: .bold))
+                        .accessibilityIdentifier("toast-lifetime")
+                }
                 if t.undo != nil {
                     Button("Undo") { model.undo(t) }
                         .font(.system(size: 16, weight: .bold))
