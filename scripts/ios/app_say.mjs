@@ -21,10 +21,9 @@
  * P6 (what is heard follows the latest request): `speakSeq` makes the
  * newest speak own the audio, `tapSeq` retires a pending tile fetch, and a
  * transform lands only if the bar still holds exactly what was sent. A
- * stale reply changes nothing and speaks nothing. (Web divergences, on
- * purpose: speech.js speaks the CURRENT bar after a stale reply and
- * re-speaks the new bar if it changed mid-speak; here the newer request or
- * tap already owns the audio, so the abandoned request stays silent.)
+ * stale reply changes nothing on the bar, and (as speech.js) the press
+ * still speaks the CURRENT bar - the abandoned reply's text is never sent
+ * to the voice nor played.
  */
 import { voiceSentence, sentenceSpeakText } from "../../public/shared/voice_sentence.mjs";
 import { voiceTile } from "../../public/shared/voice_tile.mjs";
@@ -212,7 +211,9 @@ async function speakCore(s, x) {
       deadlineMs: SPEAK_VOICE_WAIT_MS,
     });
     if (seq !== x.speakSeq) return null;
-    if (text !== sentenceSpeakText(s.sentence)) return null;
+    // The bar changed mid-request: speak what it holds now, never the
+    // stale recording (speech.js).
+    if (text !== sentenceSpeakText(s.sentence)) return speakCore(s, x);
     if (blob?._file) play = [{ type: "file", key: blob._file }];
   }
   if (!play) {
@@ -330,9 +331,8 @@ async function transformCore(s, x, mode) {
       toast = `${name} couldn't work just now — spoke it as it was.`;
     }
   }
-  // Stale: the bar moved on, so the newer bar (and the tap that changed
-  // it) owns the audio. Nothing lands, nothing speaks.
-  if (!fresh) return { toast, play: null };
+  // As the web: a stale reply changes nothing on the bar, but the press
+  // still speaks - the CURRENT bar, never the abandoned reply's text.
   return { toast, play: await speakCore(s, x) };
 }
 

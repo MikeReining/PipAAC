@@ -734,10 +734,10 @@ shows the open person's photo (Add / Change / Remove).
 - P6: an outcome arrives as an event only if still wanted. `speakSeq` (newest
   speak owns the audio), `tapSeq` (a newer tap retires a pending tile
   fetch), the web's `sourceText` staleness check, and an AbortController
-  deadline (15 s transform, 10 s sentence voice). Deliberate divergence from
-  `speech.js`: after a stale reply the web still speaks the CURRENT bar, and
-  re-speaks the new bar if it changed mid-speak; here the abandoned request
-  stays silent (the tap that changed the bar already spoke).
+  deadline (15 s transform, 10 s sentence voice). As the web: a stale reply
+  changes nothing on the bar, the press still speaks the CURRENT bar, and a
+  bar that changed mid-speak is re-spoken - the abandoned reply's text is
+  never sent to the voice nor played.
 - Hermetic UI runs: a launch with `-pipUITestReset` or `-PipDataDir` and no
   `-PipBaseURL` points the relay at a refusing loopback port, so no test can
   reach production (the core then takes its honest offline path).
@@ -746,10 +746,10 @@ shows the open person's photo (Add / Change / Remove).
   body keys, no license key when none stored, the cache file that plays, the
   stale/late/stalled/offline/not-entitled paths, tile mint and overtaken
   tile tap); XCUITests `SayUITests` against a stub Worker in the test
-  process (fix -> bar + played file bytes; late ⏪ reply discarded; offline
+  process (fix -> bar + played file bytes; late ⏪ reply discarded and the current bar spoken; offline
   toast; typed word minted and spoken).
 - Left: face-button feelings (`speakFeeling`), trial-countdown nudges and the
   Lifetime door (F), tile prefetch of entity names on boot (the family-name
   mint at add/rename belongs to the word-card slice), media sync of cached
-  clips. Web bugs noted, not copied: `voice_tile.sweepReplaced` drops `trial`,
-  so a trialing user (no license) never runs the replaced-clip sweep.
+  clips. (The web bug `voice_tile.sweepReplaced` dropping `trial` was fixed
+  separately: `fix(voice): replaced-clip sweep runs for trial users too`.)

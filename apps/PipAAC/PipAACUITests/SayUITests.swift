@@ -116,8 +116,8 @@ final class SayUITests: XCTestCase {
     }
 
     /// Change the bar while a slow ⏪ is in flight -> the late reply is
-    /// discarded: the bar is unchanged and the abandoned sentence is never
-    /// sent to the voice nor played.
+    /// discarded (bar unchanged, its text never reaches the voice or the
+    /// speaker), and the press still speaks the CURRENT bar, as the web does.
     func testLateReplyAfterTheBarChangedIsDiscarded() throws {
         server.transformReply = "Went to the park."
         server.transformDelay = 3.0
@@ -133,12 +133,21 @@ final class SayUITests: XCTestCase {
         wait("three chips") { barWords(app).count == 3 }
         let bar = barWords(app)
 
-        sleep(5)                                // the stub's reply lands (3 s) and is dropped
+        // The stub's reply lands (3 s) and is dropped; the current bar speaks.
+        wait("the current bar is spoken", timeout: 15) {
+            played().contains { $0.contains("/VoiceCache/pip-voice/") }
+        }
         XCTAssertEqual(barWords(app), bar, "bar unchanged by the stale reply")
         XCTAssertFalse(barWords(app).contains("park."))
-        XCTAssertEqual(server.requests("/api/v1/voice/speak").count, 0,
-                       "the abandoned sentence never reaches the voice")
-        XCTAssertFalse(played().contains { $0.contains("/VoiceCache/") }, "and is never played")
+        let spoken = server.requests("/api/v1/voice/speak")
+        XCTAssertFalse(spoken.isEmpty)
+        XCTAssertEqual(spoken.last?.body["text"] as? String,
+                       bar.joined(separator: " ").lowercased() + ".",
+                       "the voice was asked for the current bar")
+        XCTAssertFalse(spoken.contains { ($0.body["text"] as? String ?? "").contains("park") },
+                       "the abandoned reply never reaches the voice")
+        let path = try XCTUnwrap(played().last { $0.contains("/VoiceCache/pip-voice/") })
+        XCTAssertEqual(try Data(contentsOf: URL(fileURLWithPath: path)), StubWorker.clip)
         shot(app, "d4-late-reply-dropped")
     }
 

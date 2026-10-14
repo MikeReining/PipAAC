@@ -8197,8 +8197,8 @@ ${a.a}` }
       ).catch(() => null);
       return res?.ok ? res.json().catch(() => null) : null;
     }
-    async function sweepReplaced({ userId, license, voice, since }) {
-      const res = await replacedSince({ userId, license, voice, since });
+    async function sweepReplaced({ userId, license, trial = false, voice, since }) {
+      const res = await replacedSince({ userId, license, trial, voice, since });
       if (!res) return null;
       const ids = Array.isArray(res.ids) ? res.ids : [];
       for (const id of ids) await evict(voice, id);
@@ -8636,7 +8636,7 @@ ${a.a}` }
         deadlineMs: SPEAK_VOICE_WAIT_MS
       });
       if (seq !== x.speakSeq) return null;
-      if (text !== sentenceSpeakText(s.sentence)) return null;
+      if (text !== sentenceSpeakText(s.sentence)) return speakCore(s, x);
       if (blob?._file) play = [{ type: "file", key: blob._file }];
     }
     if (!play) {
@@ -8746,7 +8746,6 @@ ${a.a}` }
         toast = `${name} couldn't work just now \u2014 spoke it as it was.`;
       }
     }
-    if (!fresh) return { toast, play: null };
     return { toast, play: await speakCore(s, x) };
   }
   function transform(appId, mode) {

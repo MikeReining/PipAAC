@@ -167,7 +167,8 @@ const { appId } = app.appOpen(1, readFileSync(join(root, "public/catalog.json"),
 
 const barText = () => app.appBar(appId).map((c) => c.display).join(" ");
 const tapWord = (id, text) => app.appTap(appId, { kind: "sense", id, text, source: "grid" });
-const fresh = () => {
+const fresh = async () => {
+  await sleep(150); // let the previous press finish (busy clears after its speak)
   app.appClear(appId);
   worker.reset();
   says.length = 0;
@@ -200,7 +201,7 @@ test("boot: the trial clock starts and is mirrored, the web's request shapes", a
 });
 
 test("fix it: names are masked on the wire, restored on the bar, and the cloud clip is what plays", async () => {
-  fresh();
+  await fresh();
   app.appTap(appId, { kind: "entity", id: "ent_leo", text: "Leo", source: "grid" });
   tapWord("sns_0013", "want");
   const taps = barText();
@@ -264,27 +265,32 @@ test("play: a repeat is the local cache - no second request - and past restores 
   assert.equal(worker.of("/api/v1/voice/speak")[base.speak + 1].body.text, "Leo want.");
 });
 
-test("a late reply after the bar changed is discarded: bar untouched, nothing spoken, nothing requested", async () => {
-  fresh();
+test("a late reply after the bar changed is discarded; the CURRENT bar is spoken, never the stale reply", async () => {
+  await fresh();
   tapWord("sns_0013", "want");
   tapWord("sns_0128", "apple");
-  const before = barText();
   worker.transformDelayMs = 300;
-  worker.transform = () => ({ json: { text: "Want an apple." } });
+  worker.transform = () => ({ json: { text: "Went to the park." } });
   say.transform(appId, "past");
   await until(() => worker.of("/api/v1/transform").length === 1, "request in flight");
   tapWord("sns_0013", "want"); // the child keeps going
   const after = barText();
-  assert.notEqual(after, before);
-  await sleep(600); // the reply lands and is dropped
-  assert.equal(barText(), after, "bar unchanged");
-  assert.equal(worker.of("/api/v1/voice/speak").length, 0, "the abandoned sentence is never sent to the voice");
-  assert.deepEqual(says.flatMap(playedFiles), [], "and never played");
+  await until(() => says.some((e) => playedFiles(e).length), "current bar spoken", 3000);
+  await sleep(100);
+  assert.equal(barText(), after, "bar unchanged by the late reply");
   assert.equal(app.appBar(appId).some((c) => c.kind === "typed"), false);
+  const spoken = worker.of("/api/v1/voice/speak");
+  assert.ok(spoken.length >= 1);
+  assert.equal(spoken.at(-1).body.text, `${after.toLowerCase()}.`, "the current bar, not the reply");
+  assert.ok(spoken.every((r) => !/park/i.test(r.body.text)), "the late reply never reaches the voice");
+  const hash = Buffer.from(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${after.toLowerCase()}.`))).toString("hex");
+  const entry = caches.get(`pip-voice\nhttps://voice.local/voi_default_en/neutral/${hash}`);
+  assert.ok(entry, "the clip for the current bar is in the cache");
+  assert.equal(says.flatMap(playedFiles).at(-1), entry.file, "and is what plays");
 });
 
 test("offline: the press speaks the bar as built, word by word, and says why", async () => {
-  fresh();
+  await fresh();
   online = false;
   tapWord("sns_0013", "want");
   tapWord("sns_0128", "apple");
@@ -298,7 +304,7 @@ test("offline: the press speaks the bar as built, word by word, and says why", a
 });
 
 test("a stalled transform is abandoned at the deadline; its late reply never lands", async () => {
-  fresh();
+  await fresh();
   tapWord("sns_0013", "want");
   tapWord("sns_0128", "apple");
   worker.transformNever = true;
@@ -316,7 +322,7 @@ test("a stalled transform is abandoned at the deadline; its late reply never lan
 });
 
 test("not entitled: the bar is spoken as built, the ask shows once per session", async () => {
-  fresh();
+  await fresh();
   tapWord("sns_0013", "want");
   tapWord("sns_0128", "apple");
   worker.transform = () => ({ status: 403, json: { error: "bad_license" } });
@@ -331,7 +337,7 @@ test("not entitled: the bar is spoken as built, the ask shows once per session",
 });
 
 test("a typed word is minted on commit (supporter action) and its clip plays on a tap", async () => {
-  fresh();
+  await fresh();
   typedTap("zorp");
   await until(() => worker.of("/api/v1/voice/tile").length > 0, "mint request");
   const m = worker.of("/api/v1/voice/tile")[0];
@@ -351,7 +357,7 @@ test("a typed word is minted on commit (supporter action) and its clip plays on 
 });
 
 test("a tile tap that was overtaken by a newer tap is not played", async () => {
-  fresh();
+  await fresh();
   caches.clear();
   worker.tile = () => ({ bytes: MP3 });
   const slow = worker.tile;
