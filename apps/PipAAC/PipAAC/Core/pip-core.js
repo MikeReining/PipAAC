@@ -7930,6 +7930,7 @@ ${a.a}` }
   var app_say_exports = {};
   __export(app_say_exports, {
     identify: () => identify,
+    nudgeFor: () => nudgeFor,
     speak: () => speak,
     speakStart: () => speakStart,
     tapSpeech: () => tapSpeech,
@@ -8573,8 +8574,29 @@ ${a.a}` }
     if (res?.next) await keys.put(key, String(res.next)).catch(() => {
     });
   }
+  function nudgeFor(endsAt, now, marks = [], licensed = false) {
+    if (licensed || !endsAt) return null;
+    const daysLeft = Math.ceil((endsAt - now) / 864e5);
+    const pick = daysLeft <= 0 ? ["expired", "The free trial is over \u2014 Pip Lifetime keeps the natural voice and every helper: $49 once."] : daysLeft === 3 ? ["d5", "Free trial \xB7 3 days left \u2014 Pip Lifetime keeps it all: $49 once."] : daysLeft === 2 ? ["d6", "Free trial \xB7 2 days left \u2014 Pip Lifetime keeps it all: $49 once."] : null;
+    return pick && !marks.includes(pick[0]) ? { tag: pick[0], msg: pick[1] } : null;
+  }
+  async function trialNudge(s, x) {
+    const key = `user/${x.userId}/trial-nudge`;
+    let marks = [];
+    try {
+      marks = JSON.parse(await keys.get(key) ?? "[]");
+    } catch {
+    }
+    const n = nudgeFor(x.trialEndsAt, Date.now(), marks, x.trialLicensed === true);
+    if (!n) return;
+    await keys.put(key, JSON.stringify([...marks, n.tag])).catch(() => {
+    });
+    emit({ appId: s.appId, toast: n.msg });
+  }
   async function boot(s, x) {
     await refreshTrial(x).catch(() => false);
+    await trialNudge(s, x).catch(() => {
+    });
     await drain(x);
     await sweep(s, x).catch(() => {
     });

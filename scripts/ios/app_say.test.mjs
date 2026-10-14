@@ -375,3 +375,32 @@ test("a tile tap that was overtaken by a newer tap is not played", async () => {
   await sleep(300);
   assert.deepEqual(says.flatMap(playedFiles), [], "the older tile clip stays silent");
 });
+
+test("PU-2 trial nudges: the web's words, once per mark, last two days and expiry only", async () => {
+  const web = readFileSync(join(root, "public/board/speech.js"), "utf8");
+  const DAY = 86_400_000, now = 1_700_000_000_000;
+  const n = (days, marks = [], licensed = false) => say.nudgeFor(now + days * DAY - 1000, now, marks, licensed);
+  assert.equal(n(5), null);
+  assert.equal(n(4), null);
+  for (const [days, tag] of [[3, "d5"], [2, "d6"], [-1, "expired"]]) {
+    const r = n(days);
+    assert.equal(r.tag, tag);
+    assert.ok(web.includes(r.msg), `copy is the web's: ${r.msg}`);
+    assert.equal(n(days, [tag]), null, "never twice");
+  }
+  assert.equal(n(0.5), null, "one day left has no nudge");
+  assert.equal(n(3, [], true), null, "licensed: none");
+  assert.equal(say.nudgeFor(null, now), null);
+
+  // At boot: shown once, then remembered across boots.
+  await fresh();
+  worker.trialEndsAt = Date.now() + 2.5 * DAY;
+  say.identify(appId, USER);
+  await until(() => says.some((e) => e.toast), "the d5 nudge");
+  assert.equal(says.find((e) => e.toast).toast, "Free trial · 3 days left — Pip Lifetime keeps it all: $49 once.");
+  const count = () => says.filter((e) => e.toast).length;
+  say.identify(appId, USER);
+  await sleep(200);
+  assert.equal(count(), 1, "the second boot stays quiet");
+  worker.trialEndsAt = Date.now() + 5 * DAY;
+});

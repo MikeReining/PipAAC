@@ -194,7 +194,7 @@ Not-a-spec rule: a row says what the web does today (traced), never what it ough
 | Workflow | Gesture / entry | Web call path | Split | Data / API / media effect | Release | Slice | Proof | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | PU-1 Trial clock starts and counts down | First launch online | `speech.js:refreshTrial` 511 → `POST /api/v1/trial/start`, `GET /api/v1/trial` | Swift | Worker trial record | 1.0 | F | P9 | planned |
-| PU-2 Trial nudges (last two days, expiry) | Launch near end | `speech.js:trialNudge` 537; `lifetime-ui.js:mountTrialClock` 108 | Swift | Local marks `pip-trial-nudge` | 1.0 | F | UI test | planned |
+| PU-2 Trial nudges (last two days, expiry) | Launch near end | `speech.js:trialNudge` 537; `lifetime-ui.js:mountTrialClock` 108 | Swift | Local marks `pip-trial-nudge` | 1.0 | F | UI test | implemented (app_say.test.mjs PU-2) |
 | PU-3 Lifetime page: what it adds, hear the difference, countdown | Settings → Lifetime; any paid-feature door | `board/lifetime-ui.js:mountLifetime` 21 | Swift; shipped clips | None | 1.0 | F | UI test | implemented (F1: LifetimeUITests, PurchaseTests) |
 | PU-4 Buy Lifetime | Lifetime page | Web: `unlock.js:checkoutFromUrl` 87 → `POST /api/v1/checkout`/`/checkout/codes` (Stripe). iOS: StoreKit consumable, server-validated | Swift StoreKit | Worker validation endpoint → `entitled()` | 1.0 | F | P9 | implemented (F1: PurchaseTests, LifetimeUITests, appstore.test.mjs; no web checkout link) |
 | PU-5 Redeem a code | Lifetime page "Have a code?" | `devices-ui.js:activateLicense` 973 → `account.mjs:redeemLicense` → `POST /api/v1/license/redeem` | Swift | License on relay + device | 1.0 | F | P9 | implemented (F1: LifetimeUITests, PurchaseTests) |

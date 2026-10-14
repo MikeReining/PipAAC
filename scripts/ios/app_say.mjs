@@ -125,8 +125,35 @@ async function sweep(s, x) {
   if (res?.next) await keys.put(key, String(res.next)).catch(() => {});
 }
 
+/** speech.js trialNudge (040 § 6.3), the decision only: one toast on each
+ *  of the last two days and one at expiry, the web's words. -> {tag, msg}
+ *  or null (already shown, licensed, or not in a nudge window). */
+export function nudgeFor(endsAt, now, marks = [], licensed = false) {
+  if (licensed || !endsAt) return null;
+  const daysLeft = Math.ceil((endsAt - now) / 86_400_000);
+  const pick = daysLeft <= 0
+    ? ["expired", "The free trial is over — Pip Lifetime keeps the natural voice and every helper: $49 once."]
+    : daysLeft === 3 ? ["d5", "Free trial · 3 days left — Pip Lifetime keeps it all: $49 once."]
+    : daysLeft === 2 ? ["d6", "Free trial · 2 days left — Pip Lifetime keeps it all: $49 once."]
+    : null;
+  return pick && !marks.includes(pick[0]) ? { tag: pick[0], msg: pick[1] } : null;
+}
+
+/** At boot only, never on the child's board; Swift adds the "See Pip
+ *  Lifetime" door to any toast that names it. Marks are device-local. */
+async function trialNudge(s, x) {
+  const key = `user/${x.userId}/trial-nudge`;
+  let marks = [];
+  try { marks = JSON.parse((await keys.get(key)) ?? "[]"); } catch { /* fresh marks */ }
+  const n = nudgeFor(x.trialEndsAt, Date.now(), marks, x.trialLicensed === true);
+  if (!n) return;
+  await keys.put(key, JSON.stringify([...marks, n.tag])).catch(() => {});
+  emit({ appId: s.appId, toast: n.msg });
+}
+
 async function boot(s, x) {
   await refreshTrial(x).catch(() => false);
+  await trialNudge(s, x).catch(() => {});
   await drain(x);
   await sweep(s, x).catch(() => {});
 }
