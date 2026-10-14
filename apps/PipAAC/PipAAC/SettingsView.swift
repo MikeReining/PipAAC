@@ -14,6 +14,7 @@
 //  Pages live in SettingsPages.swift; the PIN sheet is at the bottom.
 //
 
+import Combine
 import SwiftUI
 
 // MARK: - Render models (scripts/ios/app_settings.mjs)
