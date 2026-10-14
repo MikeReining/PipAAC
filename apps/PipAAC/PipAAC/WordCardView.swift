@@ -23,6 +23,12 @@ struct WordCardView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
+                    if let added = card.justAdded {
+                        Text("✓ Added to \(added.groupName)")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(PipStyle.ink)
+                            .accessibilityIdentifier("wc-added")
+                    }
                     Button { model.speakCard(card) } label: {
                         WordTile(label: card.label, role: card.role, art: card.art)
                             .frame(width: 150, height: 170)
@@ -92,7 +98,7 @@ struct WordCardView: View {
     /// "Also in": the groups holding this word on this board size, each
     /// with a ✕ (027 B9 — this placement only).
     @ViewBuilder private var alsoIn: some View {
-        if card.onMainBoard || !card.groups.isEmpty {
+        do {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Also in")
                     .font(.system(size: 14, weight: .semibold))
@@ -120,6 +126,19 @@ struct WordCardView: View {
                         .clipShape(Capsule())
                         .overlay(Capsule().stroke(PipStyle.muted.opacity(0.4), lineWidth: 1.5))
                     }
+                    Button {
+                        model.openOtherGroups(kind: card.kind, id: card.id, label: card.label)
+                    } label: {
+                        Text("+ Group")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundStyle(PipStyle.ink)
+                            .padding(.horizontal, 12).padding(.vertical, 8)
+                            .overlay(Capsule().strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [5, 3]))
+                                .foregroundStyle(PipStyle.muted))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Add \(card.label) to other groups")
+                    .accessibilityIdentifier("wc-addgroup")
                 }
             }
             .frame(maxWidth: 520, alignment: .leading)
@@ -147,7 +166,7 @@ struct WordCardView: View {
 }
 
 /// Chips wrap onto new lines.
-private struct FlowRow: Layout {
+struct FlowRow: Layout {
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         arrange(proposal.width ?? 400, subviews).size
     }

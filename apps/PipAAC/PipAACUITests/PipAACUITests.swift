@@ -272,4 +272,155 @@ final class PipAACUITests: XCTestCase {
         XCTAssertEqual(w3.frame, neighborHome, "positions stay swapped after a relaunch")
         XCTAssertEqual(again.buttons["tile:sns_0014"].frame, wantHome)
     }
+
+    // MARK: - E2: add a word + the Library
+
+    /// Edit -> Groups -> open a group by its door.
+    @MainActor
+    private func openGroupInEdit(_ app: XCUIApplication, _ id: String) {
+        app.buttons["editGroups"].tap()
+        let door = app.buttons["group:\(id)"]
+        XCTAssertTrue(door.waitForExistence(timeout: 10))
+        door.tap()
+    }
+
+    /// E2 works test: Edit -> Add a word -> choose the group (Snack) ->
+    /// type "pizza" -> pick the catalog match -> Done -> the word is on
+    /// that group's page -> relaunch -> still there, same cell.
+    @MainActor
+    func testAddCatalogWordToChosenGroup() throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["-pipUITestReset"]
+        app.launch()
+        XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 20))
+        enterEdit(app)
+
+        app.buttons["editAdd"].tap()
+        let field = app.textFields["add-word"]
+        XCTAssertTrue(field.waitForExistence(timeout: 10))
+        XCTAssertEqual(app.buttons["add-dest"].label, "Choose a group, now My Words")
+        app.buttons["add-dest"].tap()
+        let snack = app.buttons["add-group:all:grp_snack"]
+        XCTAssertTrue(snack.waitForExistence(timeout: 10))
+        attachShot(app, "e2-group-picker")
+        snack.tap()
+        XCTAssertEqual(app.buttons["add-dest"].label, "Choose a group, now Snack")
+        field.tap()
+        field.typeText("pizza")
+        let match = app.buttons["add-match:sense:sns_0100"]
+        XCTAssertTrue(match.waitForExistence(timeout: 10), "the catalog match is offered")
+        XCTAssertTrue(app.buttons["add-new"].exists, "Make is always last")
+        attachShot(app, "e2-add-matches")
+        match.tap()
+        XCTAssertTrue(app.staticTexts["editToastText"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.staticTexts["editToastText"].label, "Added pizza")
+        XCTAssertTrue(app.buttons["toast-action"].exists, "the web's Add to other groups door")
+        app.buttons["editDone"].tap()
+
+        XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 10))
+        app.buttons["Groups"].firstMatch.tap()
+        let door = app.buttons["group:grp_snack"]
+        XCTAssertTrue(door.waitForExistence(timeout: 10))
+        door.tap()
+        XCTAssertTrue(app.buttons["tile:sns_0100"].waitForExistence(timeout: 10),
+                      "pizza is on the Snack page")
+        let frame = app.buttons["tile:sns_0100"].frame
+
+        app.terminate()
+        let again = XCUIApplication()
+        again.launch()
+        XCTAssertTrue(again.buttons["tile:sns_0013"].waitForExistence(timeout: 20))
+        again.buttons["Groups"].firstMatch.tap()
+        again.buttons["group:grp_snack"].tap()
+        XCTAssertTrue(again.buttons["tile:sns_0100"].waitForExistence(timeout: 10),
+                      "pizza survives a relaunch")
+        XCTAssertEqual(again.buttons["tile:sns_0100"].frame, frame, "in the same cell")
+    }
+
+    /// A tapped empty cell is the picker: the word lands exactly there.
+    @MainActor
+    func testAddIntoTappedEmptyCell() throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["-pipUITestReset"]
+        app.launch()
+        XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 20))
+        enterEdit(app)
+        openGroupInEdit(app, "grp_snack")
+        let doors = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'emptycell:'"))
+        XCTAssertTrue(doors.firstMatch.waitForExistence(timeout: 10))
+        let cell = doors.element(boundBy: doors.count - 1)
+        let cellFrame = cell.frame
+        cell.tap()
+        let field = app.textFields["add-word"]
+        XCTAssertTrue(field.waitForExistence(timeout: 10))
+        XCTAssertEqual(app.buttons["add-dest"].label, "Choose a group, now Snack")
+        field.tap()
+        field.typeText("pizza")
+        app.buttons["add-match:sense:sns_0100"].tap()
+        let tile = app.buttons["tile:sns_0100"]
+        XCTAssertTrue(tile.waitForExistence(timeout: 10))
+        XCTAssertEqual(tile.frame, cellFrame, "the word took the tapped cell")
+    }
+
+    /// Make a personal word -> its card says where it went -> Also in
+    /// adds it to another group -> the Library search finds it -> it is
+    /// still there after a relaunch.
+    @MainActor
+    func testMakePersonalWordThenLibrary() throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["-pipUITestReset"]
+        app.launch()
+        XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 20))
+        enterEdit(app)
+
+        app.buttons["editAdd"].tap()
+        let field = app.textFields["add-word"]
+        XCTAssertTrue(field.waitForExistence(timeout: 10))
+        field.tap()
+        field.typeText("Grandpa Lou")
+        let make = app.buttons["add-new"]
+        XCTAssertTrue(make.waitForExistence(timeout: 10))
+        XCTAssertTrue(make.label.contains("Grandpa Lou"))
+        make.tap()
+        XCTAssertTrue(app.staticTexts["wc-added"].waitForExistence(timeout: 10))
+        XCTAssertEqual(app.staticTexts["wc-added"].label, "✓ Added to My Words")
+        attachShot(app, "e2-just-added-card")
+
+        app.buttons["wc-addgroup"].tap()
+        let chip = app.buttons["boards-chip:grp_snack"]
+        XCTAssertTrue(chip.waitForExistence(timeout: 10))
+        XCTAssertFalse(app.buttons["boards-chip:grp_my_words"].exists, "it is already in My Words")
+        XCTAssertFalse(app.buttons["boards-save"].isEnabled)
+        chip.tap()
+        app.buttons["boards-save"].tap()
+        XCTAssertTrue(app.staticTexts["editToastText"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.staticTexts["editToastText"].label, "Added Grandpa Lou to Snack")
+
+        app.buttons["editLibrary"].tap()
+        let q = app.textFields["lib-q"]
+        XCTAssertTrue(q.waitForExistence(timeout: 10))
+        q.tap()
+        q.typeText("grandpa")
+        let row = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'lib-row:entity:'")).firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: 10), "search finds the new word")
+        XCTAssertTrue(row.label.hasPrefix("Grandpa Lou"))
+        XCTAssertTrue(row.label.contains("My Words"))
+        XCTAssertTrue(row.label.contains("Snack"))
+        attachShot(app, "e2-library-search")
+        row.tap()
+        XCTAssertTrue(app.textFields["wc-name"].waitForExistence(timeout: 10), "a row opens the card")
+        app.buttons["wc-done"].tap()
+        app.buttons["lib-close"].tap()
+        app.buttons["editDone"].tap()
+
+        app.terminate()
+        let again = XCUIApplication()
+        again.launch()
+        XCTAssertTrue(again.buttons["tile:sns_0013"].waitForExistence(timeout: 20))
+        again.buttons["Groups"].firstMatch.tap()
+        again.buttons["group:grp_my_words"].tap()
+        let ent = again.buttons.matching(NSPredicate(format: "label == 'Grandpa Lou'")).firstMatch
+        XCTAssertTrue(ent.waitForExistence(timeout: 10),
+                      "the personal word is on its page after a relaunch")
+    }
 }

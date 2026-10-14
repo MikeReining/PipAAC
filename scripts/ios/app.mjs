@@ -221,7 +221,7 @@ function boardModel(s) {
       });
       continue;
     }
-    if (anchor?.kind === "reserved") { slots.push({ type: "empty", slot }); continue; }
+    if (anchor?.kind === "reserved") { slots.push({ type: "empty", slot, locked: true }); continue; }
     const c = bySlot.get(slot);
     if (!c) { slots.push({ type: "empty", slot }); continue; }
     slots.push({ ...homeSlot(s, c, mask), slot });
@@ -452,7 +452,7 @@ export function appGroupPage(appId, groupId, page = 0) {
       const showHome = geom.frame.includes(slot) || s.topRowOn;
       const c = showHome ? home.get(slot) : null;
       slots.push(c ? { ...homeSlot(s, c, mask), slot, reserved: true }
-                   : { type: "empty", slot });
+                   : { type: "empty", slot, locked: true });
       continue;
     }
     const c = cells.get(slot);

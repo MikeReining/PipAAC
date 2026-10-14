@@ -34,12 +34,27 @@ nonisolated struct WordCardModel: Decodable, Sendable, Identifiable {
     let hint: String
     let onMainBoard: Bool
     let groups: [WordCardGroupModel]
+    /// Set only on the add's step 2 ("✓ Added to …").
+    var justAdded: JustAdded?
     var sheetID: String { "\(kind):\(id)" }
+}
+
+nonisolated struct JustAdded: Decodable, Sendable {
+    let groupName: String
+}
+
+nonisolated struct ToastWordRef: Decodable, Sendable {
+    let kind: String
+    let id: String
+    let label: String
 }
 
 nonisolated struct EditToastModel: Decodable, Sendable {
     let text: String
     var undo: String?
+    /// The web's toast action ("Add to other groups" after an add).
+    var actionLabel: String?
+    var other: ToastWordRef?
 }
 
 nonisolated struct EditPaint: Decodable, Sendable {
@@ -59,22 +74,23 @@ nonisolated struct CardSpeech: Decodable, Sendable {
 
 extension AppModel {
     nonisolated static func editCore<T: Decodable & Sendable>(
-        _ core: PipCore, _ method: String, _ args: sending [Any]
+        _ core: PipCore, _ method: String, _ args: sending [Any],
+        object: String = "PIPCORE.edit"
     ) async throws -> T {
-        try core.sync { try decodeRaw(core.call("PIPCORE.edit", method, args)) }
+        try core.sync { try decodeRaw(core.call(object, method, args)) }
     }
 
     /// One edit call, awaited off the main actor, applied on it.
     /// `openCard` is true only for the call that is meant to show the card.
-    private func editCall(_ method: String, _ args: [Any], openCard: Bool = false,
-                          clearToast: Bool = false,
-                          then: (@MainActor () -> Void)? = nil) {
+    func editCall(_ method: String, _ args: [Any], openCard: Bool = false,
+                  clearToast: Bool = false, object: String = "PIPCORE.edit",
+                  then: (@MainActor () -> Void)? = nil) {
         let appId = self.appId
         let core = self.core
         Task { @MainActor [weak self] in
             guard let self else { return }
             do {
-                let p: EditPaint = try await Self.editCore(core, method, [appId] + args)
+                let p: EditPaint = try await Self.editCore(core, method, [appId] + args, object: object)
                 if clearToast { editToast = nil }
                 applyEdit(p, openCard: openCard)
                 then?()
@@ -84,7 +100,7 @@ extension AppModel {
         }
     }
 
-    private func applyEdit(_ p: EditPaint, openCard: Bool) {
+    func applyEdit(_ p: EditPaint, openCard: Bool) {
         editing = p.editing
         board = p.board
         if let gp = p.groupPage { groupPage = gp }
@@ -98,7 +114,7 @@ extension AppModel {
         if let t = p.toast { showEditToast(t) }
     }
 
-    private func showEditToast(_ t: EditToastModel) {
+    func showEditToast(_ t: EditToastModel) {
         editToastSeq += 1
         let seq = editToastSeq
         editToast = t
@@ -224,6 +240,24 @@ nonisolated enum UITestHooks {
 struct EditHeader: View {
     @EnvironmentObject var model: AppModel
 
+    private func headerButton(_ title: String, system: String, id: String,
+                              action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: system)
+                .font(.system(size: 16, weight: .semibold))
+                .padding(.horizontal, 14)
+                .frame(height: 48)
+                .background(Color.white)
+                .foregroundStyle(PipStyle.ink)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(RoundedRectangle(cornerRadius: 10)
+                    .stroke(PipStyle.ink.opacity(0.35), lineWidth: 1.5))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityIdentifier(id)
+    }
+
     var body: some View {
         HStack(spacing: 12) {
             Button { model.exitEdit() } label: {
@@ -243,6 +277,12 @@ struct EditHeader: View {
                 .foregroundStyle(PipStyle.muted)
                 .lineLimit(2)
             Spacer()
+            headerButton("Add a word", system: "plus", id: "editAdd") {
+                model.openAdd(groupId: model.surface == .group ? model.groupPage?.groupId : nil)
+            }
+            headerButton("All words", system: "books.vertical", id: "editLibrary") {
+                model.showLibrary = true
+            }
             Button {
                 if model.surface == .board { model.openGroups() } else { model.backToBoard() }
             } label: {
@@ -360,6 +400,11 @@ struct EditToastOverlay: View {
                     Button("Undo") { model.undo(t) }
                         .font(.system(size: 16, weight: .bold))
                         .accessibilityIdentifier("toast-undo")
+                }
+                if let label = t.actionLabel, let w = t.other {
+                    Button(label) { model.openOtherGroups(w) }
+                        .font(.system(size: 16, weight: .bold))
+                        .accessibilityIdentifier("toast-action")
                 }
             }
             .padding(.horizontal, 18).padding(.vertical, 12)

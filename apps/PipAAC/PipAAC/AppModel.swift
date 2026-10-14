@@ -25,6 +25,7 @@ nonisolated struct CellModel: Decodable, Sendable {
     var art: String?
     var photoKey: String?
     var reserved: Bool?
+    var locked: Bool?           // an anchor/reserved empty: nothing can go here
     var hidden: Bool?
     // family / group / anchors
     var familyId: String?
@@ -183,6 +184,11 @@ final class AppModel: ObservableObject {
     // Edit mode + word card (EditMode.swift) — render state only.
     @Published var editing = false
     @Published var card: WordCardModel?
+    // E2: add a word, the Library, "Also in" add, empty-cell placement.
+    @Published var addRequest: AddRequest?
+    @Published var otherGroups: OtherGroupsModel?
+    @Published var placeRequest: PlaceRequest?
+    @Published var showLibrary = false
     @Published var editToast: EditToastModel?
     var editToastSeq = 0
     @Published private(set) var settings: SettingsModel?

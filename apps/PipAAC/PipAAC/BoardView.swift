@@ -37,10 +37,12 @@ struct BoardView: View {
             SettingsView()
                 .environmentObject(model)
         }
-        .sheet(item: $model.card) { card in
-            WordCardView(card: card)     // WordCardView.swift
+        .sheet(isPresented: $model.showLibrary) {
+            LibraryView()                // LibraryView.swift
                 .environmentObject(model)
         }
+        // card / add a word / "Also in" / place — one sheet (AddWordView.swift)
+        .modifier(EditSheets(inLibrary: false))
         .overlay(alignment: .bottom) { EditToastOverlay() }
         .animation(.easeInOut(duration: 0.2), value: model.editToast?.text)
         .overlay(alignment: .top) {
@@ -264,7 +266,7 @@ struct BoardView: View {
                 HStack(spacing: gap) {
                     ForEach(0..<cols, id: \.self) { c in
                         let slot = r * cols + c
-                        cellView(cells.first(where: { $0.slot == slot }), slotAt: slotAt)
+                        cellView(cells.first(where: { $0.slot == slot }), slot: slot, slotAt: slotAt)
                             .frame(width: w, height: h)
                     }
                 }
@@ -276,9 +278,13 @@ struct BoardView: View {
     }
 
     @ViewBuilder
-    private func cellView(_ cell: CellModel?, slotAt: @escaping (CGPoint) -> Int?) -> some View {
+    private func cellView(_ cell: CellModel?, slot: Int,
+                          slotAt: @escaping (CGPoint) -> Int?) -> some View {
         if model.editing, let cell, cell.type == "word" {
             EditCell(cell: cell, slotAt: slotAt)
+        } else if model.editing, cell == nil || cell?.type == "empty",
+                  cell?.locked != true, model.surface == .board || model.surface == .group {
+            EditEmptyCell(slot: slot)      // AddWordView.swift — a door in Edit mode
         } else {
             plainCell(cell)
         }

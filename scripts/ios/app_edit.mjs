@@ -278,3 +278,10 @@ export function testSeedPerson(appId, { name }) {
   invalidate(s);
   return { id, ...paint(appId) };
 }
+
+/* Shared with the sibling facade app_library.mjs (E2): one paint, one
+ * card model, one toast shape — never copied. */
+export {
+  paint as editPaint, cardModel as editCardModel,
+  toastWith as editToastWith, invalidate as editInvalidate,
+};

@@ -615,3 +615,36 @@ more and no "opens first", launch shows "Who's talking?".
   Sam -> file gone).
 - Left: remove has no second PIN prompt (Settings itself asks on every
   open); rename a person; sync states.
+
+**2026-10-14 (E2 — add a word + the Library):** in Edit mode an adult adds
+a word the way the web does: "Add a word" (header) -> type -> matches from
+the family's words and the catalog (Make always last, the exact match
+highlighted, Return takes it) -> the destination chip opens the group
+picker (Recent / All groups / "Make a group called ...") -> the word is
+placed; tapping an empty group cell files the word into exactly that
+cell. Make saves a personal word at once and opens its card ("Added to
+..."). The card's "+ Group" and the add toast's "Add to other groups"
+open the web's destinations sheet. "All words" opens the Library (Added /
+Suggested / All, "Search words", "in ..." subtitles, a row opens the card,
+Add a word).
+
+- Scope: LW-2, 3, 4, 12, 16, 18. Not in E2: pictures, voice, pasted lists,
+  suggested lists, group rename/delete, the Lifetime door on the free-word
+  cap (message only; iOS has no license yet, `s.licensed` is the seam).
+- Changed: `scripts/ios/app_library.mjs` (`PIPCORE.lib`, new; `library`
+  is taken by shared/library.mjs): addState/addPlace/addMake/addMakeGroup,
+  otherGroups/otherGroupsSave, libraryState, placeList/placePick; every
+  write is one shared-owner call (placeItem, createEntity, createGroup,
+  addToGroups, placeOnBoard). `app_edit.mjs` exports its paint/card/toast
+  helpers; `app.mjs` marks anchor/reserved empties `locked`. Swift:
+  `AddWordView.swift` (add form, other-groups, place sheet, empty-cell
+  door), `LibraryView.swift` (new); one `EditSheets` modifier presents
+  card/add/other/place as a single sheet so Make swaps the form for the card.
+- Verified: `scripts/ios/app_library.test.mjs` (sync_op rows via a second
+  connection); XCUITests `testAddCatalogWordToChosenGroup`,
+  `testAddIntoTappedEmptyCell`, `testMakePersonalWordThenLibrary`.
+- Left: a new word stays silent (no clip, never device TTS); the on-demand
+  mint needs transport, and the card shows no "pending" line yet. The match
+  rows' play preview is not built. LW-18 on the home board has no XCUITest
+  (grid60 has no empty cell); node-covered.
+- Web note: recent groups live in localStorage on the web, per session here.

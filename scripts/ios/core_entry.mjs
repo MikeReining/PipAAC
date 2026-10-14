@@ -56,6 +56,9 @@ export * as groupIcons from "../../public/shared/group-icon-library.mjs";
 export * as app from "./app.mjs";
 /** Edit mode + the word card (044 E1) — PIPCORE.edit.* */
 export * as edit from "./app_edit.mjs";
+/** Add a word, the Library, "Also in" add, empty-cell placement (044 E2)
+ *  — PIPCORE.lib.* (`library` is already public/shared/library.mjs). */
+export * as lib from "./app_library.mjs";
 
 /** The web's sync loop, unchanged, over host I/O (044 C2). */
 export * as sync from "./app_sync.mjs";
