@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.16-a51fa927b331",
-  "version": "1.1.16",
-  "payloadHash": "a51fa927b331",
+  "buildId": "1.1.17-5edb110f296d",
+  "version": "1.1.17",
+  "payloadHash": "5edb110f296d",
   "files": [
     {
       "path": "/board.js",
@@ -405,8 +405,8 @@
     },
     {
       "path": "/catalog.json",
-      "bytes": 3759055,
-      "sha256": "da69430cd5d45dff7c6ef80bfac4db57aba0baa0a302c4df75180183591805f1"
+      "bytes": 3760064,
+      "sha256": "5519c3f9a2d200e304bd06bd56849f9c107ea5086d5b30e4759571af656b3d82"
     },
     {
       "path": "/db.js",
@@ -435,8 +435,8 @@
     },
     {
       "path": "/fresh_db.sqlite",
-      "bytes": 3203072,
-      "sha256": "69c8f33a383d91d210e8d35a61be0df741bd0204b3d7bb26c2c7f2f51b7f2788"
+      "bytes": 2555904,
+      "sha256": "0f51383bae0d4d0d2aec6e3f515345367922a4fa7abc18f07823bc813e998743"
     },
     {
       "path": "/help.en.json",

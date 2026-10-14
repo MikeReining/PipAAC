@@ -1864,7 +1864,7 @@
         "wbbSenseId": "Colors",
         "clip": {
           "senseId": "Colors",
-          "key": "audio/Colors/9bc50e718e54.mp3",
+          "key": "audio/colors/9bc50e718e54.mp3",
           "spokenText": "Colors",
           "voice": "recorded",
           "source": "bitsboard-recorded",
@@ -1876,7 +1876,7 @@
         "via": "lookup"
       },
       "clip": {
-        "key": "audio/Colors/9bc50e718e54.mp3",
+        "key": "audio/colors/9bc50e718e54.mp3",
         "sha256": "9bc50e718e54a199edec3d6c083317ad29ed8eec8f9dee9a82c0e9e1df106e5d",
         "source": "bitsboard-recorded",
         "voice": "recorded",

@@ -3517,7 +3517,7 @@
       "wbbSenseId": "Gross",
       "reason": null,
       "clip": {
-        "key": "audio/Gross/9af00239f5f6.mp3",
+        "key": "audio/gross/9af00239f5f6.mp3",
         "sha256": "9af00239f5f674c076e103c10fc1d58f1723eb34cfc74d509459626938b6e327",
         "source": "archive-recorded",
         "voice": "recorded",
@@ -9507,7 +9507,7 @@
       "wbbSenseId": "Goodbye",
       "reason": null,
       "clip": {
-        "key": "audio/Goodbye/61b8af7f2c79.mp3",
+        "key": "audio/goodbye/61b8af7f2c79.mp3",
         "sha256": "61b8af7f2c79cd58c5e2f694f784c42b300bb141732f9f23e4b360ae91c8c289",
         "source": "archive-recorded",
         "voice": "recorded",
@@ -9608,7 +9608,7 @@
       "wbbSenseId": "Okay",
       "reason": null,
       "clip": {
-        "key": "audio/Okay/67761d67b957.mp3",
+        "key": "audio/okay/67761d67b957.mp3",
         "sha256": "67761d67b957e49bcbf7a686d884a3bcc71368ee20c951b8973a3ee391ba87a6",
         "source": "archive-recorded",
         "voice": "recorded",
