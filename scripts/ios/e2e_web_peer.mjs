@@ -170,6 +170,28 @@ async function hostMode() {
     "pending ops:", db.prepare("SELECT COUNT(*) c FROM sync_op WHERE relay_seq IS NULL").all()[0].c);
   put("person.json", JSON.stringify({ id: me.id, entityId, userId: me.sync.userId }));
 
+  if (scenario === "restore") {
+    // 044 C5 (SY-10, SY-9, SY-13): a fresh iPad restores this person from the
+    // recovery card. The peer's edits are flushed first so they are in the
+    // snapshot/ops the iPad pulls; the card is written as words and as the link.
+    groups.renameEntity(db, entityId, "Zedd");
+    groups.setSetting(db, "speech_rate", "faster");
+    for (let i = 0; i < 100; i++) {
+      if (db.prepare("SELECT COUNT(*) c FROM sync_op WHERE relay_seq IS NULL").all()[0].c === 0) break;
+      await sleep(100);
+    }
+    const { keyToWords, cardLink } = await import(pathToFileURL(join(shared, "recovery.mjs")).href);
+    const { RECOVERY_WORDS } = await import(pathToFileURL(join(shared, "recovery_words.mjs")).href);
+    put("words.txt", await keyToWords(root16, RECOVERY_WORDS));
+    put("link.txt", await cardLink(baseUrl, root16, RECOVERY_WORDS));
+    log("card written; waiting for the iPad to restore");
+    await waitFor("ui-done", 240000);
+    await sleep(1500);
+    dumpTo(db, "peer.dump");
+    put("host-done", Date.now());
+    process.exit(0);
+  }
+
   // offerFlow (devices-ui.js): code -> wait claim -> addDevice -> grant.
   const { pair } = await pairClient(baseUrl).offer();
   put("code.txt", pair);

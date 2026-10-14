@@ -286,8 +286,12 @@ function opsFromOtherDevice(entities) {
   return pendingOps(b, 50);
 }
 
-test("export surface: the host module has exactly the web module's exports", () => {
-  assert.deepEqual(Object.keys(hostCrypto).sort(), Object.keys(real).sort());
+test("export surface: the host module has the web module's exports, plus only the PRF-handle account verbs", () => {
+  // 044 C5: createAccountKeys / openAccountPrivWithPrf keep the account key and the
+  // passkey PRF out of JS (handles); everything else is exactly the web's surface.
+  const extras = ["createAccountKeys", "openAccountPrivWithPrf"];
+  assert.deepEqual(Object.keys(hostCrypto).filter((k) => !extras.includes(k)).sort(), Object.keys(real).sort());
+  assert.deepEqual(Object.keys(hostCrypto).filter((k) => extras.includes(k)).sort(), extras);
 });
 
 test("the bundle swaps imports, not code: no WebCrypto, no IndexedDB in pip-core.js", () => {

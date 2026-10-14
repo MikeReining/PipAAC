@@ -83,10 +83,37 @@ extension AppModel {
                 else { throw PipHostError("saveUser: bad patch") }
                 try reg.patch(userId, obj)
                 Task { @MainActor [weak self] in try? self?.refreshPeople() }
-            })
+            },
+            onRegistry: { op, argsJSON in
+                try Self.registryVerb(reg, op, argsJSON)
+            },
+            passkeys: { op, req in try await PasskeyCeremony.shared.run(op, req) })
+        flow.model = self
         try core.sync { try core.install(host) }
         self.host = host
         host.startNetworkMonitor()
+    }
+
+    /// The registry verbs the account facade's userStore calls (044 C5):
+    /// users.mjs rows in, users.mjs rows out. Runs on the core queue.
+    nonisolated static func registryVerb(_ reg: PeopleRegistry, _ op: String, _ argsJSON: String) throws -> String {
+        let args = (try JSONSerialization.jsonObject(with: Data(argsJSON.utf8))) as? [String: Any] ?? [:]
+        let enc = JSONEncoder()
+        func json<T: Encodable>(_ v: T) throws -> String { String(decoding: try enc.encode(v), as: UTF8.self) }
+        switch op {
+        case "registry.list": return try json(try reg.list())
+        case "registry.get":
+            guard let id = args["id"] as? String, let r = try reg.list().first(where: { $0.id == id }) else { return "null" }
+            return try json(r)
+        case "registry.addImported":
+            guard let id = args["id"] as? String else { throw PipHostError("registry.addImported: no id") }
+            var sync: [String: JSONValue]?
+            if case .object(let o) = JSONValue.from(args["sync"]) { sync = o }
+            _ = try reg.addImported(id: id, name: args["name"] as? String ?? "",
+                                    photo: args["photo"] as? String, sync: sync, role: args["role"] as? String)
+            return ""
+        default: throw PipHostError("unknown registry op \(op)")
+        }
     }
 
     /// scenePhase became active (web: visibilitychange).
@@ -114,6 +141,8 @@ extension AppModel {
         case "say": handleSay(json)
         case "pair.offer": if let ev { offerEvent(ev) }
         case "pair.join": if let ev { joinEvent(ev) }
+        case "account.link", "account.landing", "recovery.linked", "recovery.card", "recovery.restore":
+            flow.handle(name, json)
         default: break
         }
     }

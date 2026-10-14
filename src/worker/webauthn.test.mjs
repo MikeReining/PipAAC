@@ -59,3 +59,12 @@ test("challenge, origin, rp, presence, and signature are all enforced", async ()
   await assert.rejects(verifyAssertion(stored, await assertion({ key: other.privateKey }), expected), /bad_signature/);
   await assert.rejects(verifyAssertion(stored, await assertion({ type: "webauthn.create" }), expected), /bad_type/);
 });
+
+/* 044 C5 - the native app passkey assertions name https://<rpId>. */
+import { assertionOrigins } from "./webauthn.mjs";
+test("assertionOrigins: the page origin, plus the rpId origin for the native app", () => {
+  assert.deepEqual(assertionOrigins(new URL("https://app.pipaac.org/accounts/x/assert"), "pipaac.org"),
+    ["https://app.pipaac.org", "https://pipaac.org"]);
+  assert.deepEqual(assertionOrigins(new URL("https://pipaac.org/x"), "pipaac.org"), ["https://pipaac.org"]);
+  assert.deepEqual(assertionOrigins(new URL("http://127.0.0.1:8881/x"), "127.0.0.1"), ["http://127.0.0.1:8881"]);
+});

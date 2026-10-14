@@ -7,7 +7,7 @@ import { UserRelay } from "./relay.js";
 import { restoreByProof } from "./restore.js";
 import { PairingLobby } from "./lobby.js";
 import { SupporterAccounts } from "./accounts.js";
-import { verifyAssertion } from "./webauthn.mjs";
+import { assertionOrigins, verifyAssertion } from "./webauthn.mjs";
 import { handleResearch } from "./research.js";
 import { handleHelpSearch, handleHelpWrite } from "./help.js";
 import { handleSpeak, usageReserve } from "./voice.js";
@@ -433,7 +433,7 @@ export default {
           await verifyAssertion(await cred.json(), body, {
             challenge: body.challenge,
             rpId: rpIdFor(url.hostname),
-            origins: [url.origin],
+            origins: assertionOrigins(url, rpIdFor(url.hostname)),
           });
         } catch (e) {
           return json({ error: "assertion_failed", detail: String(e.message ?? e) },

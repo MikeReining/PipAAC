@@ -20,3 +20,16 @@ globalThis.__pipPlatformEvent = (kind) => {
     try { fn(); } catch (err) { console.error(`platform ${kind}: ${err?.stack ?? err}`); }
   }
 };
+
+/** localStorage-shaped store for shared modules that import `kv`
+ *  (account.mjs). The iOS facades keep durable state in the keychain
+ *  (app_account.mjs "account/state"); this stays in memory and unused by
+ *  them - it exists so the import resolves. */
+const kvMap = new Map();
+export const kv = {
+  getItem: (k) => (kvMap.has(k) ? kvMap.get(k) : null),
+  setItem: (k, v) => { kvMap.set(k, String(v)); },
+  removeItem: (k) => { kvMap.delete(k); },
+  key: (i) => [...kvMap.keys()][i] ?? null,
+  get length() { return kvMap.size; },
+};

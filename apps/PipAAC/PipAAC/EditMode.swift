@@ -242,6 +242,7 @@ nonisolated enum UITestHooks {
         try? FileManager.default.removeItem(at: base.appendingPathComponent("people.json"))
         try? FileManager.default.removeItem(at: base.appendingPathComponent("Users", isDirectory: true))
         UserDefaults.standard.removeObject(forKey: "pip.pin.device") // PipPin's key
+        try? PipKeychain.delete("account/state") // 044 C5: signed-in state is device-only
     }
 
     static func seedIfRequested(_ core: PipCore, appId: String) {

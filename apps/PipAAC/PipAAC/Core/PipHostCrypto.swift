@@ -172,15 +172,21 @@ nonisolated extension PipHost {
             let (pub, priv) = C.genAccountKeys()
             return ["pub": pub, "priv": C.b64u(priv)]
         case "account.seal":
-            let s = try C.sealAccountPriv(bytes(a, "priv"), prf: bytes(a, "prf"))
+            let s = try C.sealAccountPriv(bytes(a, "priv"), prf: prfData(a["prf"]))
             return ["iv": s.iv, "sealed": s.sealed]
         case "account.import":
             return handle(.dhPriv(try P256.KeyAgreement.PrivateKey(derRepresentation: bytes(a, "priv"))))
         case "account.open":
             guard let e = a["env"] as? [String: String], let iv = e["iv"], let sealed = e["sealed"]
             else { throw PipHostError("missing env") }
+            let prf = try prfData(a["prf"])
+            if a["prf"] is [String: Any] { dropPrf(a["prf"]) }
             return handle(.dhPriv(try C.openAccountPriv(
-                C.SealedAccountPriv(iv: iv, sealed: sealed), prf: bytes(a, "prf"))))
+                C.SealedAccountPriv(iv: iv, sealed: sealed), prf: prf)))
+        case "account.create":
+            return try accountCreate(a["prf"])
+        case "registry.list", "registry.get", "registry.addImported":
+            return try registry(op, a)
         case "keystore.get":
             return try keystoreGet(str(a, "name"))
         case "keystore.put":

@@ -205,6 +205,8 @@ final class AppModel: ObservableObject {
     private var coreLoaded = false
     // Sync + pairing (LinkDevices.swift)
     var host: PipHost?
+    /// Supporter account + recovery card screens' state (044 C5).
+    let flow = AccountFlow()
     /// The person the process-wide sync loop runs for (sync.mjs `running`).
     var syncingId: String?
     var syncDbId: Int32 = 0

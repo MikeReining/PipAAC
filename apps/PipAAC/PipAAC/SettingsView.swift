@@ -81,6 +81,18 @@ struct SettingsView: View {
                         }
                         .accessibilityIdentifier("settings:team")
                         .settingsRow("team", focus)
+                        NavigationLink {
+                            BackupView(flow: model.flow)
+                        } label: {
+                            Text("Backup & privacy")
+                        }
+                        .accessibilityIdentifier("settings:backup")
+                        NavigationLink {
+                            AccountView(flow: model.flow)
+                        } label: {
+                            Text("Your account")
+                        }
+                        .accessibilityIdentifier("settings:account")
                     }
                     Section("Talking") {
                         VoiceRow(voice: voice)

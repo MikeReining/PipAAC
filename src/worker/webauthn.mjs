@@ -14,6 +14,18 @@ export const unb64u = (s) => {
   return Uint8Array.from(bin, (c) => c.charCodeAt(0));
 };
 
+/** Origins a passkey assertion may name. The browser reports the page's
+ *  origin (https://app.pipaac.org). The native iPad app (phase 044 C5)
+ *  has no page: Apple puts https://<rpId> in clientDataJSON, so the
+ *  registrable domain's own origin is accepted too - same rpId, same
+ *  credential, same signature check. A dev host (127.0.0.1) keeps its
+ *  request origin only. */
+export function assertionOrigins(url, rpId) {
+  const origins = [url.origin];
+  if (rpId && rpId.includes(".") && rpId !== url.hostname) origins.push(`https://${rpId}`);
+  return origins;
+}
+
 /** DER-encoded ECDSA signature → IEEE-P1363 r‖s (64 bytes). */
 function derToP1363(der) {
   const len = (i, n) => {

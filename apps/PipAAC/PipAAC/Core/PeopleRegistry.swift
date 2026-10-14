@@ -69,6 +69,9 @@ public nonisolated struct PersonRecord: Codable, Sendable, Equatable, Identifiab
     public var sync: [String: JSONValue]? = nil
     /// person_name.mjs: the registry name is newer than the synced one.
     public var nameDirty: Bool? = nil
+    /// recovery-ui.js: the card has been on screen on this device (ms).
+    /// Device-local, like the web's registry field.
+    public var cardShownAt: Double? = nil
     /// Epoch milliseconds, like `Date.now()` in users.mjs.
     public var lastOpened: Double
 
@@ -215,6 +218,7 @@ public nonisolated final class PeopleRegistry: @unchecked Sendable {
             case "photo": rows[i].photo = v as? String
             case "nameDirty": rows[i].nameDirty = v as? Bool
             case "role": rows[i].role = v as? String
+            case "cardShownAt": rows[i].cardShownAt = (v as? NSNumber)?.doubleValue
             case "needsSetup": rows[i].needsSetup = (v as? Bool) ?? rows[i].needsSetup
             default: break
             }
@@ -238,6 +242,28 @@ public nonisolated final class PeopleRegistry: @unchecked Sendable {
             return rows[i]
         }
         let row = PersonRecord(id: id, name: "", photo: nil, home: home, role: role,
+                               needsSetup: false, sync: sync, lastOpened: now())
+        return try insertLocked(row, rows: &rows)
+    }
+
+    /// users.mjs `addUser` as the account sign-in calls it (importAccountUsers):
+    /// a known id keeps what it has and takes the newer name / photo / sync /
+    /// role; a new id gets a file seeded from fresh_db (never home).
+    @discardableResult
+    public func addImported(id: String, name: String, photo: String?,
+                            sync: [String: JSONValue]?, role: String?) throws -> PersonRecord {
+        lock.lock(); defer { lock.unlock() }
+        var rows = try load()
+        if let i = rows.firstIndex(where: { $0.id == id }) {
+            if !name.isEmpty { rows[i].name = name }
+            if let photo { rows[i].photo = photo }
+            if let sync { rows[i].sync = sync }
+            if let role { rows[i].role = role }
+            rows[i].lastOpened = now()
+            try save(rows)
+            return rows[i]
+        }
+        let row = PersonRecord(id: id, name: name, photo: photo, home: false, role: role,
                                needsSetup: false, sync: sync, lastOpened: now())
         return try insertLocked(row, rows: &rows)
     }

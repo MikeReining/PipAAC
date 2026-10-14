@@ -80,6 +80,12 @@ export * as mediasync from "./app_mediasync.mjs";
 /** Linking devices: offer a code / type a code (044 C3) - PIPCORE.pair */
 export * as pair from "./app_pair.mjs";
 
+/** Supporter accounts + passkeys (044 C5) - PIPCORE.account */
+export * as account from "./app_account.mjs";
+
+/** The recovery card: show, replace, restore (044 C5) - PIPCORE.recovery */
+export * as recovery from "./app_recovery.mjs";
+
 /** Host crypto/key-store verbs (handles over Swift CryptoKit/keychain) and
  *  the hostCall promise bridge — the surface pairing, recovery and media
  *  slices call, and the Swift suite probes. */

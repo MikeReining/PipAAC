@@ -23,7 +23,8 @@ echo "run dir: $RUN"
 # A worktree has no .dev.vars; make a minimal one (no paid keys) and remove it after.
 MADE_VARS=0
 if [ ! -f .dev.vars ]; then
-  printf 'PIP_LICENSE_SECRET=e2e-local-secret\n' > .dev.vars
+  # ENVIRONMENT=development opens the Worker's dev mailbox (044 C5 account scenario reads the "email" there).
+  printf 'PIP_LICENSE_SECRET=e2e-local-secret\nENVIRONMENT=development\n' > .dev.vars
   MADE_VARS=1
 fi
 SECRET="$(grep '^PIP_LICENSE_SECRET=' .dev.vars | head -1 | cut -d= -f2-)"
@@ -153,12 +154,37 @@ run_two_people() {
   compare "$D/B/peer.dump" "$D/ipad-B.dump" "person B's web device"
 }
 
-# PIP_E2E_ONLY=both-ways|offline|media|two-people runs one scenario (debugging).
+# PIP_E2E_ONLY=both-ways|offline|media|two-people|restore-words|restore-scan|account runs one scenario (debugging).
 only() { [ -z "${PIP_E2E_ONLY:-}" ] || [ "$PIP_E2E_ONLY" = "$1" ]; }
 only both-ways && run_scenario both-ways SyncE2ETests/testLinkAndSyncBothWays both-ways peer peer2
 only offline && run_scenario offline SyncE2ETests/testOfflineCatchUp offline peer
 only media && run_scenario media SyncMediaE2ETests/testMediaBothWays media peer
 only two-people && run_two_people
+# 044 C5: restore a fresh iPad from the recovery card - typed words, then a scanned card image.
+only restore-words && run_scenario restore-words SyncE2ETests/testRestoreFromWords restore peer
+only restore-scan && run_scenario restore-scan SyncE2ETests/testRestoreByScanningTheCard restore peer
+
+# 044 C5: Settings -> Your account against the local Worker (no peer). The simulator cannot finish a
+# passkey ceremony, so this proves link -> claim -> the passkey step, and a clean failure after it.
+run_account() {
+  if ! curl -s "$WORKER/accounts/dev/mailbox?email=probe@example.com" | grep -q no_mail; then
+    echo; echo "== scenario: account SKIPPED - the Worker's dev mailbox is closed (ENVIRONMENT is not development in .dev.vars)"
+    return
+  fi
+  local D="$RUN/account"; mkdir -p "$D"
+  echo; echo "== scenario: account (AccountUITests)"
+  start_proxy "$D"
+  # The XCUITest runner is under ATS; this reads the Worker's dev mailbox (the "email") for it.
+  ( for _ in $(seq 1 600); do
+      if [ -f "$D/email.txt" ]; then
+        curl -s "$WORKER/accounts/dev/mailbox?email=$(cat "$D/email.txt")" \
+          | python3 -c 'import json,sys; print(json.load(sys.stdin)["link"])' > "$D/link.tmp" \
+          && mv "$D/link.tmp" "$D/link.txt"; break
+      fi; sleep 0.2; done ) &
+  xcode_test "$D" "AccountUITests" && echo "account UI: PASS" || { echo "account UI: FAIL - see $D/xcodebuild.log"; FAIL=1; }
+  stop_proxy
+}
+only account && run_account
 
 echo; [ "$FAIL" = 0 ] && echo "E2E RESULT: PASS" || echo "E2E RESULT: FAIL"
 echo "artifacts: $RUN"

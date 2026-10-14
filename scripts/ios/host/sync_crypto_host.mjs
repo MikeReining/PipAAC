@@ -217,3 +217,20 @@ export const importAccountPriv = (pkcs8) =>
 export const openAccountPriv = ({ iv, sealed }, prfBytes) =>
   call("account.open", { env: { iv, sealed }, prf: b64(prfBytes) });
 
+
+/* ------------------------------------------------------------------ *
+ * 044 C5 - passkey-backed account keys, with no key bytes in JS.
+ * `prf` is an opaque { __pipPrf } handle the passkey ceremony left in
+ * Swift (the PRF output never crosses); the account private key comes
+ * back as an ECDH handle. Mirrors account.mjs registerAccount /
+ * signInAccount's use of genAccountKeys + sealAccountPriv +
+ * importAccountPriv / openAccountPriv.
+ * ------------------------------------------------------------------ */
+
+/** New account keypair, sealed under the passkey's PRF when there is one.
+ *  -> { pub, sealed: {iv, sealed} | null, priv: <ecdh-priv handle> } */
+export const createAccountKeys = (prf = null) => call("account.create", { prf });
+
+/** Unseal the account private key with the passkey's PRF handle. */
+export const openAccountPrivWithPrf = (env, prf) =>
+  call("account.open", { env: { iv: env.iv, sealed: env.sealed }, prf });

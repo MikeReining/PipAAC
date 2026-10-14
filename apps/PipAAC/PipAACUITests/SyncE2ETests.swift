@@ -15,7 +15,9 @@
 //   - the screen is read through accessibility.
 //
 
+import CoreImage.CIFilterBuiltins
 import SQLite3
+import UIKit
 import XCTest
 
 final class SyncE2ETests: XCTestCase {
@@ -246,6 +248,113 @@ final class SyncE2ETests: XCTestCase {
         attach(app, "c3-caught-up")
         put("ui-saw-edit")
         Thread.sleep(forTimeInterval: 3)
+        put("ui-done")
+        _ = try wait("host-done", 60)
+    }
+
+    // MARK: 044 C5 - the recovery card and supporter accounts
+
+    /// Settings -> Backup & privacy -> Restore from a card.
+    private func openRestore(_ app: XCUIApplication) {
+        app.buttons["settingsGear"].tap()
+        XCTAssertTrue(app.buttons["settings:backup"].waitForExistence(timeout: 10))
+        app.buttons["settings:backup"].tap()
+        XCTAssertTrue(app.buttons["backup:restore"].waitForExistence(timeout: 10))
+        app.buttons["backup:restore"].tap()
+    }
+
+    /// The 12 words on the card sheet, read off the screen ("Word 3, able").
+    private func cardWords(_ app: XCUIApplication) -> String {
+        (1...12).map { app.staticTexts["rec:word:\($0)"].label.components(separatedBy: ", ").last ?? "" }
+            .joined(separator: " ")
+    }
+
+    private func cardShownAtIsSet() -> Bool {
+        guard let d = try? Data(contentsOf: data.appendingPathComponent("people.json")),
+              let o = try? JSONSerialization.jsonObject(with: d) as? [String: Any],
+              let users = o["users"] as? [[String: Any]] else { return false }
+        return users.contains { ($0["cardShownAt"] as? Double ?? 0) > 0 }
+    }
+
+    /// After a restore: the person is the home person and the only one, the
+    /// peer's rename and setting arrived, and the card on THIS iPad shows the
+    /// same 12 words (the words came back); then Replace card gives new ones.
+    private func verifyRestored(_ app: XCUIApplication, words: String, ent: String) throws {
+        XCTAssertTrue(app.buttons["tile:\(ent)"].waitForExistence(timeout: 90), "the restored person's own word arrived")
+        XCTAssertEqual(app.buttons["tile:\(ent)"].label, "Zedd", "the peer's rename was in the restored copy")
+        XCTAssertNotNil(poll(10) { self.people().count == 1 && self.people()[0].home },
+                        "the fresh placeholder was replaced by the restored person")
+        XCTAssertNotNil(poll(10) { self.scalar("SELECT speech_rate FROM learner_profile WHERE id='prf_local'") == "faster" },
+                        "the synced setting is in the iPad's own file")
+        attach(app, "c5-restored")
+
+        // The card on this iPad: same 12 words as the card that restored it.
+        app.buttons["settingsGear"].tap()
+        XCTAssertTrue(app.buttons["settings:backup"].waitForExistence(timeout: 10))
+        app.buttons["settings:backup"].tap()
+        app.buttons["backup:card"].tap()
+        XCTAssertTrue(app.images["rec:qr"].waitForExistence(timeout: 30))
+        let before = words.trimmingCharacters(in: .whitespacesAndNewlines)
+        XCTAssertEqual(cardWords(app), before, "the card shows the same words it was restored from")
+        attach(app, "c5-card")
+        XCTAssertNotNil(poll(10) { self.cardShownAtIsSet() }, "the registry remembers the card was shown")
+
+        // Replace card: new words, and the relay accepts the new root.
+        app.buttons["rec:replace"].tap()
+        XCTAssertTrue(app.buttons["rec:replaceConfirm"].firstMatch.waitForExistence(timeout: 10))
+        app.buttons["rec:replaceConfirm"].firstMatch.tap()
+        let changed = poll(60) { self.cardWords(app) != before && !self.cardWords(app).contains("  ") }
+        XCTAssertNotNil(changed, "Replace card shows a different set of 12 words")
+        XCTAssertFalse(app.staticTexts["rec:replaceNote"].exists, "no 'unfinished' note: the relay took the new card")
+        attach(app, "c5-card-replaced")
+    }
+
+    /// SY-10 + SY-9 + SY-13: a fresh install restores from the card's WORDS
+    /// (typed into the paste box), the person arrives, the dumps match.
+    func testRestoreFromWords() throws {
+        let app = launch(reset: true)
+        XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
+        let words = try wait("words.txt")
+        let ent = try entityId()
+        openRestore(app)
+        let box = app.textViews["rec:paste"]
+        XCTAssertTrue(box.waitForExistence(timeout: 10))
+        box.tap()
+        box.typeText(words)
+        attach(app, "c5-restore-words")
+        app.buttons["rec:restore"].tap()
+        try verifyRestored(app, words: words, ent: ent)
+        Thread.sleep(forTimeInterval: 4) // acknowledgements flush
+        put("ui-done")
+        _ = try wait("host-done", 60)
+    }
+
+    /// SY-10 (scan): the card's QR as an IMAGE through the injectable scan
+    /// source (the simulator has no camera). The image is generated here from
+    /// the link the peer wrote; the app must read the QR back out of pixels.
+    func testRestoreByScanningTheCard() throws {
+        let link = try wait("link.txt").trimmingCharacters(in: .whitespacesAndNewlines)
+        let words = try wait("words.txt")
+        let ent = try entityId()
+        let png = dir.appendingPathComponent("card-scan.png")
+        let f = CIFilter.qrCodeGenerator()
+        f.message = Data(link.utf8)
+        f.correctionLevel = "M"
+        let img = f.outputImage!.transformed(by: CGAffineTransform(scaleX: 8, y: 8))
+        let ui = UIImage(cgImage: CIContext().createCGImage(img, from: img.extent)!)
+        try ui.pngData()!.write(to: png)
+
+        let app = XCUIApplication()
+        app.launchArguments = ["-pipUITestReset", "-PipDataDir", data.path, "-PipBaseURL", base,
+                               "-PipScanImage", png.path]
+        app.launch()
+        XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
+        openRestore(app)
+        XCTAssertTrue(app.buttons["restore:scan"].waitForExistence(timeout: 10))
+        attach(app, "c5-restore-scan")
+        app.buttons["restore:scan"].tap()
+        try verifyRestored(app, words: words, ent: ent)
+        Thread.sleep(forTimeInterval: 4)
         put("ui-done")
         _ = try wait("host-done", 60)
     }

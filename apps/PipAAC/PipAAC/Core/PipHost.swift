@@ -81,6 +81,11 @@ public nonisolated final class PipHost: @unchecked Sendable {
     let log = Logger(subsystem: "org.pipaac", category: "piphost")
     let onEvent: @Sendable (_ name: String, _ json: String) -> Void
     let onSaveUser: @Sendable (_ userId: String, _ patchJSON: String) throws -> Void
+    /// 044 C5: the people registry for the account facade. (op, argsJSON)
+    /// -> result JSON ("" = undefined). Runs on the core queue.
+    let onRegistry: @Sendable (_ op: String, _ argsJSON: String) throws -> String
+    /// 044 C5: the passkey ceremony (ASAuthorization lives behind it).
+    let passkeys: PasskeyHandler?
     weak var core: PipCore?
     let session: URLSession
     let wsSession: URLSession
@@ -88,10 +93,17 @@ public nonisolated final class PipHost: @unchecked Sendable {
 
     // Queue-only state (touched solely on core.jsQueue).
     var keys: [String: KeyBox] = [:]
+    /// Passkey PRF outputs, held here so they never enter JS: JS sees
+    /// { __pipPrf: id } and passes it back to account.create / account.open.
+    var prfs: [String: Data] = [:]
+    var prfOrder: [String] = []
     var timers: [Int: DispatchWorkItem] = [:]
     var tasks: [Int: URLSessionTask] = [:]
     var sockets: [Int: URLSessionWebSocketTask] = [:]
     var pathMonitor: NWPathMonitor?
+    private let online = OSAllocatedUnfairLock(initialState: true)
+    /// The last NWPath verdict (navigator.onLine's stand-in); true until known.
+    public var isOnline: Bool { online.withLock { $0 } }
 
     /// - Parameters:
     ///   - onEvent: facade events from `PIPCORE.sync` ("sync.started",
@@ -104,11 +116,16 @@ public nonisolated final class PipHost: @unchecked Sendable {
     public init(core: PipCore,
                 config: Config = Config(),
                 onEvent: @escaping @Sendable (String, String) -> Void = { _, _ in },
-                onSaveUser: @escaping @Sendable (String, String) throws -> Void = { _, _ in }) {
+                onSaveUser: @escaping @Sendable (String, String) throws -> Void = { _, _ in },
+                onRegistry: @escaping @Sendable (String, String) throws -> String = { op, _ in
+                    throw PipHostError("no registry for \(op)") },
+                passkeys: PasskeyHandler? = nil) {
         self.core = core
         self.config = config
         self.onEvent = onEvent
         self.onSaveUser = onSaveUser
+        self.onRegistry = onRegistry
+        self.passkeys = passkeys
         self.session = URLSession(configuration: config.sessionConfiguration)
         let wsConfig = URLSessionConfiguration.default
         wsConfig.waitsForConnectivity = false
@@ -164,6 +181,7 @@ public nonisolated final class PipHost: @unchecked Sendable {
             let box = OSAllocatedUnfairLock(initialState: false)
             m.pathUpdateHandler = { [weak self] path in
                 let up = path.status == .satisfied
+                self?.online.withLock { $0 = up }
                 let wasUp = box.withLock { s -> Bool in let o = s; s = up; return o }
                 if up && !wasUp { self?.notifyOnline() }
             }
@@ -252,6 +270,7 @@ public nonisolated final class PipHost: @unchecked Sendable {
             return
         }
         if op == "fetch" { startFetch(id, args); return }
+        if op.hasPrefix("passkey.") { startPasskey(id, op, args); return }
         do { settle(id, .success(try Self.encode(try run(op, args)))) }
         catch { settle(id, .failure(error)) }
     }
