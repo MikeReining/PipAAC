@@ -17,14 +17,39 @@ struct SettingsView: View {
     @State private var pinOn = PipPin.isSet
     @State private var note: String?
     @StateObject private var voice: VoiceSettings
+    @StateObject private var help: HelpModel
+    /// Pushed screens, so Help's "Show me" can pop back to a row (E5).
+    @State private var path: [SettingsDest] = []
+    /// The row Help pointed at (SettingsRoute ids); lit for a moment.
+    @State private var focus: String?
+    @State private var query = ""
+
+    enum SettingsDest: Hashable { case help }
 
     init(model: AppModel) {
         _voice = StateObject(wrappedValue: VoiceSettings(model: model))
+        _help = StateObject(wrappedValue: HelpModel(core: model.core))
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             if let s = model.settings {
+              ScrollViewReader { proxy in
+                Group {
+                  if !query.trimmingCharacters(in: .whitespaces).isEmpty {
+                    // settings-ui.js: the top box searches Settings and Help
+                    // together (shared two-pass search).
+                    Form {
+                        Section {
+                            if let r = help.result {
+                                HelpResults(result: r, onShow: show) { _ in
+                                    query = ""
+                                    path = [.help]
+                                }
+                            }
+                        }
+                    }
+                  } else {
                 Form {
                     Section {
                         // index.html #edit-groups — Edit mode is reached
@@ -34,6 +59,7 @@ struct SettingsView: View {
                             model.enterEdit()
                         }
                         .accessibilityIdentifier("editBoard")
+                        .settingsRow("editBoard", focus)
                     }
                     Section {
                         NavigationLink {
@@ -47,16 +73,20 @@ struct SettingsView: View {
                             }
                         }
                         .accessibilityIdentifier("settings:people")
+                        .settingsRow("people", focus)
                         NavigationLink {
                             TeamDevicesView()
                         } label: {
                             Text("Team & devices")
                         }
                         .accessibilityIdentifier("settings:team")
+                        .settingsRow("team", focus)
                     }
                     Section("Talking") {
                         VoiceRow(voice: voice)
+                            .settingsRow("voice", focus)
                         toggle("Grammar help", "grammar_help", s.grammarHelp)
+                            .settingsRow("grammar", focus)
                         toggle("Start fresh after speaking", "fresh_after_speak",
                                s.freshAfterSpeak)
                         Picker("Speaking speed", selection: rateBinding(s)) {
@@ -65,6 +95,7 @@ struct SettingsView: View {
                             Text("Faster").tag("faster")
                         }
                         .pickerStyle(.segmented)
+                        .settingsRow("speed", focus)
                     }
                     Section("Sentence bar") {
                         ForEach(s.barPresets, id: \.id) { p in
@@ -80,6 +111,7 @@ struct SettingsView: View {
                                     }
                                 }
                             }
+                            .settingsRow(p.id == s.barPresets.first?.id ? "bar" : nil, focus)
                         }
                         ForEach(s.allControls, id: \.self) { c in
                             Toggle(controlName(s, c), isOn: controlBinding(s, c))
@@ -92,6 +124,7 @@ struct SettingsView: View {
                             Text("ABC").tag("abc")
                         }
                         .pickerStyle(.segmented)
+                        .settingsRow("keyboard", focus)
                     }
                     Section("Board") {
                         Picker("Cells", selection: strBinding(
@@ -100,6 +133,7 @@ struct SettingsView: View {
                                 Text(cellName(l)).tag(l)
                             }
                         }
+                        .settingsRow("cells", focus)
                         toggle("Top row on group pages", "group_top_row",
                                s.groupTopRow)
                         toggle("Occasions in Groups", "occasions_visible",
@@ -108,12 +142,14 @@ struct SettingsView: View {
                     Section("Privacy") {
                         toggle("Help improve Pip — share anonymous use",
                                "share_research", s.shareResearch)
+                            .settingsRow("research", focus)
                     }
                     Section("Settings PIN") {
                         Text(pinOn
                              ? "Settings is locked with a PIN."
                              : "No PIN yet: Settings opens with one tap.")
                             .foregroundStyle(PipStyle.muted)
+                            .settingsRow("pin", focus)
                         Button(pinOn ? "Change PIN" : "Lock Settings with a PIN") {
                             pinEditor = true
                         }
@@ -130,6 +166,26 @@ struct SettingsView: View {
                             Text(note).foregroundStyle(PipStyle.muted)
                         }
                     }
+                    Section {
+                        // settings-ui.js: Help is a Settings page (042).
+                        NavigationLink(value: SettingsDest.help) {
+                            Text("Help")
+                        }
+                        .accessibilityIdentifier("settings:help")
+                    }
+                }
+                  }
+                }
+                .onChange(of: focus) { _, r in
+                    if let r { withAnimation { proxy.scrollTo(r, anchor: .center) } }
+                }
+              }
+                .searchable(text: $query,
+                            placement: .navigationBarDrawer(displayMode: .always),
+                            prompt: "Search or ask: feelings, teacher, bigger…")
+                .onChange(of: query) { _, q in help.setQuery(q) }
+                .navigationDestination(for: SettingsDest.self) { _ in
+                    HelpView(help: help, onShow: show)
                 }
                 .navigationTitle("Settings")
                 .toolbar {
@@ -153,7 +209,23 @@ struct SettingsView: View {
             }
             .presentationDetents([.medium])
         }
-        .onAppear { pinOn = PipPin.isSet; voice.load() }
+        .onAppear {
+            pinOn = PipPin.isSet; voice.load()
+            Task { await help.load(childName: model.activeName == "this person" ? "" : model.activeName) }
+        }
+    }
+
+    /// Help -> a Settings row: back to the list, scroll there, light the
+    /// row for a moment (help-ui.js goTo).
+    private func show(_ route: String) {
+        query = ""
+        path = []
+        Task {
+            try? await Task.sleep(for: .milliseconds(450))
+            focus = route
+            try? await Task.sleep(for: .milliseconds(1600))
+            if focus == route { focus = nil }
+        }
     }
 
     private func flash(_ msg: String) {
@@ -201,6 +273,44 @@ struct SettingsView: View {
 
     private func cellName(_ layout: String) -> String {
         layout.replacingOccurrences(of: "grid", with: "") + " cells"
+    }
+}
+
+extension View {
+    /// A Settings row Help can point at: a stable scroll id and a quiet
+    /// highlight while `focus` names it (the web's `set-found`).
+    func settingsRow(_ route: String?, _ focus: String?) -> some View {
+        modifier(SettingsRowMark(route: route, focus: focus))
+    }
+}
+
+private struct SettingsRowMark: ViewModifier {
+    let route: String?
+    let focus: String?
+    @ViewBuilder func body(content: Content) -> some View {
+        let lit = route != nil && route == focus
+        if let route {
+            content.id(route)
+                .modifier(Lit(lit: lit, route: route))
+        } else {
+            content
+        }
+    }
+}
+
+private struct Lit: ViewModifier {
+    let lit: Bool
+    let route: String
+    func body(content: Content) -> some View {
+        content
+            .listRowBackground(lit ? Color.yellow.opacity(0.35) : nil)
+            .overlay(alignment: .topLeading) {
+                if lit {
+                    Color.clear.frame(width: 1, height: 1)
+                        .accessibilityElement()
+                        .accessibilityIdentifier("found:\(route)")
+                }
+            }
     }
 }
 

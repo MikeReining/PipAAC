@@ -65,7 +65,15 @@ function build(out) {
     "fresh_db.sqlite", "catalog.json",
     "suggest_answers.en.json", "form_answers.en.json",
     "sw-audio.json", "feeling_voice.json",
+    // 042 Help, offline: the derived index (answers + Settings rows) the
+    // web serves, searched on the device.
+    "help.en.json",
   ]) { copy(out, rel); note(rel); }
+  // The answers' truth owner (044 § 6: Help answers come from
+  // src/help/answers.en.json); help.en.json is built from it (help:index
+  // gate), and the Swift suite checks the two agree.
+  put(out, "help/answers.en.json", readFileSync(join(repo, "src/help/answers.en.json")));
+  note("help/answers.en.json");
 
   // The bundled default voice — the exact clip set the service worker
   // precaches (028 bundle rule: default voice in the app, the rest

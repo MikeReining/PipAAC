@@ -208,10 +208,10 @@ Not-a-spec rule: a row says what the web does today (traced), never what it ough
 
 | Workflow | Gesture / entry | Web call path | Split | Data / API / media effect | Release | Slice | Proof | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| HP-1 Read Help answers | Settings → Help | `board/help-ui.js:mountHelp` 30; content `help.en.json` (from `src/help/answers.en.json`) | Swift | None | 1.0 | E | UI test | planned |
-| HP-2 Search Help and Settings (on device, then by meaning) | Settings search field | `help-ui.js` input 161 → `shared/help_search.mjs`; online `GET /api/v1/help/search` | Core search; Swift client | Worker search when online | 1.0 | E | UI test | planned |
-| HP-3 Write to us | Help → Write to us | `help-ui.js` ~253 → `POST /api/v1/help/write` | Swift | Worker message | 1.0 | E | UI test | planned |
-| HP-4 Help links open the right Settings row | Tap a help link | `help-ui.js` pane click 300 → `settings-ui.js` `show` | Swift | None | 1.0 | E | UI test | planned |
+| HP-1 Read Help answers | Settings → Help | `board/help-ui.js:mountHelp` 30; content `help.en.json` (from `src/help/answers.en.json`) | Swift | None | 1.0 | E | UI test | implemented (`HelpUITests`, `app_help.test.mjs`) |
+| HP-2 Search Help and Settings (on device, then by meaning) | Settings search field | `help-ui.js` input 161 → `shared/help_search.mjs`; online `GET /api/v1/help/search` | Core search; Swift client | Worker search when online | 1.0 | E | UI test | implemented (`HelpUITests`, `app_help.test.mjs`) |
+| HP-3 Write to us | Help → Write to us | `help-ui.js` ~253 → `POST /api/v1/help/write` | Swift | Worker message | 1.0 | E | UI test | implemented (`HelpUITests`, `app_help.test.mjs`) |
+| HP-4 Help links open the right Settings row | Tap a help link | `help-ui.js` pane click 300 → `settings-ui.js` `show` | Swift | None | 1.0 | E | UI test | implemented (`HelpUITests`, `app_help.test.mjs`) |
 
 ## Spotlight, modeling, progress
 

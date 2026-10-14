@@ -70,6 +70,9 @@ export * as media from "./app_media.mjs";
  *  shared clients (044 D4) — PIPCORE.say.* */
 export * as say from "./app_say.mjs";
 
+/** Help: answers, search, Write to us (044 E5) - PIPCORE.help.* */
+export * as help from "./app_help.mjs";
+
 /** The web's sync loop, unchanged, over host I/O (044 C2). */
 export * as sync from "./app_sync.mjs";
 export * as mediasync from "./app_mediasync.mjs";

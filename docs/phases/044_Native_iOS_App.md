@@ -753,3 +753,37 @@ shows the open person's photo (Add / Change / Remove).
   mint at add/rename belongs to the word-card slice), media sync of cached
   clips. (The web bug `voice_tile.sweepReplaced` dropping `trial` was fixed
   separately: `fix(voice): replaced-clip sweep runs for trial users too`.)
+
+### E5 Help (HP-1..4)
+
+- Scope: HP-1 read answers, HP-2 search (device, then by meaning), HP-3
+  Write to us, HP-4 Show me / Settings hits open the right Settings row.
+- Changed: `scripts/ios/app_help.mjs` (`PIPCORE.help`: load, home, search,
+  meaningPath, writeCopy, writeItem, writeStatus, outboxPush; `ROUTES` maps
+  web `sec/at` targets to native row ids). Search is the shared
+  `help_search.mjs` (`localHits` + `mergeHits`). `bundle_assets.mjs` now
+  ships `help.en.json` (the web's derived index) and
+  `help/answers.en.json` (the authored truth). Swift: `HelpView.swift`
+  (model, stubbable network, views), `ParentGate.swift` (reusable
+  `.parentGate`), `SettingsView.swift` (Help row, search box above the
+  list, `.settingsRow(route, focus)` ids + highlight, `NavigationStack(path:)`
+  so Show me pops back and scrolls to the row).
+- Behaviour: Show me and Settings hits exist only for rows that exist
+  natively (voice, speed, grammar help, sentence bar, keyboard, cells, PIN,
+  research, edit board, people, team); other answers have no button, as the
+  web hides a Show me whose row is not shown. The web's offline outbox
+  (<= 10) is kept in UserDefaults and flushed on reconnect / Help open.
+  The only outside link in Help (`mailto:hello@pipaac.org`) is behind
+  `ParentGate` (type three spelled-out digits); the web has no gate.
+- Verified: `scripts/ios/app_help.test.mjs`; `HelpUITests` (offline
+  "voice" -> body text equals answers.en.json -> Show me lands on the lit
+  voice row, no Worker call made; "emotions" with a stubbed Worker shows
+  its hit and the stub saw `/api/v1/help/search?q=emotions`; Write to us
+  body read from the stub = message, email, 6 details keys; Settings
+  search box; parent gate refuses wrong digits). The Worker is stubbed
+  in-app (`-pipUITestHelpStub <dir>`); no production call from tests.
+- Left: sentence-button glyphs (sparkle etc.) in answers render as the
+  emoji, not the web's drawn icons; "Replay the tour" has no native tour;
+  "Pip Lifetime" detail is always "no" until purchases land (044 F);
+  "This device" detail is always "the user's own".
+
