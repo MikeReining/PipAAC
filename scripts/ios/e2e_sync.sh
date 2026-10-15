@@ -18,6 +18,8 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 RUN="$(mktemp -d /tmp/pip-e2e.XXXXXX)"
 echo "run dir: $RUN"
+# Silent and windowless: a run must never sound on the developer's Mac.
+scripts/ios/test_sim.sh mute "$UDID"
 
 # The relay's lifetime check needs PIP_LICENSE_SECRET (a local Worker var).
 # A worktree has no .dev.vars; make a minimal one (no paid keys) and remove it after.

@@ -16,6 +16,11 @@ final class PipSpeaker: NSObject, AVAudioPlayerDelegate {
     var rate: Float = 1.0
 
     private var player: AVAudioPlayer?
+
+    /// Test simulators play every clip at volume 0 (same timing, same
+    /// trace) so a run never sounds on the developer's Mac. Set per
+    /// simulator by scripts/ios/test_sim.sh: `defaults write -g PipMuted`.
+    private static let muted = UserDefaults.standard.bool(forKey: "PipMuted")
     private var gen = 0
     private var pending: [SpeechSlot] = []
     private var onDone: (() -> Void)?
@@ -108,6 +113,7 @@ final class PipSpeaker: NSObject, AVAudioPlayerDelegate {
                     p.delegate = self
                     p.enableRate = true
                     p.rate = rate
+                    if Self.muted { p.volume = 0 }
                     player = p
                     if let u = PipBlobs.url(forKey: key) { PipAudioTrace.record(u) }
                     p.play()
@@ -140,6 +146,7 @@ final class PipSpeaker: NSObject, AVAudioPlayerDelegate {
                 p.delegate = self
                 p.enableRate = true
                 p.rate = rate
+                if Self.muted { p.volume = 0 }
                 player = p
                 p.play()
                 return
