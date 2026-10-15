@@ -109,6 +109,18 @@ export async function licenseHolds(env, uid, presented) {
   return !(issue === "refunded" || issue === "dispute");
 }
 
+/** Pictures (030 § 6.1, Pricing § 4.2 "5 drawings" on Free; founder
+ *  2026-10-15): every board that started its trial may find, reuse and
+ *  draw — the draw allowance (free 5, Lifetime 300) is the bound, not a
+ *  license. The trial start's per-connection day cap is what keeps farmed
+ *  ids from multiplying the free five. A forged license is still refused;
+ *  a refunded one falls back to the free board it now is. */
+export async function picturesAllowed(env, uid, presented) {
+  if (await licenseHolds(env, uid, presented)) return true;
+  if (presented && !(await checkLicense(env.PIP_LICENSE_SECRET, uid, presented))) return false;
+  return (await trialStatusFetch(env, uid))?.endsAt != null;
+}
+
 export async function entitled(env, uid, presented) {
   if (await checkLicense(env.PIP_LICENSE_SECRET, uid, presented)) {
     return licenseHolds(env, uid, presented);

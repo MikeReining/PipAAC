@@ -225,6 +225,39 @@ test("allowance endpoint + lifetime tier from the relay", async () => {
   assert.equal(after.left, 299);
 });
 
+test("a free board (no license) that started its trial draws its five, then 402; never-started and forged are refused", async () => {
+  let calls = 0;
+  const env = makeEnv({ synth: async () => (calls++, PNG_BYTES) });
+  const bare = (uid, extra = {}) => worker.fetch(new Request("https://x/api/v1/pictures/draw", {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ user_id: uid, text: extra.text ?? "trampoline", ...extra }),
+  }), env);
+  const bareAllowance = (uid) => worker.fetch(new Request("https://x/api/v1/pictures/allowance", {
+    headers: { "x-pip-user": uid, "x-pip-license": "" } }), env);
+
+  // Never started a trial (no trial row): refused, no vendor call.
+  assert.equal((await bare(UID2)).status, 403);
+  assert.equal((await bareAllowance(UID2)).status, 403);
+  assert.equal(calls, 0);
+
+  const start = await worker.fetch(new Request("https://x/api/v1/trial/start", {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ user_id: UID2 }) }), env);
+  assert.equal(start.status, 200);
+  assert.deepEqual(await (await bareAllowance(UID2)).json(), { left: 5, total: 5 });
+  for (const [i, text] of ["kite", "moon", "drum", "boat", "sock"].entries()) {
+    const r = await bare(UID2, { text });
+    assert.equal(r.status, 200, text);
+    assert.equal(r.headers.get("x-drawings-left"), String(4 - i));
+  }
+  assert.equal((await bare(UID2, { text: "lamp" })).status, 402, "the five are the bound");
+  assert.equal(calls, 5);
+  // Reuse stays free at 0 left: an existing drawing is a hit.
+  assert.equal((await bare(UID2, { text: "kite" })).headers.get("x-draw-cache"), "hit");
+  // A forged license is refused even with a trial row.
+  assert.equal((await bare(UID2, { license: "pip-life-forged" })).status, 403);
+});
+
 test("WT10: unsafe text returns 422 before Jev or synth", async () => {
   let calls = 0, jevCalls = 0;
   const env = makeEnv({

@@ -17,7 +17,7 @@
  * Shared plumbing: pictures_shared.js. Find: pictures_find.js.
  * Signals: pictures_signals.js. Draw pipeline: pictures_draw.js.
  */
-import { licenseHolds } from "./trial.mjs";
+import { picturesAllowed } from "./trial.mjs";
 import { adminOk } from "./tile.js";
 import {
   ALLOWANCE, entitlementFor,
@@ -36,7 +36,7 @@ export { handleDraw } from "./pictures_draw.js";
 export async function handleAllowance(request, env) {
   const uid = request.headers.get("x-pip-user");
   if (!okUuid(uid)) return json({ error: "bad_user_id" }, { status: 400 });
-  if (!(await licenseHolds(env, uid, request.headers.get("x-pip-license")))) {
+  if (!(await picturesAllowed(env, uid, request.headers.get("x-pip-license")))) {
     return json({ error: "bad_license" }, { status: 403 });
   }
   if (!env.TILE_LEDGER) {
@@ -60,7 +60,7 @@ export async function handleAllowance(request, env) {
 export async function handlePictureImage(request, env, imageId) {
   const uid = request.headers.get("x-pip-user");
   if (!okUuid(uid)) return json({ error: "bad_user_id" }, { status: 400 });
-  if (!(await licenseHolds(env, uid, request.headers.get("x-pip-license")))) {
+  if (!(await picturesAllowed(env, uid, request.headers.get("x-pip-license")))) {
     return json({ error: "bad_license" }, { status: 403 });
   }
   let obj = null;

@@ -3,7 +3,7 @@
  *  the single-flight cache wait. Reuse first, draw last — handleDraw
  *  checks the index before a paid mint. Shared plumbing lives in
  *  pictures_shared.js. */
-import { licenseHolds } from "./trial.mjs";
+import { picturesAllowed } from "./trial.mjs";
 import { usageRefund, usageReserve } from "./voice.js";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import {
@@ -196,7 +196,7 @@ export async function handleDraw(request, env, ctx) {
   const body = await request.json().catch(() => null);
   const uid = typeof body?.user_id === "string" ? body.user_id : null;
   if (!okUuid(uid)) return json({ error: "bad_user_id" }, { status: 400 });
-  if (!(await licenseHolds(env, uid, body?.license))) {
+  if (!(await picturesAllowed(env, uid, body?.license))) {
     return json({ error: "bad_license" }, { status: 403 });
   }
   const text = cleanText(body?.text, TEXT_MAX);

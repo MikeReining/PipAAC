@@ -6,7 +6,9 @@
  * applies a threshold of its own (030 § 4.2).
  *
  * Nothing here decides scope or kind — those are Jev's answers, passed
- * through. Credentials are supplied per call (they may rotate).
+ * through. Credentials are supplied per call (they may rotate). The
+ * license is optional: a free board that started its trial gets its five
+ * drawings (Pricing § 4.2) — the Worker decides, not this module.
  */
 
 /** What the card does with a find result (029 § 4.1):
@@ -139,7 +141,7 @@ export function pictureClient({ base = "", fetchFn = (...a) => fetch(...a) } = {
   /** 030 find — {candidates, auto, scope, kind, language, calibrated}, or
    *  {error} (offline, 503, 429…). Never throws. */
   async function find({ userId, license, text, description = null, locale }) {
-    if (!userId || !license) return { error: "unavailable" };
+    if (!userId) return { error: "unavailable" };
     try {
       const res = await post("/api/v1/pictures/find",
         { user_id: userId, license, text, description, locale });
@@ -151,7 +153,7 @@ export function pictureClient({ base = "", fetchFn = (...a) => fetch(...a) } = {
   }
 
   async function findBatch({ userId, license, items, locale }) {
-    if (!userId || !license || !items.length) return { error: "unavailable" };
+    if (!userId || !items.length) return { error: "unavailable" };
     try {
       const res = await post("/api/v1/pictures/find-batch",
         { user_id: userId, license, items, locale });
@@ -169,7 +171,7 @@ export function pictureClient({ base = "", fetchFn = (...a) => fetch(...a) } = {
    *  planner's hint arrives as stage "planned". Older servers answer
    *  image/png and we read the blob the old way. */
   async function draw({ userId, license, text, description = null, locale, onStage }) {
-    if (!userId || !license) return { ok: false, reason: "unavailable" };
+    if (!userId) return { ok: false, reason: "unavailable" };
     try {
       const res = await fetchFn(`${base}/api/v1/pictures/draw`, {
         method: "POST",
@@ -203,14 +205,14 @@ export function pictureClient({ base = "", fetchFn = (...a) => fetch(...a) } = {
   /** Anonymous crowd signals (030 § 6.2–6.3). Fire-and-forget: a lost
    *  signal costs nothing, so failures are swallowed. */
   async function pick({ userId, license, text, description = null, imageId }) {
-    if (!userId || !license || !imageId) return false;
+    if (!userId || !imageId) return false;
     const res = await post("/api/v1/pictures/pick",
       { user_id: userId, license, text, description, image_id: imageId }).catch(() => null);
     return res?.status === 204;
   }
 
   async function reject({ userId, license, text, description = null, ours, action, theirs = null }) {
-    if (!userId || !license || !ours) return false;
+    if (!userId || !ours) return false;
     const body = { user_id: userId, license, text, description, ours, action };
     if (action !== "photo" && theirs) body.theirs = theirs; // a photo is never sent
     const res = await post("/api/v1/pictures/reject", body).catch(() => null);
@@ -218,10 +220,10 @@ export function pictureClient({ base = "", fetchFn = (...a) => fetch(...a) } = {
   }
 
   async function allowance({ userId, license }) {
-    if (!userId || !license) return null;
+    if (!userId) return null;
     try {
       const res = await fetchFn(`${base}/api/v1/pictures/allowance`, {
-        headers: { "x-pip-user": userId, "x-pip-license": license },
+        headers: { "x-pip-user": userId, "x-pip-license": license ?? "" },
       });
       return res.ok ? await res.json() : null;
     } catch {
@@ -236,7 +238,7 @@ export function pictureClient({ base = "", fetchFn = (...a) => fetch(...a) } = {
     try {
       const gated = asset.startsWith("/api/v1/pictures/img/");
       const res = await fetchFn(`${base}${asset}`, gated
-        ? { headers: { "x-pip-user": userId, "x-pip-license": license } }
+        ? { headers: { "x-pip-user": userId, "x-pip-license": license ?? "" } }
         : undefined);
       return res.ok ? await res.blob() : null;
     } catch {

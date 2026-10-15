@@ -38,7 +38,7 @@
     "src/worker/index.js": 596,
     "src/worker/pictures.test.mjs": 803,
     "src/worker/pictures_draw.js": 510,
-    "src/worker/pictures_draw.test.mjs": 661,
+    "src/worker/pictures_draw.test.mjs": 694,
     "src/worker/relay.heavy.test.mjs": 605,
     "src/worker/relay.js": 979,
     "src/worker/tile.js": 779,

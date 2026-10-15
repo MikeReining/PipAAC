@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.23-06b7cdc914df",
-  "version": "1.1.23",
-  "payloadHash": "06b7cdc914df",
+  "buildId": "1.1.24-3b51cf7cb4d1",
+  "version": "1.1.24",
+  "payloadHash": "3b51cf7cb4d1",
   "files": [
     {
       "path": "/board.js",
@@ -940,8 +940,8 @@
     },
     {
       "path": "/shared/pictures.mjs",
-      "bytes": 9812,
-      "sha256": "b7cd0d57000d4e2d0a9184c700bd34f6398eb49e1c6f63ff68ae7e0008e901ca"
+      "bytes": 9900,
+      "sha256": "5db6314ce36d65483727dbd909fcdf7bf9b24fc37820eb2da4f7dfaab73eac89"
     },
     {
       "path": "/shared/pin.mjs",

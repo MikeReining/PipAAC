@@ -334,6 +334,10 @@ waits on it: the ranking already corrects itself through `REJECT_WEIGHT`.
 | Pip Lifetime | 300, once | same |
 | Abuse guard | 30 mints/day | same |
 
+- **Who:** any board that started its trial, licensed or not (founder
+  2026-10-15; `picturesAllowed` in `src/worker/trial.mjs`). The trial
+  start's per-connection day cap bounds farmed ids; the allowance bounds
+  the spend. A forged license is refused.
 - **Counts:** image API calls only — new drawings and redraws (a mint).
 - **Never counts:** `find`, `pick`, a draw that is a ledger hit, any catalog
   or extended picture.

@@ -2,7 +2,7 @@
  *  steer everyone's ranking. Scope comes from Jev, never the client;
  *  a null scope fails closed (a stored "common" would leak a personal
  *  name). Posts land on the Tile-ledger DO via picPost. */
-import { licenseHolds } from "./trial.mjs";
+import { picturesAllowed } from "./trial.mjs";
 import { usageRefund, usageReserve } from "./voice.js";
 import { signalsKey } from "../shared/picture_index.mjs";
 import {
@@ -21,7 +21,7 @@ export async function handlePick(request, env, ctx) {
   const body = await request.json().catch(() => null);
   const uid = typeof body?.user_id === "string" ? body.user_id : null;
   if (!okUuid(uid)) return json({ error: "bad_user_id" }, { status: 400 });
-  if (!(await licenseHolds(env, uid, body?.license))) {
+  if (!(await picturesAllowed(env, uid, body?.license))) {
     return json({ error: "bad_license" }, { status: 403 });
   }
   const text = cleanText(body?.text, TEXT_MAX);
@@ -86,7 +86,7 @@ export async function handleReject(request, env, ctx) {
   const body = await request.json().catch(() => null);
   const uid = typeof body?.user_id === "string" ? body.user_id : null;
   if (!okUuid(uid)) return json({ error: "bad_user_id" }, { status: 400 });
-  if (!(await licenseHolds(env, uid, body?.license))) {
+  if (!(await picturesAllowed(env, uid, body?.license))) {
     return json({ error: "bad_license" }, { status: 403 });
   }
   const text = cleanText(body?.text, TEXT_MAX);
