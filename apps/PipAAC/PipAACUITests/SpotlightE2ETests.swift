@@ -105,6 +105,8 @@ final class SpotlightE2ETests: XCTestCase {
 
     private func join(_ app: XCUIApplication, code: String, role: String) {
         app.buttons["settingsGear"].tap()
+        XCTAssertTrue(app.buttons["settingsSection:team"].waitForExistence(timeout: 10))
+        app.buttons["settingsSection:team"].tap()   // E4: the Team & devices page
         XCTAssertTrue(app.buttons["settings:team"].waitForExistence(timeout: 10))
         app.buttons["settings:team"].tap()
         XCTAssertTrue(app.buttons["team:join"].waitForExistence(timeout: 10))
