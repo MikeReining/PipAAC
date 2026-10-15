@@ -59,13 +59,13 @@ struct CardFinder: View {
             if let row {
                 if !row.line.isEmpty {
                     Text(row.line)
-                        .font(.system(size: 15))
+                        .pipFont(15)
                         .foregroundStyle(PipStyle.muted)
                         .accessibilityIdentifier("wc-picstate")
                 }
                 if let s = row.suggestion {
                     Button { model.picAcceptSuggestion(card) } label: {
-                        Text(s).font(.system(size: 16, weight: .semibold))
+                        Text(s).pipFont(16, .semibold)
                             .foregroundStyle(PipStyle.ink)
                             .padding(.horizontal, 14).padding(.vertical, 8)
                             .background(Color.white).clipShape(Capsule())
@@ -78,7 +78,7 @@ struct CardFinder: View {
                 if let r = row.results { results(r) }
                 if !row.drawcost.isEmpty {
                     Text(row.drawcost)
-                        .font(.system(size: 14))
+                        .pipFont(14)
                         .foregroundStyle(PipStyle.muted)
                         .accessibilityIdentifier("wc-drawcost")
                 }
@@ -92,7 +92,7 @@ struct CardFinder: View {
         HStack(spacing: 8) {
             TextField(row.placeholder, text: $desc)
                 .textFieldStyle(.roundedBorder)
-                .font(.system(size: 17))
+                .pipFont(17)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .submitLabel(.search)
@@ -101,7 +101,7 @@ struct CardFinder: View {
                 .accessibilityLabel(row.placeholder)
                 .accessibilityIdentifier("wc-desc")
             Button { go(row) } label: {
-                Text("Find").font(.system(size: 17, weight: .semibold))
+                Text("Find").pipFont(17, .semibold)
                     .frame(minWidth: 64, minHeight: 44)
                     .background(canGo(row) ? PipStyle.ink : Color(white: 0.9))
                     .foregroundStyle(canGo(row) ? Color.white : PipStyle.muted)
@@ -168,8 +168,8 @@ struct DrawTile: View {
     var body: some View {
         Button(action: action) {
             VStack(spacing: 2) {
-                Text(glyph).font(.system(size: 22))
-                Text(title).font(.system(size: 13, weight: .semibold))
+                Text(glyph).pipFont(22)
+                Text(title).pipFont(13, .semibold)
             }
             .foregroundStyle(PipStyle.ink)
             .frame(width: 64, height: 64)
@@ -195,14 +195,14 @@ struct BulkListView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text(model.bulk?.title ?? "Add a list")
-                    .font(.system(size: 24, weight: .bold))
+                    .pipFont(24, .bold)
                     .foregroundStyle(PipStyle.ink)
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityIdentifier("bulk-title")
                 Spacer()
                 Button { model.bulkRequest = nil; model.bulk = nil } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 28))
+                        .pipFont(28)
                         .symbolRenderingMode(.palette)
                         .foregroundStyle(Color.white, PipStyle.muted)
                         .frame(width: 44, height: 44)
@@ -213,7 +213,7 @@ struct BulkListView: View {
             }
             ZStack(alignment: .topLeading) {
                 TextEditor(text: $text)
-                    .font(.system(size: 19))
+                    .pipFont(19)
                     .scrollContentBackground(.hidden)
                     .focused($focus)
                     .autocorrectionDisabled()
@@ -226,7 +226,7 @@ struct BulkListView: View {
                     .accessibilityIdentifier("bulk-paste")
                 if text.isEmpty {
                     Text(model.bulk?.placeholder ?? "One word or short phrase per line")
-                        .font(.system(size: 19))
+                        .pipFont(19)
                         .foregroundStyle(PipStyle.muted.opacity(0.7))
                         .padding(.horizontal, 12).padding(.top, 14)
                         .allowsHitTesting(false)
@@ -241,14 +241,14 @@ struct BulkListView: View {
             }
             if let note = model.bulk?.note, !note.isEmpty {
                 Text(note)
-                    .font(.system(size: 15))
+                    .pipFont(15)
                     .foregroundStyle(PipStyle.muted)
                     .accessibilityIdentifier("bulk-note")
             }
             Button { model.bulkAdd(groupId: request.groupId, text: text) } label: {
                 let b = model.bulk
                 Text(b?.addLabel ?? "Add all")
-                    .font(.system(size: 18, weight: .semibold))
+                    .pipFont(18, .semibold)
                     .frame(maxWidth: .infinity, minHeight: 52)
                     .background((b?.addDisabled ?? true) ? Color(white: 0.9) : PipStyle.ink)
                     .foregroundStyle((b?.addDisabled ?? true) ? PipStyle.muted : Color.white)
@@ -278,11 +278,11 @@ struct BulkListView: View {
             .accessibilityLabel(r.cycles ? "Another picture for \(r.label)" : "Picture for \(r.label)")
             .accessibilityIdentifier("bulk-thumb:\(r.key)")
             Text(r.label)
-                .font(.system(size: 19, weight: .semibold))
+                .pipFont(19, .semibold)
                 .foregroundStyle(PipStyle.ink)
             Spacer()
             Text(r.tag)
-                .font(.system(size: 14, weight: .semibold))
+                .pipFont(14, .semibold)
                 .foregroundStyle(r.already || r.overCap ? PipStyle.muted : PipStyle.ink)
                 .accessibilityIdentifier("bulk-tag:\(r.key)")
         }
@@ -316,13 +316,13 @@ struct PhotoDraftsView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text(sheet?.title ?? "Add photos")
-                    .font(.system(size: 24, weight: .bold))
+                    .pipFont(24, .bold)
                     .foregroundStyle(PipStyle.ink)
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityIdentifier("photo-title")
                 Spacer()
                 Button("Cancel") { model.photoRequest = nil }
-                    .font(.system(size: 17, weight: .medium))
+                    .pipFont(17, .medium)
                     .frame(minHeight: 44)
                     .accessibilityIdentifier("photo-cancel")
             }
@@ -334,11 +334,11 @@ struct PhotoDraftsView: View {
                             TextField(sheet?.rows[safe: i]?.placeholder ?? "Name this one",
                                       text: $names[i])
                                 .textFieldStyle(.roundedBorder)
-                                .font(.system(size: 19))
+                                .pipFont(19)
                                 .submitLabel(.done)
                                 .accessibilityIdentifier("photo-name:\(i)")
                             Text(sheet?.rows[safe: i]?.tag ?? "")
-                                .font(.system(size: 14, weight: .semibold))
+                                .pipFont(14, .semibold)
                                 .foregroundStyle(PipStyle.muted)
                                 .accessibilityIdentifier("photo-tag:\(i)")
                         }
@@ -351,7 +351,7 @@ struct PhotoDraftsView: View {
             Button { model.photosSave(request, drafts: drafts) } label: {
                 let off = sheet?.saveDisabled ?? true
                 Text(sheet?.saveLabel ?? "Save")
-                    .font(.system(size: 18, weight: .semibold))
+                    .pipFont(18, .semibold)
                     .frame(maxWidth: .infinity, minHeight: 52)
                     .background(off ? Color(white: 0.9) : PipStyle.ink)
                     .foregroundStyle(off ? PipStyle.muted : Color.white)
@@ -407,7 +407,7 @@ struct AddListLinks: View {
             }
             Spacer()
         }
-        .font(.system(size: 17, weight: .medium))
+        .pipFont(17, .medium)
         .frame(minHeight: 44)
         .onChange(of: picked) { _, items in
             guard !items.isEmpty else { return }

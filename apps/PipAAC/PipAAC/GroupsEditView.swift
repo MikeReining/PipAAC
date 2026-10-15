@@ -179,12 +179,12 @@ struct GroupToastBar: View {
         if let t = editor.toast {
             HStack(spacing: 14) {
                 Text(t.text)
-                    .font(.system(size: 16, weight: .semibold))
+                    .pipFont(16, .semibold)
                     .foregroundStyle(PipStyle.ink)
                     .accessibilityIdentifier("groupsToastText")
                 if t.undo != nil {
                     Button("Undo") { editor.undo(t) }
-                        .font(.system(size: 16, weight: .bold))
+                        .pipFont(16, .bold)
                         .accessibilityIdentifier("groupsToastUndo")
                 }
             }
@@ -332,7 +332,7 @@ struct GroupsEditView: View {
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
-                    .font(.system(size: 22))
+                    .pipFont(22)
                     .frame(width: 44, height: 44)
             }
             .accessibilityLabel("More for \(g.name)")

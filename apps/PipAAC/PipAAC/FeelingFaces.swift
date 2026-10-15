@@ -129,7 +129,8 @@ struct TryFacesView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
             }
-            .accessibilityHidden(true)
+            .accessibilityElement(children: .ignore)       // slice G: label, not hidden (audit)
+            .accessibilityLabel("Example sentence: I want an apple")
             HStack(spacing: 16) {
                 ForEach(["happy", "sad", "angry"], id: \.self) { f in
                     FaceButton(feeling: f, dark: model.tryingFace == f, size: 48,

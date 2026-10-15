@@ -45,7 +45,7 @@ struct ParentGate: View {
                     .textFieldStyle(.roundedBorder)
                     .keyboardType(.numberPad)
                     .multilineTextAlignment(.center)
-                    .font(.system(size: 28, weight: .medium, design: .monospaced))
+                    .pipFont(28, .medium, design: .monospaced)
                     .frame(maxWidth: 220)
                     .focused($focused)
                     .onChange(of: input) { _, v in

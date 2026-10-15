@@ -152,7 +152,7 @@ struct CardSwapButton: View {
         if card.swap != nil {
             Button { model.openSwap(card) } label: {
                 Label("Swap for another word", systemImage: "arrow.left.arrow.right")
-                    .font(.system(size: 16, weight: .semibold))
+                    .pipFont(16, .semibold)
                     .padding(.horizontal, 14).frame(minHeight: 44)
                     .background(Color.white)
                     .foregroundStyle(PipStyle.ink)
@@ -177,10 +177,10 @@ struct CardColourRow: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
                     Text("Colour")
-                        .font(.system(size: 14, weight: .semibold))
+                        .pipFont(14, .semibold)
                         .foregroundStyle(PipStyle.muted)
                     Text(card.kindName ?? "")
-                        .font(.system(size: 14))
+                        .pipFont(14)
                         .foregroundStyle(PipStyle.muted)
                         .accessibilityIdentifier("wc-kind")
                 }
@@ -223,14 +223,14 @@ struct SwapView: View {
             HStack {
                 if let h = list?.head {
                     Text(h.label)
-                        .font(.system(size: 22, weight: .semibold))
+                        .pipFont(22, .semibold)
                         .foregroundStyle(PipStyle.inkText)
                         .padding(.horizontal, 14).padding(.vertical, 8)
                         .background(PipStyle.fill(h.role))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .accessibilityIdentifier("swap-head")
                     Text(String(h.count))
-                        .font(.system(size: 15))
+                        .pipFont(15)
                         .foregroundStyle(PipStyle.muted)
                         .accessibilityLabel("\(h.count) taps in the last 30 days")
                     Button { model.swapEdit(request) } label: {
@@ -247,7 +247,7 @@ struct SwapView: View {
             }
             TextField("🔍", text: $q)
                 .textFieldStyle(.roundedBorder)
-                .font(.system(size: 20))
+                .pipFont(20)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .accessibilityLabel("Search words")
@@ -262,14 +262,14 @@ struct SwapView: View {
                         Button { model.swapPick(request, row: r) } label: {
                             HStack {
                                 Text(r.label)
-                                    .font(.system(size: 19, weight: .semibold))
+                                    .pipFont(19, .semibold)
                                     .foregroundStyle(PipStyle.inkText)
                                     .padding(.horizontal, 12).padding(.vertical, 8)
                                     .background(PipStyle.fill(r.role))
                                     .clipShape(RoundedRectangle(cornerRadius: 8))
                                 Spacer()
                                 Text(String(r.count))
-                                    .font(.system(size: 15))
+                                    .pipFont(15)
                                     .foregroundStyle(PipStyle.muted)
                             }
                             .padding(.horizontal, 8).frame(minHeight: 48)
@@ -300,7 +300,7 @@ struct EditorStatusLabel: View {
 
     var body: some View {
         Text(model.editorStatus.text)
-            .font(.system(size: 14, weight: .semibold))
+            .pipFont(14, .semibold)
             .foregroundStyle(model.editorStatus.tone == "warn"
                              ? Color(red: 0.62, green: 0.30, blue: 0.0) : PipStyle.muted)
             .lineLimit(1)

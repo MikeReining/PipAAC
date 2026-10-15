@@ -25,7 +25,7 @@ struct WordCardView: View {
                 VStack(spacing: 20) {
                     if let added = card.justAdded {
                         Text("✓ Added to \(added.groupName)")
-                            .font(.system(size: 16, weight: .semibold))
+                            .pipFont(16, .semibold)
                             .foregroundStyle(PipStyle.ink)
                             .accessibilityIdentifier("wc-added")
                     }
@@ -41,14 +41,14 @@ struct WordCardView: View {
                     CardSwapButton(card: card)
 
                     Text(card.hint)
-                        .font(.system(size: 15))
+                        .pipFont(15)
                         .foregroundStyle(PipStyle.muted)
                         .accessibilityIdentifier("wc-hint")
 
                     if card.canRename {
                         TextField("Name", text: $name)
                             .textFieldStyle(.roundedBorder)
-                            .font(.system(size: 22, weight: .semibold))
+                            .pipFont(22, .semibold)
                             .multilineTextAlignment(.center)
                             .submitLabel(.done)
                             .focused($nameFocused)
@@ -110,7 +110,7 @@ struct WordCardView: View {
         do {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Also in")
-                    .font(.system(size: 14, weight: .semibold))
+                    .pipFont(14, .semibold)
                     .foregroundStyle(PipStyle.muted)
                 FlowRow {
                     if card.onMainBoard { chip("Main board") }
@@ -129,7 +129,7 @@ struct WordCardView: View {
                             .accessibilityLabel("Remove from \(g.name)")
                             .accessibilityIdentifier("wc-leave:\(g.id)")
                         }
-                        .font(.system(size: 15, weight: .medium))
+                        .pipFont(15, .medium)
                         .padding(.horizontal, 12).padding(.vertical, 8)
                         .background(Color.white)
                         .clipShape(Capsule())
@@ -139,7 +139,7 @@ struct WordCardView: View {
                         model.openOtherGroups(kind: card.kind, id: card.id, label: card.label)
                     } label: {
                         Text("+ Group")
-                            .font(.system(size: 15, weight: .semibold))
+                            .pipFont(15, .semibold)
                             .foregroundStyle(PipStyle.ink)
                             .padding(.horizontal, 12).padding(.vertical, 8)
                             .overlay(Capsule().strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [5, 3]))
@@ -156,7 +156,8 @@ struct WordCardView: View {
 
     private func chip(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 15, weight: .medium))
+            .pipFont(15, .medium)
+            .foregroundStyle(PipStyle.inkText)
             .padding(.horizontal, 12).padding(.vertical, 8)
             .background(PipStyle.fill(nil))
             .clipShape(Capsule())
@@ -165,7 +166,7 @@ struct WordCardView: View {
     private func quiet(_ title: String, id: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 17, weight: .medium))
+                .pipFont(17, .medium)
                 .foregroundStyle(PipStyle.muted)
                 .frame(minWidth: 200, minHeight: 44)
         }

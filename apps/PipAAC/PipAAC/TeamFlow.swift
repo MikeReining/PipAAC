@@ -191,7 +191,7 @@ private struct TeamToastBar: ViewModifier {
         content.safeAreaInset(edge: .bottom) {
             if let t = team.toast {
                 Text(t)
-                    .font(.system(size: 16, weight: .medium))
+                    .pipFont(16, .medium)
                     .foregroundStyle(Color.white)
                     .padding(.horizontal, 16).padding(.vertical, 12)
                     .background(PipStyle.ink, in: RoundedRectangle(cornerRadius: 12))

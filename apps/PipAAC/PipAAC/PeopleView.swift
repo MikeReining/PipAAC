@@ -25,7 +25,7 @@ struct WhosTalkingView: View {
     var body: some View {
         VStack(spacing: 24) {
             Text("Who's talking?")
-                .font(.system(size: 34, weight: .bold))
+                .pipFont(34, .bold)
                 .foregroundStyle(PipStyle.ink)
             ScrollView {
                 VStack(spacing: 12) {
@@ -34,7 +34,7 @@ struct WhosTalkingView: View {
                             HStack(spacing: 14) {
                                 Avatar(person: p)
                                 Text(p.displayName)
-                                    .font(.system(size: 24, weight: .semibold))
+                                    .pipFont(24, .semibold)
                                     .foregroundStyle(PipStyle.ink)
                                 Spacer()
                             }

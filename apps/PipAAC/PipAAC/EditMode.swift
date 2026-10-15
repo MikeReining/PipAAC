@@ -349,6 +349,10 @@ struct EditHeader: View {
     }
 
     var body: some View {
+        // The six header controls are wider than a portrait iPad (the screenshot
+        // showed Done and Groups cut off at the edges): scroll sideways so every
+        // one stays reachable by touch, VoiceOver and Switch Control.
+        ScrollView(.horizontal, showsIndicators: false) {
         HStack(spacing: 12) {
             Button { model.exitEdit() } label: {
                 Label("Done", systemImage: "checkmark")
@@ -367,6 +371,7 @@ struct EditHeader: View {
                 .foregroundStyle(PipStyle.muted)
                 .lineLimit(2)
                 .minimumScaleFactor(0.7)
+                .frame(maxWidth: 260, alignment: .leading)
             Spacer(minLength: 4)
             EditorStatusLabel() // LW-22
             // 018 D10: 📊 puts the child's own 30-day taps on every tile.
@@ -409,6 +414,7 @@ struct EditHeader: View {
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("editGroups")
+        }
         }
         .frame(height: 64)
     }
@@ -492,9 +498,12 @@ struct EditCell: View {
                                : "Opens this word's card")
             .accessibilityAddTraits(.isButton)
             .accessibilityIdentifier("tile:\(cell.id ?? "")")
-            .accessibilityValue(tileValue(
-                photo: (cell.art ?? cell.photoKey)?.hasPrefix("blob:") == true,
-                wordsOnly: wordsOnly, count: cell.count))
+            // A hidden word is drawn faded: say so (colour/opacity alone is not a state).
+            .accessibilityValue([
+                tileValue(photo: (cell.art ?? cell.photoKey)?.hasPrefix("blob:") == true,
+                          wordsOnly: wordsOnly, count: cell.count),
+                cell.hidden == true ? "hidden" : "",
+            ].filter { !$0.isEmpty }.joined(separator: ", "))
     }
 }
 

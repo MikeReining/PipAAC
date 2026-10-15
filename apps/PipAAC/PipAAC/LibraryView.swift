@@ -50,13 +50,13 @@ struct LibraryView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 12) {
                 Text("Words")
-                    .font(.system(size: 26, weight: .bold))
+                    .pipFont(26, .bold)
                     .foregroundStyle(PipStyle.ink)
                     .accessibilityAddTraits(.isHeader)
                 Spacer()
                 Button { model.openAdd(groupId: nil) } label: {
                     Label("Add a word", systemImage: "plus")
-                        .font(.system(size: 16, weight: .semibold))
+                        .pipFont(16, .semibold)
                         .padding(.horizontal, 14).frame(height: 44)
                         .background(PipStyle.ink)
                         .foregroundStyle(Color.white)
@@ -67,7 +67,7 @@ struct LibraryView: View {
                 .accessibilityIdentifier("lib-add")
                 Button { model.bulkRequest = BulkRequest(groupId: nil) } label: {
                     Text("Add a list")
-                        .font(.system(size: 16, weight: .semibold))
+                        .pipFont(16, .semibold)
                         .padding(.horizontal, 14).frame(height: 44)
                         .background(Color.white)
                         .foregroundStyle(PipStyle.ink)
@@ -79,7 +79,7 @@ struct LibraryView: View {
                 .accessibilityLabel("Add a list")
                 .accessibilityIdentifier("lib-bulk")
                 Button("Close") { model.showLibrary = false }
-                    .font(.system(size: 17, weight: .medium))
+                    .pipFont(17, .medium)
                     .frame(minHeight: 44)
                     .accessibilityIdentifier("lib-close")
             }
@@ -92,7 +92,7 @@ struct LibraryView: View {
             .accessibilityIdentifier("lib-tabs")
             TextField("Search words", text: $q)
                 .textFieldStyle(.roundedBorder)
-                .font(.system(size: 20))
+                .pipFont(20)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .accessibilityLabel("Search words")
@@ -138,10 +138,10 @@ struct LibraryView: View {
                 MatchPic(label: r.label, role: r.role, art: r.art ?? r.photoKey)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(r.label)
-                        .font(.system(size: 19, weight: .semibold))
+                        .pipFont(19, .semibold)
                         .foregroundStyle(PipStyle.ink)
                     if let s = r.sub {
-                        Text(s).font(.system(size: 14)).foregroundStyle(PipStyle.muted)
+                        Text(s).pipFont(14).foregroundStyle(PipStyle.muted)
                     }
                 }
                 Spacer()

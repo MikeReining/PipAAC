@@ -479,6 +479,11 @@ struct FirstRunHost: View {
                 EmptyView()
             }
         }
+        // Welcome / look / world cover the whole board: VoiceOver and Switch
+        // Control must not reach the tiles behind them (the tour keeps the
+        // board live on purpose).
+        .accessibilityAddTraits(flow.phase == .welcome || flow.phase == .look || flow.phase == .world
+                                ? .isModal : [])
         // The welcome is its own top layer; the join sheet sits above it.
         .sheet(isPresented: Binding(
             get: { model.joinSheet != nil && flow.phase != .none },
@@ -533,7 +538,7 @@ private struct ChoiceButton: View {
                     }
                 }
                 Text(choice.label)
-                    .font(.system(size: 19, weight: .bold))
+                    .pipFont(19, .bold)
                     .foregroundStyle(PipStyle.inkText)
             }
             .frame(maxWidth: .infinity, minHeight: 88)
@@ -560,7 +565,7 @@ private struct GoButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 19, weight: .bold))
+                .pipFont(19, .bold)
                 .frame(maxWidth: .infinity, minHeight: 60)
                 .background(PipStyle.ink)
                 .foregroundStyle(Color.white)
@@ -580,12 +585,12 @@ struct WelcomeScreen: View {
     var body: some View {
         if let w = flow.copy?.welcome {
             WelcomeFrame {
-                Text(w.title).font(.system(size: 34, weight: .bold)).foregroundStyle(PipStyle.inkText)
+                Text(w.title).pipFont(34, .bold).foregroundStyle(PipStyle.inkText)
                     .accessibilityAddTraits(.isHeader)
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(w.nameLabel).font(.system(size: 17, weight: .bold))
+                    Text(w.nameLabel).pipFont(17, .bold)
                     TextField(w.namePlaceholder, text: $flow.name)
-                        .font(.system(size: 20))
+                        .pipFont(20)
                         .padding(14)
                         .background(Color.white)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -594,7 +599,7 @@ struct WelcomeScreen: View {
                         .accessibilityLabel(w.nameLabel)
                         .accessibilityIdentifier("welcome:name")
                 }
-                Text(w.whoQ).font(.system(size: 17, weight: .bold))
+                Text(w.whoQ).pipFont(17, .bold)
                 HStack(spacing: 12) {
                     ForEach(w.choices) { c in
                         ChoiceButton(choice: c, selected: flow.audience == c.value, idPrefix: "welcome") {
@@ -610,7 +615,7 @@ struct WelcomeScreen: View {
                 HStack(spacing: 0) {
                     Text(w.joinLead).foregroundStyle(PipStyle.muted)
                     Button(w.join) { model.joinSheet = JoinSheetState() }
-                        .font(.system(size: 17, weight: .bold))
+                        .pipFont(17, .bold)
                         .foregroundStyle(PipStyle.inkText)
                         .underline()
                         .accessibilityIdentifier("welcome:join")
@@ -627,7 +632,7 @@ struct LookScreen: View {
     var body: some View {
         if let l = flow.copy?.look {
             WelcomeFrame {
-                Text(l.title).font(.system(size: 34, weight: .bold)).foregroundStyle(PipStyle.inkText)
+                Text(l.title).pipFont(34, .bold).foregroundStyle(PipStyle.inkText)
                     .accessibilityAddTraits(.isHeader)
                 Text(l.sub).foregroundStyle(PipStyle.muted)
                 HStack(spacing: 12) {
@@ -666,7 +671,7 @@ struct WorldScreen: View {
                     }
                     Spacer()
                     Button { Task { await flow.worldClose() } } label: {
-                        Image(systemName: "xmark").font(.system(size: 17, weight: .semibold))
+                        Image(systemName: "xmark").pipFont(17, .semibold)
                             .frame(width: 44, height: 44)
                     }
                     .buttonStyle(.plain)
@@ -676,20 +681,20 @@ struct WorldScreen: View {
                 .accessibilityElement(children: .contain)
                 .accessibilityLabel("Step \(flow.worldStep + 1) of \(w.steps.count)")
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(step.title).font(.system(size: 26, weight: .bold)).foregroundStyle(PipStyle.inkText)
+                    Text(step.title).pipFont(26, .bold).foregroundStyle(PipStyle.inkText)
                         .accessibilityAddTraits(.isHeader)
                         .accessibilityIdentifier("world:title")
-                    Text(step.hint).font(.system(size: 15)).foregroundStyle(PipStyle.muted)
+                    Text(step.hint).pipFont(15).foregroundStyle(PipStyle.muted)
                 }
                 if step.key == "people" { peopleForm(w) } else { listForm(w) }
                 if let t = flow.worldToast {
-                    Text(t).font(.system(size: 15, weight: .semibold)).foregroundStyle(PipStyle.ink)
+                    Text(t).pipFont(15, .semibold).foregroundStyle(PipStyle.ink)
                         .accessibilityIdentifier("world:toast")
                 }
                 HStack(spacing: 10) {
                     if flow.worldStep > 0 {
                         Button(w.back) { flow.worldBack() }
-                            .font(.system(size: 18, weight: .bold))
+                            .pipFont(18, .bold)
                             .frame(maxWidth: .infinity, minHeight: 56)
                             .background(Color.white)
                             .clipShape(RoundedRectangle(cornerRadius: 14))
@@ -702,7 +707,7 @@ struct WorldScreen: View {
                     }
                 }
                 Button(w.skip) { Task { await flow.worldSkip() } }
-                    .font(.system(size: 16))
+                    .pipFont(16)
                     .foregroundStyle(PipStyle.muted)
                     .underline()
                     .frame(maxWidth: .infinity)
@@ -735,7 +740,7 @@ struct WorldScreen: View {
                               : "\(w.namePlaceholder) — like \(i < w.examples.count ? w.examples[i] : w.otherExample)",
                               text: Binding(get: { flow.rows[safe: i]?.name ?? "" },
                                             set: { if i < flow.rows.count { flow.rows[i].name = $0 } }))
-                        .font(.system(size: 19))
+                        .pipFont(19)
                         .padding(12)
                         .background(Color.white)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -747,10 +752,10 @@ struct WorldScreen: View {
             }
             Button { flow.addRow() } label: {
                 HStack(spacing: 12) {
-                    Text("＋").font(.system(size: 24)).frame(width: 56, height: 56)
+                    Text("＋").pipFont(24).frame(width: 56, height: 56)
                         .overlay(Circle().strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [5, 3]))
                             .foregroundStyle(PipStyle.muted))
-                    Text(w.addRow).font(.system(size: 17, weight: .semibold))
+                    Text(w.addRow).pipFont(17, .semibold)
                     Spacer()
                 }
                 .foregroundStyle(PipStyle.ink)
@@ -768,7 +773,7 @@ struct WorldScreen: View {
             } else if let k = row.photoKey, let ui = PipAssets.image(k) {
                 Image(uiImage: ui).resizable().scaledToFill().clipShape(Circle())
             } else {
-                Image(systemName: "camera").font(.system(size: 22)).foregroundStyle(PipStyle.muted)
+                Image(systemName: "camera").pipFont(22).foregroundStyle(PipStyle.muted)
             }
         }
         .frame(width: 56, height: 56)
@@ -791,7 +796,7 @@ struct WorldScreen: View {
     private func listForm(_ w: FRWorld) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             TextEditor(text: $flow.listText)
-                .font(.system(size: 19))
+                .pipFont(19)
                 .frame(minHeight: 110)
                 .scrollContentBackground(.hidden)
                 .padding(8)
@@ -814,7 +819,7 @@ struct WorldScreen: View {
                         if let ui = PipAssets.image(r.art) {
                             Image(uiImage: ui).resizable().scaledToFit().padding(3)
                         } else {
-                            Text(r.initial).font(.system(size: 18, weight: .bold)).foregroundStyle(PipStyle.muted)
+                            Text(r.initial).pipFont(18, .bold).foregroundStyle(PipStyle.muted)
                         }
                     }
                     .frame(width: 40, height: 40)
@@ -824,7 +829,7 @@ struct WorldScreen: View {
                         .foregroundStyle(PipStyle.muted.opacity(0.6)))
                     Text(r.label).strikethrough(r.already).foregroundStyle(r.already ? PipStyle.muted : PipStyle.inkText)
                     if let tag = r.tag {
-                        Text(tag).font(.system(size: 13, weight: .semibold)).foregroundStyle(PipStyle.muted)
+                        Text(tag).pipFont(13, .semibold).foregroundStyle(PipStyle.muted)
                     }
                     Spacer()
                 }
@@ -851,18 +856,20 @@ struct TourCardView: View {
             Spacer()
             VStack(alignment: .leading, spacing: 10) {
                 Tour.say(card.say)
-                    .font(.system(size: 20, weight: .heavy))
+                    .pipFont(20, .heavy)
                     .foregroundStyle(PipStyle.inkText)
+                    .accessibilityLabel(PipSpoken.words(card.say))
                     .accessibilityIdentifier("tour:say")
                 if let note = card.note {
-                    Tour.say(note).font(.system(size: 14)).foregroundStyle(PipStyle.muted)
+                    Tour.say(note).pipFont(14).foregroundStyle(PipStyle.muted)
+                        .accessibilityLabel(PipSpoken.words(note))
                         .accessibilityIdentifier("tour:note")
                 }
                 HStack(spacing: 10) {
                     if let skip = card.skip {
                         Spacer()
                         Button(skip) { flow.tourEnd() }
-                            .font(.system(size: 17))
+                            .pipFont(17)
                             .foregroundStyle(PipStyle.muted)
                             .underline()
                             .padding(6)
@@ -871,7 +878,7 @@ struct TourCardView: View {
                     if card.done {
                         if let v = card.voices {
                             Button(v) { flow.tourEnd(thenVoices: true) }
-                                .font(.system(size: 18, weight: .bold))
+                                .pipFont(18, .bold)
                                 .frame(maxWidth: .infinity, minHeight: 52)
                                 .background(Color.white)
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -881,7 +888,7 @@ struct TourCardView: View {
                         }
                         if let go = card.go {
                             Button(go) { flow.tourEnd() }
-                                .font(.system(size: 18, weight: .bold))
+                                .pipFont(18, .bold)
                                 .frame(maxWidth: .infinity, minHeight: 52)
                                 .background(PipStyle.ink)
                                 .clipShape(RoundedRectangle(cornerRadius: 12))

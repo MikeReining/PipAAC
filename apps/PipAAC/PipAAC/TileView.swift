@@ -59,6 +59,9 @@ enum PipStyle {
     static let cream = Color(red: 0.965, green: 0.957, blue: 0.937)
     static let ink = Color(red: 0.165, green: 0.141, blue: 0.114)
     static let inkText = Color(red: 0.102, green: 0.102, blue: 0.102)
+    /// Links and tinted buttons: the system blue is ~3.9:1 on the grouped
+    /// background (audit: contrast); this one is ~7:1, same hue.
+    static let link = Color(red: 0.0, green: 0.318, blue: 0.78)
     static let muted = Color(red: 0.357, green: 0.325, blue: 0.282)
 }
 
@@ -106,6 +109,7 @@ struct WordTile: View {
                                 .resizable()
                                 .scaledToFit()
                                 .padding(4)
+                                .accessibilityHidden(true)
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -153,6 +157,7 @@ struct StripCard: View {
                         .resizable()
                         .scaledToFit()
                         .padding(3)
+                        .accessibilityHidden(true)
                 } else {
                     Text(label.prefix(1).uppercased())
                         .font(.system(size: 24, weight: .bold))
@@ -193,6 +198,7 @@ struct BarChip: View {
                     .scaledToFit()
                     .frame(height: 34)
                     .padding(.top, 4)
+                    .accessibilityHidden(true)
             }
             Text(display)
                 .font(.system(size: 15, weight: .medium))

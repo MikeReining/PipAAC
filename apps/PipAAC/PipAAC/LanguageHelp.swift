@@ -186,7 +186,7 @@ struct LikelyPreview: View {
         HStack(spacing: 8) {
             ForEach(tiles, id: \.0) { t in
                 Text(t.0)
-                    .font(.system(size: 12, weight: .bold))
+                    .pipFont(12, .bold)
                     .foregroundStyle(PipStyle.inkText)
                     .padding(.top, 4)
                     .frame(width: 58, height: 50, alignment: .top)
@@ -201,6 +201,7 @@ struct LikelyPreview: View {
                     }
             }
         }
-        .accessibilityHidden(true)
+        .accessibilityElement(children: .ignore)       // slice G: label, not hidden (audit)
+        .accessibilityLabel("Example: want, go and juice. Go has a thick outline.")
     }
 }

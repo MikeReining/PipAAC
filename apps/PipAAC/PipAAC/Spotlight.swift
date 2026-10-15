@@ -254,6 +254,7 @@ struct ModelBar: View {
     var body: some View {
         HStack(spacing: 14) {
             TipText(text: spot.line ?? "")
+                .accessibilityLabel(PipSpoken.words(spot.line ?? ""))
                 .font(.system(size: 15))
                 .foregroundStyle(Color.white)
                 .lineLimit(3)

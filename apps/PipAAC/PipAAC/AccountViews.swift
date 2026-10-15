@@ -206,7 +206,7 @@ struct CardSheet: View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), alignment: .leading), count: 3), spacing: 8) {
             ForEach(Array(words.enumerated()), id: \.offset) { i, w in
                 Text("\(i + 1)  \(w)")
-                    .font(.system(size: 20, design: .monospaced))
+                    .pipFont(20, design: .monospaced)
                     .accessibilityIdentifier("rec:word:\(i + 1)")
                     .accessibilityLabel("Word \(i + 1), \(w)")
             }

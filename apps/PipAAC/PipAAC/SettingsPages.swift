@@ -37,7 +37,7 @@ extension SettingsView {
                         PersonAvatar(person: me, size: 56)
                     }
                     TextField("Their name", text: $nameText)
-                        .font(.system(size: 22, weight: .semibold))
+                        .pipFont(22, .semibold)
                         .focused($nameFocused)
                         .submitLabel(.done)
                         .onSubmit { model.setPersonName(nameText) }
@@ -439,7 +439,7 @@ extension SettingsView {
                     .pickerStyle(.segmented)
                     .accessibilityIdentifier("spot:dim")
                 } header: {
-                    Text("Look")
+                    Text("Look").foregroundStyle(PipStyle.muted)
                 } footer: {
                     Text(sp.lookSummary).accessibilityIdentifier("spot:lookSummary")
                 }

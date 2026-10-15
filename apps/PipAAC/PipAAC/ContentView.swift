@@ -28,11 +28,14 @@ struct ContentView: View {
                 WhosTalkingView()
                     .environmentObject(model)
             } else {
-                BoardView()
+                // The welcome / look / world screens cover the board: nothing
+                // behind them may be reached by VoiceOver or Switch Control.
+                BoardGate(flow: model.firstRun)
                     .environmentObject(model)
             }
         }
         .environment(\.wordsOnly, model.wordsOnly)
+        .tint(PipStyle.link)
         // First run (FirstRun.swift): the welcome sits over the board like
         // the web's .welcome layer; the demo's card sits on it.
         .overlay { FirstRunHost(flow: model.firstRun).environmentObject(model) }

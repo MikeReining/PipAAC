@@ -12,6 +12,7 @@ import SwiftUI
 struct BoardView: View {
     @EnvironmentObject var model: AppModel
     @State private var pinGate = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(spacing: 8) {
@@ -106,6 +107,9 @@ struct BoardView: View {
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundStyle(PipStyle.muted)
                                 .padding(.horizontal, 10)
+                                .frame(minHeight: 44)
+                                .contentShape(Rectangle())
+                                .accessibilityElement(children: .combine)
                         } else {
                             ForEach(Array(model.bar.enumerated()), id: \.offset) { i, chip in
                                 BarChip(display: chip.display ?? "", art: chip.art ?? chip.photoKey)
@@ -122,14 +126,20 @@ struct BoardView: View {
                     }
                     .padding(.vertical, 4)
                 }
-                .onTapGesture {
-                    if !model.bar.isEmpty { model.speak() }
-                }
+                // An empty bar has nothing to play: no tap target (a tiny
+                // "Tap a word to start." that claimed to be tappable failed the audit).
+                .modifier(PlayOnTap(enabled: !model.bar.isEmpty) { model.speak() })
                 .onChange(of: model.bar.count) { _, n in
-                    if n > 0 { withAnimation { proxy.scrollTo(n - 1, anchor: .trailing) } }
+                    if n > 0 { if reduceMotion { proxy.scrollTo(n - 1, anchor: .trailing) }
+                        else { withAnimation { proxy.scrollTo(n - 1, anchor: .trailing) } } }
                 }
             }
             .layoutPriority(1)
+            // The chips stay their own elements (VoiceOver reads the words in
+            // order); the bar itself offers Play as an action.
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel("Sentence")
+            .accessibilityAction(named: "Play") { if !model.bar.isEmpty { model.speak() } }
             .accessibilityIdentifier("sentenceBar")
 
             let editable = !model.bar.isEmpty || model.typing != nil
@@ -150,7 +160,7 @@ struct BoardView: View {
                     .tour(model.tourCard, kind: "button", id: "fix")
             }
             if model.controls.contains("question") {
-                TxButton(system: "questionmark", label: "Ask it",
+                TxButton(system: "questionmark", label: "Ask it as a question",
                          selected: model.question,
                          enabled: !model.bar.isEmpty,
                          spot: model.spot.controls["question"]) { model.transform("question") }
@@ -270,6 +280,7 @@ struct BoardView: View {
                           role: card.role, art: card.art ?? card.photoKey)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(card.label ?? "")
             .accessibilityIdentifier("strip:\(card.id ?? card.label ?? "?")")
             .tour(model.tourCard, kind: "strip", id: card.id)
         }
@@ -361,6 +372,9 @@ struct BoardView: View {
             }
             .buttonStyle(.plain)
             .spotMark(spotMark, dim: model.spot.dim)
+            // The word itself; Pip speaks it on tap, so no hint or second
+            // spoken form (044 A0: VoiceOver must not say it twice).
+            .accessibilityLabel(cell?.label ?? "")
             .accessibilityIdentifier("tile:\(cell?.id ?? "")")
             .accessibilityValue([
                 tileValue(photo: ((cell?.art ?? cell?.photoKey).flatMap { PipBlobs.url(forKey: $0) }) != nil,
@@ -432,6 +446,7 @@ struct BoardView: View {
                 WordTile(label: key.label ?? "", role: key.role, art: key.art)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(key.label ?? "")
             .accessibilityIdentifier("kbpartner:\(key.senseId ?? "")")
         case "empty":
             EmptyCell()
@@ -441,8 +456,19 @@ struct BoardView: View {
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("kbkey:\(key.value ?? "?")")
-            .accessibilityLabel(key.kind == "backspace" ? "Delete" : (key.value ?? ""))
+            .accessibilityLabel(key.kind == "backspace" ? "Backspace"
+                                : key.kind == "space" ? "space" : (key.value ?? ""))
+            .accessibilityAddTraits(key.latched == true ? .isSelected : [])
         }
+    }
+}
+
+/// Tap the bar to play it - only while there is something to play.
+private struct PlayOnTap: ViewModifier {
+    let enabled: Bool
+    let play: () -> Void
+    @ViewBuilder func body(content: Content) -> some View {
+        if enabled { content.onTapGesture(perform: play) } else { content }
     }
 }
 
@@ -616,6 +642,7 @@ struct TxButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: system)
+                .accessibilityHidden(true)
                 .font(.system(size: 18, weight: .semibold))
                 .frame(width: 44, height: 48)
                 .background(selected ? PipStyle.ink
@@ -628,6 +655,7 @@ struct TxButton: View {
         }
         .buttonStyle(.plain)
         .disabled(!enabled)
+        .accessibilityAddTraits(selected ? .isSelected : [])
         .spotMark(spot.map { SpotMark(glow: $0.glow, modeled: $0.modeled, count: $0.count) }, dim: 1)
         .accessibilityLabel(label)
         .accessibilityValue(spot?.modeled == true ? "modeled" : (spot?.glow == true ? "glowing" : ""))
@@ -643,6 +671,7 @@ struct BarButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: system)
+                .accessibilityHidden(true)
                 .font(.system(size: 20, weight: .semibold))
                 .frame(width: wide ? 64 : 48, height: 48)
                 .background(enabled ? Color.white : Color(white: 0.94))

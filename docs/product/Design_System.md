@@ -224,6 +224,32 @@ of every word the learner sees: tile labels, strip cards, sentence words,
 keycaps, anchors. Parent Corner sheets stay on the system font — adult
 chrome.
 
+## Accessibility (native iPad)
+
+Decided in 044 slice G; the web's `aria-label`s are the spoken words.
+
+- **A tile is one button whose label is the word and nothing else.** Pip
+  speaks the word on tap; the tile adds no hint and no second spoken form,
+  so VoiceOver never says it twice. Picture, role colour and the
+  "family photo / words only / likely next / glowing" state travel in the
+  accessibility *value*, not the label.
+- **Sentence buttons** are labelled exactly as `index.html`: Backspace,
+  Clear, Fix it, Ask it as a question, Say it in the past, Play, Say it in
+  the future. The tense pair and ❓ report `selected` when on. The sentence
+  bar is a container ("Sentence") whose chips read in order and which
+  offers a Play action.
+- **Larger text.** Text screens (Settings, Help, the welcome, sheets) scale
+  with Dynamic Type (`pipFont`); at the accessibility sizes Settings shows
+  its section list and one page at a time. **The board grid does not
+  reflow**: fixed word positions are the product (Platforms_iOS_And_Web
+  § 5), so tile labels keep their point size and shrink to fit
+  (`minimumScaleFactor`) instead of growing the tile.
+- **Reduce Motion** stops the tour ring and the Spotlight pulse (the
+  web's `prefers-reduced-motion` rules) and the sentence-bar auto-scroll.
+- **Touch targets**: chrome controls are at least 44 pt.
+- Links and tinted buttons use `PipStyle.link` (about 7:1) instead of the
+  system blue (about 3.9:1 on grouped backgrounds).
+
 ## Choosing a group's icon
 
 **Shipped 2026-10-05.** Settings →

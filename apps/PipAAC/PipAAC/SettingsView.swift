@@ -118,9 +118,13 @@ struct SettingsView: View {
         "\(me?.name ?? "")|\(pinOn)|\(me?.cardShownAt != nil)|\(model.team.state?.owner ?? true)|\(model.lifetime.licensed)|\(model.settings.map { "\($0)" } ?? "")|\(voice.pick?.currentName ?? "")"
     }
 
+    @Environment(\.dynamicTypeSize) private var typeSize
+    @ScaledMetric(relativeTo: .body) private var iconWidth: CGFloat = 26
+
     var body: some View {
         GeometryReader { geo in
-            let narrow = geo.size.width < 760
+            // Largest text: the section list takes the whole width (one list, then one page).
+            let narrow = geo.size.width < 760 || typeSize.isAccessibilitySize
             VStack(spacing: 0) {
                 header(narrow: narrow)
                 Divider()
@@ -171,31 +175,48 @@ struct SettingsView: View {
     // MARK: header (settings-ui.js .set-top)
 
     private func header(narrow: Bool) -> some View {
-        HStack(spacing: 14) {
+        let title = HStack(spacing: 14) {
             if let me {
                 PersonAvatar(person: me, size: 40)
             }
             VStack(alignment: .leading, spacing: 0) {
                 Text(hub?.unnamed == false ? (hub?.person ?? "Settings") : "Settings")
-                    .font(.system(size: 20, weight: .bold))
+                    .pipFont(20, .bold)
                     .foregroundStyle(PipStyle.ink)
+                    .accessibilityAddTraits(.isHeader)
                     .accessibilityIdentifier("settingsPerson")
                 Text("Settings").font(.caption).foregroundStyle(PipStyle.muted)
             }
             .accessibilityElement(children: .combine)
-            TextField("Search or ask: feelings, teacher, bigger…", text: $query)
-                .textFieldStyle(.roundedBorder)
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
-                .submitLabel(.search)
-                .frame(maxWidth: 520)
-                .accessibilityLabel("Search settings and help")
-                .accessibilityIdentifier("settingsSearch")
-            Spacer(minLength: 0)
-            Button("Done") { dismiss() }
-                .buttonStyle(.borderedProminent)
-                .tint(PipStyle.ink)
-                .accessibilityIdentifier("settingsDone")
+        }
+        let search = TextField("Search or ask: feelings, teacher, bigger…", text: $query)
+            // A plain field in our own rounded box: the system rounded-border
+            // field keeps a fixed height and clips at the largest text sizes.
+            .textFieldStyle(.plain)
+            .padding(.horizontal, 10).padding(.vertical, 8)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(PipStyle.muted.opacity(0.35), lineWidth: 1))
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
+            .submitLabel(.search)
+            .frame(maxWidth: typeSize.isAccessibilitySize ? .infinity : 520)
+            .accessibilityLabel("Search settings and help")
+            .accessibilityIdentifier("settingsSearch")
+        let done = Button("Done") { dismiss() }
+            .buttonStyle(.borderedProminent)
+            .tint(PipStyle.ink)
+            .accessibilityIdentifier("settingsDone")
+        return Group {
+            if typeSize.isAccessibilitySize {
+                // Largest text: the search field gets its own full-width line.
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(spacing: 14) { title; Spacer(minLength: 0); done }
+                    search
+                }
+            } else {
+                HStack(spacing: 14) { title; search; Spacer(minLength: 0); done }
+            }
         }
         .padding(.horizontal, 20).padding(.vertical, 12)
     }
@@ -210,9 +231,10 @@ struct SettingsView: View {
                     if sec.id == hub?.sections.first?.id || sec.group != group(before: sec) {
                         Text(sec.group == "you" ? "You"
                              : (hub?.unnamed == false ? (hub?.person ?? "") : "This person"))
-                            .font(.system(size: 12, weight: .bold))
+                            .pipFont(12, .bold)
                             .foregroundStyle(PipStyle.muted)
                             .textCase(.uppercase)
+                            .accessibilityAddTraits(.isHeader)
                             .padding(.horizontal, 12).padding(.top, 10).padding(.bottom, 4)
                     }
                     Button {
@@ -222,15 +244,15 @@ struct SettingsView: View {
                     } label: {
                         HStack(spacing: 12) {
                             Image(systemName: sectionIcons[sec.id] ?? "gearshape")
-                                .font(.system(size: 18))
-                                .frame(width: 26)
+                                .pipFont(18)
+                                .frame(width: iconWidth)
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(sec.title).font(.system(size: 17, weight: .semibold))
+                                Text(sec.title).pipFont(17, .semibold)
                                 if !sec.summary.isEmpty {
                                     Text(sec.summary)
-                                        .font(.system(size: 13))
+                                        .pipFont(13)
                                         .foregroundStyle(PipStyle.muted)
-                                        .lineLimit(2)
+                                        .lineLimit(typeSize.isAccessibilitySize ? nil : 2)
                                         .multilineTextAlignment(.leading)
                                 }
                             }
@@ -514,7 +536,7 @@ struct PinSheet: View {
                 .keyboardType(.numberPad)
                 .focused($focused)
                 .multilineTextAlignment(.center)
-                .font(.system(size: 28, weight: .medium, design: .monospaced))
+                .pipFont(28, .medium, design: .monospaced)
                 .frame(maxWidth: 220)
                 // Four digits is the whole PIN: act on the fourth.
                 .onChange(of: input) { _, v in

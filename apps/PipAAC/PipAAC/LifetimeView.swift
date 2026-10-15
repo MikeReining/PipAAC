@@ -149,7 +149,7 @@ struct LifetimeView: View {
         card {
             if let line = p.trialLine {
                 Text(line)
-                    .font(.system(size: 15, weight: .semibold))
+                    .pipFont(15, .semibold)
                     .padding(.horizontal, 12).padding(.vertical, 6)
                     .background(PipStyle.fill("Yellow"))
                     .clipShape(Capsule())
@@ -157,7 +157,7 @@ struct LifetimeView: View {
             }
             Text(p.title).font(.largeTitle.weight(.bold)).foregroundStyle(PipStyle.ink)
             HStack(alignment: .firstTextBaseline, spacing: 6) {
-                Text(p.price).font(.system(size: 34, weight: .heavy))
+                Text(p.price).pipFont(34, .heavy)
                 Text(p.priceNote).foregroundStyle(PipStyle.muted)
                 Text(p.priceFine).font(.footnote).foregroundStyle(PipStyle.muted)
             }
@@ -166,7 +166,7 @@ struct LifetimeView: View {
                 life.requestBuy()
             } label: {
                 Text(life.price.map { "Get Pip Lifetime · \($0)" } ?? "Get Pip Lifetime")
-                    .font(.system(size: 18, weight: .bold))
+                    .pipFont(18, .bold)
                     .frame(maxWidth: .infinity, minHeight: 52)
             }
             .buttonStyle(.borderedProminent)
@@ -239,7 +239,7 @@ struct LifetimeView: View {
             Text(p.featuresLabel).font(.headline)
             ForEach(p.features, id: \.title) { f in
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(f.title).font(.system(size: 17, weight: .semibold))
+                    Text(f.title).pipFont(17, .semibold)
                     Text(f.detail).font(.callout).foregroundStyle(PipStyle.muted)
                 }
                 .accessibilityElement(children: .combine)

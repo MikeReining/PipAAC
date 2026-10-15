@@ -110,7 +110,7 @@ private struct PhotoButton: View {
 
     private var label: some View {
         Text("\u{1F4F7} \(title)")
-            .font(.system(size: 16, weight: .semibold))
+            .pipFont(16, .semibold)
             .foregroundStyle(PipStyle.ink)
             .padding(.horizontal, 14).padding(.vertical, 10)
             .overlay(Capsule().strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [5, 3]))
@@ -130,7 +130,7 @@ struct CardPictureRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Picture")
-                .font(.system(size: 14, weight: .semibold))
+                .pipFont(14, .semibold)
                 .foregroundStyle(PipStyle.muted)
             FlowRow {
                 // E6 (word-card-pictures.js paint): the pictures to choose from, then Draw it.
@@ -146,7 +146,7 @@ struct CardPictureRow: View {
                 if card.media?.canUseOurs == true {
                     Button { model.useOurPicture(card) } label: {
                         Text("Use our picture")
-                            .font(.system(size: 16, weight: .semibold))
+                            .pipFont(16, .semibold)
                             .foregroundStyle(PipStyle.ink)
                             .padding(.horizontal, 14).padding(.vertical, 10)
                             .background(Color.white)
@@ -177,7 +177,8 @@ struct PersonAvatar: View {
                 Image(uiImage: ui).resizable().scaledToFill()
             } else {
                 Text(String(person.displayName.prefix(1)).uppercased())
-                    .font(.system(size: size * 0.45, weight: .bold))
+                    .font(.system(.title3, weight: .bold))   // Dynamic Type, shrunk into the circle
+                    .minimumScaleFactor(0.4)
                     .foregroundStyle(PipStyle.ink)
                     .frame(width: size, height: size)
                     .background(Color.white)

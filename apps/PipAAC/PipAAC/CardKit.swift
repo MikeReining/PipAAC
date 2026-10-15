@@ -80,14 +80,14 @@ struct CardImageView: View {
                         .frame(width: 560, height: 560).padding(.top, 24)
                 }
                 Text("Pip QR card")
-                    .font(.system(size: 26, weight: .semibold))
+                    .pipFont(26, .semibold)
                     .foregroundStyle(Color(red: 0.129, green: 0.192, blue: 0.247)) // #21313f
                     .padding(.top, 20)
                 LazyVGrid(columns: Array(repeating: GridItem(.fixed(190), alignment: .leading), count: 3),
                           alignment: .leading, spacing: 8) {
                     ForEach(Array(words.enumerated()), id: \.offset) { i, w in
                         Text("\(i + 1) \(w)")
-                            .font(.system(size: 24, design: .monospaced))
+                            .pipFont(24, design: .monospaced)
                             .foregroundStyle(Color(red: 0.129, green: 0.192, blue: 0.247))
                     }
                 }

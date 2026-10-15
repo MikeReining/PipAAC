@@ -341,7 +341,7 @@ struct AddWordView: View {
     private var header: some View {
         HStack(spacing: 12) {
             Text(state?.title ?? "Add a word")
-                .font(.system(size: 24, weight: .bold))
+                .pipFont(24, .bold)
                 .foregroundStyle(PipStyle.ink)
                 .accessibilityAddTraits(.isHeader)
             Button {
@@ -351,9 +351,9 @@ struct AddWordView: View {
                 HStack(spacing: 4) {
                     Text("to").foregroundStyle(PipStyle.muted)
                     Text(target.name).fontWeight(.bold)
-                    Image(systemName: "chevron.down").font(.system(size: 12, weight: .bold))
+                    Image(systemName: "chevron.down").pipFont(12, .bold)
                 }
-                .font(.system(size: 17))
+                .pipFont(17)
                 .foregroundStyle(PipStyle.ink)
                 .padding(.horizontal, 12).frame(minHeight: 44)
                 .background(Color.white)
@@ -366,7 +366,7 @@ struct AddWordView: View {
             Spacer()
             Button { model.addRequest = nil } label: {
                 Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 28))
+                    .pipFont(28)
                     .symbolRenderingMode(.palette)
                     .foregroundStyle(Color.white, PipStyle.muted)
                     .frame(width: 44, height: 44)
@@ -382,7 +382,7 @@ struct AddWordView: View {
     private var wordField: some View {
         TextField("Type a word", text: $text)
             .textFieldStyle(.roundedBorder)
-            .font(.system(size: 22))
+            .pipFont(22)
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
             .submitLabel(.done)
@@ -396,7 +396,7 @@ struct AddWordView: View {
         if let st = state {
             if !st.count.hidden {
                 Text(st.count.text)
-                    .font(.system(size: 14))
+                    .pipFont(14)
                     .foregroundStyle(PipStyle.muted)
                     .accessibilityIdentifier("add-count")
             }
@@ -414,15 +414,15 @@ struct AddWordView: View {
                 MatchPic(label: m.label, role: m.role, art: m.art, plus: m.kind == "make")
                 VStack(alignment: .leading, spacing: 2) {
                     Text(m.label)
-                        .font(.system(size: 20, weight: .semibold))
+                        .pipFont(20, .semibold)
                         .foregroundStyle(PipStyle.ink)
                     Text(m.sub)
-                        .font(.system(size: 14))
+                        .pipFont(14)
                         .foregroundStyle(PipStyle.muted)
                 }
                 Spacer()
                 Text(m.action)
-                    .font(.system(size: 15, weight: .bold))
+                    .pipFont(15, .bold)
                     .foregroundStyle(m.here ? PipStyle.muted : PipStyle.ink)
             }
             .padding(.horizontal, 14).padding(.vertical, 10)
@@ -459,7 +459,7 @@ struct AddWordView: View {
             TextField(naming ? "Name the new group" : "Find a group",
                       text: Binding(get: { pickerQuery ?? "" }, set: { pickerQuery = $0 }))
                 .textFieldStyle(.roundedBorder)
-                .font(.system(size: 20))
+                .pipFont(20)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .submitLabel(.go)
@@ -484,16 +484,16 @@ struct AddWordView: View {
     }
 
     private func head(_ s: String) -> some View {
-        Text(s).font(.system(size: 14, weight: .semibold))
+        Text(s).pipFont(14, .semibold)
             .foregroundStyle(PipStyle.muted).padding(.top, 6)
     }
 
     private func groupRow(_ g: AddGroupRow, prefix: String) -> some View {
         Button { choose(g.id) } label: {
             HStack {
-                Text(g.name).font(.system(size: 19, weight: .medium))
+                Text(g.name).pipFont(19, .medium)
                 Spacer()
-                if g.selected { Text("✓").font(.system(size: 19, weight: .bold)) }
+                if g.selected { Text("✓").pipFont(19, .bold) }
             }
             .foregroundStyle(PipStyle.ink)
             .padding(.horizontal, 14).frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
@@ -514,8 +514,8 @@ struct AddWordView: View {
             else { pickerQuery = ""; naming = true; focus = .group }
         } label: {
             HStack(spacing: 8) {
-                Text("+").font(.system(size: 22, weight: .bold))
-                Text(make.label).font(.system(size: 19, weight: .medium))
+                Text("+").pipFont(22, .bold)
+                Text(make.label).pipFont(19, .medium)
                 Spacer()
             }
             .foregroundStyle(PipStyle.ink)
@@ -567,7 +567,7 @@ struct MatchPic: View {
                 Image(uiImage: ui).resizable().scaledToFit().padding(3)
             } else {
                 Text(plus ? "+" : String(label.first.map { String($0).uppercased() } ?? ""))
-                    .font(.system(size: 22, weight: .bold))
+                    .pipFont(22, .bold)
                     .foregroundStyle(PipStyle.inkText)
             }
         }
@@ -591,11 +591,11 @@ struct OtherGroupsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text(model_.title)
-                .font(.system(size: 22, weight: .bold))
+                .pipFont(22, .bold)
                 .foregroundStyle(PipStyle.ink)
                 .accessibilityAddTraits(.isHeader)
             Text("Only the groups you pick change. Groups that already have this word are not listed.")
-                .font(.system(size: 15))
+                .pipFont(15)
                 .foregroundStyle(PipStyle.muted)
             ScrollView {
                 FlowRow {
@@ -605,7 +605,7 @@ struct OtherGroupsView: View {
                             if on { picked.remove(g.id) } else { picked.insert(g.id) }
                         } label: {
                             Text(g.name)
-                                .font(.system(size: 16, weight: .medium))
+                                .pipFont(16, .medium)
                                 .foregroundStyle(on ? Color.white : PipStyle.ink)
                                 .padding(.horizontal, 14).padding(.vertical, 10)
                                 .background(on ? PipStyle.ink : Color.white)
@@ -623,7 +623,7 @@ struct OtherGroupsView: View {
                 Button {
                     model.saveOtherGroups(model_, ids: model_.groups.map(\.id).filter(picked.contains))
                 } label: {
-                    Text("Add").font(.system(size: 18, weight: .semibold))
+                    Text("Add").pipFont(18, .semibold)
                         .frame(minWidth: 100, minHeight: 48)
                         .background(picked.isEmpty ? Color(white: 0.9) : PipStyle.ink)
                         .foregroundStyle(picked.isEmpty ? PipStyle.muted : Color.white)
@@ -633,7 +633,7 @@ struct OtherGroupsView: View {
                 .disabled(picked.isEmpty)
                 .accessibilityIdentifier("boards-save")
                 Button { model.otherGroups = nil } label: {
-                    Text("Cancel").font(.system(size: 18, weight: .semibold))
+                    Text("Cancel").pipFont(18, .semibold)
                         .frame(minWidth: 100, minHeight: 48)
                         .background(Color.white)
                         .foregroundStyle(PipStyle.ink)
@@ -663,7 +663,7 @@ struct PlaceView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text(list?.title ?? "What goes here?")
-                    .font(.system(size: 24, weight: .bold))
+                    .pipFont(24, .bold)
                     .foregroundStyle(PipStyle.ink)
                     .accessibilityAddTraits(.isHeader)
                 Spacer()
@@ -672,7 +672,7 @@ struct PlaceView: View {
             }
             TextField("Search words", text: $q)
                 .textFieldStyle(.roundedBorder)
-                .font(.system(size: 20))
+                .pipFont(20)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .accessibilityIdentifier("place-q")
@@ -685,14 +685,14 @@ struct PlaceView: View {
                         Button { model.placePick(slot: slot, row: r) } label: {
                             HStack {
                                 Text(r.label)
-                                    .font(.system(size: 19, weight: .semibold))
+                                    .pipFont(19, .semibold)
                                     .foregroundStyle(PipStyle.inkText)
                                     .padding(.horizontal, 12).padding(.vertical, 8)
                                     .background(PipStyle.fill(r.role))
                                     .clipShape(RoundedRectangle(cornerRadius: 8))
                                 Spacer()
                                 Text(String(r.count))
-                                    .font(.system(size: 15))
+                                    .pipFont(15)
                                     .foregroundStyle(PipStyle.muted)
                             }
                             .padding(.horizontal, 8).frame(minHeight: 48)
@@ -733,7 +733,7 @@ struct EditEmptyCell: View {
             ZStack {
                 EmptyCell()
                 Image(systemName: "plus")
-                    .font(.system(size: 18, weight: .semibold))
+                    .pipFont(18, .semibold)
                     .foregroundStyle(PipStyle.muted.opacity(0.6))
             }
             .contentShape(Rectangle())

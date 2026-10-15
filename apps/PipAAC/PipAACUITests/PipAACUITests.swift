@@ -68,7 +68,7 @@ final class PipAACUITests: XCTestCase {
 
         // All six controls show on a fresh profile (bar_controls NULL).
         XCTAssertTrue(app.buttons["Fix it"].exists)
-        XCTAssertTrue(app.buttons["Ask it"].exists)
+        XCTAssertTrue(app.buttons["Ask it as a question"].exists)
         XCTAssertTrue(app.buttons["Say it in the past"].exists)
         XCTAssertTrue(app.buttons["Say it in the future"].exists)
 
@@ -125,7 +125,7 @@ final class PipAACUITests: XCTestCase {
 
         XCTAssertTrue(app.buttons["want"].waitForExistence(timeout: 10))
         app.buttons["tile:sns_0013"].tap() // tile id — "want" is also a strip card
-        XCTAssertTrue(app.buttons["Ask it"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Ask it as a question"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["Clear"].exists)
         XCTAssertFalse(app.buttons["Fix it"].exists)
         XCTAssertFalse(app.buttons["Say it in the past"].exists)

@@ -154,7 +154,7 @@ struct CardVoiceRow: View {
         if let v = card.media?.voice {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Voice")
-                    .font(.system(size: 14, weight: .semibold))
+                    .pipFont(14, .semibold)
                     .foregroundStyle(PipStyle.muted)
                 FlowRow {
                     pill("\u{25B6}", v.name, selected: !v.mineOn, id: "wc-voicebase") {
@@ -169,14 +169,14 @@ struct CardVoiceRow: View {
                 }
                 if let h = recorder.hint {
                     Text(h)
-                        .font(.system(size: 14))
+                        .pipFont(14)
                         .foregroundStyle(PipStyle.muted)
                         .accessibilityIdentifier("wc-rechint")
                 }
                 if ProcessInfo.processInfo.arguments.contains("-pipUITestProbe") {
                     // UI-test instrument: the last clip the speaker played.
                     Text(model.lastClip ?? "none")
-                        .font(.system(size: 1))
+                        .pipFont(1)
                         .accessibilityIdentifier("wc-lastclip")
                         .accessibilityLabel(model.lastClip ?? "none")
                 }
@@ -190,10 +190,10 @@ struct CardVoiceRow: View {
                       action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 6) {
-                Text(dot).font(.system(size: 12))
+                Text(dot).pipFont(12)
                 Text(title)
             }
-            .font(.system(size: 16, weight: .semibold))
+            .pipFont(16, .semibold)
             .foregroundStyle(PipStyle.ink)
             .padding(.horizontal, 14).padding(.vertical, 10)
             .background(selected ? PipStyle.fill(nil) : Color.white)
@@ -221,7 +221,7 @@ struct CardVoiceRow: View {
                     Text(again ? "\u{1F399} Again" : "\u{1F399} Record your voice")
                 }
             }
-            .font(.system(size: 16, weight: .semibold))
+            .pipFont(16, .semibold)
             .foregroundStyle(recorder.recording ? Color.red : PipStyle.ink)
             .padding(.horizontal, 14).padding(.vertical, 10)
             .overlay(Capsule().strokeBorder(style: StrokeStyle(lineWidth: 1.5,

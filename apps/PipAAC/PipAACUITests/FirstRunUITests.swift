@@ -147,7 +147,7 @@ final class FirstRunUITests: XCTestCase {
         fix.tap()
         XCTAssertTrue(app.staticTexts["apple."].waitForExistence(timeout: 10), "✨ made it 'You want an apple.'")
         shot(app, "09-tour-ask")
-        app.buttons["Ask it"].tap()
+        app.buttons["Ask it as a question"].tap()
         XCTAssertTrue(app.staticTexts["apple?"].waitForExistence(timeout: 10), "❓ made it 'Do you want an apple?'")
         XCTAssertTrue(app.buttons["tour:go"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.buttons["tour:voices"].exists)
