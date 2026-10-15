@@ -16,7 +16,7 @@ High-Risk Stop: nothing is submitted until the founder signs off on § 3–4.
 | Price | Free download; in-app purchase Pip Lifetime for one user |
 | Support URL | https://pipaac.org/faq |
 | Marketing URL | https://pipaac.org |
-| Privacy policy URL | https://pipaac.org/privacy (needs the § 4 additions first) |
+| Privacy policy URL | https://pipaac.org/privacy |
 
 **Promotional text (170):** Your child taps the words; Pip says the
 sentence out loud in a natural voice — using only the words your child
@@ -90,9 +90,9 @@ word voices), Groq (sentence buttons, names masked to PERSON1), picture
 providers (word only). The trial's anti-abuse day counter stores a salted
 hash of the IP, never the address (`trial.mjs ipHashFor`).
 
-## 4. Privacy policy gaps (site/public/privacy.html) — founder sign-off
+## 4. Privacy policy additions (site/public/privacy.html)
 
-The page is accurate for the web board but is missing:
+Approved by the founder 2026-10-15 and live on pipaac.org/privacy:
 
 1. **Accounts:** "If a grown-up makes a supporter account, we keep the email
    address to send sign-in links and invites. Passkeys stay on your devices;
@@ -127,7 +127,8 @@ hello@pipaac.org.
 
 - [ ] Build from `npm run ios:archive` uploaded via Organizer; TestFlight
       passes P1, P3, P7 on the A16 iPad.
-- [ ] § 3 answers entered; § 4 policy deployed to pipaac.org first.
+- [x] § 4 policy deployed to pipaac.org (2026-10-15).
+- [ ] § 3 answers entered.
 - [ ] IAP created, attached to the version, reviewed together.
 - [ ] Paid Apps agreement, banking, tax active.
 - [ ] Screenshots, description, keywords, age rating, review notes.
