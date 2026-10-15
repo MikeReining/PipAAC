@@ -46,6 +46,7 @@ const cand = (id, n = 0) => ({ image_id: id, asset: id.startsWith("drw_")
 const worker = {
   log: [],
   entitled: true,
+  trial: true,        // the person started a trial (the free five)
   left: 3,
   finds: new Map(),         // normalized text -> find result
   drawStatus: 200,
@@ -68,7 +69,10 @@ function workerHandle({ url, method, headers, body }) {
   worker.log.push({ path: u.pathname, method, headers, body: json });
   const jsonRes = (o, status = 200) => ({ status, headers: [["content-type", "application/json"]],
     body: b64u(Buffer.from(JSON.stringify(o))) });
-  const licensed = (json?.license ?? headers["x-pip-license"]) === LICENSE;
+  // picturesAllowed (src/worker/trial.mjs): a valid license, or - with none
+  // presented - a board that started its trial. A forged license is refused.
+  const presented = json?.license ?? headers["x-pip-license"] ?? "";
+  const licensed = presented === LICENSE || (!presented && worker.trial);
   if (u.pathname.startsWith("/api/v1/pictures/") && !(worker.entitled && licensed)) {
     return jsonRes({ error: "bad_license" }, 403);
   }

@@ -188,14 +188,24 @@ test("not entitled: the Worker's 403 shows the web's gate copy, and with no lice
   assert.equal(photoOf(id), null);
   assert.equal(worker.of("/api/v1/pictures/draw").length, 0);
 
-  // No license stored (a trial-only person): the client never asks - "unavailable".
+  // No license stored (a free board that started its trial): the request still
+  // goes, with no license, and the free five apply - results, not a gate.
+  worker.entitled = true;
   const had = keystore.get(`user/${USER}/license`);
   keystore.delete(`user/${USER}/license`);
   events.length = 0;
-  const before = worker.log.length;
   const id2 = newWord("lemon");
   pics.cardOpen(appId, { kind: "entity", id: id2 });
-  await until(() => lastRow("entity", id2)?.line === "We'll find a picture when you're back online.", "unavailable copy");
-  assert.equal(worker.log.length, before, "no picture request leaves without a license");
+  await until(() => photoOf(id2), "a free board gets its close picture");
+  const f = worker.of("/api/v1/pictures/find").at(-1);
+  assert.equal(f.body.license ?? null, null, "no license is sent, none is invented");
+  assert.equal(f.body.user_id, USER);
+
+  // No trial started: still refused, with the web's gate copy.
+  worker.trial = false;
+  const id3 = newWord("plumcake");
+  pics.cardOpen(appId, { kind: "entity", id: id3 });
+  await until(() => lastRow("entity", id3)?.line === "Couldn't make a picture. Try again, or add a photo.", "denied copy");
+  worker.trial = true;
   keystore.set(`user/${USER}/license`, had);
 });
