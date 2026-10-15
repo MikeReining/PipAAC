@@ -32,7 +32,7 @@ struct ContentView: View {
                     .environmentObject(model)
             }
         }
-        .environment(\.pipWordsOnly, model.wordsOnly)
+        .environment(\.wordsOnly, model.wordsOnly)
         // First run (FirstRun.swift): the welcome sits over the board like
         // the web's .welcome layer; the demo's card sits on it.
         .overlay { FirstRunHost(flow: model.firstRun).environmentObject(model) }

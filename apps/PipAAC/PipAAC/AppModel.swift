@@ -213,7 +213,8 @@ final class AppModel: ObservableObject {
     /// Bumped when a picture changed the board behind an open sheet (the Library refreshes).
     @Published var picTick = 0
     var editToastSeq = 0
-    @Published private(set) var settings: SettingsModel?
+    /// The synced settings; the "Words only" look follows them (one value for board, bar and first run).
+    @Published private(set) var settings: SettingsModel? { didSet { wordsOnly = settings?.look == "label" } }
     /// First run (FirstRun.swift, 044 E7): the demo's current card while it
     /// runs (nil otherwise), and the open person's "Words only" look.
     let firstRun = FirstRunFlow()

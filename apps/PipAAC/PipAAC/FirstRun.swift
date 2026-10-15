@@ -517,7 +517,7 @@ private struct ChoiceButton: View {
                         ForEach(preview) { t in
                             WordTile(label: t.label, role: t.role, art: t.art)
                                 .frame(width: 84, height: 84)
-                                .environment(\.pipWordsOnly, wordsOnly)
+                                .environment(\.wordsOnly, wordsOnly)
                         }
                     }
                 }

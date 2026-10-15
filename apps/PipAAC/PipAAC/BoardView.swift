@@ -38,7 +38,7 @@ struct BoardView: View {
         .fullScreenCover(isPresented: $model.showSettings) {
             SettingsView(model: model)
                 .environmentObject(model)
-                .environment(\.wordsOnly, model.settings?.look == "label")
+                .environment(\.wordsOnly, model.wordsOnly)
         }
         .sheet(isPresented: $model.showLifetime) {
             LifetimeSheet().environmentObject(model)
@@ -52,7 +52,7 @@ struct BoardView: View {
                 .environmentObject(model)
         }
         // Presentation mode (BS-22): one value, read by every tile.
-        .environment(\.wordsOnly, model.settings?.look == "label")
+        .environment(\.wordsOnly, model.wordsOnly)
         // card / add a word / "Also in" / place — one sheet (AddWordView.swift)
         .modifier(EditSheets(inLibrary: false))
         .overlay(alignment: .bottom) { EditToastOverlay() }
@@ -348,7 +348,7 @@ struct BoardView: View {
             .accessibilityIdentifier("tile:\(cell?.id ?? "")")
             .accessibilityValue([
                 tileValue(photo: ((cell?.art ?? cell?.photoKey).flatMap { PipBlobs.url(forKey: $0) }) != nil,
-                          wordsOnly: model.settings?.look == "label", count: nil),
+                          wordsOnly: model.wordsOnly, count: nil),
                 spotMark?.a11y,
             ].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", "))
         case "groups":
