@@ -8556,6 +8556,10 @@ ${a.a}` }
   var openAccountPrivWithPrf = (env, prf) => call("account.open", { env: { iv: env.iv, sealed: env.sealed }, prf });
 
   // public/shared/sync_client.mjs
+  var fetch2 = (url, init) => timedFetch(url, init).catch((e) => {
+    throw Object.assign(e instanceof Error ? e : new Error(String(e)), { unreachable: true });
+  });
+  var relayUnreachable = (e) => e?.unreachable === true || e?.status === 408 || e?.status === 429 || e?.status >= 500;
   var te4 = new TextEncoder();
   var hex = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
   async function signedHeaders(identity, method, path, body) {
@@ -8575,7 +8579,7 @@ ${bodyHash}`);
     const call2 = async (method, suffix, body) => {
       const bytes2 = body === void 0 ? void 0 : te4.encode(JSON.stringify(body));
       const signedPath = path(suffix).split("?")[0];
-      const res = await timedFetch(`${baseUrl}${path(suffix)}`, {
+      const res = await fetch2(`${baseUrl}${path(suffix)}`, {
         method,
         headers: {
           ...bytes2 ? { "content-type": "application/json" } : {},
@@ -8648,7 +8652,7 @@ ${bodyHash}`);
       async putSnapshot(payload, seq) {
         const p = path(`/snapshot?seq=${seq}`);
         const body = te4.encode(JSON.stringify(payload));
-        const res = await timedFetch(`${baseUrl}${p}`, {
+        const res = await fetch2(`${baseUrl}${p}`, {
           method: "PUT",
           headers: {
             "content-type": "application/json",
@@ -8661,7 +8665,7 @@ ${bodyHash}`);
       },
       async getSnapshot() {
         const p = path("/snapshot");
-        const res = await timedFetch(`${baseUrl}${p}`, {
+        const res = await fetch2(`${baseUrl}${p}`, {
           headers: await signedHeaders(identity, "GET", p, null)
         });
         if (res.status === 404) return null;
@@ -8672,7 +8676,7 @@ ${bodyHash}`);
       async putBlob(sealed) {
         const p = path(`/blobs/${sealed.sha}`);
         const body = te4.encode(JSON.stringify(sealed.env));
-        const res = await timedFetch(`${baseUrl}${p}`, {
+        const res = await fetch2(`${baseUrl}${p}`, {
           method: "PUT",
           headers: { "content-type": "application/json", ...await signedHeaders(identity, "PUT", p, body) },
           body
@@ -8685,7 +8689,7 @@ ${bodyHash}`);
       },
       async getBlob(sha) {
         const p = path(`/blobs/${sha}`);
-        const res = await timedFetch(`${baseUrl}${p}`, {
+        const res = await fetch2(`${baseUrl}${p}`, {
           headers: await signedHeaders(identity, "GET", p, null)
         });
         if (!res.ok) throw Object.assign(
@@ -8709,7 +8713,7 @@ ${ts}`);
     };
   }
   async function restoreByProof(baseUrl, { proof, device_id, pubkey, dh_pub }) {
-    const res = await timedFetch(`${baseUrl}/restore`, {
+    const res = await fetch2(`${baseUrl}/restore`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ device_id, pubkey, dh_pub, proof })
@@ -8718,7 +8722,7 @@ ${ts}`);
     return res.json();
   }
   async function joinDeviceWithToken(baseUrl, userId, { token, device_id, pubkey, dh_pub }) {
-    const res = await timedFetch(`${baseUrl}/users/${userId}/devices`, {
+    const res = await fetch2(`${baseUrl}/users/${userId}/devices`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ device_id, pubkey, dh_pub, join_token: token })
@@ -8738,13 +8742,13 @@ ${ts}`);
     return {
       /** The device that has the user opens a code (and QR) to show. */
       offer: async () => {
-        const res = await timedFetch(`${baseUrl}/pair`, { method: "POST" });
+        const res = await fetch2(`${baseUrl}/pair`, { method: "POST" });
         if (!res.ok) await fail(res, "pair offer");
         return res.json();
       },
       /** The new device claims a typed code with its public keys. */
       claim: async (code, { device_id, sig_pub, dh_pub, label }) => {
-        const res = await timedFetch(`${baseUrl}/pair/${code}/claim`, {
+        const res = await fetch2(`${baseUrl}/pair/${code}/claim`, {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ device_id, sig_pub, dh_pub, label })
@@ -8753,12 +8757,12 @@ ${ts}`);
         return res.json();
       },
       status: async (code) => {
-        const res = await timedFetch(`${baseUrl}/pair/${code}`);
+        const res = await fetch2(`${baseUrl}/pair/${code}`);
         if (!res.ok) await fail(res, "pair status");
         return res.json();
       },
       grant: async (code, g2) => {
-        const res = await timedFetch(`${baseUrl}/pair/${code}/grant`, {
+        const res = await fetch2(`${baseUrl}/pair/${code}/grant`, {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(g2)
@@ -9265,6 +9269,10 @@ ${ts}`);
     let chain = Promise.resolve();
     const enqueue = (job) => chain = chain.then(() => stopped ? void 0 : job()).catch((err) => {
       if (stopped) return;
+      if (relayUnreachable(err)) {
+        console.warn("sync: relay unreachable", err);
+        return;
+      }
       ingestError = String(err?.stack || err);
       console.warn("sync: ingest failed", err);
     });

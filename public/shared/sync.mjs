@@ -18,7 +18,7 @@ import {
   getDeviceIdentity, getUserKey, openBlob, openKeyStore, openOp,
   putUserKey, sealOp, sealBlob, unwrapUserKey, userKeyName,
 } from "./sync_crypto.mjs";
-import { relayClient } from "./sync_client.mjs";
+import { relayClient, relayUnreachable } from "./sync_client.mjs";
 import { withDeadline } from "./bounded.mjs";
 import { onOnline, onVisible } from "./platform.mjs";
 import { completeRemovalRotation, resumeRecoveryCard, resumeSupporterRegrant } from "./rotation.mjs";
@@ -359,6 +359,9 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
   let chain = Promise.resolve();
   const enqueue = (job) => (chain = chain.then(() => (stopped ? undefined : job())).catch((err) => {
     if (stopped) return;
+    // A relay we cannot reach is offline, not a failed replay: the editor
+    // says "Offline — will sync" and the next connect retries the catch-up.
+    if (relayUnreachable(err)) { console.warn("sync: relay unreachable", err); return; }
     ingestError = String(err?.stack || err);
     console.warn("sync: ingest failed", err);
   }));

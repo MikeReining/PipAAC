@@ -5,7 +5,17 @@
  * The relay sees ciphertext only; openOps happen on this side.
  */
 import { sealOp, openOp, signPayload } from "./sync_crypto.mjs";
-import { timedFetch as fetch } from "./bounded.mjs";
+import { timedFetch } from "./bounded.mjs";
+
+/** The relay never answered (offline, DNS, stall): the error is tagged so
+ *  callers can tell "unreachable" from a relay that answered with an error. */
+const fetch = (url, init) => timedFetch(url, init).catch((e) => {
+  throw Object.assign(e instanceof Error ? e : new Error(String(e)), { unreachable: true });
+});
+
+/** Offline, stalled, 408, 429 or 5xx: a later retry may succeed. */
+export const relayUnreachable = (e) =>
+  e?.unreachable === true || e?.status === 408 || e?.status === 429 || e?.status >= 500;
 
 const te = new TextEncoder();
 const hex = (buf) =>

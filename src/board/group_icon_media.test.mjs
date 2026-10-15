@@ -42,7 +42,8 @@ test("a pinned group's photo is encrypted and uploaded even when no word refers 
           putBlob: async (sealed) => { globalThis.__pipGroupMedia.sent.push(sealed); },
           getBlob: async () => { throw Object.assign(new Error("missing"), { status: 404 }); },
           wsUrl: async () => "wss://test.invalid"
-        });`,
+        });
+        export { relayUnreachable } from ${JSON.stringify(realCrypto.replace("sync_crypto.mjs", "sync_client.mjs"))};`,
       };
       return sources[url] ? { format: "module", source: sources[url], shortCircuit: true } : next(url, ctx);
     },

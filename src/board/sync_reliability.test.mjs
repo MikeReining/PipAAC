@@ -75,6 +75,7 @@ registerHooks({
       "virtual:client-rel": `
         export const relayClient = (opts) =>
           globalThis.__pipSyncReliabilityShared.relayClient(opts);
+        export { relayUnreachable } from ${JSON.stringify(pathToFileURL(join(sharedDir, "sync_client.mjs")).href)};
       `,
       "virtual:crypto-rel": `
         export * from ${JSON.stringify(realCrypto)};
@@ -377,6 +378,34 @@ test("F11: ingest failure is honest — a poisoned op leaves ingestError set, no
   await settle();
   assert.ok(r.syncHealth().ingestError, "failed replay never surfaced");
   assert.equal(r.user.sync.cursor, 0, "cursor claimed coverage of a failed replay");
+});
+
+test("unreachable relay: the real client tags a fetch that never answered; 503 counts too", async () => {
+  const { relayClient, relayUnreachable } = await import(pathToFileURL(join(sharedDir, "sync_client.mjs")).href);
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async () => { throw new TypeError("Failed to fetch"); };
+  try {
+    const c = relayClient({ userId: "u1", baseUrl: "http://relay.invalid",
+      identity: await getDeviceIdentity(memoryKeyStore()), userKey: await newUserKey() });
+    const err = await c.fetchOps(0, 10).then(() => null, (e) => e);
+    assert.ok(err instanceof TypeError, "the original error type is kept");
+    assert.equal(relayUnreachable(err), true);
+  } finally { globalThis.fetch = realFetch; }
+  assert.equal(relayUnreachable({ status: 503 }), true);
+  assert.equal(relayUnreachable({ status: 400 }), false);
+  assert.equal(relayUnreachable(new Error("sync: database save failed; catch-up paused")), false);
+});
+
+test("unreachable relay: a catch-up that cannot reach the relay reads Offline, not a failed update", async () => {
+  const { editorStatus } = await import("../../public/board/editor-find.js");
+  const offline = () => { throw Object.assign(new TypeError("Failed to fetch"), { unreachable: true }); };
+  const r = await runtime({ fetchOps: async () => offline(), submit: async () => offline() });
+  createEntity(r.db, { name: "Grandma" }); // a pending edit the relay cannot take
+  await sleep(500); // past the 300 ms flush debounce
+  const h = r.syncHealth();
+  assert.equal(h.ingestError, null, "an offline relay was reported as a failed replay");
+  assert.ok(h.flushError, "the failed send is the offline signal");
+  assert.equal(editorStatus({ linked: true, pending: 1, online: true, ...h }).text, "Offline — will sync");
 });
 
 test("F12: import marks an unjoined user pendingJoin — keys present, relay access unproven", async () => {

@@ -90,6 +90,7 @@ registerHooks({
       "virtual:client": `
         export const relayClient = (opts) =>
           globalThis.__pipSyncTestShared.relayClient(opts);
+        export { relayUnreachable } from ${JSON.stringify(pathToFileURL(join(sharedDir, "sync_client.mjs")).href)};
       `,
       "virtual:crypto": `
         export * from ${JSON.stringify(realCrypto)};

@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.25-a28bb0dbcda2",
-  "version": "1.1.25",
-  "payloadHash": "a28bb0dbcda2",
+  "buildId": "1.1.26-d6a98bbe6cd0",
+  "version": "1.1.26",
+  "payloadHash": "d6a98bbe6cd0",
   "files": [
     {
       "path": "/board.js",
@@ -1010,8 +1010,8 @@
     },
     {
       "path": "/shared/sync_client.mjs",
-      "bytes": 13783,
-      "sha256": "0bdb47f01228702f6560a7f2cd506d6277e7c4d1b9c9bec8121fae197a9a5276"
+      "bytes": 14291,
+      "sha256": "0d768d511e1c6d8c15e4e7a2d7b9c1fb1b39e531a63ab4bd7d52f884c3b2933a"
     },
     {
       "path": "/shared/sync_crypto.mjs",
@@ -1020,8 +1020,8 @@
     },
     {
       "path": "/shared/sync.mjs",
-      "bytes": 33737,
-      "sha256": "6ebb61336047e9bfdd406202e3b5e4af0e4a708af02bcb5ca1d3db34d806bce3"
+      "bytes": 33998,
+      "sha256": "8e7f1e624b026bd3c09dec6669e3ed0041ee3a7a092ded8588863f368da8cf8d"
     },
     {
       "path": "/shared/team_names.mjs",
