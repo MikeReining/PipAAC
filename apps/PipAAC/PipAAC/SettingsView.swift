@@ -34,6 +34,13 @@ nonisolated struct HubChecklistItem: Decodable, Sendable, Identifiable {
     let hint: String
 }
 
+/// SY-11 (settings-ui.js renderProtect): the Protect line above the checklist.
+nonisolated struct HubProtect: Decodable, Sendable {
+    let visible: Bool
+    let title: String
+    let summary: String
+}
+
 nonisolated struct HubChecklist: Decodable, Sendable {
     let visible: Bool
     let title: String
@@ -52,6 +59,7 @@ nonisolated struct HubModel: Decodable, Sendable {
     let unnamed: Bool
     let sections: [HubSection]
     let checklist: HubChecklist
+    let protect: HubProtect
     let glance: [HubGlance]
 }
 
@@ -107,7 +115,7 @@ struct SettingsView: View {
 
     /// Everything the hub's text depends on; a change reloads it.
     private var hubKey: String {
-        "\(me?.name ?? "")|\(pinOn)|\(model.lifetime.licensed)|\(model.settings.map { "\($0)" } ?? "")|\(voice.pick?.currentName ?? "")"
+        "\(me?.name ?? "")|\(pinOn)|\(me?.cardShownAt != nil)|\(model.team.state?.owner ?? true)|\(model.lifetime.licensed)|\(model.settings.map { "\($0)" } ?? "")|\(voice.pick?.currentName ?? "")"
     }
 
     var body: some View {
@@ -150,6 +158,10 @@ struct SettingsView: View {
             Task { await help.load(childName: model.activeName == "this person" ? "" : model.activeName) }
         }
         .task(id: hubKey) { await loadHub() }
+        // A universal sign-in link: land on Your account (AccountView takes it).
+        .onChange(of: model.incomingSignIn, initial: true) { _, link in
+            if link != nil { section = "account"; narrowOnPage = true }
+        }
         .onReceive(model.lifetime.objectWillChange) { _ in Task { await loadHub() } }
         .onChange(of: pinOn) { _, _ in biometricOn = PipBiometric.enabled }
         .onChange(of: query) { _, q in help.setQuery(q) }
@@ -329,7 +341,8 @@ struct SettingsView: View {
 
     private func loadHub() async {
         let h: HubModel? = try? await model.coreValueAny(
-            "PIPCORE.settingsUi", "hub", [["name": me?.name ?? "", "pinOn": pinOn, "licensed": model.lifetime.licensed]])
+            "PIPCORE.settingsUi", "hub", [["name": me?.name ?? "", "pinOn": pinOn, "licensed": model.lifetime.licensed,
+                                      "cardMade": me?.cardShownAt != nil, "team": model.team.state?.owner == false]])
         if let h { hub = h }
         spotPage = try? await model.coreValueAny(
             "PIPCORE.lang", "spotlightPage", [["role": me?.role ?? "", "name": me?.name ?? ""]])

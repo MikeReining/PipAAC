@@ -75,11 +75,19 @@ export function syncStartDb(db, userRow, baseUrl, opts) {
   return { accepted: true };
 }
 
+/** SY-12 (native-only; the web shows its generic "Couldn't apply an
+ *  update"): sync.mjs adoptRemoteSnapshot throws "snapshot version N newer
+ *  than supported M" when the relay holds a format this build cannot
+ *  read. The cursor does not move and pending sync_op rows are untouched. */
+export const isIncompatible = (e) =>
+  /snapshot version \d+ newer than supported/.test(String(e?.message ?? e ?? ""));
+
 /** The web's syncHealth(), JSON-safe (Errors flattened to their message). */
 export function syncHealth() {
   const h = health();
   const msg = (e) => (e == null ? null : String(e.message ?? e));
   return { running: h.running, flushError: msg(h.flushError), ingestError: msg(h.ingestError),
+    incompatible: isIncompatible(h.ingestError),
     rotationError: msg(h.rotationError), mediaPending: h.mediaPending, mediaError: msg(h.mediaError) };
 }
 

@@ -63,6 +63,28 @@ extension SettingsView {
                 .accessibilityIdentifier("settings:addWord")
             }
 
+            // SY-11: the Protect line (settings-ui.js renderProtect) leads
+            // the checklist and opens Backup & privacy.
+            if let p = hub?.protect, p.visible {
+                Section {
+                    Button {
+                        section = "backup"
+                        narrowOnPage = true
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "exclamationmark.circle.fill").foregroundStyle(PipStyle.ink)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(p.title).font(.headline).foregroundStyle(PipStyle.ink)
+                                Text(p.summary).font(.subheadline).foregroundStyle(PipStyle.muted)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right").foregroundStyle(PipStyle.muted)
+                        }
+                    }
+                    .accessibilityIdentifier("settings:protect")
+                }
+            }
+
             if let c = hub?.checklist, c.visible {
                 Section {
                     ForEach(c.items) { it in

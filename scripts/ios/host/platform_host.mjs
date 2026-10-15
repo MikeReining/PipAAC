@@ -16,6 +16,14 @@ export const onHidden = (fn) => { listeners.hidden.add(fn); };
 export const onPageHide = (fn) => { listeners.hidden.add(fn); };
 
 globalThis.__pipPlatformEvent = (kind) => {
+  /* navigator.onLine's stand-in: Swift reports every NWPath verdict change
+   * ("netUp" / "netDown"); facade code reads globalThis.__pipOnline
+   * (strip.js facesOn: `navigator.onLine !== false`) and Swift repaints. */
+  if (kind === "netUp" || kind === "netDown") {
+    globalThis.__pipOnline = kind === "netUp";
+    globalThis.__pipHost?.emit?.("net.changed", JSON.stringify({ online: kind === "netUp" }));
+    return;
+  }
   for (const fn of [...(listeners[kind] ?? [])]) {
     try { fn(); } catch (err) { console.error(`platform ${kind}: ${err?.stack ?? err}`); }
   }

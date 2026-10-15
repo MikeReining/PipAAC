@@ -94,6 +94,15 @@ struct AccountView: View {
         .navigationTitle("Your account")
         .teamToast(team)
         .onAppear { flow.refreshAccount(); team.refresh() }
+        // A universal link is a paste: same field, same Sign in.
+        .onChange(of: model.incomingSignIn, initial: true) { _, link in
+            guard let link else { return }
+            model.incomingSignIn = nil
+            flow.refreshAccount()
+            guard flow.signedInEmail == nil, !hidden else { return }
+            pasted = link
+            flow.signIn(pasted: link)
+        }
     }
 }
 

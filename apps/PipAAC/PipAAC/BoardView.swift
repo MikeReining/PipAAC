@@ -40,6 +40,13 @@ struct BoardView: View {
                 .environmentObject(model)
                 .environment(\.wordsOnly, model.wordsOnly)
         }
+        // A universal sign-in link opens Settings like the gear does - PIN
+        // first when one is set - and Settings lands on Your account.
+        .onChange(of: "\(model.incomingSignIn ?? "")|\(model.activeId ?? "")", initial: true) { _, _ in
+            // (keyed on the open person too: a cold-launch link waits for the core)
+            guard model.incomingSignIn != nil, model.activeId != nil, !model.showSettings else { return }
+            if PipPin.isSet { pinGate = true } else { model.openSettings() }
+        }
         .sheet(isPresented: $model.showLifetime) {
             LifetimeSheet().environmentObject(model)
         }

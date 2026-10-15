@@ -103,12 +103,18 @@ export function cardSetKind(appId, { id, role }) {
  *  else is read here. The native database is durable per statement, so
  *  there is no "dirty"/"blocked" state; `saveError` is a core write that
  *  threw. */
+/** SY-12: a relay newer than this build is refused visibly (the web has
+ *  no equivalent: it says "Couldn't apply an update"). Edits stay pending. */
+export const INCOMPATIBLE_TEXT = "Update Pip to sync — your changes are kept on this iPad";
+export const withProtocol = (h, status) =>
+  h.incompatible ? { text: INCOMPATIBLE_TEXT, tone: "warn" } : status;
+
 export function editorStatusOf(appId, { linked = false, online = true, saveError = false } = {}) {
   const s = appSession(appId);
   const pending = one(s.d, "SELECT COUNT(*) AS n FROM sync_op WHERE relay_seq IS NULL")?.n ?? 0;
   const h = syncHealth();
-  return editorStatus({
+  return withProtocol(h, editorStatus({
     linked, pending, online, ...h,
     saveBlocked: false, saveError, dirty: false,
-  });
+  }));
 }

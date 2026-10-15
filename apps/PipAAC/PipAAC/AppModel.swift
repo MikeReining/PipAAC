@@ -210,6 +210,9 @@ final class AppModel: ObservableObject {
     @Published private(set) var question = false
     @Published private(set) var toast: String?
     @Published var showSettings = false
+    /// A universal link (IncomingLinks.swift) waiting to be pasted into
+    /// Your account; the account page takes it and clears it.
+    @Published var incomingSignIn: String?
     // Edit mode + word card (EditMode.swift) — render state only.
     @Published var editing = false
     /// BS-24 / SN-10: the face that is dark while its audio is on the way.
@@ -308,6 +311,7 @@ final class AppModel: ObservableObject {
         speaker.onPlay = { [weak self] k in self?.lastClip = k }
         wireMediaStates()
         startMediaTestHook()
+        openURLFromLaunchArgument()
         Task { @MainActor in
             do {
                 UITestHooks.resetIfRequested()

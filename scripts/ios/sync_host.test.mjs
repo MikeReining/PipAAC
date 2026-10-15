@@ -55,6 +55,9 @@ class FakeRelay {
     this.badSig = [];
     this.fetchOpsCalls = 0;
     this.stallFetchOps = 0;   // next N GET /ops requests never answer
+    this.snapshot = null;     // { e, env } the relay serves on GET /snapshot
+    this.snapSeq = 0;         // prune point reported with GET /ops
+    this.refuseOps = null;    // { status, json } answered to every POST /ops
   }
   async addOps(ops) {
     const rows = [];
@@ -81,16 +84,19 @@ class FakeRelay {
     if (method === "GET" && p === "/devices/self") {
       return { status: 200, json: { current_epoch: 1, wrapped_key: null, wrapped_keys: {}, rotate_min_epoch: 0 } };
     }
-    if (method === "GET" && p === "/snapshot") return { status: 404, json: { error: "none" } };
+    if (method === "GET" && p === "/snapshot") {
+      return this.snapshot ? { status: 200, json: this.snapshot } : { status: 404, json: { error: "none" } };
+    }
     if (method === "GET" && p === "/supporters") return { status: 200, json: { supporters: [] } };
     if (method === "GET" && p === "/devices") return { status: 200, json: { devices: [], current_epoch: 1 } };
     if (method === "GET" && p === "/ops") {
       this.fetchOpsCalls++;
       if (this.stallFetchOps > 0) { this.stallFetchOps--; return null; }
       const after = Number(u.searchParams?.get?.("after") ?? /after=(\d+)/.exec(u.search)[1]);
-      return { status: 200, json: { ops: this.log.filter((r) => r.relay_seq > after), snap_seq: 0 } };
+      return { status: 200, json: { ops: this.log.filter((r) => r.relay_seq > after), snap_seq: this.snapSeq } };
     }
     if (method === "POST" && p === "/ops") {
+      if (this.refuseOps) return this.refuseOps;
       const { ops } = JSON.parse(Buffer.from(bytes).toString());
       const assigned = ops.map((o) => {
         const row = { relay_seq: this.log.length + 1, op_id: o.op_id, env: o.env, epoch: 1 };
@@ -382,4 +388,27 @@ test("crypto.subtle.digest shim rides the host sha256", async () => {
   })`);
   await until(() => d.ctx.__sha, "digest");
   assert.equal(d.ctx.__sha, hex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode("abc"))));
+});
+
+test("SY-12: a relay snapshot newer than this build is refused visibly and pending edits are kept", async () => {
+  const userKey = await real.newUserKey();
+  const relay = new FakeRelay(userKey);
+  // The relay's history was folded into a snapshot in a format from the future.
+  relay.snapSeq = 5;
+  relay.snapshot = { e: 1, env: await real.sealOp(userKey, { v: 99, seq: 5, snap: {} }) };
+  // ...and it answers upgrade_required to the pushes, as the relay does when it refuses a device.
+  relay.refuseOps = { status: 403, json: { error: "upgrade_required" } };
+  const d = await boot({ relay, userKey });
+  d.run(`PIPCORE.groups.createEntity(PIPCORE.makeDb(1), { id: "ent_kept", name: "Kept pup" })`);
+  const health = () => JSON.parse(d.run(`JSON.stringify(PIPCORE.sync.syncHealth())`));
+  await until(() => health().incompatible, "incompatible flagged");
+  assert.match(health().ingestError, /snapshot version 99 newer than supported/);
+  // The status the iPad shows (app_card.withProtocol over the same health).
+  const shown = JSON.parse(d.run(`JSON.stringify(PIPCORE.card.withProtocol(PIPCORE.sync.syncHealth(), { text: "Saving…", tone: "busy" }))`));
+  assert.deepEqual(shown, { text: "Update Pip to sync — your changes are kept on this iPad", tone: "warn" });
+  // Nothing dropped: the edit's op is still pending, in the db, never confirmed; no state adopted.
+  await sleep(200);
+  assert.deepEqual(dumpOps(d.db), [["create_entity", null]]);
+  assert.deepEqual(dumpEntities(d.db), [["ent_kept", "Kept pup"]]);
+  assert.equal(relay.log.length, 0);
 });

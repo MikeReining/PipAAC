@@ -179,9 +179,15 @@ public nonisolated final class PipHost: @unchecked Sendable {
             guard pathMonitor == nil else { return }
             let m = NWPathMonitor()
             let box = OSAllocatedUnfairLock(initialState: false)
+            let reported = OSAllocatedUnfairLock<Bool?>(initialState: nil)
             m.pathUpdateHandler = { [weak self] path in
                 let up = path.status == .satisfied
                 self?.online.withLock { $0 = up }
+                // navigator.onLine's stand-in for the core (strip.js facesOn):
+                // every change of verdict, including the first.
+                if reported.withLock({ s -> Bool in let c = s != up; s = up; return c }) {
+                    self?.fire(up ? "netUp" : "netDown")
+                }
                 let wasUp = box.withLock { s -> Bool in let o = s; s = up; return o }
                 if up && !wasUp { self?.notifyOnline() }
             }

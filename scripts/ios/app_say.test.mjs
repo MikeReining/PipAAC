@@ -731,3 +731,27 @@ test("voice lock: after the trial every non-default voice but the one in use is 
   s = await newSession({ ends: Date.now() - DAY2, licensed: true });
   assert.deepEqual(lockedOf(s.id), []);
 });
+
+test("BS-24 offline: the faces hide AND release their slot (strip.js facesOn, navigator.onLine), so a family page has no ghost cell", async () => {
+  const { id } = await newSession({ ends: Date.now() + 3 * DAY2 });
+  const db = P.makeDb(1);
+  const fams = P.families.families(db).map((f) => f.id)
+    .filter((fid) => P.families.familyItems(db, fid, "en", new Set()).length >= 3);
+  const cap = app.appStrip(id).cap;
+  const sized = fams.filter((fid) => P.families.familyItems(db, fid, "en", new Set()).length === cap);
+  assert.ok(sized.length, `a catalog family of exactly ${cap} tiles (fits the strip only when the faces slot is released)`);
+  assert.ok(fams.length, "a catalog family with enough tiles to fill the strip");
+  const plain = (st) => st.cards.filter((c) => c.kind !== "more").length;
+  const open = () => app.appOpenFamily(id, sized[0]);
+  const onlineSt = open();
+  assert.notEqual(onlineSt.faces, null);
+  ctx.__pipPlatformEvent("netDown"); // Swift's NWPath verdict
+  const offSt = open();
+  assert.equal(offSt.faces, null, "no faces offline");
+  assert.equal(onlineSt.pages, 2, "online: the faces take a slot, so the family pages");
+  assert.equal(offSt.pages, 1, "offline: the slot goes back to words");
+  assert.equal(plain(offSt), cap);
+  assert.equal(app.appStrip(id).faces, null);
+  ctx.__pipPlatformEvent("netUp");
+  assert.notEqual(open().faces, null, "back online: faces and their slot return");
+});

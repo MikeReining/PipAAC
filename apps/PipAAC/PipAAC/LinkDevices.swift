@@ -138,6 +138,9 @@ extension AppModel {
             if syncingId != nil, syncingId == activeId { repaintFromCore() }
         case "media.state":
             if let m = try? JSONDecoder().decode(MediaState.self, from: Data(json.utf8)) { mediaState = m }
+        case "net.changed":
+            // strip.js facesOn reads navigator.onLine: the faces and their slot.
+            repaintFromCore()
         case "sync.applied":
             if syncingId != nil, syncingId == activeId { repaintFromCore() }
         case "sync.started":

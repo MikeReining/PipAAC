@@ -4,6 +4,7 @@
 // is parsed by EVERY isolate — including each Durable Object — and
 // crash-looped the TileLedger DO over the 128 MB isolate memory limit.
 import { UserRelay } from "./relay.js";
+import { AASA_PATHS, aasaResponse } from "./aasa.mjs";
 import { restoreByProof } from "./restore.js";
 import { PairingLobby } from "./lobby.js";
 import { SupporterAccounts } from "./accounts.js";
@@ -60,6 +61,11 @@ export default {
 
     if (path === "/health") {
       return json({ ok: true, service: "pipaac" });
+    }
+
+    // Universal links for the emailed sign-in link (044): the AASA, as JSON.
+    if (AASA_PATHS.has(url.pathname) && (request.method === "GET" || request.method === "HEAD")) {
+      return aasaResponse(request);
     }
 
     // Whole-sentence voice (024 slice 1): shared R2 cache for Pip-word

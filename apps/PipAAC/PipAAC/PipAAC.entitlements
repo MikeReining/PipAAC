@@ -5,6 +5,7 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>webcredentials:pipaac.org</string>
+		<string>applinks:app.pipaac.org</string>
 	</array>
 </dict>
 </plist>

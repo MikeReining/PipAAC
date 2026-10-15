@@ -6432,6 +6432,7 @@ ${a.a}` }
   function facesModel(s) {
     const data = s.catalog.feelingVoice;
     if (!data?.feelings || !s.sentence.length || s.kbBuffer) return null;
+    if (globalThis.__pipOnline === false) return null;
     if (!expressiveOn(s.d)) return null;
     const pos = (id) => s.d.prepare(
       `SELECT part_of_speech AS p FROM label
@@ -8339,15 +8340,18 @@ ${a.a}` }
   // scripts/ios/app_card.mjs
   var app_card_exports = {};
   __export(app_card_exports, {
+    INCOMPATIBLE_TEXT: () => INCOMPATIBLE_TEXT,
     cardSetKind: () => cardSetKind,
     editorStatusOf: () => editorStatusOf,
     swapList: () => swapList,
-    swapPick: () => swapPick
+    swapPick: () => swapPick,
+    withProtocol: () => withProtocol
   });
 
   // scripts/ios/app_sync.mjs
   var app_sync_exports = {};
   __export(app_sync_exports, {
+    isIncompatible: () => isIncompatible,
     syncHealth: () => syncHealth2,
     syncStart: () => syncStart,
     syncStartDb: () => syncStartDb,
@@ -8877,6 +8881,11 @@ ${ts}`);
     listeners.visible.add(fn);
   };
   globalThis.__pipPlatformEvent = (kind) => {
+    if (kind === "netUp" || kind === "netDown") {
+      globalThis.__pipOnline = kind === "netUp";
+      globalThis.__pipHost?.emit?.("net.changed", JSON.stringify({ online: kind === "netUp" }));
+      return;
+    }
     for (const fn of [...listeners[kind] ?? []]) {
       try {
         fn();
@@ -10728,6 +10737,7 @@ ${ts}`);
     );
     return { accepted: true };
   }
+  var isIncompatible = (e) => /snapshot version \d+ newer than supported/.test(String(e?.message ?? e ?? ""));
   function syncHealth2() {
     const h = syncHealth();
     const msg = (e) => e == null ? null : String(e.message ?? e);
@@ -10735,6 +10745,7 @@ ${ts}`);
       running: h.running,
       flushError: msg(h.flushError),
       ingestError: msg(h.ingestError),
+      incompatible: isIncompatible(h.ingestError),
       rotationError: msg(h.rotationError),
       mediaPending: h.mediaPending,
       mediaError: msg(h.mediaError)
@@ -10839,11 +10850,13 @@ ${ts}`);
     invalidate(s);
     return paint(appId, { card: cardModel(s, "entity", id) });
   }
+  var INCOMPATIBLE_TEXT = "Update Pip to sync \u2014 your changes are kept on this iPad";
+  var withProtocol = (h, status) => h.incompatible ? { text: INCOMPATIBLE_TEXT, tone: "warn" } : status;
   function editorStatusOf(appId, { linked = false, online = true, saveError = false } = {}) {
     const s = appSession(appId);
     const pending2 = one8(s.d, "SELECT COUNT(*) AS n FROM sync_op WHERE relay_seq IS NULL")?.n ?? 0;
     const h = syncHealth2();
-    return editorStatus({
+    return withProtocol(h, editorStatus({
       linked,
       pending: pending2,
       online,
@@ -10851,7 +10864,7 @@ ${ts}`);
       saveBlocked: false,
       saveError,
       dirty: false
-    });
+    }));
   }
 
   // scripts/ios/app_voice.mjs
@@ -13908,7 +13921,8 @@ ${ts}`);
   var app_settings_exports = {};
   __export(app_settings_exports, {
     hub: () => hub,
-    nameSet: () => nameSet
+    nameSet: () => nameSet,
+    protectLine: () => protectLine
   });
   var PIP10 = () => globalThis.PIPCORE;
   var one13 = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
@@ -13941,7 +13955,37 @@ ${ts}`);
     const lists = one13(d, "SELECT count(*) AS n FROM spotlight_list")?.n ?? 0;
     return lists ? `Off \xB7 ${lists} list${lists === 1 ? "" : "s"}` : "Off";
   }
-  function hub(appId, { name = "", pinOn = false, licensed = false } = {}) {
+  var INVESTED_OPS = [
+    "create_entity",
+    "set_entity_photo",
+    "create_group",
+    "add_to_groups",
+    "place_item",
+    "move_item",
+    "swap_items",
+    "set_image_override",
+    "set_override",
+    "set_mask",
+    "rename_entity",
+    "set_family_items",
+    "spot_list_save",
+    "set_group_hidden",
+    "move_group",
+    "swap_groups",
+    "reorder_groups",
+    "delete_group"
+  ];
+  var invested = (d) => (one13(d, "SELECT count(*) AS n FROM personal_entity")?.n ?? 0) > 0 || !!one13(d, `SELECT 1 AS x FROM sync_op WHERE kind IN (${INVESTED_OPS.map(() => "?").join(",")}) LIMIT 1`, INVESTED_OPS);
+  function protectLine(d, who, { pinOn, cardMade, team }) {
+    const pinOff = !pinOn, noCard = !cardMade;
+    if (team || !invested(d) || !(pinOff || noCard)) return { visible: false, title: "", summary: "" };
+    return {
+      visible: true,
+      title: `Protect ${who.unnamed ? "this person's" : `${who.inline}'s`} words`,
+      summary: pinOff && noCard ? "Add a Settings PIN and make the recovery card" : pinOff ? "Add a Settings PIN" : "Make the recovery card"
+    };
+  }
+  function hub(appId, { name = "", pinOn = false, licensed = false, cardMade = false, team = false } = {}) {
     const s = appSession(appId);
     const d = s.d;
     const p = one13(d, "SELECT * FROM learner_profile WHERE id = 'prf_local'") ?? {};
@@ -13983,6 +14027,7 @@ ${ts}`);
     ];
     const left = items.filter((i) => !i.done).length;
     return {
+      protect: protectLine(d, who, { pinOn, cardMade, team }),
       person: who.inline,
       unnamed: who.unnamed,
       sections: orderSections(licensed).map((x) => ({

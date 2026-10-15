@@ -77,6 +77,47 @@ final class GroupsUITests: XCTestCase {
         }
     }
 
+    // MARK: SY-11 Protect line
+
+    /// A fresh board is not worth protecting: no nudge. Once a group exists
+    /// (a create_group op - board.js facts().invested) the Overview leads
+    /// with "Protect this person's words", and it opens Backup & privacy.
+    @MainActor
+    func testProtectNudgeAppearsOnceTheBoardIsTheirs() throws {
+        let app = launch()
+        XCTAssertTrue(app.buttons["want"].waitForExistence(timeout: 30))
+        openSettings(app)
+        XCTAssertTrue(app.buttons["settings:addWord"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.buttons["settings:protect"].exists, "nothing customized yet")
+
+        app.buttons["settingsSection:words"].tap()
+        app.buttons["settings:editGroups"].tap()
+        XCTAssertTrue(app.buttons["groupNew"].waitForExistence(timeout: 15))
+        app.buttons["groupNew"].tap()
+        let name = app.alerts.textFields.firstMatch
+        XCTAssertTrue(name.waitForExistence(timeout: 5))
+        name.typeText("Park")
+        app.alerts.buttons["Create"].firstMatch.tap()
+        let made = NSPredicate { _, _ in
+            ((try? self.query("SELECT id FROM board_group WHERE name='Park'")) ?? []).count == 1
+        }
+        wait(for: [expectation(for: made, evaluatedWith: nil)], timeout: 10)
+
+        // Edit groups is a sheet over the board: close it, reopen Settings.
+        app.buttons["Done"].firstMatch.tap()
+        XCTAssertTrue(app.buttons["editDone"].waitForExistence(timeout: 10))
+        app.buttons["editDone"].tap()
+        XCTAssertTrue(app.buttons["settingsGear"].waitForExistence(timeout: 10))
+        openSettings(app)
+        let protect = app.buttons["settings:protect"]
+        XCTAssertTrue(protect.waitForExistence(timeout: 10), "the board is theirs now")
+        XCTAssertTrue(protect.label.contains("Protect this person's words"), protect.label)
+        XCTAssertTrue(protect.label.contains("Add a Settings PIN and make the recovery card"), protect.label)
+        shot(app, "sy11-protect-line")
+        protect.tap()
+        XCTAssertTrue(app.buttons["backup:card"].waitForExistence(timeout: 10), "it leads to Backup & privacy")
+    }
+
     // MARK: LW-14 + LW-15
 
     /// Create "Park", rename it "Playground", move it first, give it the

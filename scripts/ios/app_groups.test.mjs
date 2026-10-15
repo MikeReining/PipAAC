@@ -61,6 +61,19 @@ const grp = (id) => q("SELECT * FROM board_group WHERE id = ?", id)[0];
 const doors = () => app.appGroups(appId).pages.flatMap((p) => p.cells)
   .filter((c) => c.type === "group").map((c) => c.groupId);
 
+test("SY-11: the Protect line appears once the board is worth protecting, names what is missing, and goes quiet when done", () => {
+  const has = (o) => settingsUi.hub(appId, { name: "Maya", ...o }).protect;
+  assert.deepEqual(has({}), { visible: false, title: "", summary: "" }, "nothing customized yet: no nudge");
+  groupsEdit.createGroupNamed(appId, { name: "Sy11" }); // a create_group op: the board is theirs now
+  assert.deepEqual(has({}), { visible: true, title: "Protect Maya's words",
+    summary: "Add a Settings PIN and make the recovery card" });
+  assert.equal(settingsUi.hub(appId, { name: "" }).protect.title, "Protect this person's words");
+  assert.equal(has({ pinOn: true }).summary, "Make the recovery card");
+  assert.equal(has({ cardMade: true }).summary, "Add a Settings PIN");
+  assert.equal(has({ pinOn: true, cardMade: true }).visible, false, "both done: gone");
+  assert.equal(has({ team: true }).visible, false, "a Team device is never nagged");
+});
+
 test("create, rename, reorder first, set the icon: the db and the ops hold exactly that", () => {
   let before = maxSeq();
   const made = groupsEdit.createGroupNamed(appId, { name: "Park" });

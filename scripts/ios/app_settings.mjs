@@ -61,10 +61,34 @@ function spotlightSummary(d) {
   return lists ? `Off · ${lists} list${lists === 1 ? "" : "s"}` : "Off";
 }
 
+/** board.js facts().invested, verbatim: something of theirs is on the
+ *  board (a word they made, or any of these customizing ops). */
+const INVESTED_OPS = ["create_entity", "set_entity_photo", "create_group", "add_to_groups", "place_item",
+  "move_item", "swap_items", "set_image_override", "set_override", "set_mask", "rename_entity",
+  "set_family_items", "spot_list_save", "set_group_hidden", "move_group", "swap_groups", "reorder_groups",
+  "delete_group"];
+const invested = (d) =>
+  (one(d, "SELECT count(*) AS n FROM personal_entity")?.n ?? 0) > 0
+  || !!one(d, `SELECT 1 AS x FROM sync_op WHERE kind IN (${INVESTED_OPS.map(() => "?").join(",")}) LIMIT 1`, INVESTED_OPS);
+
+/** settings-ui.js renderProtect (SY-11): after the first customization,
+ *  one line naming what is still missing - a PIN, the recovery card.
+ *  Owners only; it leads to Backup & privacy. Copy verbatim. */
+export function protectLine(d, who, { pinOn, cardMade, team }) {
+  const pinOff = !pinOn, noCard = !cardMade;
+  if (team || !invested(d) || !(pinOff || noCard)) return { visible: false, title: "", summary: "" };
+  return {
+    visible: true,
+    title: `Protect ${who.unnamed ? "this person's" : `${who.inline}'s`} words`,
+    summary: pinOff && noCard ? "Add a Settings PIN and make the recovery card"
+      : pinOff ? "Add a Settings PIN" : "Make the recovery card",
+  };
+}
+
 /** settings-ui.js SUMMARIES / checklist / renderOverview, as data.
  *  `name` is the open person's name (the people list owns it), `pinOn`
  *  the device PIN (Swift owns it). */
-export function hub(appId, { name = "", pinOn = false, licensed = false } = {}) {
+export function hub(appId, { name = "", pinOn = false, licensed = false, cardMade = false, team = false } = {}) {
   const s = appSession(appId);
   const d = s.d;
   const p = one(d, "SELECT * FROM learner_profile WHERE id = 'prf_local'") ?? {};
@@ -98,6 +122,7 @@ export function hub(appId, { name = "", pinOn = false, licensed = false } = {}) 
   const left = items.filter((i) => !i.done).length;
 
   return {
+    protect: protectLine(d, who, { pinOn, cardMade, team }),
     person: who.inline,
     unnamed: who.unnamed,
     sections: orderSections(licensed).map((x) => ({

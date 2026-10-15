@@ -10,6 +10,10 @@ import { FEELINGS, expressiveOn, suggestedFeeling } from "../../public/shared/fe
 export function facesModel(s) {
   const data = s.catalog.feelingVoice;
   if (!data?.feelings || !s.sentence.length || s.kbBuffer) return null;
+  // strip.js facesOn: `navigator.onLine !== false`. Offline the faces are
+  // gone AND their slot is released (renderStrip/renderExpand count
+  // facesOn() for the cap), so the family page never leaves a ghost cell.
+  if (globalThis.__pipOnline === false) return null;
   if (!expressiveOn(s.d)) return null;
   const pos = (id) => s.d.prepare(
     `SELECT part_of_speech AS p FROM label
