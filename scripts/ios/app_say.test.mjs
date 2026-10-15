@@ -51,6 +51,8 @@ const worker = {
   speak: () => ({ bytes: MP3 }),
   tile: () => ({ bytes: MP3 }),
   trialEndsAt: Date.now() + 5 * 86_400_000,
+  trialLicensed: false,
+  trialDown: false,
   reset() {
     this.log = [];
     this.transform = (body) => ({ json: { text: `${body.text}.` } });
@@ -73,7 +75,9 @@ async function workerHandle({ url, method, headers, body }) {
       body: b64u(Buffer.from(JSON.stringify(r.json ?? {}))) };
   switch (u.pathname) {
     case "/api/v1/trial/start": return reply({ json: { endsAt: worker.trialEndsAt } });
-    case "/api/v1/trial": return reply({ json: { licensed: false, endsAt: worker.trialEndsAt } });
+    case "/api/v1/trial":
+      if (worker.trialDown) return reply({ status: 503, json: { error: "down" } });
+      return reply({ json: { licensed: worker.trialLicensed, endsAt: worker.trialEndsAt } });
     case "/api/v1/transform": {
       if (worker.transformNever) return NEVER;
       if (worker.transformDelayMs) await sleep(worker.transformDelayMs);
@@ -403,4 +407,152 @@ test("PU-2 trial nudges: the web's words, once per mark, last two days and expir
   await sleep(200);
   assert.equal(count(), 1, "the second boot stays quiet");
   worker.trialEndsAt = Date.now() + 5 * DAY;
+});
+
+/* ---------------- 044 F: PU-1 / SN-9 - the trial clock and the gate ----------------
+ * The Worker's rule (src/worker/transform.js checkLicense / trialEntitled):
+ * a license, or the trial still running; else 403 bad_license. The client
+ * never pre-gates a sentence button (public/board/speech.js
+ * transformAndSpeak has no entitledNow check) - it sends, and the
+ * Worker's answer decides. entitledNow gates only the feeling faces. */
+const DAY2 = 86_400_000;
+const LICENSE = "lic_test_license";
+const entitledWorker = () => {
+  worker.transform = (b) => (b.license || worker.trialEndsAt > Date.now()
+    ? { json: { text: `${b.text}.` } }
+    : { status: 403, json: { error: "bad_license" } });
+};
+const catalogJson = readFileSync(join(root, "public/catalog.json"), "utf8");
+/** A brand-new session (own askShown / trial mirror) for the same person. */
+const newSession = async ({ ends, licensed = false, license = null, down = false } = {}) => {
+  worker.reset();
+  worker.trialEndsAt = ends;
+  worker.trialLicensed = licensed;
+  worker.trialDown = down;
+  entitledWorker();
+  if (license) keystore.set(`user/${USER}/license`, JSON.stringify(license));
+  else keystore.delete(`user/${USER}/license`);
+  keystore.delete(`user/${USER}/trial-nudge`);
+  keystore.delete(`user/${USER}/trial-ok`);
+  keystore.delete(`user/${USER}/voice-wanted`);
+  caches.clear(); // every case starts with no cloud clip cached
+  says.length = 0;
+  online = true;
+  const { appId: id } = app.appOpen(1, catalogJson, null, null);
+  say.identify(id, USER);
+  await until(() => worker.of("/api/v1/trial").length > 0, "trial read");
+  await sleep(80);
+  says.length = 0; // the boot nudge is PU-2's test, not this one's
+  app.appClear(id);
+  app.appTap(id, { kind: "sense", id: "sns_0013", text: "want", source: "grid" });
+  app.appTap(id, { kind: "sense", id: "sns_0128", text: "apple", source: "grid" });
+  return { id };
+};
+const barOf = (id) => app.appBar(id).map((c) => c.display).join(" ");
+
+test("SN-9: trial running -> the buttons work, the natural voice speaks (no license sent)", async () => {
+  const { id } = await newSession({ ends: Date.now() + 3 * DAY2 });
+  say.transform(id, "fix");
+  await until(() => says.some((e) => playedFiles(e).length), "cloud clip");
+  assert.equal(barOf(id), "Want apple.");
+  assert.equal("license" in worker.of("/api/v1/transform")[0].body, false);
+  assert.equal(worker.of("/api/v1/voice/speak").length, 1);
+  assert.equal(says.some((e) => e.toast), false);
+});
+
+test("SN-9: trial over, no license -> sent anyway, the Worker refuses, the ask shows ONCE, the bar speaks as built", async () => {
+  const { id } = await newSession({ ends: Date.now() - DAY2 });
+  say.transform(id, "fix");
+  await until(() => says.some((e) => e.play), "spoken as built");
+  assert.equal(worker.of("/api/v1/transform").length, 1, "no client-side pre-gate: the press is sent");
+  const ev = says.find((e) => e.toast);
+  assert.equal(ev.toast, "Fix it comes with Pip Lifetime — the free trial has ended.");
+  assert.equal(barOf(id), "Want apple", "nothing is replaced");
+  assert.deepEqual(ev.play.map((s) => s.type), ["clip", "clip"], "the free way: word clips");
+  assert.equal(worker.of("/api/v1/voice/speak").length, 0, "no natural-voice request without entitlement");
+  // Another gated button: speaks again, no second ask.
+  says.length = 0;
+  say.transform(id, "past");
+  await until(() => says.some((e) => e.play), "spoken again");
+  assert.equal(says.some((e) => e.toast), false, "once per session");
+  assert.equal(worker.of("/api/v1/transform").length, 2);
+  // Play is never gated: it speaks her words, no ask, no voice request.
+  says.length = 0;
+  say.speak(id);
+  await until(() => says.some((e) => e.play), "play speaks");
+  assert.deepEqual(says.at(-1).play.map((s) => s.type), ["clip", "clip"]);
+  assert.equal(says.some((e) => e.toast), false);
+  assert.equal(worker.of("/api/v1/voice/speak").length, 0);
+  // A word tile still speaks its clip.
+  const tapped = app.appTap(id, { kind: "sense", id: "sns_0013", text: "want", source: "grid" });
+  assert.ok(JSON.stringify(tapped).includes("audio/"), "the tapped word's own clip");
+});
+
+test("SN-9: a holding license -> not gated even after the trial; the license rides the request", async () => {
+  const { id } = await newSession({ ends: Date.now() - DAY2, licensed: true, license: LICENSE });
+  assert.equal(worker.of("/api/v1/trial/start").length, 0, "a licensed person never starts a trial");
+  assert.equal(worker.of("/api/v1/trial")[0].headers["x-pip-license"], LICENSE);
+  say.transform(id, "fix");
+  await until(() => says.some((e) => playedFiles(e).length), "cloud clip");
+  assert.equal(worker.of("/api/v1/transform")[0].body.license, LICENSE);
+  assert.equal(barOf(id), "Want apple.");
+  assert.equal(says.some((e) => e.toast), false);
+  assert.equal(worker.of("/api/v1/voice/speak").length, 1);
+});
+
+test("SN-9: trial state unknown (clock unreadable) -> still no client gate, the Worker decides; speaks the free way; offline is the honest toast", async () => {
+  const { id } = await newSession({ ends: Date.now() + 3 * DAY2, down: true });
+  say.transform(id, "fix");
+  await until(() => says.some((e) => e.play), "outcome");
+  assert.equal(worker.of("/api/v1/transform").length, 1, "sent: the web never pre-gates on its mirror");
+  assert.equal(barOf(id), "Want apple.", "the Worker's trial is running, so it answered");
+  assert.equal(worker.of("/api/v1/voice/speak").length, 0, "mirror empty: the natural voice is not requested");
+  online = false;
+  app.appClear(id);
+  app.appTap(id, { kind: "sense", id: "sns_0013", text: "want", source: "grid" });
+  app.appTap(id, { kind: "sense", id: "sns_0128", text: "apple", source: "grid" });
+  says.length = 0;
+  say.transform(id, "question");
+  await until(() => says.some((e) => e.toast), "offline toast");
+  assert.equal(says.find((e) => e.toast).toast, "Ask it needs the internet — spoke it as it was.");
+  online = true;
+});
+
+test("PU-1: an offline first run starts nothing; the online event starts and mirrors the clock, then nudges", async () => {
+  worker.reset();
+  worker.trialEndsAt = Date.now() + 2.5 * DAY2;
+  worker.trialLicensed = false;
+  worker.trialDown = false;
+  for (const k of ["license", "trial-ok", "trial-nudge"]) keystore.delete(`user/${USER}/${k}`);
+  says.length = 0;
+  online = false;
+  const { appId: id } = app.appOpen(1, catalogJson, null, null);
+  say.identify(id, USER);
+  await sleep(150);
+  assert.equal(worker.log.length, 0, "offline: no request reaches the Worker");
+  online = true;
+  ctx.__pipPlatformEvent("online");
+  // (Earlier cases' sessions of the same person also hear the event.)
+  await until(() => worker.of("/api/v1/trial/start").length >= 1, "start on reconnect");
+  assert.deepEqual(worker.of("/api/v1/trial/start")[0].body, { user_id: USER });
+  await until(() => says.some((e) => e.toast), "nudge on reconnect (mountTrialClock.boot)");
+  assert.equal(says.find((e) => e.toast).toast, "Free trial · 3 days left — Pip Lifetime keeps it all: $49 once.");
+  await sleep(150);
+  const starts = worker.of("/api/v1/trial/start").length;
+  const reads = worker.of("/api/v1/trial").length;
+  say.identify(id, USER);
+  await until(() => worker.of("/api/v1/trial").length > reads, "second read");
+  assert.equal(worker.of("/api/v1/trial/start").length, starts, "start posts once per person");
+});
+
+test("PU-1: expiry reverts a chosen voice to Pip's own; the choice returns when entitled again", async () => {
+  const { id } = await newSession({ ends: Date.now() - DAY2 });
+  const voiceNow = () => j(P.voicepick.voiceModel(id)).current;
+  app.appSetSetting(id, "preferred_voice_id", "voi_leo_en");
+  assert.equal(voiceNow(), "voi_leo_en");
+  say.trialRefresh(id); // Settings opened; the trial is over
+  await until(() => voiceNow() === "voi_default_en", "reverted");
+  worker.trialEndsAt = Date.now() + 3 * DAY2; // entitled again
+  say.trialRefresh(id);
+  await until(() => voiceNow() === "voi_leo_en", "restored");
 });

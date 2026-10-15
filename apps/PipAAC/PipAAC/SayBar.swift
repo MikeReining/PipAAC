@@ -44,6 +44,15 @@ extension AppModel {
         }
     }
 
+    /// board.js:874 - opening Settings re-reads the trial clock (and the
+    /// voice follows it, as on the web).
+    func sayTrialRefresh() {
+        let appId = self.appId, core = self.core
+        Task { @MainActor in
+            let _: SayAck? = try? await Self.sayRaw(core, "trialRefresh", [appId])
+        }
+    }
+
     /// ✨ ❓ ⏪ ⏩.
     func sayTransform(_ mode: String) { sayPress("transform", [mode]) }
     /// ▶.

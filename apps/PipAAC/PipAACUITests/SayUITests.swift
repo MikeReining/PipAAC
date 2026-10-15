@@ -173,6 +173,53 @@ final class SayUITests: XCTestCase {
         shot(app, "d4-offline-toast")
     }
 
+    /// SN-9: the trial is over and nobody holds a license. The press is
+    /// sent, the Worker refuses, the bar is spoken as built (word clips,
+    /// no natural voice), the grown-up gets the ask with the door, and the
+    /// door opens the Lifetime page - whose trial line says it ended.
+    func testTrialOverGatedButtonSpeaksAsBuiltAndOffersTheLifetimePage() throws {
+        server.trialEnded = true
+        let app = launch()
+        XCTAssertTrue(app.buttons["want"].waitForExistence(timeout: 30))
+        app.buttons["go"].tap()
+        app.buttons["more"].tap()
+        wait("two chips") { barWords(app).count == 2 }
+        let before = played().count
+
+        app.buttons["Fix it"].tap()
+
+        // (The boot's expiry nudge may still be up; the press's own ask replaces it.)
+        let toast = app.staticTexts["toast"]
+        let ask = "Fix it comes with Pip Lifetime — the free trial has ended."
+        wait("the ask", timeout: 10) { toast.exists && toast.label == ask }
+        let door = app.buttons["See Pip Lifetime"]
+        XCTAssertTrue(door.exists, "the ask offers See Pip Lifetime")
+        shot(app, "f-trial-over-ask")
+        door.tap()
+        let line = app.descendants(matching: .any)["life:trial"].firstMatch
+        XCTAssertTrue(line.waitForExistence(timeout: 30), "the door opens the Lifetime page")
+        XCTAssertEqual(line.label, "Free trial ended. Buy to turn it all back on.")
+        shot(app, "f-trial-over-lifetime")
+        app.buttons["life:close"].tap()
+
+        // What was heard: her word clips, never the natural voice.
+        wait("her word clips play") { played().count >= before + 2 }
+        XCTAssertFalse(played().suffix(2).contains { $0.contains("/VoiceCache/") })
+        XCTAssertEqual(barWords(app), ["Go", "more"], "nothing is replaced")
+        // What the iPad SENT: the press went to the Worker (no client
+        // pre-gate), carried no license, and no natural-voice request followed.
+        let t = try XCTUnwrap(server.requests("/api/v1/transform").first)
+        XCTAssertNil(t.body["license"])
+        XCTAssertTrue(server.requests("/api/v1/voice/speak").isEmpty)
+
+        // Play is never gated: it speaks her words and asks nothing.
+        let n = played().count
+        XCTAssertTrue(app.buttons["Play"].waitForExistence(timeout: 10))
+        app.buttons["Play"].tap()
+        wait("play speaks the word clips") { played().count >= n + 2 }
+        XCTAssertTrue(server.requests("/api/v1/voice/speak").isEmpty)
+    }
+
     /// A typed word is minted on commit (a supporter action) and its tile
     /// clip is what plays - from the local cache afterwards.
     func testTypedWordIsMintedAndSpokenFromTheTileLibrary() throws {
@@ -223,6 +270,10 @@ final class StubWorker: @unchecked Sendable {
     private var log: [Req] = []
     private(set) var port: UInt16 = 0
     var transformReply = "Hello."
+    /// 044 F: the trial is over - the clock reads a past end and the
+    /// transform route refuses with the Worker's bad_license. (Set before
+    /// launch; these launches never hold a license.)
+    var trialEnded = false
     var transformDelay: Double = 0
 
     // E6 - the Picture Finder routes (no provider is reachable: every answer is canned).
@@ -304,11 +355,16 @@ final class StubWorker: @unchecked Sendable {
         func sendJSON(_ o: Any, after: Double = 0) {
             send(200, "application/json", (try? JSONSerialization.data(withJSONObject: o)) ?? Data(), after: after)
         }
-        let endsAt = (Date().timeIntervalSince1970 + 5 * 86400) * 1000
+        let endsAt = (Date().timeIntervalSince1970 + (trialEnded ? -86400 : 5 * 86400)) * 1000
         switch path {
         case "/api/v1/trial/start": sendJSON(["endsAt": endsAt])
         case "/api/v1/trial": sendJSON(["licensed": false, "endsAt": endsAt])
-        case "/api/v1/transform": sendJSON(["text": transformReply], after: transformDelay)
+        case "/api/v1/transform":
+            if trialEnded {
+                send(403, "application/json", Data(#"{"error":"bad_license"}"#.utf8))
+            } else {
+                sendJSON(["text": transformReply], after: transformDelay)
+            }
         case "/api/v1/voice/speak", "/api/v1/voice/tile": send(200, "audio/mpeg", Self.clip)
         case "/api/v1/voice/tile/replaced": sendJSON(["ids": [String](), "next": 1])
         case "/api/v1/pictures/find": sendJSON(findBody(json["text"] as? String ?? ""))

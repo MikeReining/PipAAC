@@ -66,7 +66,7 @@ Not-a-spec rule: a row says what the web does today (traced), never what it ough
 | SN-6 Name masking before the model sees text | Tap button | `transformAndSpeak` → `shared/name_shield.mjs:maskNames` | Core | None (names never leave) | 1.0 | D | unit | implemented (proof app_say.test.mjs: wire text masked, bar unmasked) |
 | SN-7 Bounded wait; abandoned reply never lands | Slow/interrupted transform | `speech.js` `TRANSFORM_WAIT_MS` + `AbortController` | Swift | None | 1.0 | D | P6 | implemented (15 s bound + abort; a stale reply is dropped; proof SayUITests.testLateReply…, app_say.test.mjs) |
 | SN-8 Choose which buttons show (quick setups + toggles) | Settings → Talking → Sentence bar | `settings-sync.js` `#bar-preset` 259, `#bar-toggles` 263 → `shared/bar.mjs` | Both | `learner_profile.bar_controls` (synced) | 1.0 | B | P3 | implemented (`BAR_PRESETS`, toggles; UI test `testSettingsSurface`) |
-| SN-9 Free-tier / trial gate on ✨ ❓ ⏪ ⏩ | Tap when not entitled | `speech.js:entitledNow` 301, `askOnce` 304 → Lifetime page | Both | Worker `GET /api/v1/trial`; entitlement | 1.0 | F | P9 | planned |
+| SN-9 Free-tier / trial gate on ✨ ❓ ⏪ ⏩ | Tap when not entitled | `speech.js:entitledNow` 301, `askOnce` 304 → Lifetime page | Both | Worker `GET /api/v1/trial`; entitlement | 1.0 | F | P9 | implemented (F2: app_say.test.mjs SN-9; SayUITests.testTrialOverGated...) |
 | SN-10 Expressive voice: speak with a feeling | Tap face then ▶ | `speech.js:speakFeeling` 486 | Both | See BS-24 | 1.0 | D | P6 | planned |
 | SN-11 Fix-it demo is scripted (first-run tour only) | Tour | `board/tour-ui.js:mountTour` 40 | Swift | Nothing logged | 1.0 | E | UI test | implemented (`app_firstrun.test.mjs` demo writes/calls nothing; `FirstRunUITests`) |
 
@@ -193,7 +193,7 @@ Not-a-spec rule: a row says what the web does today (traced), never what it ough
 
 | Workflow | Gesture / entry | Web call path | Split | Data / API / media effect | Release | Slice | Proof | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| PU-1 Trial clock starts and counts down | First launch online | `speech.js:refreshTrial` 511 → `POST /api/v1/trial/start`, `GET /api/v1/trial` | Swift | Worker trial record | 1.0 | F | P9 | planned |
+| PU-1 Trial clock starts and counts down | First launch online | `speech.js:refreshTrial` 511 → `POST /api/v1/trial/start`, `GET /api/v1/trial` | Swift | Worker trial record | 1.0 | F | P9 | implemented (F2: app_say.test.mjs PU-1) |
 | PU-2 Trial nudges (last two days, expiry) | Launch near end | `speech.js:trialNudge` 537; `lifetime-ui.js:mountTrialClock` 108 | Swift | Local marks `pip-trial-nudge` | 1.0 | F | UI test | implemented (app_say.test.mjs PU-2) |
 | PU-3 Lifetime page: what it adds, hear the difference, countdown | Settings → Lifetime; any paid-feature door | `board/lifetime-ui.js:mountLifetime` 21 | Swift; shipped clips | None | 1.0 | F | UI test | implemented (F1: LifetimeUITests, PurchaseTests) |
 | PU-4 Buy Lifetime | Lifetime page | Web: `unlock.js:checkoutFromUrl` 87 → `POST /api/v1/checkout`/`/checkout/codes` (Stripe). iOS: StoreKit consumable, server-validated | Swift StoreKit | Worker validation endpoint → `entitled()` | 1.0 | F | P9 | implemented (F1: PurchaseTests, LifetimeUITests, appstore.test.mjs; no web checkout link) |

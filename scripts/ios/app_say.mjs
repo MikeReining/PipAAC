@@ -152,23 +152,71 @@ async function trialNudge(s, x) {
   emit({ appId: s.appId, toast: n.msg });
 }
 
-async function boot(s, x) {
-  await refreshTrial(x).catch(() => false);
+/** lifetime-ui.js mountTrialClock.syncTrialVoice: expiry reverts a
+ *  non-default voice to Pip's own (the choice is kept and restored once
+ *  entitled again). Entitled = a license (the relay's answer or the
+ *  Worker's) or the trial still running (board.js:1230 isEntitled). */
+async function syncTrialVoice(s, x) {
+  const defId = s.d.prepare(
+    "SELECT id FROM voice WHERE locale = ? AND is_default = 1").all(s.locale)[0]?.id;
+  if (!defId) return false;
+  const wantedKey = `user/${x.userId}/voice-wanted`;
+  const wanted = await keys.get(wantedKey).catch(() => null);
+  const set = (id) => globalThis.PIPCORE.app.appSetSetting(s.appId, "preferred_voice_id", id);
+  if (x.trialLicensed === true || s.licensed === true || trialActive(x)) {
+    if (wanted && wanted !== s.voiceId
+        && s.d.prepare("SELECT 1 AS x FROM voice WHERE id = ? AND status = 'active'").all(wanted)[0]) {
+      set(wanted);
+      await keys.put(wantedKey, undefined).catch(() => {});
+      return true;
+    }
+    return false;
+  }
+  if (s.voiceId !== defId
+      && !s.d.prepare("SELECT is_default AS d FROM voice WHERE id = ?").all(s.voiceId)[0]?.d) {
+    await keys.put(wantedKey, s.voiceId).catch(() => {});
+    set(defId);
+    return true;
+  }
+  return false;
+}
+
+/** mountTrialClock boot(): refresh, and only on success sync the voice
+ *  and raise the nudge; the repaint is a "say" state. */
+async function trialBoot(s, x) {
+  if (!(await refreshTrial(x).catch(() => false))) return false;
+  const changed = await syncTrialVoice(s, x).catch(() => false);
   await trialNudge(s, x).catch(() => {});
+  if (changed) emit({ appId: s.appId, state: painted(s) });
+  return true;
+}
+
+async function boot(s, x) {
+  await trialBoot(s, x);
   await drain(x);
   await sweep(s, x).catch(() => {});
 }
 
+/** board.js:874 - opening Settings re-reads the trial and syncs the voice. */
+export function trialRefresh(appId) {
+  const s = appSession(appId);
+  const x = X(s);
+  if (x.userId) void trialBoot(s, x).catch(() => {});
+  return { ok: true };
+}
+
 /* The web's "online" listener: the offline queue drains on reconnect, and
- * a first run that started offline gets its trial clock now. */
+ * a first run that started offline gets its trial clock now (board.js:1239
+ * `if (!trialActive()) trialClock.boot()`). */
 onOnline(() => {
   for (const [id, x] of sessions) {
     if (!x.userId) continue;
     void (async () => {
-      if (!trialActive(x)) await refreshTrial(x).catch(() => false);
+      let s;
+      try { s = appSession(id); } catch { return; } // session closed
+      if (!trialActive(x)) await trialBoot(s, x);
       await drain(x);
     })();
-    void id;
   }
 });
 

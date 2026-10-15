@@ -479,7 +479,8 @@ final class AppModel: ObservableObject {
         let seq = toastSeq
         toast = msg
         Task { [weak self] in
-            try? await Task.sleep(for: .seconds(3.5))
+            // edit-shared.js toast(): six seconds, long enough to reach "See Pip Lifetime".
+            try? await Task.sleep(for: .seconds(6))
             if self?.toastSeq == seq { self?.toast = nil }
         }
     }
@@ -511,6 +512,7 @@ final class AppModel: ObservableObject {
         navCall("appSettings", []) { [weak self] (m: SettingsModel) in
             self?.settings = m
             self?.showSettings = true
+            self?.sayTrialRefresh()
         }
     }
 

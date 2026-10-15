@@ -9534,7 +9534,8 @@ ${ts}`);
     speakStart: () => speakStart,
     tapSpeech: () => tapSpeech,
     tileEnsure: () => tileEnsure,
-    transform: () => transform
+    transform: () => transform,
+    trialRefresh: () => trialRefresh
   });
 
   // public/shared/voice_sentence.mjs
@@ -9925,22 +9926,65 @@ ${ts}`);
     });
     emit2({ appId: s.appId, toast: n.msg });
   }
-  async function boot(s, x) {
-    await refreshTrial(x).catch(() => false);
+  async function syncTrialVoice(s, x) {
+    const defId = s.d.prepare(
+      "SELECT id FROM voice WHERE locale = ? AND is_default = 1"
+    ).all(s.locale)[0]?.id;
+    if (!defId) return false;
+    const wantedKey = `user/${x.userId}/voice-wanted`;
+    const wanted2 = await keys.get(wantedKey).catch(() => null);
+    const set = (id) => globalThis.PIPCORE.app.appSetSetting(s.appId, "preferred_voice_id", id);
+    if (x.trialLicensed === true || s.licensed === true || trialActive(x)) {
+      if (wanted2 && wanted2 !== s.voiceId && s.d.prepare("SELECT 1 AS x FROM voice WHERE id = ? AND status = 'active'").all(wanted2)[0]) {
+        set(wanted2);
+        await keys.put(wantedKey, void 0).catch(() => {
+        });
+        return true;
+      }
+      return false;
+    }
+    if (s.voiceId !== defId && !s.d.prepare("SELECT is_default AS d FROM voice WHERE id = ?").all(s.voiceId)[0]?.d) {
+      await keys.put(wantedKey, s.voiceId).catch(() => {
+      });
+      set(defId);
+      return true;
+    }
+    return false;
+  }
+  async function trialBoot(s, x) {
+    if (!await refreshTrial(x).catch(() => false)) return false;
+    const changed2 = await syncTrialVoice(s, x).catch(() => false);
     await trialNudge(s, x).catch(() => {
     });
+    if (changed2) emit2({ appId: s.appId, state: painted(s) });
+    return true;
+  }
+  async function boot(s, x) {
+    await trialBoot(s, x);
     await drain(x);
     await sweep(s, x).catch(() => {
     });
+  }
+  function trialRefresh(appId) {
+    const s = appSession(appId);
+    const x = X(s);
+    if (x.userId) void trialBoot(s, x).catch(() => {
+    });
+    return { ok: true };
   }
   onOnline(() => {
     for (const [id, x] of sessions) {
       if (!x.userId) continue;
       void (async () => {
-        if (!trialActive(x)) await refreshTrial(x).catch(() => false);
+        let s;
+        try {
+          s = appSession(id);
+        } catch {
+          return;
+        }
+        if (!trialActive(x)) await trialBoot(s, x);
         await drain(x);
       })();
-      void id;
     }
   });
   function tileEnsure(s, text, source = "user_typed") {
