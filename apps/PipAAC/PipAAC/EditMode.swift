@@ -285,6 +285,21 @@ nonisolated enum UITestHooks {
         try? PipKeychain.put("account/state", data, service: service)
     }
 
+    /// E6: `-pipUITestLicense <string>` stores a license for the open person,
+    /// as a purchase would leave it (the pictures need one; the purchase
+    /// itself is the F1 slice's test).
+    static var licenseToSeed: String? {
+        guard let i = args.firstIndex(of: "-pipUITestLicense"), i + 1 < args.count else { return nil }
+        return args[i + 1]
+    }
+
+    /// E6: `-pipUITestPhotoFiles a.png,b.png` - "Add photos" takes these files
+    /// through the same save path in place of the system picker.
+    static var photoFiles: [String]? {
+        guard let i = args.firstIndex(of: "-pipUITestPhotoFiles"), i + 1 < args.count else { return nil }
+        return args[i + 1].split(separator: ",").map(String.init)
+    }
+
     static func seedIfRequested(_ core: PipCore, appId: String) {
         guard let i = args.firstIndex(of: "-pipUITestSeedPerson"),
               i + 1 < args.count else { return }

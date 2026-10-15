@@ -14,6 +14,7 @@
 //
 
 import Network
+import UIKit
 import XCTest
 
 @MainActor
@@ -224,6 +225,26 @@ final class StubWorker: @unchecked Sendable {
     var transformReply = "Hello."
     var transformDelay: Double = 0
 
+    // E6 - the Picture Finder routes (no provider is reachable: every answer is canned).
+    /// A solid-colour PNG the app can decode; the colour names the picture.
+    static func png(_ color: UIColor) -> Data {
+        let r = UIGraphicsImageRenderer(size: CGSize(width: 64, height: 64))
+        return r.pngData { ctx in color.setFill(); ctx.fill(CGRect(x: 0, y: 0, width: 64, height: 64)) }
+    }
+    static let candidateColors: [String: UIColor] = [
+        "img_red": .red, "img_green": .green, "img_blue": .blue, "drawn": .orange,
+    ]
+    /// normalized text -> the find result body (default: three candidates, no auto, common word)
+    var finds: [String: [String: Any]] = [:]
+    var picLeft = 3
+    private func findBody(_ text: String) -> [String: Any] {
+        if let f = finds[text] { return f }
+        return ["candidates": [["image_id": "img_red", "asset": "/symbols/img_red.png", "source": "ours", "score": 0.9],
+                               ["image_id": "img_green", "asset": "/symbols/img_green.png", "source": "ours", "score": 0.8],
+                               ["image_id": "img_blue", "asset": "/symbols/img_blue.png", "source": "ours", "score": 0.7]],
+                "auto": NSNull(), "scope": "common", "kind": "None", "language": "en", "calibrated": true]
+    }
+
     init() throws {
         listener = try NWListener(using: .tcp, on: .any)
         let ready = DispatchSemaphore(value: 0)
@@ -290,7 +311,28 @@ final class StubWorker: @unchecked Sendable {
         case "/api/v1/transform": sendJSON(["text": transformReply], after: transformDelay)
         case "/api/v1/voice/speak", "/api/v1/voice/tile": send(200, "audio/mpeg", Self.clip)
         case "/api/v1/voice/tile/replaced": sendJSON(["ids": [String](), "next": 1])
-        default: send(404, "text/plain", Data())
+        case "/api/v1/pictures/find": sendJSON(findBody(json["text"] as? String ?? ""))
+        case "/api/v1/pictures/find-batch":
+            let items = (json["items"] as? [[String: Any]]) ?? []
+            sendJSON(["results": items.map { findBody($0["text"] as? String ?? "") }])
+        case "/api/v1/pictures/allowance": sendJSON(["left": picLeft, "total": 5])
+        case "/api/v1/pictures/pick", "/api/v1/pictures/reject": send(204, "text/plain", Data())
+        case "/api/v1/pictures/draw":
+            lock.lock(); picLeft -= 1; let left = picLeft; lock.unlock()
+            let key = String(repeating: "ab", count: 32)
+            func ev(_ o: [String: Any]) -> String {
+                "data: " + String(decoding: (try? JSONSerialization.data(withJSONObject: o)) ?? Data(), as: UTF8.self) + "\n\n"
+            }
+            let body = ev(["type": "stage", "stage": "drawing"])
+                + ev(["type": "done", "image": Self.png(.orange).base64EncodedString(), "key": key, "cache": "mint", "left": left])
+            send(200, "text/event-stream", Data(body.utf8))
+        default:
+            if path.hasPrefix("/symbols/") || path.hasPrefix("/api/v1/pictures/img/") {
+                let name = (path as NSString).lastPathComponent.replacingOccurrences(of: ".png", with: "")
+                send(200, "image/png", Self.png(Self.candidateColors[name] ?? .gray))
+            } else {
+                send(404, "text/plain", Data())
+            }
         }
     }
 }

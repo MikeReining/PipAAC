@@ -341,7 +341,16 @@ class Response {
       this.headers.set("content-type", this._blob.type);
     }
     this.ok = this.status >= 200 && this.status < 300;
-    this.body = null; // no stream: callers use arrayBuffer/text/json
+    // No live stream: the host hands over a finished body. A reader (the
+    // draw client's SSE parse, pictures.mjs readDrawStream) gets it whole.
+    const bytes = this._bytes;
+    this.body = body == null ? null : {
+      getReader() {
+        let done = false;
+        return { read: async () => (done ? { done: true, value: undefined }
+          : (done = true, { done: false, value: bytes })) };
+      },
+    };
     this.bodyUsed = false;
   }
   arrayBuffer() { return Promise.resolve(this._bytes.slice().buffer); }

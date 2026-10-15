@@ -23,6 +23,7 @@ const reader = new DatabaseSync(file); // the instrument the facade cannot influ
 const bindable = (v) => (v === undefined ? null : typeof v === "boolean" ? (v ? 1 : 0) : v);
 const host = {
   log: () => {},
+  emit: () => {}, // E6: a photo repaints the card's Picture row (PIPCORE.pics) through a host event
   randomUUID: () => crypto.randomUUID(),
   randomBytes: (n) => [...crypto.getRandomValues(new Uint8Array(n))],
   dbExec: (_id, sql) => { writer.exec(sql); return null; },

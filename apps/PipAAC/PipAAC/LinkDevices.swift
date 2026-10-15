@@ -145,6 +145,7 @@ extension AppModel {
             if ev?.stage == nil, json.contains("\"ok\":false") { syncingId = nil }
         case "spot.changed", "spot.speak": handleSpotEvent(name, json)
         case "say": handleSay(json)
+        case "pic": handlePic(json)
         case "purchase": lifetimeBackend.handle(json)
         case "pair.offer": if let ev { offerEvent(ev) }
         case "pair.join": if let ev { joinEvent(ev) }

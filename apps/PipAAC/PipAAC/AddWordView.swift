@@ -231,12 +231,16 @@ struct EditSheets: ViewModifier {
         case add(AddRequest)
         case other(OtherGroupsModel)
         case place(PlaceRequest)
+        case bulk(BulkRequest)
+        case photos(PhotoRequest)
         var id: String {
             switch self {
             case .card(let c): "card:\(c.sheetID)"
             case .add(let a): "add:\(a.id)"
             case .other(let o): "other:\(o.kind):\(o.id)"
             case .place(let p): "place:\(p.slot)"
+            case .bulk(let b): "bulk:\(b.id)"
+            case .photos(let p): "photos:\(p.id)"
             }
         }
     }
@@ -247,6 +251,8 @@ struct EditSheets: ViewModifier {
         if let a = model.addRequest { return .add(a) }
         if let o = model.otherGroups { return .other(o) }
         if let p = model.placeRequest { return .place(p) }
+        if let b = model.bulkRequest { return .bulk(b) }
+        if let p = model.photoRequest { return .photos(p) }
         return nil
     }
 
@@ -261,6 +267,8 @@ struct EditSheets: ViewModifier {
                 case .add(let a): AddWordView(request: a)
                 case .other(let o): OtherGroupsView(model: o)
                 case .place(let p): PlaceView(slot: p.slot)
+                case .bulk(let b): BulkListView(request: b)
+                case .photos(let p): PhotoDraftsView(request: p)
                 }
             }
             .environmentObject(model)
@@ -272,6 +280,9 @@ struct EditSheets: ViewModifier {
         model.addRequest = nil
         model.otherGroups = nil
         model.placeRequest = nil
+        model.bulkRequest = nil
+        model.bulk = nil
+        model.photoRequest = nil
     }
 }
 
@@ -295,7 +306,7 @@ struct AddWordView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             header
-            if pickerQuery != nil { groupPicker } else { wordField; matches }
+            if pickerQuery != nil { groupPicker } else { wordField; matches; AddListLinks(groupId: target.id, cell: cell) }
             Spacer(minLength: 0)
         }
         .padding(24)

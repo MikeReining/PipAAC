@@ -65,6 +65,19 @@ struct LibraryView: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("Add a word")
                 .accessibilityIdentifier("lib-add")
+                Button { model.bulkRequest = BulkRequest(groupId: nil) } label: {
+                    Text("Add a list")
+                        .font(.system(size: 16, weight: .semibold))
+                        .padding(.horizontal, 14).frame(height: 44)
+                        .background(Color.white)
+                        .foregroundStyle(PipStyle.ink)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .overlay(RoundedRectangle(cornerRadius: 10)
+                            .stroke(PipStyle.ink.opacity(0.35), lineWidth: 1.5))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Add a list")
+                .accessibilityIdentifier("lib-bulk")
                 Button("Close") { model.showLibrary = false }
                     .font(.system(size: 17, weight: .medium))
                     .frame(minHeight: 44)
@@ -107,6 +120,8 @@ struct LibraryView: View {
         // A write that changed the Library (add, make, remove) refreshes it.
         .onChange(of: model.card?.sheetID) { _, _ in refresh() }
         .onChange(of: model.addRequest?.id) { _, _ in refresh() }
+        .onChange(of: model.bulkRequest?.id) { _, _ in refresh() }
+        .onChange(of: model.picTick) { _, _ in refresh() }
     }
 
     private func refresh() {

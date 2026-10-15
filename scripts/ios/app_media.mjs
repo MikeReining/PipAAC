@@ -80,6 +80,7 @@ export function cardSetPhoto(appId, { kind, id, key }) {
   else PIP().images.setImageOverride(s.d, { senseId: id, photoKey: key });
   PIP().mediasync.queueUpload(key); // the bytes follow the op (SY-6)
   forget(s, kind, id);
+  PIP().pics.afterPhoto(appId, { kind, id, key }); // 030 § 6.3: replacing OUR picture sends one reject
   return repaint(appId, kind, id);
 }
 

@@ -118,8 +118,9 @@ private struct PhotoButton: View {
     }
 }
 
-/// The word card's Picture row (word-card-pictures.js, photo part only:
-/// the finder and drawing are other slices).
+/// The word card's Picture row (word-card-pictures.js): the pictures to
+/// choose from, Draw it, the dashed Photo tile; Find and its results are
+/// CardFinder (PicturesView.swift).
 struct CardPictureRow: View {
     @EnvironmentObject var model: AppModel
     let card: WordCardModel
@@ -132,6 +133,15 @@ struct CardPictureRow: View {
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(PipStyle.muted)
             FlowRow {
+                // E6 (word-card-pictures.js paint): the pictures to choose from, then Draw it.
+                if let row = model.picRows[model.picKey(card)] {
+                    ForEach(row.choices) { c in PicChoiceButton(card: card, choice: c) }
+                    if row.drawIt {
+                        DrawTile(title: "Draw it", glyph: "\u{270F}\u{FE0F}", label: "Draw it", id: "wc-drawit") {
+                            model.picDraw(card, desc: "")
+                        }
+                    }
+                }
                 PhotoButton(title: "Photo", id: "wc-photo", choosing: $choosing, taking: $taking)
                 if card.media?.canUseOurs == true {
                     Button { model.useOurPicture(card) } label: {
@@ -147,6 +157,7 @@ struct CardPictureRow: View {
                     .accessibilityIdentifier("wc-useours")
                 }
             }
+            CardFinder(card: card)
         }
         .frame(maxWidth: 520, alignment: .leading)
         .photoSource(choosing: $choosing, taking: $taking) { data in

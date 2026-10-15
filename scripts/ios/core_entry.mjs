@@ -82,6 +82,10 @@ export * as firstrun from "./app_firstrun.mjs";
 /** Help: answers, search, Write to us (044 E5) - PIPCORE.help.* */
 export * as help from "./app_help.mjs";
 
+/** Pictures: find by meaning, pick / reject, Draw it for me, pasted lists,
+ *  several photos as new words (044 E6) - PIPCORE.pics.* */
+export * as pics from "./app_pictures.mjs";
+
 /** The web's sync loop, unchanged, over host I/O (044 C2). */
 export * as sync from "./app_sync.mjs";
 export * as mediasync from "./app_mediasync.mjs";

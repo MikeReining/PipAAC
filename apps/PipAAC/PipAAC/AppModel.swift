@@ -192,6 +192,13 @@ final class AppModel: ObservableObject {
     @Published var placeRequest: PlaceRequest?
     @Published var showLibrary = false
     @Published var editToast: EditToastModel?
+    // E6: pictures (PicturesModel.swift) - the card's Picture row, the paste form, several photos.
+    @Published var picRows: [String: PicRow] = [:]
+    @Published var bulkRequest: BulkRequest?
+    @Published var bulk: BulkModel?
+    @Published var photoRequest: PhotoRequest?
+    /// Bumped when a picture changed the board behind an open sheet (the Library refreshes).
+    @Published var picTick = 0
     var editToastSeq = 0
     @Published private(set) var settings: SettingsModel?
     /// First run (FirstRun.swift, 044 E7): the demo's current card while it
@@ -311,6 +318,7 @@ final class AppModel: ObservableObject {
         dbId = newDb
         activeId = id
         sayIdentify(id)
+        picIdentify(id)
         lifetime.start()
         Task { await lifetime.refresh() }
         try registry.touchOpened(id)

@@ -841,3 +841,11 @@ shows the open person's photo (Add / Change / Remove).
 - Tests: UI tests boot to the board unless they pass `-pipUITestFirstRun` (`UITestHooks.skipFirstRun`: hermetic and not asked); `-pipUITestPhotoFile <png>` is the face "picker" in tests.
 - Left: tile-clip prefetch for the names typed in the world pass (network; same as E2's Make); picture finding for typed foods/places (`PIPCORE.pics`, E6); "Try other voices" opens Settings (no route to Voice yet); words-only text sizing is one fixed size, not the web's fit-to-smallest.
 
+
+**2026-10-14 (E6 - pictures and pasted lists):**
+
+- Scope: PP-1, PP-2, PP-3, PP-5, PP-6, LW-5.
+- Changed: core `scripts/ios/app_pictures.mjs` (+ `_shared`, `_bulk`; `PIPCORE.pics`) runs the web's `pictureClient`, `picture-fill.js`, `bulk.mjs` and `pictureLine` unchanged and mirrors the closures of `word-card-pictures.js` / `add-flow.js` with line cites. Bytes are fetched by the core and stored as `blob:<sha256>`; writes go through `setEntityPhoto` / `setImageOverride` / `applyPasteRows` / `applyPhotoDrafts`. Results leave as one host event, "pic". Swift: `PicturesModel.swift`, `PicturesView.swift` (Picture row choices, Draw it, Find, paste form, photo names sheet, multi-select PhotosPicker); small hooks in `AppModel`, `AddWordView`, `LibraryView`, `PhotoPickerView`, `LinkDevices`. `jsc_shims.mjs`: a response now has a one-shot `body.getReader()` (the draw client parses SSE). `app_media.cardSetPhoto` tells pics so a photo replacing our pick sends the web's one reject.
+- Verified: `app_pictures.test.mjs` (7) and `app_pictures_bulk.test.mjs` (5) on the built core with a fake Worker; `PicturesUITests` (5, in-process StubWorker, board cell accessibility + disk + request log); full xcodebuild suite; full `e2e_sync.sh`.
+- Web notes (not fixed): pictures need a stored license, so a trial-only person gets the "back online" line; the paste form reads the allowance once per page and never again; opening a personal word's card runs a find every time; draw stages cannot be live on iPad (host buffers a response), the line says "Drawing...".
+- Left: voice mint after a paste (web `tile.prefetch`), photo names from file names (PhotosPicker gives none, names start blank), no picture-sync e2e scenario, parked-offline picture list is in memory only.
