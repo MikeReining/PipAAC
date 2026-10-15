@@ -194,6 +194,11 @@ final class AppModel: ObservableObject {
     @Published var editToast: EditToastModel?
     var editToastSeq = 0
     @Published private(set) var settings: SettingsModel?
+    /// First run (FirstRun.swift, 044 E7): the demo's current card while it
+    /// runs (nil otherwise), and the open person's "Words only" look.
+    let firstRun = FirstRunFlow()
+    @Published var tourCard: TourCard?
+    @Published var wordsOnly = false
     /// The device's people (PeopleRegistry), last opened first, and who is open.
     @Published private(set) var people: [PersonRecord] = []
     @Published private(set) var activeId: String?
@@ -253,6 +258,7 @@ final class AppModel: ObservableObject {
     /// people and no home asks "Who's talking?" first.
     func boot() {
         speaker.configure()
+        firstRun.model = self
         speaker.onPlay = { [weak self] k in self?.lastClip = k }
         wireMediaStates()
         startMediaTestHook()
@@ -322,6 +328,7 @@ final class AppModel: ObservableObject {
         showSettings = false
         apply(st)
         surface = .board
+        firstRun.personOpened(id)
         startSyncIfLinked()
     }
 
@@ -451,17 +458,21 @@ final class AppModel: ObservableObject {
     func tap(kind: String, id: String, text: String, source: String = "grid") {
         // A supporter's spotlight: the tap lights the word on the child's board.
         if spot.modeling { modelTap(kind: kind, id: id, text: text); return }
+        // The first-run demo owns the board: its own tap, never logged (SN-11).
+        if tourCard != nil { firstRun.tourTap(kind: kind, id: id); return }
         mutate("appTap", [["kind": kind, "id": id, "text": text, "source": source]])
     }
 
-    func backspace() { mutate("appBackspace", []) }
-    func clear() { mutate("appClear", []) }
+    func backspace() { if tourCard == nil { mutate("appBackspace", []) } }
+    func clear() { if tourCard == nil { mutate("appClear", []) } }
 
     /// ✨ ❓ ⏪ ⏩ — the core asks the Worker (masked names, 15 s bound,
     /// stale replies dropped) and speaks the result; offline it speaks the
     /// bar as built and says why (SayBar.swift, Sentence_Bar.md).
     func transform(_ mode: String) {
         if spot.modeling, mode == "fix" || mode == "question" { modelControl(mode); return }
+        // The demo's ✨/❓ are scripted: no Worker call (SN-11).
+        if tourCard != nil { firstRun.tourTransform(mode); return }
         sayTransform(mode)
     }
 
@@ -513,7 +524,7 @@ final class AppModel: ObservableObject {
 
     /// ▶ — the whole-sentence cloud clip when online, her word clips
     /// otherwise (SayBar.swift).
-    func speak() { saySpeak() }
+    func speak() { if tourCard == nil { saySpeak() } }
 
     // MARK: navigation
 

@@ -81,7 +81,7 @@ struct BoardView: View {
     /// (index.html #bar + tx-* — docs/product/Sentence_Bar.md).
     private var topBar: some View {
         HStack(spacing: 8) {
-            cornerButton
+            cornerButton.tourQuiet(model.tourCard)
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 6) {
@@ -120,33 +120,40 @@ struct BoardView: View {
             if model.controls.contains("backspace") {
                 BarButton(system: "delete.backward", label: "Backspace",
                           enabled: editable) { model.backspace() }
+                    .tourQuiet(model.tourCard)
             }
             if model.controls.contains("clear") {
                 BarButton(system: "xmark", label: "Clear",
                           enabled: editable) { model.clear() }
+                    .tourQuiet(model.tourCard)
             }
             if model.controls.contains("fix") {
                 TxButton(system: "wand.and.stars", label: "Fix it",
                          enabled: !model.bar.isEmpty,
                          spot: model.spot.controls["fix"]) { model.transform("fix") }
+                    .tour(model.tourCard, kind: "button", id: "fix")
             }
             if model.controls.contains("question") {
                 TxButton(system: "questionmark", label: "Ask it",
                          selected: model.question,
                          enabled: !model.bar.isEmpty,
                          spot: model.spot.controls["question"]) { model.transform("question") }
+                    .tour(model.tourCard, kind: "button", id: "question")
             }
             if model.controls.contains("past") {
                 TxButton(system: "backward.fill", label: "Say it in the past",
                          selected: model.tense == "past",
                          enabled: !model.bar.isEmpty) { model.transform("past") }
+                    .tourQuiet(model.tourCard)
             }
             BarButton(system: "play.fill", label: "Play",
                       enabled: !model.bar.isEmpty, wide: true) { model.speak() }
+                .tourQuiet(model.tourCard)
             if model.controls.contains("future") {
                 TxButton(system: "forward.fill", label: "Say it in the future",
                          selected: model.tense == "future",
                          enabled: !model.bar.isEmpty) { model.transform("future") }
+                    .tourQuiet(model.tourCard)
             }
             SpotChip()               // Spotlight.swift - "🔦 Name · End" while a glow runs
         }
@@ -211,11 +218,13 @@ struct BoardView: View {
                 case .boot, .picker: break
                 }
             }
+            .tourQuiet(model.tourCard)
             AnchorTile(icon: "keyboard",
                        label: model.kb == nil ? "Keyboard" : "Board") {
                 model.toggleKeyboard()
             }
             .accessibilityIdentifier("anchor:keyboard")
+            .tourQuiet(model.tourCard)
         }
         .frame(height: 76)
     }
@@ -241,6 +250,7 @@ struct BoardView: View {
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("strip:\(card.id ?? card.label ?? "?")")
+            .tour(model.tourCard, kind: "strip", id: card.id)
         }
     }
 
@@ -305,6 +315,7 @@ struct BoardView: View {
             EditEmptyCell(slot: slot)      // AddWordView.swift — a door in Edit mode
         } else {
             plainCell(cell)
+                .tour(model.tourCard, kind: "cell", id: cell?.type == "word" ? cell?.id : nil)
         }
     }
 

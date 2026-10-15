@@ -423,7 +423,7 @@ private struct OfferSheet: View {
 }
 
 /// The pairing sheet, joining side: who uses this device, then the code.
-private struct JoinSheet: View {
+struct JoinSheet: View {
     @EnvironmentObject var model: AppModel
     @State private var role: String?
     @State private var code = ""

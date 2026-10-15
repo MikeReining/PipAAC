@@ -39,34 +39,48 @@ enum PipStyle {
     static let muted = Color(red: 0.357, green: 0.325, blue: 0.282)
 }
 
+/// The person's "Words only" look (learner_profile.presentation_mode =
+/// 'label'; base.css .words-only hides every picture, no cell moves).
+private struct WordsOnlyKey: EnvironmentKey { static let defaultValue = false }
+extension EnvironmentValues {
+    var pipWordsOnly: Bool {
+        get { self[WordsOnlyKey.self] }
+        set { self[WordsOnlyKey.self] = newValue }
+    }
+}
+
 /// grid.js wordTile: label strip on top (role fill), art on white.
 struct WordTile: View {
     let label: String
     let role: String?
     let art: String?
+    @Environment(\.pipWordsOnly) private var wordsOnly
 
     var body: some View {
         VStack(spacing: 0) {
             Text(label)
-                .font(.system(size: 17, weight: .semibold))
+                .font(.system(size: wordsOnly ? 22 : 17, weight: .semibold))
                 .foregroundStyle(PipStyle.inkText)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .minimumScaleFactor(0.55)
                 .padding(.horizontal, 4)
                 .frame(maxWidth: .infinity)
-                .frame(height: 34)
+                .frame(height: wordsOnly ? nil : 34)
+                .frame(maxHeight: wordsOnly ? .infinity : nil)
                 .background(PipStyle.fill(role))
-            ZStack {
-                Color.white
-                if let ui = PipAssets.image(art) {
-                    Image(uiImage: ui)
-                        .resizable()
-                        .scaledToFit()
-                        .padding(4)
+            if !wordsOnly {
+                ZStack {
+                    Color.white
+                    if let ui = PipAssets.image(art) {
+                        Image(uiImage: ui)
+                            .resizable()
+                            .scaledToFit()
+                            .padding(4)
+                    }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -80,23 +94,26 @@ struct StripCard: View {
     let label: String
     let role: String?
     let art: String?
+    @Environment(\.pipWordsOnly) private var wordsOnly
 
     var body: some View {
         HStack(spacing: 0) {
-            ZStack {
-                Color.white
-                if let ui = PipAssets.image(art) {
-                    Image(uiImage: ui)
-                        .resizable()
-                        .scaledToFit()
-                        .padding(3)
-                } else {
-                    Text(label.prefix(1).uppercased())
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundStyle(PipStyle.muted)
+            if !wordsOnly {
+                ZStack {
+                    Color.white
+                    if let ui = PipAssets.image(art) {
+                        Image(uiImage: ui)
+                            .resizable()
+                            .scaledToFit()
+                            .padding(3)
+                    } else {
+                        Text(label.prefix(1).uppercased())
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundStyle(PipStyle.muted)
+                    }
                 }
+                .frame(width: 56)
             }
-            .frame(width: 56)
             Text(label)
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(PipStyle.inkText)
@@ -119,10 +136,11 @@ struct StripCard: View {
 struct BarChip: View {
     let display: String
     let art: String?
+    @Environment(\.pipWordsOnly) private var wordsOnly
 
     var body: some View {
         VStack(spacing: 0) {
-            if let ui = PipAssets.image(art) {
+            if !wordsOnly, let ui = PipAssets.image(art) {
                 Image(uiImage: ui)
                     .resizable()
                     .scaledToFit()

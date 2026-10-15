@@ -235,6 +235,19 @@ nonisolated enum UITestHooks {
         args.contains("-pipUITestReset") || args.contains("-PipDataDir")
     }
 
+    /// E7: a UI-test launch boots straight to the board (first run is a
+    /// fresh-install gate); only a test that is about first run passes
+    /// `-pipUITestFirstRun`. The registry row is untouched (a join still
+    /// replaces its placeholder) - only the welcome is not shown.
+    static var skipFirstRun: Bool { hermetic && !args.contains("-pipUITestFirstRun") }
+
+    /// E7: the file a first-run test's "photo picker" returns (the
+    /// simulator's real picker has no usable accessibility tree).
+    static var photoFile: String? {
+        guard let i = args.firstIndex(of: "-pipUITestPhotoFile"), i + 1 < args.count else { return nil }
+        return args[i + 1]
+    }
+
     /// F1: a UI-test launch whose "App Store" is the in-process fake.
     static var fakeStore: Bool { args.contains("-PipFakeStore") }
 

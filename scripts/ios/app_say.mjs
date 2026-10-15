@@ -290,7 +290,7 @@ const NAMES = {
 
 /** txbar's display-only art for a model-supplied token (meta-cache.js
  *  artForWord): a label hit shows that sense's symbol; never a wrong one. */
-function artForWord(s, word) {
+export function artForWord(s, word) {
   const w = normalizeV1(
     String(word).replace(/^[^\p{L}\p{N}'-]+|[^\p{L}\p{N}'-]+$/gu, ""));
   if (!w) return null;

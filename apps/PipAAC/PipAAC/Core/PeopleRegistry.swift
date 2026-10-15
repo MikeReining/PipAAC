@@ -72,6 +72,10 @@ public nonisolated struct PersonRecord: Codable, Sendable, Equatable, Identifiab
     /// recovery-ui.js: the card has been on screen on this device (ms).
     /// Device-local, like the web's registry field.
     public var cardShownAt: Double? = nil
+    /// onramp-ui.js: "child" | "adult", set by the welcome (044 E7).
+    public var audience: String? = nil
+    /// tour-ui.js end(): the demo was finished or skipped (044 E7).
+    public var tourDone: Bool? = nil
     /// Epoch milliseconds, like `Date.now()` in users.mjs.
     public var lastOpened: Double
 
@@ -220,6 +224,8 @@ public nonisolated final class PeopleRegistry: @unchecked Sendable {
             case "role": rows[i].role = v as? String
             case "cardShownAt": rows[i].cardShownAt = (v as? NSNumber)?.doubleValue
             case "needsSetup": rows[i].needsSetup = (v as? Bool) ?? rows[i].needsSetup
+            case "audience": rows[i].audience = v as? String
+            case "tourDone": rows[i].tourDone = v as? Bool
             default: break
             }
         }

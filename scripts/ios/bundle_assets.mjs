@@ -22,6 +22,7 @@ import { createHash } from "node:crypto";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { tmpdir as osTmpdir } from "node:os";
+import { ONRAMP_CLIPS, onrampClipPath } from "../../public/shared/onramp_audio.mjs";
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const PUB = join(repo, "public");
@@ -87,6 +88,13 @@ function build(out) {
   // 044 F1 — the Lifetime page's "Hear the difference": the shipped
   // natural-sentence clip (the free side plays the word clips above).
   copy(out, "audio/onramp/demo-sentence.mp3"); note("audio/onramp/demo-sentence.mp3");
+  // 044 E7 - first run: every welcome and demo prompt is a shipped
+  // recording in the product voice (shared/onramp_audio.mjs), played
+  // offline from the bundle. Never device TTS.
+  for (const key of Object.keys(ONRAMP_CLIPS)) {
+    const rel = onrampClipPath(key);
+    copy(out, rel); note(rel);
+  }
 
   // Tile art — webp copies as-is; every svg gets a 512 px raster twin
   // (<name>.svg.png) which the loader prefers for .svg keys.

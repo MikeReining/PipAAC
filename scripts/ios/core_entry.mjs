@@ -36,6 +36,7 @@ export * as library from "../../public/shared/library.mjs";
 export * as bar from "../../public/shared/bar.mjs";
 export * as txbar from "../../public/shared/txbar.mjs";
 export * as wincard from "../../public/shared/wincard.mjs";
+export * as setup from "../../public/shared/setup.mjs";
 export * as bulk from "../../public/shared/bulk.mjs";
 export * as personName from "../../public/shared/person_name.mjs";
 export * as dashboard from "../../public/shared/dashboard.mjs";
@@ -73,6 +74,10 @@ export * as media from "./app_media.mjs";
 /** The sentence buttons + cloud sentence/tile voice, over the web's own
  *  shared clients (044 D4) — PIPCORE.say.* */
 export * as say from "./app_say.mjs";
+
+/** First run: the welcome, "their world", the scripted demo tour (044 E7)
+ *  - PIPCORE.firstrun.* */
+export * as firstrun from "./app_firstrun.mjs";
 
 /** Help: answers, search, Write to us (044 E5) - PIPCORE.help.* */
 export * as help from "./app_help.mjs";
