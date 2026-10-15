@@ -123,6 +123,9 @@ final class VoiceUITests: XCTestCase {
 
         app.navigationBars.buttons.firstMatch.tap()
         app.buttons["settingsDone"].tap()
+        // The sheet's dismissal must finish first: a tap during it lands nowhere.
+        XCTAssertTrue(app.buttons["settingsDone"].waitForNonExistence(timeout: 10), "Settings closed")
+        XCTAssertTrue(app.buttons["tile:sns_0013"].isHittable)
         app.buttons["tile:sns_0013"].tap()
         let want = dir.appendingPathComponent("VoicePacks/\(mia)").path + "/" + miaKey(sense: "sns_0013")
         try waitFor { self.played().last == want }
