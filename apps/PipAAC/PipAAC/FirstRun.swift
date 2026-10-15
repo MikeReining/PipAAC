@@ -285,7 +285,7 @@ final class FirstRunFlow: ObservableObject {
     }
 
     private func afterWelcome() async {
-        if copy?.offersWorld == true { await openWorld() } else { await finishSetup() }
+        if copy?.offersWorld == true || UITestHooks.firstRunWorld { await openWorld() } else { await finishSetup() }
     }
 
     // MARK: their world

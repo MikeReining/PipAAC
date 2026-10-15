@@ -10113,7 +10113,7 @@ ${ts}`);
   var one9 = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
   var clip = (key) => ({ key, path: PIP6().onrampAudio.onrampClipPath(key) });
   var PREVIEW = ["sns_0013", "sns_0128"];
-  var OFFER_WORLD_IN_FIRST_RUN = true;
+  var OFFER_WORLD_IN_FIRST_RUN = false;
   function welcome(appId, { name = "" } = {}) {
     const s = appSession(appId);
     const tile = (id) => {

@@ -48,12 +48,10 @@ const clip = (key) => ({ key, path: PIP().onrampAudio.onrampClipPath(key) });
 /** Preview tiles for the look question (onramp-ui.js PREVIEW). */
 const PREVIEW = ["sns_0013", "sns_0128"]; // want, apple
 
-/** First-run is offered by default with the "their world" pass between
- *  the welcome and the demo. The web does NOT do this (onramp-ui.js
- *  header: the old form "still opens from Settings -> Words -> People &
- *  places, never by itself") - the founder's iPad packet asked for it.
- *  One switch, so web parity is a one-line flip. */
-export const OFFER_WORLD_IN_FIRST_RUN = true;
+/** The web's first run goes welcome -> demo; the "their world" form
+ *  "still opens from Settings -> Words -> People & places, never by
+ *  itself" (onramp-ui.js header). Web semantics win (044 § 2). */
+export const OFFER_WORLD_IN_FIRST_RUN = false;
 
 export function welcome(appId, { name = "" } = {}) {
   const s = appSession(appId);

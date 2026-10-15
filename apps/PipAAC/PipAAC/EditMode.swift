@@ -251,6 +251,10 @@ nonisolated enum UITestHooks {
         return marker.map { FileManager.default.fileExists(atPath: $0.path) } ?? false
     }
 
+    /// E7: walk the "their world" form inside first run. The web opens it
+    /// only from Settings (that row is not built yet), so tests reach it here.
+    static var firstRunWorld: Bool { args.contains("-pipUITestFirstRunWorld") }
+
     /// E7: the file a first-run test's "photo picker" returns (the
     /// simulator's real picker has no usable accessibility tree).
     static var photoFile: String? {

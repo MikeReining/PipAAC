@@ -72,10 +72,11 @@ final class FirstRunUITests: XCTestCase {
 
     // MARK: helpers
 
-    private func launch(reset: Bool) -> XCUIApplication {
+    private func launch(reset: Bool, world: Bool = false) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = (reset ? ["-pipUITestReset"] : [])
             + ["-PipDataDir", dir.path, "-pipUITestFirstRun", "-pipUITestPhotoFile", face.path]
+            + (world ? ["-pipUITestFirstRunWorld"] : [])
         app.launch()
         return app
     }
@@ -100,7 +101,7 @@ final class FirstRunUITests: XCTestCase {
     /// PF-2 + PF-3 + PF-4: the whole walk, then a relaunch.
     @MainActor
     func testWelcomeWorldTourBoard() throws {
-        let app = launch(reset: true)
+        let app = launch(reset: true, world: true)
 
         // PF-2: the welcome. Nothing but the welcome is reachable behind it.
         let name = app.textFields["welcome:name"]
@@ -214,18 +215,16 @@ final class FirstRunUITests: XCTestCase {
         shot(again, "12-relaunch-board")
     }
 
-    /// Skip everywhere: the child path, close the world, skip the demo.
+    /// The web's path: welcome -> demo (no "their world" by itself), skip the demo.
     @MainActor
     func testSkipAndRelaunch() throws {
         let app = launch(reset: true)
         XCTAssertTrue(app.textFields["welcome:name"].waitForExistence(timeout: 30))
         tap(app, "welcome:choice:child")
         tap(app, "welcome:continue")
-        // A child has no look question: straight to their world.
-        XCTAssertTrue(app.staticTexts["world:title"].waitForExistence(timeout: 10))
-        XCTAssertEqual(app.staticTexts["world:title"].label, "Who does your child call for?")
-        tap(app, "world:close")
+        // A child has no look question, and first run never opens their world: straight to the demo.
         XCTAssertTrue(app.staticTexts["tour:say"].waitForExistence(timeout: 20))
+        XCTAssertFalse(app.staticTexts["world:title"].exists, "the web opens their world only from Settings")
         shot(app, "20-skip-tour")
         tap(app, "tour:skip")
         XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 10))
@@ -233,7 +232,7 @@ final class FirstRunUITests: XCTestCase {
         XCTAssertEqual(try query("SELECT presentation_mode FROM learner_profile WHERE id='prf_local'").first?.first,
                        "symbol", "no look question: the default stands")
         XCTAssertEqual(try query("SELECT count(*) FROM personal_entity WHERE status='active'").first?.first, "0",
-                       "closing the world wrote nothing")
+                       "skipping wrote no words")
         let row = try XCTUnwrap(people().first)
         XCTAssertFalse(row.needsSetup)
         XCTAssertEqual(row.audience, "child")

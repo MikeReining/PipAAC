@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.24-3b51cf7cb4d1",
-  "version": "1.1.24",
-  "payloadHash": "3b51cf7cb4d1",
+  "buildId": "1.1.25-a28bb0dbcda2",
+  "version": "1.1.25",
+  "payloadHash": "a28bb0dbcda2",
   "files": [
     {
       "path": "/board.js",
@@ -305,8 +305,8 @@
     },
     {
       "path": "/board/tour-ui.js",
-      "bytes": 7959,
-      "sha256": "0243c36f765fc4f7ce9bc99d74d1996d09da9cfcabfc6f92add475e6219e2da0"
+      "bytes": 7972,
+      "sha256": "0434ca475a0b4914cfdbff589590f6626501ac15479ae51ce55323b4ab25fe58"
     },
     {
       "path": "/board/unlock.js",

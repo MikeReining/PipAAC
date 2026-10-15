@@ -1,7 +1,7 @@
 /**
  * The first-run demo (founder 2026-09-28): the wow before any setup.
- * want → apple (placed on the Smart bar for the tour) → ✨ Fix it →
- * "I want an apple." → ⏪ → "I wanted an apple." → "Now try your own."
+ * you → want → apple (placed on the Smart bar for the tour) → ✨ Fix it →
+ * "You want an apple." → ❓ → "Do you want an apple?" → "Now try your own."
  *
  * Scripted on purpose: it plays offline and instantly, and never
  * depends on what a model returns that day. Honesty rules:
@@ -44,7 +44,7 @@ export function mountTour({ board, saveUser }) {
   let timer = null;
   let target = () => null;
 
-  // `say` is the card's display text (withIcons renders ✨/⏪ as icons);
+  // `say` is the card's display text (withIcons renders ✨/❓ as icons);
   // `clip` is the recording's key in shared/onramp_audio.mjs.
   // 038: only the buttons the person has — read at start() so a Replay
   // after a Settings change walks the bar as it is now. Both transforms
