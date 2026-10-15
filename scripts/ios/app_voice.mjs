@@ -11,7 +11,8 @@
 import { voiceChoices, voiceName } from "../../public/shared/voices.mjs";
 import { resolveProfile } from "../../public/shared/profile.mjs";
 import { resolveSlot } from "../../public/shared/voice.mjs";
-import { appDb } from "./app.mjs";
+import { appDb, appSession } from "./app.mjs";
+import { entitled } from "./app_say.mjs";
 
 const all = (db, sql, p = []) => db.prepare(sql).all(...p);
 
@@ -22,6 +23,10 @@ export function voiceModel(appId) {
   const db = appDb(appId);
   const { locale, voiceId } = resolveProfile(db);
   const { available, coming } = voiceChoices(db, locale);
+  /* voice-ui.js card(): 040 - the default voice is free forever; once the
+   * trial is over every other voice but the one in use is locked (its tap
+   * opens the Lifetime page - board.js:1378 locked/onLocked). */
+  const open = entitled(appSession(appId));
   return {
     current: voiceId,
     currentName: voiceName(db, voiceId),
@@ -30,6 +35,7 @@ export function voiceModel(appId) {
       name: voiceName(db, v.id),
       note: v.note,
       isDefault: !!v.is_default,
+      locked: !open && !v.is_default && v.id !== voiceId,
     })),
     coming: coming.map((v) => ({ name: v.name, note: v.note })),
   };

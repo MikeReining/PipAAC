@@ -68,6 +68,7 @@ nonisolated struct StripModel: Decodable, Sendable {
     var page: Int?
     var pages: Int?
     let cards: [CardModel]
+    var faces: FacesModel?      // 025: the feeling faces own the last slot
 }
 
 nonisolated struct ChipModel: Decodable, Sendable {
@@ -195,6 +196,9 @@ final class AppModel: ObservableObject {
     @Published var showSettings = false
     // Edit mode + word card (EditMode.swift) — render state only.
     @Published var editing = false
+    /// BS-24 / SN-10: the face that is dark while its audio is on the way.
+    @Published var speakingFace: String?
+    @Published var tryingFace: String?
     @Published var card: WordCardModel?
     // E2: add a word, the Library, "Also in" add, empty-cell placement.
     @Published var addRequest: AddRequest?

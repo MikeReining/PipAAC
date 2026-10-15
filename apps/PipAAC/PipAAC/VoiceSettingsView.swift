@@ -19,6 +19,7 @@ nonisolated struct VoiceChoice: Decodable, Sendable, Identifiable {
     let name: String
     let note: String
     let isDefault: Bool
+    var locked: Bool = false   // voice-ui.js: after the trial, non-default voices lock
 }
 nonisolated struct VoiceComing: Decodable, Sendable { let name: String; let note: String }
 nonisolated struct VoicePickModel: Decodable, Sendable {
@@ -115,6 +116,9 @@ final class VoiceSettings: ObservableObject {
     }
 
     func cancel(_ id: String) { tasks[id]?.cancel() }
+
+    /// board.js onLocked: a locked voice opens the Lifetime page.
+    func openLifetime() { model.openLifetime() }
 
     private func activate(_ id: String) async {
         do {
@@ -213,6 +217,13 @@ struct VoicePickerView: View {
                     Text(v.note).foregroundStyle(PipStyle.muted)
                 }
                 Spacer()
+                if v.locked {
+                    // 040: the default voice is free forever; every other voice locks when
+                    // the trial ends. The lock opens the page, never a dead button.
+                    Button("🔒 Pip Lifetime") { voice.openLifetime() }
+                        .buttonStyle(.bordered)
+                        .accessibilityIdentifier("voice:locked:\(v.id)")
+                } else {
                 Button("▶ Hear it") { voice.hear(v.id) }
                     .buttonStyle(.bordered)
                     .accessibilityLabel("Hear \(v.name)")
@@ -235,6 +246,7 @@ struct VoicePickerView: View {
                         .buttonStyle(.borderedProminent)
                         .disabled(!voice.online)
                         .accessibilityIdentifier("voice:use:\(v.id)")
+                }
                 }
             }
             if let dl {

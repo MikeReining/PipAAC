@@ -18,6 +18,7 @@
  *          SharedAssets, everything else is the 400 ms silent slot.
  */
 
+import { facesModel } from "./app_faces.mjs";
 import { report as reportResearch } from "./app_research.mjs";
 const PIP = () => globalThis.PIPCORE;
 
@@ -292,6 +293,7 @@ function maybeImpression(s, candidates, shown, { mode = "picture", cap = null, g
 function stripModel(s) {
   const geom = boardGeom(s);
   const cap = stripSlots(geom.cols);
+  const faces = facesModel(s);
 
   /* strip.js: mid-word, the strip switches from continuations to
    *  spelling completions — prefix matches over approved labels and
@@ -307,7 +309,7 @@ function stripModel(s) {
         : { kind: "sense", id: e.id, label: e.text,
             role: e.role ?? "None", art: metaFor(s, e.id).art })
       .filter(Boolean);
-    return { cap, mode: "complete", cards };
+    return { cap, mode: "complete", cards, faces: null };
   }
 
   if (s.expand) {
@@ -315,9 +317,11 @@ function stripModel(s) {
     if (!fam) s.expand = null;
     else {
       const items = PIP().families.familyItems(s.d, s.expand.familyId, s.locale, masked(s));
-      const pageSize = cap - 1;
-      const pages = items.length > cap ? Math.ceil(items.length / pageSize) : 1;
-      const realSize = pages > 1 ? pageSize : cap;
+      /* strip.js renderExpand: the faces slot comes out of the cap. */
+      const fcap = Math.max(1, cap - (faces ? 1 : 0));
+      const pageSize = fcap - 1;
+      const pages = items.length > fcap ? Math.ceil(items.length / pageSize) : 1;
+      const realSize = pages > 1 ? pageSize : fcap;
       s.expand.page = Math.min(s.expand.page, pages - 1);
       const shown = items.slice(s.expand.page * realSize, s.expand.page * realSize + realSize);
       const cards = shown.map((it) => it.kind === "family"
@@ -327,7 +331,7 @@ function stripModel(s) {
             role: it.role ?? "None", art: it.kind === "sense" ? metaFor(s, it.id).art : null });
       if (pages > 1) cards.push({ kind: "more", label: "more ›" });
       return { cap, mode: "family", familyId: s.expand.familyId,
-        page: s.expand.page, pages, cards };
+        page: s.expand.page, pages, cards, faces };
     }
   }
 
@@ -348,9 +352,9 @@ function stripModel(s) {
   const cards = items.map((c) => stripCardFor(s, c)).filter(Boolean);
   if (s.openImpressionId !== null) {
     PIP().funnel.stampShownFinal(s.d, s.openImpressionId,
-      cards.slice(0, cap).map((c) => `${c.kind}:${c.id}`));
+      cards.slice(0, cap - (faces ? 1 : 0)).map((c) => `${c.kind}:${c.id}`));
   }
-  return { cap, mode: "predict", cards };
+  return { cap, mode: "predict", cards, faces };
 }
 export const appStrip = (appId) => stripModel(S(appId));
 
@@ -648,9 +652,9 @@ function prepareSpeak(s) {
 }
 
 /** Speaking ends the logged sentence; the bar keeps its words. */
-function finishSpeak(s) {
+function finishSpeak(s, feeling = null) {
   if (s.sentenceId !== null) {
-    PIP().funnel.closeSentence(s.d, s.sentenceId, Date.now(), "spoken");
+    PIP().funnel.closeSentence(s.d, s.sentenceId, Date.now(), "spoken", feeling);
     s.sentenceId = null; s.picks = 0;
     s.lastImpressionKey = null; s.openImpressionId = null;
   }

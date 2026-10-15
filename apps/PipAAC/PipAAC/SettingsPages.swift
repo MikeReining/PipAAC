@@ -242,10 +242,7 @@ extension SettingsView {
             }
             Section {
                 toggle("Feeling faces", "expressive_voice", s.expressiveVoice)
-            } footer: {
-                Text(s.expressiveVoice
-                     ? "Tap a face to hear it. In the Smart bar, faces let \(person) say a sentence happy, sad, or angry."
-                     : "Off — the Smart bar shows word suggestions instead.")
+                TryFacesView(expressive: s.expressiveVoice, person: person)
             }
             Section {
                 Picker("After Play", selection: Binding(

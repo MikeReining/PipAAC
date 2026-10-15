@@ -166,6 +166,7 @@ vm.runInContext(readFileSync(join(root, "apps/PipAAC/PipAAC/Core/pip-core.js"), 
 const j = (v) => JSON.parse(JSON.stringify(v));
 const P = ctx.PIPCORE;
 const app = new Proxy({}, { get: (_, k) => (...a) => j(P.app[k](...a)) });
+const faces = new Proxy({}, { get: (_, k) => (...a) => j(P.faces[k](...a)) });
 const say = new Proxy({}, { get: (_, k) => (...a) => j(P.say[k](...a)) });
 const { appId } = app.appOpen(1, readFileSync(join(root, "public/catalog.json"), "utf8"), null, null);
 
@@ -555,4 +556,178 @@ test("PU-1: expiry reverts a chosen voice to Pip's own; the choice returns when 
   worker.trialEndsAt = Date.now() + 3 * DAY2; // entitled again
   say.trialRefresh(id);
   await until(() => voiceNow() === "voi_leo_en", "restored");
+});
+
+/* ---------------- 044 BS-24 / SN-10: the feeling faces; the voice lock ----------------
+ * Web: strip.js faceCard 137 -> speech.js speakFeeling 486 -> speakSentence
+ * (feeling) 398 -> voice_sentence request { user_id, [license], voice, text,
+ * feeling }; entitledNow 301 gates it; settings-sync.js "Try the faces" 107
+ * -> board.js sampleVoice 1355; voice-ui.js 51 + board.js 1378 lock voices.
+ * Instruments: the fake Worker's request log and the say events. */
+const tapIds = (id, ...ids) => { for (const sid of ids) app.appTap(id, { kind: "sense", id: sid, text: "x", source: "grid" }); };
+const feelingSays = (n0) => says.slice(n0).filter((e) => e.done === "face");
+
+test("BS-24: the faces ride the strip's last slot from the first word; the lit one is the I + feeling suggestion", async () => {
+  const { id } = await newSession({ ends: Date.now() + 3 * DAY2 });
+  app.appClear(id);
+  assert.equal(app.appStrip(id).faces, null, "an empty bar shows no faces");
+  tapIds(id, "sns_0013"); // want
+  let st = app.appStrip(id);
+  assert.deepEqual(st.faces, { lit: null, feelings: ["happy", "sad", "angry"] });
+  const cap = st.cap;
+  assert.ok(st.cards.length <= cap);
+  app.appClear(id);
+  tapIds(id, "sns_0001", "sns_0061"); // I + happy
+  assert.equal(app.appStrip(id).faces.lit, "happy");
+  app.appClear(id);
+  tapIds(id, "sns_0001", "sns_0179"); // I + sad
+  assert.equal(app.appStrip(id).faces.lit, "sad");
+  app.appClear(id);
+  tapIds(id, "sns_0061"); // happy alone doesn't light
+  assert.equal(app.appStrip(id).faces.lit, null);
+  // Off is instant: the slot returns to word suggestions (setting stored as the web does).
+  app.appSetSetting(id, "expressive_voice", 0);
+  assert.equal(app.appStrip(id).faces, null);
+  app.appSetSetting(id, "expressive_voice", 1);
+  assert.notEqual(app.appStrip(id).faces, null);
+  // Mid-word the strip is spelling completions - no faces (facesOn: !kbUi.text).
+  app.appKbOpen(id);
+  app.appKbPress(id, "z");
+  assert.equal(app.appStrip(id).faces, null);
+});
+
+test("BS-24: a face tap (trial running) sends the web's speak request with the feeling and plays the cloud clip", async () => {
+  const { id } = await newSession({ ends: Date.now() + 3 * DAY2 });
+  const n0 = says.length;
+  faces.speak(id, "happy");
+  await until(() => feelingSays(n0).length, "face outcome");
+  const sp = worker.of("/api/v1/voice/speak");
+  assert.equal(sp.length, 1);
+  assert.deepEqual(Object.keys(sp[0].body), ["user_id", "voice", "text", "feeling"]);
+  assert.equal(sp[0].body.feeling, "happy");
+  assert.equal(sp[0].body.text, "want apple.");
+  assert.equal(sp[0].body.user_id, USER);
+  const ev = feelingSays(n0)[0];
+  const entry = [...caches.entries()].find(([k]) => k.startsWith("pip-voice\n") && k.includes("/happy/"))[1];
+  assert.deepEqual(playedFiles(ev), [entry.file], "what plays is that feeling's clip");
+  assert.equal(ev.toast, null);
+  // The feeling is not neutral's cache cell: ▶ afterwards asks for neutral.
+  say.speak(id);
+  await until(() => worker.of("/api/v1/voice/speak").length === 2, "neutral speak");
+  assert.equal(worker.of("/api/v1/voice/speak")[1].body.feeling, "neutral");
+  await sleep(60);
+});
+
+test("BS-24: a single word speaks in a feeling too - a face requests every length (025 § 1)", async () => {
+  const { id } = await newSession({ ends: Date.now() + 3 * DAY2 });
+  app.appClear(id);
+  tapIds(id, "sns_0013");
+  const n0 = says.length;
+  faces.speak(id, "angry");
+  await until(() => feelingSays(n0).length, "face outcome");
+  const sp = worker.of("/api/v1/voice/speak");
+  assert.equal(sp.length, 1);
+  assert.equal(sp[0].body.feeling, "angry");
+});
+
+test("BS-24: the licence rides a face's request when one is held (web: license: await voiceLicense())", async () => {
+  const { id } = await newSession({ ends: Date.now() - DAY2, license: LICENSE });
+  const n0 = says.length;
+  faces.speak(id, "sad");
+  await until(() => feelingSays(n0).length, "face outcome");
+  const sp = worker.of("/api/v1/voice/speak")[0];
+  assert.deepEqual(Object.keys(sp.body), ["user_id", "license", "voice", "text", "feeling"]);
+  assert.equal(sp.body.license, LICENSE);
+  assert.equal(sp.body.feeling, "sad");
+});
+
+test("BS-24: not entitled (trial over, no licence) -> the web's path: no feeling request, ask once, the bar spoken word by word", async () => {
+  const { id } = await newSession({ ends: Date.now() - DAY2 });
+  const n0 = says.length;
+  faces.speak(id, "happy");
+  await until(() => feelingSays(n0).length, "face outcome");
+  assert.equal(worker.of("/api/v1/voice/speak").length, 0, "no natural-voice request, feeling or neutral");
+  const ev = feelingSays(n0)[0];
+  assert.equal(ev.toast, "A feeling voice comes with Pip Lifetime — the free trial has ended.");
+  assert.deepEqual(ev.play.map((s) => s.type), ["clip", "clip"], "her word clips");
+  assert.equal(barOf(id), "Want apple", "nothing is replaced");
+  // askOnce: the second tap in the session speaks and stays quiet.
+  const n1 = says.length;
+  faces.speak(id, "sad");
+  await until(() => feelingSays(n1).length, "second face outcome");
+  assert.equal(feelingSays(n1)[0].toast, null);
+  assert.equal(worker.of("/api/v1/voice/speak").length, 0);
+});
+
+test("BS-24: an empty bar ignores a face; a face is ignored while a transform is in flight (txBusy)", async () => {
+  const { id } = await newSession({ ends: Date.now() + 3 * DAY2 });
+  app.appClear(id);
+  const n0 = says.length;
+  faces.speak(id, "happy");
+  await sleep(100);
+  assert.deepEqual(says.slice(n0).map((e) => [e.done, e.play, e.toast]), [["face", null, null]],
+    "only the un-press: nothing plays, nothing is asked");
+  assert.equal(worker.of("/api/v1/voice/speak").length, 0);
+  tapIds(id, "sns_0013", "sns_0128");
+  worker.transformDelayMs = 300;
+  say.transform(id, "fix");
+  await until(() => worker.of("/api/v1/transform").length === 1, "in flight");
+  faces.speak(id, "happy");
+  await until(() => says.some((e) => playedFiles(e).length), "the transform's own speech");
+  assert.ok(worker.of("/api/v1/voice/speak").every((r) => r.body.feeling === "neutral"), "the face did not speak");
+});
+
+test("SN-10: Try the faces sends the sample sentence with the feeling - during the trial too (web bug fixed: board.js sampleVoice passes trial)", async () => {
+  const { id } = await newSession({ ends: Date.now() + 3 * DAY2 });
+  const n0 = says.length;
+  assert.deepEqual(faces.sample(id, "sad"), { ok: true });
+  await until(() => says.slice(n0).some((e) => e.done === "try"), "try outcome");
+  const sp = worker.of("/api/v1/voice/speak");
+  assert.equal(sp.length, 1);
+  assert.deepEqual(Object.keys(sp[0].body), ["user_id", "voice", "text", "feeling"]);
+  assert.equal(sp[0].body.text, "I want an apple.");
+  assert.equal(sp[0].body.feeling, "sad");
+  assert.equal(sp[0].body.voice, "voi_default_en");
+  const ev = says.slice(n0).find((e) => e.done === "try");
+  assert.equal(playedFiles(ev).length, 1);
+  assert.equal(ev.toast ?? null, null);
+});
+
+test("SN-10: Try the faces with no answer says the web's words, and plays nothing (no word-clip fallback for a feeling)", async () => {
+  const { id } = await newSession({ ends: Date.now() + 3 * DAY2 });
+  worker.speak = () => ({ status: 500, json: { error: "down" } });
+  const n0 = says.length;
+  faces.sample(id, "angry");
+  await until(() => says.slice(n0).some((e) => e.done === "try"), "try outcome");
+  const ev = says.slice(n0).find((e) => e.done === "try");
+  assert.equal(ev.toast, "Couldn't play that — try again online.");
+  assert.equal(ev.play ?? null, null);
+  // Trial over, no licence: the client sends nothing (voice_sentence gate), same toast.
+  const o = await newSession({ ends: Date.now() - DAY2 });
+  const n1 = says.length;
+  faces.sample(o.id, "happy");
+  await until(() => says.slice(n1).some((e) => e.done === "try"), "try outcome 2");
+  assert.equal(worker.of("/api/v1/voice/speak").length, 0);
+  assert.equal(says.slice(n1).find((e) => e.done === "try").toast, "Couldn't play that — try again online.");
+});
+
+test("voice lock: after the trial every non-default voice but the one in use is locked; licensed or in-trial unlocks (board.js:1378)", async () => {
+  const lockedOf = (id) => j(P.voicepick.voiceModel(id)).choices.filter((c) => c.locked).map((c) => c.id).sort();
+  const choicesOf = (id) => j(P.voicepick.voiceModel(id));
+  let s = await newSession({ ends: Date.now() - DAY2 });
+  const m = choicesOf(s.id);
+  const nonDefault = m.choices.filter((c) => !c.isDefault).map((c) => c.id).sort();
+  assert.ok(nonDefault.length >= 3, "the lineup has several paid voices");
+  assert.equal(m.choices.find((c) => c.isDefault).locked, false, "Pip's own voice is free forever");
+  assert.deepEqual(lockedOf(s.id), nonDefault);
+  // The voice in use stays pickable-looking (it is "In use", not locked).
+  app.appSetSetting(s.id, "preferred_voice_id", nonDefault[0]);
+  assert.equal(choicesOf(s.id).choices.find((c) => c.id === nonDefault[0]).locked, false);
+  assert.deepEqual(lockedOf(s.id), nonDefault.slice(1));
+  // Trial running: nothing locked.
+  s = await newSession({ ends: Date.now() + 3 * DAY2 });
+  assert.deepEqual(lockedOf(s.id), []);
+  // A licence (the Worker says licensed) after the trial: nothing locked.
+  s = await newSession({ ends: Date.now() - DAY2, licensed: true });
+  assert.deepEqual(lockedOf(s.id), []);
 });

@@ -210,7 +210,9 @@ struct BoardView: View {
                 // A supporter's spotlight: the line sits where the suggestions were.
                 ModelBar(spot: model.spot)
             } else {
-                ForEach(0..<cap, id: \.self) { i in
+                // 025 § 1: the faces take the last slot; word suggestions fill the rest.
+                let wordSlots = cap - (model.facesShown ? 1 : 0)
+                ForEach(0..<wordSlots, id: \.self) { i in
                     if i < cards.count {
                         stripButton(cards[i])
                     } else {
@@ -218,6 +220,9 @@ struct BoardView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
+                if model.facesShown, let faces = model.strip?.faces {
+                    FaceCard(faces: faces).frame(maxWidth: .infinity)
+                }
             }
             AnchorTile(icon: "folder.fill", label: "Groups", glow: model.spot.groups) {
                 switch model.surface {

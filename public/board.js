@@ -1354,8 +1354,8 @@ $("open-setup").addEventListener("click", () => {
 const SAMPLE_TEXT = "I want an apple.";
 async function sampleVoice(id, feeling = "neutral") {
   const blob = await sentenceVoice.request({
-    userId: me.id, license: await voiceLicense(), voice: id,
-    text: SAMPLE_TEXT, feeling, deadlineMs: SPEAK_VOICE_WAIT_MS,
+    userId: me.id, license: await voiceLicense(), trial: trialActive(),
+    voice: id, text: SAMPLE_TEXT, feeling, deadlineMs: SPEAK_VOICE_WAIT_MS,
   }).catch(() => null);
   if (blob) return playBlob(blob);
   if (feeling !== "neutral") return false; // a feeling has no word-clip fallback

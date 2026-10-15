@@ -43,7 +43,7 @@ test("the picker lists the web's voices with the web's words", () => {
   const m = voicepick.voiceModel(appId);
   assert.equal(m.current, "voi_default_en");
   assert.deepEqual(m.choices.find((c) => c.isDefault), {
-    id: "voi_default_en", name: "Pip", note: "Pip's own voice", isDefault: true });
+    id: "voi_default_en", name: "Pip", note: "Pip's own voice", isDefault: true, locked: false });
   for (const [id, note] of [["voi_mia_en", "Younger, female"], ["voi_leo_en", "Grown-up, male"],
     ["voi_sam_en", "Younger, male"]]) {
     assert.equal(m.choices.find((c) => c.id === id)?.note, note);

@@ -78,6 +78,8 @@ export * as media from "./app_media.mjs";
 /** The sentence buttons + cloud sentence/tile voice, over the web's own
  *  shared clients (044 D4) — PIPCORE.say.* */
 export * as say from "./app_say.mjs";
+/** The expressive-voice faces and Try the faces (044 D4; BS-24, SN-10) — PIPCORE.faces.* */
+export * as faces from "./app_feeling.mjs";
 
 /** First run: the welcome, "their world", the scripted demo tour (044 E7)
  *  - PIPCORE.firstrun.* */

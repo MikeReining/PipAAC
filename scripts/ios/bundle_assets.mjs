@@ -40,7 +40,19 @@ const copy = (out, rel) => put(out, rel, readFileSync(join(PUB, rel)));
 /** qlmanage -t renders svg → <file>.png at the -s pixel size. */
 const rasterize = (svgAbs, pngAbs) => {
   mkdirSync(dirname(pngAbs), { recursive: true });
-  execFileSync("qlmanage", ["-t", "-s", "512", "-o", dirname(pngAbs), svgAbs],
+  /* qlmanage draws an svg at its own width/height inside the 512 canvas: a
+   * 96x96 icon lands as a thumbnail in the corner. Render a copy whose
+   * root size is the canvas (viewBox scales the art). */
+  let src = svgAbs;
+  const text = readFileSync(svgAbs, "utf8");
+  const root = text.match(/<svg\b[^>]*>/)?.[0] ?? "";
+  if (/\bviewBox=/.test(root) && /\bwidth="(\d+)"/.test(root) && Number(RegExp.$1) < 512) {
+    const dir = mkdtempSync(join(osTmpdir(), "pip-svg-"));
+    src = join(dir, svgAbs.split("/").pop());
+    writeFileSync(src, text.replace(root,
+      root.replace(/\bwidth="\d+"/, 'width="512"').replace(/\bheight="\d+"/, 'height="512"')));
+  }
+  execFileSync("qlmanage", ["-t", "-s", "512", "-o", dirname(pngAbs), src],
     { stdio: "pipe" });
   const made = join(dirname(pngAbs), `${svgAbs.split("/").pop()}.png`);
   if (!existsSync(made)) throw new Error(`qlmanage produced nothing for ${svgAbs}`);

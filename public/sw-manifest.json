@@ -1,12 +1,12 @@
 {
-  "buildId": "1.1.26-d6a98bbe6cd0",
-  "version": "1.1.26",
-  "payloadHash": "d6a98bbe6cd0",
+  "buildId": "1.1.27-b1a9f936d377",
+  "version": "1.1.27",
+  "payloadHash": "b1a9f936d377",
   "files": [
     {
       "path": "/board.js",
-      "bytes": 69018,
-      "sha256": "6f6b9ea9a24e5f0892a2f3201243b77b5acb50bcaeedea28c88bc6ddf38ebcb2"
+      "bytes": 69040,
+      "sha256": "e286f6f060cd551c3b920c3311f852b4e1e5c73eee83ea7d1f4eca2a1037b1ad"
     },
     {
       "path": "/board/add-flow.css",

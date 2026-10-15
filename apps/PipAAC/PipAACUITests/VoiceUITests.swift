@@ -20,6 +20,9 @@ import XCTest
 final class VoiceUITests: XCTestCase {
     private var dir: URL!
     private var server: ClipServer!
+    /// 040: other voices are a trial/Lifetime feature - the stub Worker
+    /// answers the trial clock (running) so the picker is unlocked.
+    private var worker: StubWorker!
     private let mia = "voi_mia_en"
 
     override func setUpWithError() throws {
@@ -29,7 +32,7 @@ final class VoiceUITests: XCTestCase {
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
     }
 
-    override func tearDown() { server?.stop() }
+    override func tearDown() { server?.stop(); worker?.stop() }
 
     // MARK: repo files
 
@@ -67,7 +70,9 @@ final class VoiceUITests: XCTestCase {
 
     private func launch() -> XCUIApplication {
         let app = XCUIApplication()
+        if worker == nil { worker = try? StubWorker() }
         app.launchArguments = ["-PipDataDir", dir.path, "-PipTraceAudio", "YES",
+                               "-PipBaseURL", "http://127.0.0.1:\(worker.port)",
                                "-PipVoiceBase", "http://127.0.0.1:\(server.port)"]
         app.launch()
         return app

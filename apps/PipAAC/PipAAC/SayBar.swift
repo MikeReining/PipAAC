@@ -22,6 +22,7 @@ nonisolated struct SayEvent: Decodable, Sendable {
     var play: [SpeechSlotModel]?
     var toast: String?
     var state: PaintedState?
+    var done: String?   // "face" | "try": a feeling press has been answered
 }
 
 private nonisolated struct SayAck: Decodable, Sendable { var ok: Bool? }
@@ -75,6 +76,8 @@ extension AppModel {
     func handleSay(_ json: String) {
         guard let ev = try? JSONDecoder().decode(SayEvent.self, from: Data(json.utf8)),
               ev.appId == appId else { return }
+        if ev.done == "face" { speakingFace = nil }
+        if ev.done == "try" { tryingFace = nil }
         if let st = ev.state { apply(st) }
         if let msg = ev.toast { showToast(msg) }
         if let play = ev.play, !play.isEmpty {

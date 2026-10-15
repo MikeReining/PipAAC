@@ -40,19 +40,19 @@ import { onOnline } from "./host/platform_host.mjs";
 import { appSession, appSpeakParts } from "./app.mjs";
 
 /* speech.js constants - same numbers. */
-const SPEAK_VOICE_WAIT_MS = 10_000;
+export const SPEAK_VOICE_WAIT_MS = 10_000;
 const TRANSFORM_WAIT_MS = 15_000;
 
-const sentenceVoice = voiceSentence();
+export const sentenceVoice = voiceSentence();
 const tileVoice = voiceTile();
 const keys = openKeyStore();
 
-const emit = (payload) =>
+export const emit = (payload) =>
   globalThis.__pipHost.emit("say", JSON.stringify({ play: null, toast: null, state: null, ...payload }));
 
 /** Per-session voice state (speech.js's closure variables). */
 const sessions = new Map();
-function X(s) {
+export function X(s) {
   let x = sessions.get(s.appId);
   if (!x) {
     x = { userId: null, trialEndsAt: null, busy: false, askShown: false,
@@ -61,17 +61,17 @@ function X(s) {
   }
   return x;
 }
-const trialActive = (x) => (x.trialEndsAt ?? 0) > Date.now();
+export const trialActive = (x) => (x.trialEndsAt ?? 0) > Date.now();
 
 /** speech.js voiceLicense, minus the localhost dev mint: the stored
  *  license (undefined when there is none, so the key drops out of the
  *  request body exactly as it does on the web). */
-const licenseOf = async (x) => {
+export const licenseOf = async (x) => {
   try { return (await keys.get(`user/${x.userId}/license`)) || undefined; }
   catch { return undefined; }
 };
 
-const painted = (s) => appSpeakParts.state(s);
+export const painted = (s) => appSpeakParts.state(s);
 
 /* ---------------- identity + trial (speech.js refreshTrial) ---------------- */
 
@@ -292,27 +292,29 @@ export function tapSpeech(s, speech) {
  *  to SPEAK_VOICE_WAIT_MS) for the whole-sentence recording; anything else
  *  - offline, not entitled, over budget, stalled - falls to the word clips
  *  so she is always heard. */
-async function speakCore(s, x) {
+export async function speakCore(s, x, feeling = null) {
   const { prepareSpeak, finishSpeak, barSlots } = appSpeakParts;
   const seq = ++x.speakSeq;
   x.tapSeq++;
   prepareSpeak(s);
   const text = sentenceSpeakText(s.sentence);
   let play = null;
-  if (s.sentence.length >= 2) {
+  /* 025: a face tap requests every length - the shortest messages are
+   * often the most emotional. */
+  if (s.sentence.length >= 2 || feeling) {
     const blob = await sentenceVoice.request({
       userId: x.userId,
       license: await licenseOf(x),
       trial: trialActive(x),
       voice: s.voiceId,
       text,
-      feeling: "neutral",
+      feeling: feeling ?? "neutral",
       deadlineMs: SPEAK_VOICE_WAIT_MS,
     });
     if (seq !== x.speakSeq) return null;
     // The bar changed mid-request: speak what it holds now, never the
     // stale recording (speech.js).
-    if (text !== sentenceSpeakText(s.sentence)) return speakCore(s, x);
+    if (text !== sentenceSpeakText(s.sentence)) return speakCore(s, x, feeling);
     if (blob?._file) play = [{ type: "file", key: blob._file }];
   }
   if (!play) {
@@ -327,7 +329,7 @@ async function speakCore(s, x) {
       }
     }
   }
-  finishSpeak(s);
+  finishSpeak(s, feeling);
   try { refreshStatsDays(s.d); } catch (e) { console.error(`stats: ${e}`); }
   reportResearch(s.d);
   return play;
@@ -457,4 +459,12 @@ export function transform(appId, mode) {
     },
     (e) => { x.busy = false; console.error(`say.transform: ${e}`); });
   return painted(s);
+}
+
+/** board.js:1230/1378 - entitled = a license (the Worker's read or the
+ *  purchase seam) or the trial still running; the voice picker locks every
+ *  non-default voice when this is false. */
+export function entitled(s) {
+  const x = sessions.get(s.appId);
+  return !!(x && (x.trialLicensed === true || s.licensed === true || trialActive(x)));
 }
