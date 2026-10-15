@@ -213,6 +213,11 @@ final class AppModel: ObservableObject {
     /// Bumped when a picture changed the board behind an open sheet (the Library refreshes).
     @Published var picTick = 0
     var editToastSeq = 0
+    // E8 (CardRows.swift): the swap picker, the editor's save status.
+    @Published var swapRequest: SwapRequest?
+    @Published var editorStatus = EditorStatus(text: "Saved on this device", tone: "ok")
+    /// A core write that threw (editCall): the status says so until one succeeds.
+    var saveFailed = false
     /// The synced settings; the "Words only" look follows them (one value for board, bar and first run).
     @Published private(set) var settings: SettingsModel? { didSet { wordsOnly = settings?.look == "label" } }
     /// First run (FirstRun.swift, 044 E7): the demo's current card while it

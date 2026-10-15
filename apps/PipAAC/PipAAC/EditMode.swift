@@ -36,6 +36,12 @@ nonisolated struct WordCardModel: Decodable, Sendable, Identifiable {
     let hint: String
     let onMainBoard: Bool
     let groups: [WordCardGroupModel]
+    // E8: Colour row, "Sounds wrong", Swap (scripts/ios/app_edit.mjs cardModel).
+    var canColour: Bool?
+    var kindName: String?
+    var kinds: [CardKindModel]?
+    var canFlag: Bool?
+    var swap: CardSwapContext?
     /// Set only on the add's step 2 ("✓ Added to …").
     var justAdded: JustAdded?
     var sheetID: String { "\(kind):\(id)" }
@@ -106,11 +112,13 @@ extension AppModel {
             guard let self else { return }
             do {
                 let p: EditPaint = try await Self.editCore(core, method, [appId] + args, object: object)
+                saveFailed = false
                 if clearToast { editToast = nil }
                 applyEdit(p, openCard: openCard)
                 then?()
             } catch {
                 NSLog("AppModel.edit.\(method) failed: \(error)")
+                saveFailed = true // editorStatus: "Couldn't save — keep this open"
             }
         }
     }
@@ -164,8 +172,8 @@ extension AppModel {
 
     // MARK: the card (LW-6)
 
-    func openCard(kind: String, id: String) {
-        editCall("cardOpen", [["kind": kind, "id": id]], openCard: true)
+    func openCard(kind: String, id: String, swap: Bool = false) {
+        editCall("cardOpen", [["kind": kind, "id": id, "swap": swap]], openCard: true)
     }
 
     func speakCard(_ c: WordCardModel) {
@@ -359,6 +367,7 @@ struct EditHeader: View {
                 .lineLimit(2)
                 .minimumScaleFactor(0.7)
             Spacer(minLength: 4)
+            EditorStatusLabel() // LW-22
             // 018 D10: 📊 puts the child's own 30-day taps on every tile.
             Button { model.toggleCounts() } label: {
                 Image(systemName: "chart.bar.fill")
@@ -458,7 +467,7 @@ struct EditCell: View {
             .contentShape(Rectangle())
             .onTapGesture {
                 if reserved && cell.hidden != true { return }
-                if let id = cell.id { model.openCard(kind: cell.kind ?? "sense", id: id) }
+                if let id = cell.id { model.openCard(kind: cell.kind ?? "sense", id: id, swap: true) }
             }
             .gesture(
                 DragGesture(minimumDistance: 10, coordinateSpace: .named("slotgrid"))

@@ -61,6 +61,10 @@ export * as edit from "./app_edit.mjs";
  *  — PIPCORE.lib.* (`library` is already public/shared/library.mjs). */
 export * as lib from "./app_library.mjs";
 
+/** Swap, Colour and the editor's save status on the word card (044 E8)
+ *  - PIPCORE.card.* */
+export * as card from "./app_card.mjs";
+
 /** Live modeling + the Spotlight glow/dim/tip on the board (044 D5) -
  *  PIPCORE.spot.* */
 export * as spot from "./app_spotlight.mjs";

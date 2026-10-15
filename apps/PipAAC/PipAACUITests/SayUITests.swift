@@ -367,6 +367,7 @@ final class StubWorker: @unchecked Sendable {
             }
         case "/api/v1/voice/speak", "/api/v1/voice/tile": send(200, "audio/mpeg", Self.clip)
         case "/api/v1/voice/tile/replaced": sendJSON(["ids": [String](), "next": 1])
+        case "/api/v1/voice/tile/flag": send(204, "text/plain", Data()) // E8: "Sounds wrong"
         case "/api/v1/pictures/find": sendJSON(findBody(json["text"] as? String ?? ""))
         case "/api/v1/pictures/find-batch":
             let items = (json["items"] as? [[String: Any]]) ?? []

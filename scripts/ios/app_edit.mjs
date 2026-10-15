@@ -22,6 +22,7 @@ import {
   appBoard, appGeom, appGroupPage, appMeta, appSession,
 } from "./app.mjs";
 import { mediaFor } from "./app_media.mjs";
+import { KINDS } from "../../public/board/word-card.js";
 
 const PIP = () => globalThis.PIPCORE;
 const one = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
@@ -59,7 +60,7 @@ function paint(appId, extra = {}) {
 /** The word card's model (word-card.js openWordCard): the tile as the
  *  child sees it, then what an adult can change. A catalog word is not
  *  renamed here ("a new copy" is the web's answer); personal words are. */
-function cardModel(s, kind, id) {
+function cardModel(s, kind, id, opts = {}) {
   const d = s.d;
   const layout = PIP().groups_shared.activeLayout(d);
   let base;
@@ -93,10 +94,34 @@ function cardModel(s, kind, id) {
     hidden: !isEnt && PIP().groups.maskedSenseIds(d).has(id),
     hint: isEnt ? "Tap the name to change it" : "Tap the word to hear it",
     onMainBoard: PIP().coremove.cellSlot(d, appGeom(s).name, kind, id) !== null,
+    // Colour row (word-card.js paintKind): personal words only.
+    canColour: isEnt,
+    kindName: KINDS.find(([r]) => r === base.role)?.[1] ?? "Thing",
+    kinds: isEnt ? KINDS.map(([r, label]) => ({ role: r, label, selected: r === base.role })) : [],
+    // "Sounds wrong" (word-card.js paintVoice): personal names on a shared board voice.
+    canFlag: isEnt && one(d, "SELECT source AS s FROM voice WHERE id = ?", [s.voiceId])?.s !== "device_tts",
+    // Swap (editor-ui.js showCard): only where the word holds a cell, and
+    // only when the card was opened from the board (opts.swap).
+    swap: opts.swap ? swapContext(s, kind, id) : null,
     groups: homes
       .filter((g) => PIP().groups_shared.shownOn(d, g.id, layout))
       .map((g) => ({ id: g.id, name: g.name })),
   };
+}
+
+/** editor-ui.js showCard: Replace is offered anywhere the word holds a
+ *  cell — the home cell on the main board, this group's seat in a group. */
+function swapContext(s, kind, id) {
+  const d = s.d;
+  if (s.view === "group" && s.groupId !== null) {
+    const cell = one(d,
+      `SELECT page, slot_index FROM group_cell
+       WHERE group_id = ? AND layout = ? AND item_kind = ? AND item_id = ?`,
+      [s.groupId, PIP().groups_shared.activeLayout(d), kind, id]);
+    return cell ? { where: "group", groupId: s.groupId, page: cell.page, slot: cell.slot_index } : null;
+  }
+  const slot = PIP().coremove.cellSlot(d, appGeom(s).name, kind, id);
+  return slot === null ? null : { where: "main", slot };
 }
 
 /* ---------------- undo toasts ---------------- */
@@ -142,9 +167,9 @@ export function editState(appId) { return paint(appId); }
 
 /* ---------------- the word card (LW-6) ---------------- */
 
-export function cardOpen(appId, { kind, id }) {
+export function cardOpen(appId, { kind, id, swap = false }) {
   const s = appSession(appId);
-  return paint(appId, { card: cardModel(s, kind, id) });
+  return paint(appId, { card: cardModel(s, kind, id, { swap }) });
 }
 
 /** The tile speaks when tapped, as it does for the child — through the

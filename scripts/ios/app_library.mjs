@@ -300,6 +300,8 @@ function kidsUni(s) {
   return (s.kidsUniCache = uni);
 }
 
+export { kidsUni as placeUniFor };
+
 /** place-ui.js paint on the home board: every word with no home cell,
  *  most-tapped first, filtered by the search field (first 30). */
 export function placeList(appId, { q = "" }) {

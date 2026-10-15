@@ -218,6 +218,14 @@ final class SyncE2ETests: XCTestCase {
 
     /// The peer edits while this iPad is offline (relaunched against a
     /// dead relay); reconnecting catches up.
+    /// Settings -> Edit the board (the PIN gate is off on a fresh device).
+    private func enterEditing(_ app: XCUIApplication) {
+        app.buttons["settingsGear"].tap()
+        XCTAssertTrue(app.buttons["editBoard"].waitForExistence(timeout: 10))
+        app.buttons["editBoard"].tap()
+        XCTAssertTrue(app.buttons["editDone"].waitForExistence(timeout: 10))
+    }
+
     func testOfflineCatchUp() throws {
         var app = launch(reset: true)
         XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
@@ -239,6 +247,21 @@ final class SyncE2ETests: XCTestCase {
         XCTAssertEqual(app.buttons["tile:\(ent)"].label, "Zed", "offline: the old name, no catch-up possible")
         XCTAssertNotEqual(scalar("SELECT speech_rate FROM learner_profile WHERE id='prf_local'"), edit.speech_rate)
         attach(app, "c3-offline")
+
+        // 044 E8 (LW-22): an edit made with the relay gone is honestly "not saved
+        // anywhere else yet" - never "Saved".
+        enterEditing(app)
+        XCTAssertTrue(app.staticTexts["editStatus"].waitForExistence(timeout: 10))
+        app.buttons["tile:sns_0013"].tap()
+        XCTAssertTrue(app.buttons["wc-hide"].waitForExistence(timeout: 10))
+        app.buttons["wc-hide"].tap()
+        // (editorStatus's own order: a failed catch-up against the dead relay
+        // outranks "Offline" - the web function, unchanged.)
+        XCTAssertNotNil(poll(10) {
+            ["Saving…", "Offline — will sync", "Couldn't apply an update — keep this open"]
+                .contains(app.staticTexts["editStatus"].label) },
+                        "offline with an unsent edit the status is pending, not Saved: \(app.staticTexts["editStatus"].label)")
+        attach(app, "e8-status-pending")
         app.terminate()
 
         // Reconnect: relaunch against the relay.
@@ -249,6 +272,14 @@ final class SyncE2ETests: XCTestCase {
         XCTAssertNotNil(poll(10) { self.scalar("SELECT speech_rate FROM learner_profile WHERE id='prf_local'") == edit.speech_rate })
         print("E2E-LATENCY offline catch-up after relaunch: \(Int(nowMs() - t1)) ms")
         attach(app, "c3-caught-up")
+
+        // ... and once the relay has accepted it, the same line turns to "✓ Saved".
+        enterEditing(app)
+        XCTAssertNotNil(poll(60) { app.staticTexts["editStatus"].label == "✓ Saved" },
+                        "the pending edit was sent: \(app.staticTexts["editStatus"].label)")
+        XCTAssertEqual(scalar("SELECT COUNT(*) FROM sync_op WHERE relay_seq IS NULL"), "0",
+                       "the iPad's own file agrees: nothing is waiting")
+        attach(app, "e8-status-saved")
         put("ui-saw-edit")
         Thread.sleep(forTimeInterval: 3)
         put("ui-done")

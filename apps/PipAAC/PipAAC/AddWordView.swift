@@ -233,6 +233,7 @@ struct EditSheets: ViewModifier {
         case place(PlaceRequest)
         case bulk(BulkRequest)
         case photos(PhotoRequest)
+        case swap(SwapRequest)
         var id: String {
             switch self {
             case .card(let c): "card:\(c.sheetID)"
@@ -241,6 +242,7 @@ struct EditSheets: ViewModifier {
             case .place(let p): "place:\(p.slot)"
             case .bulk(let b): "bulk:\(b.id)"
             case .photos(let p): "photos:\(p.id)"
+            case .swap(let s): "swap:\(s.id)"
             }
         }
     }
@@ -253,6 +255,7 @@ struct EditSheets: ViewModifier {
         if let p = model.placeRequest { return .place(p) }
         if let b = model.bulkRequest { return .bulk(b) }
         if let p = model.photoRequest { return .photos(p) }
+        if let s = model.swapRequest { return .swap(s) }
         return nil
     }
 
@@ -269,6 +272,7 @@ struct EditSheets: ViewModifier {
                 case .place(let p): PlaceView(slot: p.slot)
                 case .bulk(let b): BulkListView(request: b)
                 case .photos(let p): PhotoDraftsView(request: p)
+                case .swap(let s): SwapView(request: s)
                 }
             }
             .environmentObject(model)
@@ -283,6 +287,7 @@ struct EditSheets: ViewModifier {
         model.bulkRequest = nil
         model.bulk = nil
         model.photoRequest = nil
+        model.swapRequest = nil
     }
 }
 

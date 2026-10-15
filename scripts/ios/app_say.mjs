@@ -236,6 +236,29 @@ export function tileEnsure(s, text, source = "user_typed") {
   })();
 }
 
+/** word-card.js #wc-flag -> tileApi.flag (028 § 5.5): "Sounds wrong" flags
+ *  the shared clip for review - a signal, never a takedown. Returns at
+ *  once; the answer is the "card.flag" host event {appId, ok, toast},
+ *  with the web's two sentences. */
+export function flagTile(appId, text) {
+  const s = appSession(appId);
+  const x = X(s);
+  void (async () => {
+    const ok = x.userId
+      ? await tileVoice.flag({
+        userId: x.userId, license: await licenseOf(x), trial: trialActive(x),
+        voice: s.voiceId, locale: s.locale, text,
+      }).catch(() => false)
+      : false;
+    globalThis.__pipHost.emit("card.flag", JSON.stringify({
+      appId, ok,
+      toast: ok ? "Flagged for review — it keeps playing meanwhile"
+        : "Couldn't flag — try again when you're online",
+    }));
+  })();
+  return { accepted: true };
+}
+
 /** A tile-library slot -> a file slot (cache hit, or one ledger fetch
  *  behind the 900 ms tap deadline) or null = the silent slot. Tiles never
  *  speak through a device voice. */

@@ -38,6 +38,8 @@ struct WordCardView: View {
                     .accessibilityLabel("Hear \(card.label)")
                     .accessibilityIdentifier("wc-tile")
 
+                    CardSwapButton(card: card)
+
                     Text(card.hint)
                         .font(.system(size: 15))
                         .foregroundStyle(PipStyle.muted)
@@ -58,6 +60,7 @@ struct WordCardView: View {
 
                     CardPictureRow(card: card)
                     CardVoiceRow(card: card)
+                    CardColourRow(card: card)
 
                     alsoIn
 
@@ -65,6 +68,9 @@ struct WordCardView: View {
                         if card.canHide {
                             quiet(card.hidden ? "Show this word" : "Hide this word",
                                   id: "wc-hide") { model.toggleHidden(card) }
+                        }
+                        if card.canFlag == true {
+                            quiet("Sounds wrong", id: "wc-flag") { model.flagCard(card) }
                         }
                         if card.canRemove {
                             quiet("Remove", id: "wc-remove") { model.removeWord(card) }
