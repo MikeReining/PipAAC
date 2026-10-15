@@ -78,7 +78,7 @@ before submitting.**
 | Purchases → Purchase History | Yes | App Functionality | `src/worker/appstore.mjs` (transaction → license) |
 | Usage Data → Product Interaction | Yes | App Functionality (budget caps on cloud voice and helpers) | `src/worker/voice.js` per-user hit counters, `usage_ledger.mjs` |
 | User Content → Other User Content | No | App Functionality | sentence audio cached by text hash (`voice.js` `speak/<sha>`); typed words for word voices (`tile_ledger.mjs`) |
-| Usage Data → Product Interaction ("Help improve Pip", on by default, switch in Backup & privacy) | No (random research id) | Analytics | `public/shared/research.mjs` → `src/worker/research.js` — **iPad shows the switch but does not send yet; wire it before 1.0 (parity) and keep this row** |
+| Usage Data → Product Interaction ("Help improve Pip", on by default, switch in Backup & privacy) | No (random research id) | Analytics | `public/shared/research.mjs` → `src/worker/research.js` (iPad sends the same rows via `scripts/ios/app_research.mjs`) |
 
 Not collected: location, contacts, health, financial info (Apple and Stripe
 take payment), browsing, search history (Help search is answered and not
@@ -132,5 +132,5 @@ hello@pipaac.org.
 - [ ] IAP created, attached to the version, reviewed together.
 - [ ] Paid Apps agreement, banking, tax active.
 - [ ] Screenshots, description, keywords, age rating, review notes.
-- [ ] `ITSAppUsesNonExemptEncryption = NO` in Info.plist (skips the
+- [x] `ITSAppUsesNonExemptEncryption = NO` in Info.plist (skips the
       per-build question).
