@@ -953,10 +953,15 @@ private struct TourGate: ViewModifier {
     let card: TourCard?
     let kind: String
     let id: String?
+    @ViewBuilder
     func body(content: Content) -> some View {
-        let isTarget = card?.target.map { $0.kind == kind && $0.id == id } ?? false
-        content
-            .allowsHitTesting(card == nil || isTarget)
-            .overlay { if isTarget { TourRing() } }
+        if card == nil {
+            content // untouched when no demo runs: identity and accessibility as before
+        } else {
+            let isTarget = card?.target.map { $0.kind == kind && $0.id == id } ?? false
+            content
+                .allowsHitTesting(isTarget)
+                .overlay { if isTarget { TourRing() } }
+        }
     }
 }

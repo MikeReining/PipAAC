@@ -239,7 +239,17 @@ nonisolated enum UITestHooks {
     /// fresh-install gate); only a test that is about first run passes
     /// `-pipUITestFirstRun`. The registry row is untouched (a join still
     /// replaces its placeholder) - only the welcome is not shown.
-    static var skipFirstRun: Bool { hermetic && !args.contains("-pipUITestFirstRun") }
+    /// A test's argument-less RELAUNCH of a skipped run still skips: the
+    /// skipping launch leaves a marker beside its data.
+    static var skipFirstRun: Bool {
+        let marker = (try? PipAssets.dataBase())?.appendingPathComponent("test-skip-first-run")
+        if hermetic {
+            if args.contains("-pipUITestFirstRun") { return false }
+            if let marker { try? Data().write(to: marker) }
+            return true
+        }
+        return marker.map { FileManager.default.fileExists(atPath: $0.path) } ?? false
+    }
 
     /// E7: the file a first-run test's "photo picker" returns (the
     /// simulator's real picker has no usable accessibility tree).
