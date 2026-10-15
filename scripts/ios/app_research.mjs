@@ -9,7 +9,6 @@
  * Fire-and-forget: a dead network never touches the board. The whitelist,
  * the research id and the off switch all live in flushResearch; the base URL
  * is the core's location.origin (the relay base the app was started with).
- * Exported to Swift as PIPCORE.research.
  */
 import { flushResearch } from "../../public/shared/research.mjs";
 
