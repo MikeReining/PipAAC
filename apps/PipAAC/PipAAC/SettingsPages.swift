@@ -198,11 +198,26 @@ extension SettingsView {
                 Text("The same words stay in the same place when \(person) opens a group.")
             }
             Section {
+                Picker("Keyboard", selection: strBinding("keyboard_mode", s.keyboardMode)) {
+                    Text("Pip keyboard").tag("pip")
+                    Text("Device keyboard").tag("device")
+                }
+                .pickerStyle(.segmented)
+                .accessibilityIdentifier("board:keyboardMode")
+            } header: {
+                Text("Keyboard")
+            } footer: {
+                Text("Pip's keyboard keeps every letter in one place.")
+            }
+            Section {
                 Picker("Letter layout", selection: strBinding("keyboard_order", s.keyboardOrder)) {
                     Text(s.keyboardStandardName).tag("standard")
                     Text("ABC").tag("abc")
                 }
                 .pickerStyle(.segmented)
+                // keyboard-ui.js syncKbSettings: the letters are the device's own.
+                .disabled(s.keyboardMode == "device")
+                .accessibilityIdentifier("board:letterLayout")
                 .settingsRow("keyboard", focus)
             } header: {
                 Text("Letter layout")
@@ -304,9 +319,130 @@ extension SettingsView {
             } footer: {
                 Text("Words take the form the sentence needs: after \"he\", the board reads wants, has, him.")
             }
+            Section {
+                toggle("Outline likely next words", "highlight_next", s.highlightNext)
+                    .accessibilityIdentifier("lang:outline")
+                LikelyPreview()
+            } footer: {
+                Text("Up to three buttons get a thick outline in their own color. Nothing moves.")
+            }
+            Section {
+                ForEach(families) { f in
+                    Button { editingFamily = f } label: {
+                        HStack {
+                            Text(f.label).foregroundStyle(PipStyle.ink)
+                            Spacer()
+                            Image(systemName: "chevron.right").foregroundStyle(PipStyle.muted)
+                        }
+                    }
+                    .accessibilityIdentifier("fam:\(f.id)")
+                }
+                if let note {
+                    Text(note).foregroundStyle(PipStyle.muted)
+                        .accessibilityIdentifier("fam:note")
+                }
+            } header: {
+                Text("Smart bar word families")
+            } footer: {
+                Text("These open in the Smart bar when their button is tapped, always in the same order. Tap one to change the order.")
+            }
+        }
+        .sheet(item: $editingFamily) { f in
+            FamilyEditor(familyId: f.id) { chips, msg in
+                families = chips
+                flash(msg)
+            }
+            .environmentObject(model)
         }
         .navigationTitle("Language help")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: Spotlight (ST-8)
+
+    /// index.html `data-sec="spotlight"`, the settings that exist on the
+    /// iPad: With two devices, and Look. Lists, picking and Try it are the
+    /// Spotlight page's later slice (SP-6, SP-7).
+    func spotlightPage(_ s: SettingsModel) -> some View {
+        Form {
+            introSection("spotlight")
+            if let sp = spotPage {
+                Section {
+                    Text(sp.roleNow).accessibilityIdentifier("spot:role")
+                    Text(sp.modelHint).foregroundStyle(PipStyle.muted)
+                    Button("Change in Team & devices") {
+                        section = "team"
+                    }
+                    .accessibilityIdentifier("spot:team")
+                    if !sp.supporter {
+                        NavigationLink("Link a device") {
+                            TeamDevicesView(team: model.team)
+                        }
+                        .accessibilityIdentifier("spot:link")
+                    }
+                } header: {
+                    Text("With two devices")
+                }
+                Section {
+                    Picker("When a supporter's tap lights a word",
+                           selection: Binding(
+                            get: { s.modelSpeaks ? 1 : 0 },
+                            set: { model.setSetting("model_speaks", $0) })) {
+                        Text("Glow silently").tag(0)
+                        Text("Glow and speak").tag(1)
+                    }
+                    .pickerStyle(.segmented)
+                    .accessibilityIdentifier("spot:speaks")
+                } header: {
+                    Text("When a supporter's tap lights a word")
+                } footer: {
+                    Text("Silent is usually best: your voice does the teaching.")
+                }
+                Section {
+                    Picker("Glow", selection: Binding(
+                        get: { s.spotPulse ? 1 : 0 },
+                        set: { model.setSetting("spot_pulse", $0) })) {
+                        Text("Steady").tag(0)
+                        Text("Pulse").tag(1)
+                    }
+                    .pickerStyle(.segmented)
+                    .accessibilityIdentifier("spot:pulse")
+                    Picker("Dim the other words", selection: Binding(
+                        get: { s.spotDim },
+                        set: { model.setSetting("spot_dim", $0) })) {
+                        Text("A little").tag(60)
+                        Text("Medium").tag(45)
+                        Text("A lot").tag(30)
+                    }
+                    .pickerStyle(.segmented)
+                    .accessibilityIdentifier("spot:dim")
+                } header: {
+                    Text("Look")
+                } footer: {
+                    Text(sp.lookSummary).accessibilityIdentifier("spot:lookSummary")
+                }
+            }
+        }
+        .navigationTitle("Spotlight")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    /// ST-3: turning it on proves one scan works; turning it off is free.
+    func setBiometric(_ on: Bool) {
+        if !on {
+            PipBiometric.setEnabled(false)
+            biometricOn = false
+            return
+        }
+        Task { @MainActor in
+            if await PipBiometric.evaluate(reason: "Use \(PipBiometric.name) to open Settings") {
+                PipBiometric.setEnabled(true)
+                biometricOn = true
+                flash("Settings opens with \(PipBiometric.name). The PIN still works.")
+            } else {
+                biometricOn = false
+            }
+        }
     }
 
     // MARK: Team & devices
@@ -363,6 +499,13 @@ extension SettingsView {
                         flash("PIN turned off. Settings opens with one tap.")
                     }
                     .accessibilityIdentifier("pin:off")
+                }
+                // ST-3: Face ID in place of typing the PIN (device-local; the PIN stays the fallback).
+                if pinOn && PipBiometric.available {
+                    Toggle("Open Settings with \(PipBiometric.name)", isOn: Binding(
+                        get: { biometricOn },
+                        set: { setBiometric($0) }))
+                        .accessibilityIdentifier("pin:biometricToggle")
                 }
                 if let note {
                     Text(note).foregroundStyle(PipStyle.muted)

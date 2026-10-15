@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.27-b1a9f936d377",
-  "version": "1.1.27",
-  "payloadHash": "b1a9f936d377",
+  "buildId": "1.1.28-63280d07633a",
+  "version": "1.1.28",
+  "payloadHash": "63280d07633a",
   "files": [
     {
       "path": "/board.js",
@@ -145,8 +145,8 @@
     },
     {
       "path": "/board/keyboard-ui.js",
-      "bytes": 14827,
-      "sha256": "a7fbe443f1ac835725bd7a7177d00fd94127394c971ef505792f465819a189f7"
+      "bytes": 15144,
+      "sha256": "665caf329956edc8112319e7b9a6e26a41f8864e4f481687894f1ceb7345af94"
     },
     {
       "path": "/board/library-ui.css",

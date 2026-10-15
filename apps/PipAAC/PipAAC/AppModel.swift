@@ -135,6 +135,10 @@ nonisolated struct PaintedState: Decodable, Sendable {
     var question: Bool? = nil
     var speechRate: Float? = nil   // appSetSetting replies carry the playback rate
     var settings: SettingsModel? = nil
+    /// SB-9: the board cells to outline as likely next words (E9).
+    var likely: [String]? = nil
+    /// KB-7: what the device keyboard's field keeps after a word-ender.
+    var rest: String? = nil
 }
 
 /// appSettings() — the synced learner_profile rows the settings sheet
@@ -155,6 +159,13 @@ nonisolated struct SettingsModel: Decodable, Sendable {
     let speechRate: String
     let keyboardOrder: String
     let keyboardStandardName: String
+    /// KB-7 / SB-9 / ST-8 (E9): "pip" | "device", the outline switch, and
+    /// the Spotlight look columns (glow style, dim opacity in percent, Speak).
+    var keyboardMode: String = "pip"
+    var highlightNext: Bool = false
+    var spotPulse: Bool = false
+    var spotDim: Int = 45
+    var modelSpeaks: Bool = false
     let boardLayout: String
     let layouts: [String]
     let barControls: [String]
@@ -176,7 +187,10 @@ nonisolated struct AppOpenResult: Decodable, Sendable {
 final class AppModel: ObservableObject {
     enum Surface { case boot, picker, board, index, group }
 
-    @Published private(set) var surface: Surface = .boot
+    @Published private(set) var surface: Surface = .boot {
+        // grid.js setView -> applyLikely: the outline is recomputed on return.
+        didSet { if surface == .board, oldValue != .board { refreshLikely() } }
+    }
     @Published var board: BoardModel? { didSet { refreshSpot() } }
     /// The attention layer (Spotlight.swift, 044 D5): the core's render model.
     @Published var spot = SpotModel()
@@ -186,6 +200,8 @@ final class AppModel: ObservableObject {
     @Published var groupPage: GroupPageModel? { didSet { refreshSpot() } }
     @Published private(set) var bootError: String?
     @Published private(set) var typing: String?
+    /// SB-9: board cell ids outlined as likely next words (core `lang.likelyIds`).
+    @Published private(set) var likely: Set<String> = []
     @Published private(set) var kb: KeyboardModel?
     /// Shown bar controls (learner_profile.bar_controls — all six when unset).
     @Published private(set) var controls: Set<String> =
@@ -354,6 +370,7 @@ final class AppModel: ObservableObject {
         try registry.touchOpened(id)
         try refreshPeople()
         spot = SpotModel()
+        likely = []
         let me = people.first { $0.id == id }
         bindSpot(role: me?.role, name: me?.displayName ?? "")
         groupIndex = nil
@@ -446,7 +463,8 @@ final class AppModel: ObservableObject {
 
     // MARK: taps
 
-    private func mutate(_ method: String, _ args: [Any]) {
+    private func mutate(_ method: String, _ args: [Any],
+                        then: (@MainActor (PaintedState) -> Void)? = nil) {
         let appId = self.appId
         let core = self.core
         Task { @MainActor [weak self] in
@@ -463,6 +481,7 @@ final class AppModel: ObservableObject {
                     speaker.play(slot: .init(type: s.type, key: s.key, text: s.text))
                 }
                 apply(st)
+                then?(st)
             } catch {
                 NSLog("AppModel.\(method) failed: \(error)")
             }
@@ -475,6 +494,7 @@ final class AppModel: ObservableObject {
         board = st.board
         typing = st.typing
         kb = st.kb
+        if let l = st.likely { likely = Set(l) }
         if let c = st.controls { controls = Set(c) }
         if let t = st.tense { tense = t }
         if let q = st.question { question = q }
@@ -560,6 +580,26 @@ final class AppModel: ObservableObject {
     }
 
     func kbPress(_ key: String) { mutate("appKbPress", [key]) }
+
+    /// KB-7: the system keyboard typed into the field (keyboard-ui.js
+    /// kbDeviceInput). The core presses everything up to the last
+    /// word-ender through the Pip keys' own path; `done` gets the text the
+    /// field keeps.
+    func kbDevice(_ text: String, done: @escaping @MainActor (String) -> Void) {
+        mutate("appKbDevice", [text]) { st in done(st.rest ?? text) }
+    }
+
+    /// SB-9: re-read the outline (a return to the board; the web's setView).
+    func refreshLikely() {
+        guard !appId.isEmpty else { return }
+        let id = appId
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            if let l: [String] = try? await coreValue("PIPCORE.lang", "likely", []), id == self.appId {
+                likely = Set(l)
+            }
+        }
+    }
     func kbPartner(_ senseId: String) { mutate("appKbPartner", [senseId]) }
 
     /// ▶ — the whole-sentence cloud clip when online, her word clips

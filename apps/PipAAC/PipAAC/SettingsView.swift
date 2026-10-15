@@ -56,7 +56,8 @@ nonisolated struct HubModel: Decodable, Sendable {
 }
 
 private let sectionIcons: [String: String] = [
-    "overview": "house", "words": "square.grid.2x2", "board": "rectangle.split.3x3",
+    "overview": "house", "words": "square.grid.2x2", "spotlight": "flashlight.on.fill",
+    "board": "rectangle.split.3x3",
     "talking": "speaker.wave.2", "lang": "character.bubble", "team": "person.2",
     "backup": "lock.shield", "lifetime": "star", "account": "person.crop.circle", "help": "questionmark.circle",
 ]
@@ -75,6 +76,11 @@ struct SettingsView: View {
     @State var query = ""
     @State var hub: HubModel?
     @State var narrowOnPage = false
+    /// E9: the Spotlight page's text, the Smart bar families, the editor sheet.
+    @State var spotPage: SpotPageModel?
+    @State var families: [FamilyChip] = []
+    @State var editingFamily: FamilyChip?
+    @State var biometricOn = PipBiometric.enabled
     @State var nameText = ""
     @FocusState var nameFocused: Bool
     /// Help (E5): answers + the shared search; one box searches Settings
@@ -145,6 +151,7 @@ struct SettingsView: View {
         }
         .task(id: hubKey) { await loadHub() }
         .onReceive(model.lifetime.objectWillChange) { _ in Task { await loadHub() } }
+        .onChange(of: pinOn) { _, _ in biometricOn = PipBiometric.enabled }
         .onChange(of: query) { _, q in help.setQuery(q) }
         .onChange(of: me?.name) { _, n in if !nameFocused { nameText = n ?? "" } }
     }
@@ -271,6 +278,7 @@ struct SettingsView: View {
         if let s = model.settings {
             switch id {
             case "words": wordsPage()
+            case "spotlight": spotlightPage(s)
             case "board": boardPage(s)
             case "talking": talkingPage(s)
             case "lang": langPage(s)
@@ -323,6 +331,9 @@ struct SettingsView: View {
         let h: HubModel? = try? await model.coreValueAny(
             "PIPCORE.settingsUi", "hub", [["name": me?.name ?? "", "pinOn": pinOn, "licensed": model.lifetime.licensed]])
         if let h { hub = h }
+        spotPage = try? await model.coreValueAny(
+            "PIPCORE.lang", "spotlightPage", [["role": me?.role ?? "", "name": me?.name ?? ""]])
+        families = (try? await model.coreValueAny("PIPCORE.lang", "families", [])) ?? families
     }
 
     func flash(_ msg: String) {
@@ -418,6 +429,12 @@ struct PinSheet: View {
                         .buttonStyle(.borderedProminent)
                 }
                 if step == .check {
+                    // ST-3: Face ID stands in for the digits; the PIN stays the fallback.
+                    if !change && PipBiometric.enabled && PipBiometric.available {
+                        Button("Use \(PipBiometric.name)") { tryBiometric() }
+                            .font(.callout)
+                            .accessibilityIdentifier("pin:biometric")
+                    }
                     Button("Forgot the PIN?") { step = .forgot; input = "" }
                         .font(.callout)
                 }
@@ -431,7 +448,20 @@ struct PinSheet: View {
                 }
             }
         }
-        .onAppear { focused = true }
+        .onAppear {
+            focused = true
+            if !change && PipBiometric.enabled && PipBiometric.available { tryBiometric() }
+        }
+    }
+
+    /// One scan in place of the 4 digits; cancel or failure leaves the
+    /// PIN field as it was.
+    private func tryBiometric() {
+        Task { @MainActor in
+            if await PipBiometric.evaluate(reason: "Open Settings") {
+                dismiss(); onDone(true)
+            }
+        }
     }
 
     private var title: String {

@@ -180,7 +180,7 @@ test("presentation mode is the synced presentation_mode column", () => {
 test("Settings hub: sections, checklist, glance", () => {
   const h = settingsUi.hub(appId, { name: "", pinOn: false });
   assert.deepEqual(h.sections.map((s) => s.title),
-    ["Get Pip Lifetime", "Overview", "Words", "Board", "Talking", "Language help", "Team & devices", "Backup & privacy",
+    ["Get Pip Lifetime", "Overview", "Words", "Spotlight", "Board", "Talking", "Language help", "Team & devices", "Backup & privacy",
       "Your account", "Help"]);
   assert.equal(h.sections[2].intro, "What this person can say, and where it lives.");
   assert.equal(h.checklist.visible, true);
@@ -192,9 +192,9 @@ test("Settings hub: sections, checklist, glance", () => {
   assert.equal(named.checklist.title, "Finish setting up · 1 of 2 done");
 
   assert.deepEqual(h.sections.map((s) => s.group),
-    ["person", "person", "person", "person", "person", "person", "person", "person", "you", "you"]);
-  assert.equal(h.sections[8].intro, "About you, the adult. This person never needs an account.");
-  assert.equal(named.sections[8].intro, "About you, the adult. Maya never needs an account.");
+    ["person", "person", "person", "person", "person", "person", "person", "person", "person", "you", "you"]);
+  assert.equal(h.sections[9].intro, "About you, the adult. This person never needs an account.");
+  assert.equal(named.sections[9].intro, "About you, the adult. Maya never needs an account.");
 });
 
 test("person name is the synced person_name", () => {

@@ -43,6 +43,6 @@
     "src/worker/relay.heavy.test.mjs": 605,
     "src/worker/relay.js": 979,
     "src/worker/tile.js": 779,
-    "scripts/ios/app.mjs": 905
+    "scripts/ios/app.mjs": 951
   }
 }

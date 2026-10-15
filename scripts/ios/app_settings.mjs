@@ -29,6 +29,7 @@ const personOf = (name) => {
 const SECTIONS = [
   { id: "overview", title: "Overview", intro: null },
   { id: "words", title: "Words", intro: "What {p} can say, and where it lives." },
+  { id: "spotlight", title: "Spotlight", intro: "Light up the words you're teaching. Everything else dims, but still speaks." },
   { id: "board", title: "Board", intro: "How the board is laid out. These are usually set once." },
   { id: "talking", title: "Talking", intro: "How sentences sound and behave." },
   { id: "lang", title: "Language help", intro: "How much Pip helps while {p} builds a sentence." },
@@ -51,6 +52,15 @@ function orderSections(licensed) {
   return [...SECTIONS.slice(0, at), life, ...SECTIONS.slice(at)];
 }
 
+/** settings-ui.js SUMMARIES.spotlight: the running session, else the
+ *  saved-list count. */
+function spotlightSummary(d) {
+  const session = PIP().spotlight.spotSession(d);
+  if (session) return `On · ${session.name} · ${PIP().spotlight.untilText(session)}`;
+  const lists = one(d, "SELECT count(*) AS n FROM spotlight_list")?.n ?? 0;
+  return lists ? `Off · ${lists} list${lists === 1 ? "" : "s"}` : "Off";
+}
+
 /** settings-ui.js SUMMARIES / checklist / renderOverview, as data.
  *  `name` is the open person's name (the people list owns it), `pinOn`
  *  the device PIN (Swift owns it). */
@@ -70,6 +80,8 @@ export function hub(appId, { name = "", pinOn = false, licensed = false } = {}) 
     ].filter(Boolean).join(" · "),
     talking: `${PIP().voices.voiceName(d, voiceId)} · ${PIP().bar.barLabel(d)} · feeling faces ${onOff(p.expressive_voice !== 0)}`,
     lang: `Grammar help ${onOff(p.grammar_help !== 0)} · outlines ${onOff(!!p.highlight_next)}`,
+    // settings-ui.js SUMMARIES.spotlight.
+    spotlight: spotlightSummary(d),
     // The recovery card is not on the iPad yet; the PIN is the one line
     // of this page that is.
     backup: pinOn ? "Settings PIN on" : "No Settings PIN yet",

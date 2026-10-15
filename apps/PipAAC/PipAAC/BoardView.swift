@@ -336,6 +336,9 @@ struct BoardView: View {
     @ViewBuilder
     private func plainCell(_ cell: CellModel?) -> some View {
         let spotMark = model.spot.mark(cell?.kind ?? "sense", cell?.id)
+        // SB-9: board only - never in a group, with the keyboard open, or editing.
+        let outlined = model.surface == .board && model.kb == nil && !model.editing
+            && cell?.id.map { model.likely.contains($0) } == true
         switch cell?.type {
         case "word":
             Button {
@@ -346,7 +349,8 @@ struct BoardView: View {
                 }
             } label: {
                 WordTile(label: cell?.label ?? "",
-                         role: cell?.role, art: cell?.art ?? cell?.photoKey)
+                         role: cell?.role, art: cell?.art ?? cell?.photoKey,
+                         likely: outlined)
             }
             .buttonStyle(.plain)
             .spotMark(spotMark, dim: model.spot.dim)
@@ -355,6 +359,7 @@ struct BoardView: View {
                 tileValue(photo: ((cell?.art ?? cell?.photoKey).flatMap { PipBlobs.url(forKey: $0) }) != nil,
                           wordsOnly: model.wordsOnly, count: nil),
                 spotMark?.a11y,
+                outlined ? "likely next" : nil,
             ].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", "))
         case "groups":
             AnchorTile(icon: "folder.fill", label: "Groups", glow: model.spot.groups) { model.openGroups() }
@@ -384,19 +389,32 @@ struct BoardView: View {
         let cols = 10, rows = 5
         let w = (size.width - gap * CGFloat(cols - 1)) / CGFloat(cols)
         let h = (size.height - gap * CGFloat(rows - 1)) / CGFloat(rows)
+        let device = kb.mode == "device"
         return VStack(spacing: gap) {
             ForEach(0..<rows, id: \.self) { r in
-                HStack(spacing: gap) {
-                    ForEach(kb.keys.filter { $0.slot / cols == r }.sorted { $0.slot < $1.slot },
-                            id: \.slot) { key in
-                        kbKeyView(key)
-                            .frame(width: w * CGFloat(key.span) + gap * CGFloat(key.span - 1),
-                                   height: h)
+                if device && r == 1 {
+                    // KB-7 (keyboard-ui.js buildKbDevice): the system keyboard
+                    // types into one field across row 2.
+                    DeviceKeyboardField().frame(height: h)
+                } else {
+                    let keys = kb.keys.filter { $0.slot / cols == r }.sorted { $0.slot < $1.slot }
+                    HStack(spacing: gap) {
+                        // The answer keys sit in the last columns of row 1.
+                        if let first = keys.first, first.slot % cols > 0 {
+                            Color.clear.frame(width: (w + gap) * CGFloat(first.slot % cols) - gap, height: h)
+                        }
+                        ForEach(keys, id: \.slot) { key in
+                            kbKeyView(key)
+                                .frame(width: w * CGFloat(key.span) + gap * CGFloat(key.span - 1),
+                                       height: h)
+                        }
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
+            if device { Spacer(minLength: 0) }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
     @ViewBuilder

@@ -286,6 +286,15 @@ export function mountKeyboard({
     return buildIndex([...senses, ...ents], locale);
   }
 
+  /** The buffer set from outside the field (Clear, a tapped completion):
+   *  the device keyboard's field follows it, so the old letters don't
+   *  come back with the next keystroke. */
+  function setKbText(v) {
+    kbText = v;
+    const ta = $("kb-device");
+    if (ta && ta.value !== v) ta.value = v;
+  }
+
   function kbCompletions() {
     if (!kbText) return [];
     if (!kbIndex) kbIndex = buildKbIndex();
@@ -295,7 +304,7 @@ export function mountKeyboard({
             entity: e.entity,
             freq: e.freq,
             onTap: () => {
-              kbText = "";
+              setKbText("");
               renderBar();
               tap(e.text, "entity", e.id, { hint: true, source: "keyboard" });
             },
@@ -306,7 +315,7 @@ export function mountKeyboard({
             role: e.role,
             freq: e.freq,
             onTap: () => {
-              kbText = "";
+              setKbText("");
               renderBar();
               tap(e.text, "sense", e.id, { hint: true, source: "keyboard" });
             },
@@ -433,7 +442,7 @@ export function mountKeyboard({
   return {
     isOpen: () => kbOpen,
     get text() { return kbText; },
-    set text(v) { kbText = v; },
+    set text(v) { setKbText(v); },
     get mode() { return kbMode; },
     set mode(v) { kbMode = v; },
     get order() { return kbOrder; },

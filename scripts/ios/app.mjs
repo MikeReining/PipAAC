@@ -64,6 +64,7 @@ export function appOpen(dbId, catalogJson, phrasesJson, formTableJson) {
     kbBuffer: "", kbPendingAccent: null, kbLead: null,
     kbIndex: null,
     kbOrder: profile.keyboard_order ?? "standard",
+    kbMode: profile.keyboard_mode ?? "pip",
     barState: { tense: "present", question: false, preTransform: null },
     lastImpressionKey: null, openImpressionId: null,
     expand: null,                       // { familyId, page, depth }
@@ -90,6 +91,7 @@ function applyProfile(s) {
   s.freshAfterSpeak = !!p.fresh_after_speak;
   s.topRowOn = !!p.group_top_row;
   s.kbOrder = p.keyboard_order ?? "standard";
+  s.kbMode = p.keyboard_mode ?? "pip";
   s.kbIndex = null; // masks/entities may have changed
   return p;
 }
@@ -540,13 +542,17 @@ const startFresh = (s, editing = false) => {
  *  bridge round trip, not three. `controls`/`tense`/`question` are the
  *  bar chrome (bar.mjs owns the shown set; txbar owns the flags); `kb`
  *  is the key grid while the keyboard surface is open. */
-const state = (s) => ({
-  bar: barModel(s), strip: stripModel(s), board: boardModel(s),
+const state = (s) => {
+  const board = boardModel(s);
+  return {
+  bar: barModel(s), strip: stripModel(s), board,
+  likely: PIP().lang.likelyIds(s, board),
   typing: s.kbBuffer || null,
   kb: s.kbOpen ? kbModel(s) : null,
   controls: [...PIP().bar.barControls(s.d)],
   tense: s.barState.tense, question: s.barState.question,
-});
+  };
+};
 
 /** Sync landed ops (044 C3): re-read what the synced tables feed — the
  *  profile columns, caches, the whole painted state, the settings model.
@@ -693,9 +699,18 @@ function partnerInfo(s, senseId) {
 /** keyboard.mjs keyMap → JSON. Keys carry slot/span/kind; partner keys
  *  carry the sense's tile model; the latched dead key is flagged. */
 function kbModel(s) {
-  const keys = PIP().keyboard.keyMap(s.locale, s.kbOrder) ?? [];
+  const mapped = PIP().keyboard.keyMap(s.locale, s.kbOrder) ?? [];
+  /* keyboard-ui.js buildKb/buildKbDevice: device mode (or a locale with
+   * no key map) keeps only the yes/no partner keys, in the top row's
+   * last two columns; the system keyboard types into a field below. */
+  const device = s.kbMode === "device" || !mapped.length;
+  const partners = PIP().keymaps.PARTNER_SENSES;
+  const keys = device
+    ? partners.map((value, i) =>
+        ({ slot: 10 - partners.length + i, span: 1, kind: "partner", value }))
+    : mapped;
   return {
-    mode: keys.length ? "pip" : "device",
+    mode: device ? "device" : "pip",
     keys: keys.map((k) => {
       const m = { slot: k.slot, span: k.span, kind: k.kind };
       if (k.kind === "partner") {
@@ -737,7 +752,7 @@ function buildKbIndex(s) {
 /** keyboard-ui.js resolveTyped: approved label first (a form spelling
  *  is her pick and pins), then active personal entities, else the word
  *  stays typed. */
-function resolveTyped(s, text) {
+export function resolveTyped(s, text) {
   const norm = PIP().normalize.normalizeV1(text);
   const hit = all(s.d,
     `SELECT s.id, l.text AS label, l.kind, l.id AS label_id
@@ -840,6 +855,34 @@ export function appKbPress(appId, key) {
   return { speech: afterTap(s, speech), ...state(s) };
 }
 
+/** keyboard-ui.js kbDeviceInput: the system keyboard typed into the
+ *  field. Everything up to the last word-ender (space or . , ! ? ¿ ¡)
+ *  is pressed through the same kbPress path the Pip keys use; the rest
+ *  stays in the field and is the word in progress. Returns the painted
+ *  state plus `rest`, the text the field keeps. */
+const KB_DEV_TERM = /[\s.,!?¿¡]/;
+export function appKbDevice(appId, value) {
+  const s = S(appId);
+  const v = String(value ?? "");
+  if (v) startFresh(s);
+  let last = -1;
+  for (let i = 0; i < v.length; i++) if (KB_DEV_TERM.test(v[i])) last = i;
+  s.kbPendingAccent = null;
+  if (last < 0) {
+    s.kbBuffer = v;
+    return { rest: v, speech: null, ...state(s) };
+  }
+  const rest = v.slice(last + 1);
+  s.kbBuffer = "";
+  let speech = null;
+  for (const ch of v.slice(0, last + 1)) {
+    const r = appKbPress(appId, ch);
+    if (r.speech) speech = r.speech;
+  }
+  s.kbBuffer = rest;
+  return { rest, ...state(s), speech };
+}
+
 /** The partner answer keys (yes/no): the tap speaks the word and
  *  leaves the sentence and the buffer alone (keyboard-ui partnerCell). */
 export function appKbPartner(appId, senseId) {
@@ -872,6 +915,11 @@ function settingsModel(s) {
     keyboardOrder: p.keyboard_order ?? "standard",
     keyboardStandardName:
       PIP().keyboard.resolveKeymap(s.locale)?.standardName ?? "Standard",
+    keyboardMode: p.keyboard_mode === "device" ? "device" : "pip",
+    highlightNext: !!p.highlight_next,
+    spotPulse: p.spot_pulse === 1,
+    spotDim: p.spot_dim ?? 45,
+    modelSpeaks: p.model_speaks === 1,
     boardLayout: p.board_layout ?? "grid60",
     layouts: Object.keys(s.catalog.layouts ?? {}),
     barControls: [...PIP().bar.barControls(s.d)],

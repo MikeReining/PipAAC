@@ -69,6 +69,9 @@ struct WordTile: View {
     let art: String?
     /// 018 D10 / BS-21: the child's own 30-day taps (Edit mode + the badge).
     var count: Int? = nil
+    /// SB-9 (base.css `.cell.likely`): a thick inner outline in the tile's
+    /// own role colour, 4 pt inside the 2 pt border. Nothing moves.
+    var likely = false
     @Environment(\.wordsOnly) private var wordsOnly
 
     var body: some View {
@@ -113,6 +116,12 @@ struct WordTile: View {
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .overlay(RoundedRectangle(cornerRadius: 10)
             .stroke(PipStyle.border(role), lineWidth: 2))
+        .overlay {
+            if likely {
+                RoundedRectangle(cornerRadius: 10).inset(by: 2)
+                    .strokeBorder(PipStyle.border(role), lineWidth: 4)
+            }
+        }
         .overlay(alignment: .bottomTrailing) {
             if let count {
                 Text("\(count)")

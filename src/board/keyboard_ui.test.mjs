@@ -144,3 +144,71 @@ test("a typed word mints on commit only — never per keystroke", () => {
   assert.equal(ensures.length, 2);
   assert.equal(ensures[1].text, "world");
 });
+
+/** Device keyboard (Settings → Keyboard): the field mirrors the word in
+ *  progress. Clear, or a tapped completion, empty the buffer from outside
+ *  the field — the field has to follow, or the old letters come back with
+ *  the next keystroke ("wa" + "x" -> "wax"). */
+test("device keyboard: Clear and a tapped completion empty the field too", async () => {
+  const { DatabaseSync } = await import("node:sqlite");
+  const db = new DatabaseSync(new URL("../../public/fresh_db.sqlite", import.meta.url).pathname,
+    { readOnly: true });
+  const listeners = {};
+  let field = null;
+  const node = () => ({
+    style: {}, dataset: {}, children: [], value: "", getContext: () => ({}),
+    classList: { add() {}, remove() {}, toggle() {} },
+    setAttribute() {}, appendChild(c) { this.children.push(c); }, blur() {},
+    querySelector: () => ({ textContent: "" }),
+    querySelectorAll: () => [],
+    addEventListener(type, fn) { if (this === field) listeners[type] = fn; },
+  });
+  const nodes = {
+    "kb-order-standard": node(), "kb-mode": node(), "kb-order": node(), "hl-next": node(),
+    kb: node(), "anchor-kb": node(),
+  };
+  globalThis.document = {
+    getElementById: (id) => (id === "kb-device" ? field : nodes[id]),
+    createElement: (tag) => {
+      const el = node();
+      if (tag === "textarea") field = el;
+      return el;
+    },
+    body: { classList: { add() {}, remove() {}, toggle() {} } },
+    fonts: { ready: Promise.resolve() },
+  };
+  globalThis.window = { addEventListener() {} };
+  let tapped = null;
+  const kb = mountKeyboard({
+    db, locale: "en",
+    profile: { keyboard_mode: "device", keyboard_order: "standard" },
+    all: (database, sql, p = []) => database.prepare(sql).all(...(p ?? [])),
+    sentence: [],
+    getSentenceId: () => null, ensureSentence() {}, getSentencePicks: () => 0, setSentencePicks() {},
+    startFresh() {}, speakItem() {}, speakSentence() {}, isTxBusy: () => false,
+    renderBar() {}, renderStrip() {},
+    tap: (text) => { tapped = text; },
+    showGroupHint() {}, applyLikely() {}, fitLabels() {},
+    senseById: () => null, tileFor: () => node(),
+    getHighlightNext: () => false, getView: () => "board", setViewName() {},
+    renderGroupIndex() {}, renderGroupPage() {}, renderEditor() {},
+  });
+  kb.openKb();
+  assert.ok(field, "device mode builds the system-keyboard field");
+
+  const type = (v) => { field.value = v; listeners.input(); };
+  type("wa");
+  assert.equal(kb.text, "wa");
+  const comp = kb.completions();
+  assert.ok(comp.length > 0, "'wa' offers completions");
+  comp[0].onTap();
+  assert.ok(tapped, "the completion was tapped in");
+  assert.equal(kb.text, "");
+  assert.equal(field.value, "", "the field follows the emptied buffer");
+
+  type("wa");
+  kb.text = ""; // board.js Clear
+  assert.equal(field.value, "", "Clear empties the field");
+  type("x");
+  assert.equal(kb.text, "x", "the next keystroke starts a new word");
+});

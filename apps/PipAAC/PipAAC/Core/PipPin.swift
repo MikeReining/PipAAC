@@ -41,6 +41,7 @@ enum PipPin {
 
     static func clear() {
         UserDefaults.standard.removeObject(forKey: defaultsKey)
+        PipBiometric.setEnabled(false) // Face ID only ever stands in for a PIN that exists
     }
 
     static func isResetPhrase(_ text: String) -> Bool {

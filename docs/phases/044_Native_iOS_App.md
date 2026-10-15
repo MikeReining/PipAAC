@@ -930,3 +930,11 @@ created, renamed, hidden, deleted (Undo), reordered and given an icon.
 - Verified: `app_say.test.mjs` (faces model + lit rule, request body keys/feeling at the fake Worker, licence rides, not-entitled path, empty bar / busy ignored, sample request, failure toast, lock list for trial over / in trial / licensed); `FeelingUITests` (4 flows + unlocked-during-trial).
 - Left: the face is dark until the core answers, not until the audio ends; offline the faces hide in Swift but the family-page cap still reserves their slot (a ghost cell). `board.js` has no unit test for the `sampleVoice` fix (the shared client's trial gate is covered through the iPad case).
 
+### E9 Remaining Settings rows (ST-8, SB-7, SB-9, KB-7, ST-3) (2026-10-15)
+
+- **Scope:** Spotlight page (two devices, Speak, Glow, Dim), Smart bar family editor, "Outline likely next words", Device keyboard, Face ID in place of the PIN.
+- **Changed:** `scripts/ios/app_lang.mjs` (PIPCORE.lang); `app.mjs` hooks (`kbMode`, device-mode `kbModel`, `appKbDevice`, `likely` in the painted state, new settings fields); Swift `LanguageHelp.swift`, `DeviceKeyboard.swift`, `Core/PipBiometric.swift`, Settings pages, `WordTile` outline, `NSFaceIDUsageDescription`. Web fix: `keyboard-ui.js` `setKbText` (the device field followed Clear and a tapped completion only by accident: old letters came back with the next key).
+- **Verified:** `app_lang.test.mjs` (twin db driven by the web modules: same profile row and ops; applyLikely cell set; families; device typing = Pip-key typing), `keyboard_ui.test.mjs`, `SettingsRowsUITests` (5 tests, db read-backs, relaunch).
+- **ST-3 reading:** the phase doc says only "Face ID may stand in for typing the PIN; it does not change who may do what." Implemented as opt-in, device-local, offered once a PIN exists, proven by one scan when turned on, biometrics-only (no device passcode), PIN always the fallback, off when the PIN is turned off.
+- **Left:** Spotlight Look tile preview; Spotlight lists/pick/Try it (SP-6, SP-7); real-device Face ID check.
+
