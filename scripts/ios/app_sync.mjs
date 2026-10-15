@@ -17,6 +17,7 @@
 import { initSync, stopSync, syncHealth as health } from "../../public/shared/sync.mjs";
 import { resetMedia, scanMedia, setPuller } from "./app_mediasync.mjs";
 import { refreshStatsDays } from "../../public/shared/stats.mjs";
+import { report as reportResearch } from "./app_research.mjs";
 import { hostCall } from "./jsc_shims.mjs";
 import { appDb } from "./app.mjs";
 import { noteBase } from "./app_team.mjs";
@@ -64,7 +65,7 @@ export function syncStartDb(db, userRow, baseUrl, opts) {
         setPuller((sha) => handle.pullBlob(sha));
         scanMedia(db);
       }
-      if (handle) { try { refreshStatsDays(db); } catch (e) { console.error(`stats: ${e}`); } }
+      if (handle) { try { refreshStatsDays(db); } catch (e) { console.error(`stats: ${e}`); } reportResearch(db); }
       emit("sync.started", handle
       ? { ok: true, linked: true, deviceId: handle.identity.deviceId, epoch: handle.getEpoch() }
         : { ok: true, linked: false });

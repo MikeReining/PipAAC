@@ -170,6 +170,9 @@ final class FirstRunFlow: ObservableObject {
     @Published var worldToast: String?
     @Published var busy = false
     private var wrote = false
+    /// Opened from Settings -> Words -> People & places (the web's openWizard):
+    /// closing it just closes - no tour, no first-run bookkeeping.
+    private var fromSettings = false
 
     var touring: Bool { phase == .tour }
 
@@ -285,10 +288,17 @@ final class FirstRunFlow: ObservableObject {
     }
 
     private func afterWelcome() async {
-        if copy?.offersWorld == true || UITestHooks.firstRunWorld { await openWorld() } else { await finishSetup() }
+        if copy?.offersWorld == true { await openWorld() } else { await finishSetup() }
     }
 
     // MARK: their world
+
+    /// Settings -> Words -> People & places (board.js `open-setup` -> setupUi.openWizard).
+    func openWorldFromSettings() {
+        fromSettings = true
+        name = model?.people.first(where: { $0.id == model?.activeId })?.name ?? ""
+        Task { await openWorld() }
+    }
 
     func openWorld() async {
         do {
@@ -380,6 +390,7 @@ final class FirstRunFlow: ObservableObject {
     private func finishWorld() async {
         if wrote { model?.showToast("Their world is set up") }
         world = nil
+        if fromSettings { fromSettings = false; phase = .none; return }
         await finishSetup()
     }
 

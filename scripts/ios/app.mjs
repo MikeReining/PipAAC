@@ -18,6 +18,7 @@
  *          SharedAssets, everything else is the 400 ms silent slot.
  */
 
+import { report as reportResearch } from "./app_research.mjs";
 const PIP = () => globalThis.PIPCORE;
 
 const apps = new Map();
@@ -888,6 +889,8 @@ export function appSetSetting(appId, key, value) {
   PIP().groups.setSetting(s.d, key,
     Array.isArray(value) ? JSON.stringify(value) : value);
   const p = applyProfile(s);
+  // settings-sync.js: turning sharing on sends what is pending.
+  if (key === "share_research" && value) reportResearch(s.d);
   return {
     speechRate: SPEECH_RATES[p.speech_rate] ?? 1,
     settings: settingsModel(s),

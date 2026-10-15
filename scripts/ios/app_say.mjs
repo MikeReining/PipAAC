@@ -34,6 +34,7 @@ import {
 } from "../../public/shared/txbar.mjs";
 import { logTransform } from "../../public/shared/funnel.mjs";
 import { refreshStatsDays } from "../../public/shared/stats.mjs";
+import { report as reportResearch } from "./app_research.mjs";
 import { openKeyStore } from "./host/sync_crypto_host.mjs";
 import { onOnline } from "./host/platform_host.mjs";
 import { appSession, appSpeakParts } from "./app.mjs";
@@ -257,6 +258,7 @@ async function speakCore(s, x) {
   }
   finishSpeak(s);
   try { refreshStatsDays(s.d); } catch (e) { console.error(`stats: ${e}`); }
+  reportResearch(s.d);
   return play;
 }
 

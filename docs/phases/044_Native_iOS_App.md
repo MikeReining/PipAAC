@@ -898,3 +898,11 @@ created, renamed, hidden, deleted (Undo), reordered and given an icon.
   The Show-groups switch is a button drawn as a switch: a list in reorder
   mode swallowed a real Toggle's tap in XCUITest. Buttons-per-screen still
   writes `board_layout` directly (no move-cost confirmation; pre-existing).
+
+### Integration of E4 + E6 + E7 + D5 (2026-10-15)
+
+- Scope: make the merged tree whole; wire ST-9 "Replay the tour", Words -> "People & places", and the research upload (ST-6).
+- Merge fallout: one test - `FirstRunUITests` read a tile's accessibility value as "family photo"; E4's Words-only look makes it "family photo, words only" (the tile is truthful; the assertion followed). Nothing else failed on the merged tree.
+- Changed: Overview has the web's "Replay the tour" (`settings:replayTour`, calls `firstRun.replayTour()` after Settings closes); Words has "People & places" -> "Names, photos, and places" with the web's hint (`settings:peoplePlaces`, `FirstRunFlow.openWorldFromSettings()`; closing it does not start the tour). `-pipUITestFirstRunWorld` is gone; first run still never opens the world by itself. `scripts/ios/app_research.mjs` calls the web's `flushResearch` unchanged at the web's triggers: after a spoken sentence (`app_say`), when the sync loop is up (`app_sync`), and when the switch goes On (`appSetSetting`). Whitelist, research id and off-switch are `research.mjs`'s own; the base is the core's `location.origin` (the relay base, `-PipBaseURL` in tests). `INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO` in both configurations.
+- Verified: `app_research.test.mjs` (fake fetch, stub base: keys == RESEARCH_FIELDS, one POST per stats_day row, marked reported, none re-sent, nothing when Off); `FirstRunUITests.testReplayTourFromSettings` (tour card returns, `learner_event_log` stays 0) and `testWelcomeWorldTourBoard` (Grandma added from Settings -> Words -> People & places is on the board, in the db).
+- Left: the web also flushes at boot (before any speech); on iPad an unlinked device flushes after its next spoken sentence, a linked one when sync is up. Tile-clip prefetch for world names still open (E7).

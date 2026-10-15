@@ -111,7 +111,6 @@ export * as groupsEdit from "./app_groups.mjs";
 
 /** Settings sections, Overview, search over Settings rows (044 E4) - PIPCORE.settingsUi */
 export * as settingsUi from "./app_settings.mjs";
-
 /** Host crypto/key-store verbs (handles over Swift CryptoKit/keychain) and
  *  the hostCall promise bridge — the surface pairing, recovery and media
  *  slices call, and the Swift suite probes. */

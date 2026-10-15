@@ -87,6 +87,13 @@ extension SettingsView {
                 }
             }
 
+            Section {
+                Button("Replay the tour") {
+                    leaveSettings { model.firstRun.replayTour() }
+                }
+                .accessibilityIdentifier("settings:replayTour")
+            }
+
             Section("How it's set up") {
                 ForEach(hub?.glance ?? []) { g in
                     Button {
@@ -120,6 +127,16 @@ extension SettingsView {
                     leaveSettings { model.showLibrary = true }
                 }
                 .accessibilityIdentifier("settings:allWords")
+            }
+            Section {
+                Button("Names, photos, and places") {
+                    leaveSettings { model.firstRun.openWorldFromSettings() }
+                }
+                .accessibilityIdentifier("settings:peoplePlaces")
+            } header: {
+                Text("People & places")
+            } footer: {
+                Text("The people \(person) calls for and the places Pip should suggest.")
             }
             Section {
                 NavigationLink("Show groups") {

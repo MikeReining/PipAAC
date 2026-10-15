@@ -325,7 +325,8 @@ test("flush: a local edit is sealed with the keychain key and reaches the relay"
   const opened = [];
   for (const r of relay.log) opened.push(await real.openOp(userKey, r.env));
   assert.equal(opened.filter((o) => o.kind === "create_entity").length, 1);
-  assert.ok(opened.every((o) => o.kind === "create_entity" || o.kind === "put_stats_day"),
+  // E-int: the loop start also mints the research id (set_setting research_id), as board.js does at boot.
+  assert.ok(opened.every((o) => ["create_entity", "put_stats_day", "set_setting"].includes(o.kind)),
     opened.map((o) => o.kind).join());
   // The relay holds ciphertext only: open it with the independently held key.
   const plain = opened.find((o) => o.kind === "create_entity");

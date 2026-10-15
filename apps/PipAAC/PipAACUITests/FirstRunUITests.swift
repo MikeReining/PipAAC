@@ -72,11 +72,10 @@ final class FirstRunUITests: XCTestCase {
 
     // MARK: helpers
 
-    private func launch(reset: Bool, world: Bool = false) -> XCUIApplication {
+    private func launch(reset: Bool) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = (reset ? ["-pipUITestReset"] : [])
             + ["-PipDataDir", dir.path, "-pipUITestFirstRun", "-pipUITestPhotoFile", face.path]
-            + (world ? ["-pipUITestFirstRunWorld"] : [])
         app.launch()
         return app
     }
@@ -98,10 +97,11 @@ final class FirstRunUITests: XCTestCase {
 
     // MARK: tests
 
-    /// PF-2 + PF-3 + PF-4: the whole walk, then a relaunch.
+    /// PF-2 + PF-4, then PF-3 the way the web reaches it: Settings -> Words
+    /// -> People & places. Then a relaunch.
     @MainActor
     func testWelcomeWorldTourBoard() throws {
-        let app = launch(reset: true, world: true)
+        let app = launch(reset: true)
 
         // PF-2: the welcome. Nothing but the welcome is reachable behind it.
         let name = app.textFields["welcome:name"]
@@ -122,30 +122,6 @@ final class FirstRunUITests: XCTestCase {
         shot(app, "03-look")
         tap(app, "look:choice:label")
         tap(app, "look:continue")
-
-        // PF-3: their world - a person with a photo.
-        let title = app.staticTexts["world:title"]
-        XCTAssertTrue(title.waitForExistence(timeout: 10))
-        XCTAssertEqual(title.label, "Who does Maya call for?")
-        tap(app, "world:face:0")
-        let who = app.textFields["world:name:0"]
-        who.tap()
-        who.typeText("Grandma")
-        shot(app, "04-world-people")
-        tap(app, "world:next")
-        XCTAssertTrue(app.staticTexts["Any pets?"].waitForExistence(timeout: 10))
-        let list = app.textViews["world:list"]
-        XCTAssertTrue(list.waitForExistence(timeout: 5))
-        list.tap()
-        list.typeText("Buddy")
-        XCTAssertTrue(app.staticTexts["new — picture later"].waitForExistence(timeout: 10),
-                      "the paste preview shows what the line becomes")
-        shot(app, "05-world-pets")
-        tap(app, "world:next")
-        XCTAssertTrue(app.staticTexts["Favorite foods"].waitForExistence(timeout: 10))
-        tap(app, "world:skip")
-        XCTAssertTrue(app.staticTexts["Places they go"].waitForExistence(timeout: 10))
-        tap(app, "world:skip")
 
         // PF-4 / SN-11: the demo, on the real board.
         XCTAssertTrue(app.staticTexts["tour:say"].waitForExistence(timeout: 20))
@@ -178,15 +154,51 @@ final class FirstRunUITests: XCTestCase {
         shot(app, "10-tour-done")
         app.buttons["tour:go"].tap()
 
-        // The board, with the person on it and the look applied.
         let want = app.buttons["tile:sns_0013"]
         XCTAssertTrue(want.waitForExistence(timeout: 10))
         XCTAssertFalse(app.buttons["tour:go"].exists)
+        XCTAssertFalse(app.staticTexts["world:title"].exists, "first run never opens their world by itself")
+
+        // PF-3: Settings -> Words -> People & places - a person with a photo.
+        app.buttons["settingsGear"].tap()
+        XCTAssertTrue(app.buttons["settingsSection:words"].waitForExistence(timeout: 10))
+        app.buttons["settingsSection:words"].tap()
+        XCTAssertTrue(app.staticTexts["People & places"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["The people Maya calls for and the places Pip should suggest."].exists)
+        tap(app, "settings:peoplePlaces")
+        let title = app.staticTexts["world:title"]
+        XCTAssertTrue(title.waitForExistence(timeout: 10))
+        XCTAssertEqual(title.label, "Who does Maya call for?")
+        tap(app, "world:face:0")
+        let who = app.textFields["world:name:0"]
+        who.tap()
+        who.typeText("Grandma")
+        shot(app, "04-world-people")
+        tap(app, "world:next")
+        XCTAssertTrue(app.staticTexts["Any pets?"].waitForExistence(timeout: 10))
+        let list = app.textViews["world:list"]
+        XCTAssertTrue(list.waitForExistence(timeout: 5))
+        list.tap()
+        list.typeText("Buddy")
+        XCTAssertTrue(app.staticTexts["new — picture later"].waitForExistence(timeout: 10),
+                      "the paste preview shows what the line becomes")
+        shot(app, "05-world-pets")
+        tap(app, "world:next")
+        XCTAssertTrue(app.staticTexts["Favorite foods"].waitForExistence(timeout: 10))
+        tap(app, "world:skip")
+        XCTAssertTrue(app.staticTexts["Places they go"].waitForExistence(timeout: 10))
+        tap(app, "world:skip")
+        XCTAssertFalse(app.staticTexts["tour:say"].waitForExistence(timeout: 2),
+                       "closing it from Settings does not start the tour")
+
+        // The board, with the person on it and the look applied.
+        XCTAssertTrue(want.waitForExistence(timeout: 10))
+
         let entity = try XCTUnwrap(query(
             "SELECT id FROM personal_entity WHERE spoken_name='Grandma'").first?.first)
         let cell = app.buttons["tile:\(entity)"]
         XCTAssertTrue(cell.waitForExistence(timeout: 10), "Grandma's cell is on the board")
-        XCTAssertEqual(cell.value as? String, "family photo", "...wearing the photo that was picked")
+        XCTAssertEqual(cell.value as? String, "family photo, words only", "...wearing the photo that was picked")
         shot(app, "11-board-words-only")
 
         // The writes, read from the files.
@@ -211,8 +223,38 @@ final class FirstRunUITests: XCTestCase {
         XCTAssertTrue(again.buttons["tile:sns_0013"].waitForExistence(timeout: 30), "the board opens")
         XCTAssertFalse(again.textFields["welcome:name"].exists)
         XCTAssertFalse(again.staticTexts["tour:say"].exists)
-        XCTAssertEqual(again.buttons["tile:\(entity)"].value as? String, "family photo")
+        XCTAssertEqual(again.buttons["tile:\(entity)"].value as? String, "family photo, words only")
         shot(again, "12-relaunch-board")
+    }
+
+    /// ST-9: Settings -> Overview -> "Replay the tour" shows the demo card
+    /// on the board, and the demo writes nothing the child did.
+    @MainActor
+    func testReplayTourFromSettings() throws {
+        let app = launch(reset: true)
+        XCTAssertTrue(app.textFields["welcome:name"].waitForExistence(timeout: 30))
+        tap(app, "welcome:choice:child")
+        tap(app, "welcome:continue")
+        XCTAssertTrue(app.staticTexts["tour:say"].waitForExistence(timeout: 20))
+        tap(app, "tour:skip")
+        XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.staticTexts["tour:say"].exists)
+
+        app.buttons["settingsGear"].tap()
+        tap(app, "settings:replayTour")
+        XCTAssertTrue(app.staticTexts["tour:say"].waitForExistence(timeout: 20), "the tour card is back")
+        XCTAssertEqual(app.staticTexts["tour:say"].label, "Tap you.")
+        app.buttons["tile:sns_0002"].tap()           // you
+        let wantSay = NSPredicate(format: "label == 'Tap want.'")
+        expectation(for: wantSay, evaluatedWith: app.staticTexts["tour:say"])
+        waitForExpectations(timeout: 10)
+        shot(app, "21-replay-tour")
+        XCTAssertEqual(try query("SELECT count(*) FROM learner_event_log").first?.first, "0",
+                       "the replayed demo logged nothing")
+        tap(app, "tour:skip")
+        XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.staticTexts["tour:say"].exists)
+        XCTAssertEqual(try query("SELECT count(*) FROM learner_event_log").first?.first, "0")
     }
 
     /// The web's path: welcome -> demo (no "their world" by itself), skip the demo.
