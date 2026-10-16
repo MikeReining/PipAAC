@@ -328,10 +328,11 @@ nonisolated enum UITestHooks {
 struct EditHeader: View {
     @EnvironmentObject var model: AppModel
 
-    private func headerButton(_ title: String, system: String, id: String,
+    private func headerButton(_ title: String, system: String, id: String, compact: Bool,
                               action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Label(title, systemImage: system)
+                .labelStyle(HeaderLabelStyle(compact: compact))
                 .font(.system(size: 16, weight: .semibold))
                 .lineLimit(1)
                 .fixedSize()
@@ -349,10 +350,18 @@ struct EditHeader: View {
     }
 
     var body: some View {
-        // The six header controls are wider than a portrait iPad (the screenshot
-        // showed Done and Groups cut off at the edges): scroll sideways so every
-        // one stays reachable by touch, VoiceOver and Switch Control.
-        ScrollView(.horizontal, showsIndicators: false) {
+        // The full row is wider than a portrait iPad (Done and Groups were cut
+        // off at the edges): drop the hint, then the button titles, until it
+        // fits, so every control stays on screen (a sideways scroll hid them).
+        ViewThatFits(in: .horizontal) {
+            row(hint: true, compact: false)
+            row(hint: false, compact: false)
+            row(hint: false, compact: true)
+        }
+        .frame(height: 64)
+    }
+
+    private func row(hint: Bool, compact: Bool) -> some View {
         HStack(spacing: 12) {
             Button { model.exitEdit() } label: {
                 Label("Done", systemImage: "checkmark")
@@ -366,12 +375,14 @@ struct EditHeader: View {
             .buttonStyle(.plain)
             .accessibilityLabel("Done editing")
             .accessibilityIdentifier("editDone")
-            Text("Editing the board. Tap a word to change it; drag to move it.")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundStyle(PipStyle.muted)
-                .lineLimit(2)
-                .minimumScaleFactor(0.7)
-                .frame(maxWidth: 260, alignment: .leading)
+            if hint {
+                Text("Editing the board. Tap a word to change it; drag to move it.")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(PipStyle.muted)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.7)
+                    .frame(maxWidth: 260, alignment: .leading)
+            }
             Spacer(minLength: 4)
             EditorStatusLabel() // LW-22
             // 018 D10: 📊 puts the child's own 30-day taps on every tile.
@@ -389,13 +400,13 @@ struct EditHeader: View {
             .accessibilityLabel("Show how often each word is used")
             .accessibilityValue(model.countsOn ? "On" : "Off")
             .accessibilityIdentifier("editCounts")
-            headerButton("Edit groups", system: "folder.badge.gearshape", id: "editGroupsManage") {
+            headerButton("Edit groups", system: "folder.badge.gearshape", id: "editGroupsManage", compact: compact) {
                 model.showGroupsEdit = true
             }
-            headerButton("Add a word", system: "plus", id: "editAdd") {
+            headerButton("Add a word", system: "plus", id: "editAdd", compact: compact) {
                 model.openAdd(groupId: model.surface == .group ? model.groupPage?.groupId : nil)
             }
-            headerButton("All words", system: "books.vertical", id: "editLibrary") {
+            headerButton("All words", system: "books.vertical", id: "editLibrary", compact: compact) {
                 model.showLibrary = true
             }
             Button {
@@ -415,8 +426,19 @@ struct EditHeader: View {
             .buttonStyle(.plain)
             .accessibilityIdentifier("editGroups")
         }
+    }
+}
+
+/// Header button face: title and icon, or the icon alone when the row
+/// is short of room (the accessibility label keeps the title).
+private struct HeaderLabelStyle: LabelStyle {
+    let compact: Bool
+    func makeBody(configuration: Configuration) -> some View {
+        if compact {
+            configuration.icon.frame(minWidth: 24)
+        } else {
+            Label(configuration)
         }
-        .frame(height: 64)
     }
 }
 
