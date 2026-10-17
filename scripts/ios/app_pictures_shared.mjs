@@ -21,6 +21,35 @@ export const hex = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).p
 
 /* ---------------- per-person state ---------------- */
 
+/** picture-fill.js keeps its parked-offline list under "pip-pic-pending" in
+ *  localStorage (device-durable on the web). Here the same list lives in the
+ *  key store under the person (their word ids are theirs): a localStorage
+ *  shape, memory first, written through, and merged in by `load()` at
+ *  identify so a relaunch keeps it. */
+function pendingStore(x) {
+  let cache = null;
+  let loaded = false;
+  const name = () => `user/${x.userId}/pic-pending`;
+  const write = () => {
+    if (!x.userId || cache == null) return;
+    void keys.put(name(), JSON.parse(cache)).catch(() => {});
+  };
+  return {
+    getItem: () => cache,
+    setItem: (_k, v) => { cache = String(v); write(); },
+    async load() {
+      if (!x.userId || loaded) return;
+      loaded = true;
+      let saved = [];
+      try { saved = (await keys.get(name())) ?? []; } catch { /* none */ }
+      let now = [];
+      try { now = JSON.parse(cache ?? "[]"); } catch { /* none */ }
+      const all = [...new Set([...(Array.isArray(saved) ? saved : []), ...now])];
+      if (all.length || cache != null) { cache = JSON.stringify(all); write(); }
+    },
+  };
+}
+
 export const sessions = new Map();
 
 export function X(s) {
@@ -34,7 +63,9 @@ export function X(s) {
     finds: new Map(),          // add-flow.js finds: normalized text -> find result | "pending"
     bulkLeft: null, armed: false, findTimer: null, bulk: null,
   };
+  x.pending = pendingStore(x);
   x.fill = mountPictureFill({
+    storage: x.pending,
     db: s.d, all: allOf, locale: s.locale, client: x.client, creds: () => creds(x),
     savePhoto: (blob) => savePhoto(blob),
     syncUploadBlob: async () => {}, // savePhoto queues the upload by key (SY-6)
@@ -51,13 +82,13 @@ export function identify(appId, userId) {
   const s = appSession(appId);
   const x = X(s);
   x.userId = userId;
-  void x.fill.drainPending().then(() => flushDirty(x)).catch(() => {});
+  void x.pending.load().then(() => x.fill.drainPending()).then(() => flushDirty(x)).catch(() => {});
   return { ok: true };
 }
 
 onOnline(() => {
   for (const x of sessions.values()) {
-    if (x.userId) void x.fill.drainPending().then(() => flushDirty(x)).catch(() => {});
+    if (x.userId) void x.pending.load().then(() => x.fill.drainPending()).then(() => flushDirty(x)).catch(() => {});
   }
 });
 

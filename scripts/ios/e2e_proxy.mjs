@@ -14,11 +14,16 @@
  *               open one (the WebSocket too) is destroyed when the file
  *               flips to `down`.
  *
+ * With E2E_CANNED_PICTURES=1 it also answers the Picture Finder's routes
+ * itself (scripts/ios/e2e_canned_pictures.mjs): the local Worker has no
+ * image provider and no paid API may be called (044 E6b).
+ *
  *   node scripts/ios/e2e_proxy.mjs <workerPort> <controlFile> <portFile>
  */
 import { appendFileSync, readFileSync, watchFile, writeFileSync } from "node:fs";
 import http from "node:http";
 import net from "node:net";
+import { cannedAnswer } from "./e2e_canned_pictures.mjs";
 
 const [targetArg, ctl, portFile] = process.argv.slice(2);
 const target = Number(targetArg);
@@ -26,9 +31,19 @@ const mode = () => { try { return readFileSync(ctl, "utf8").trim() || "pass"; } 
 const live = new Set();
 const track = (s) => { live.add(s); s.on("close", () => live.delete(s)); s.on("error", () => {}); };
 
+const canned = process.env.E2E_CANNED_PICTURES === "1";
+
 const server = http.createServer((req, res) => {
   const m = mode();
   if (m === "down") { req.socket.destroy(); return; }
+  const answer = canned ? cannedAnswer(req.method, req.url.split("?")[0]) : null;
+  if (answer) {
+    req.resume();
+    res.writeHead(answer.status, { "content-type": answer.type, "content-length": answer.body.length });
+    res.end(answer.body);
+    appendFileSync(`${ctl}.log`, `CANNED ${req.method} ${req.url}\n`);
+    return;
+  }
   if (m === "cut-grant" && req.method === "POST" && req.url.startsWith("/accounts/invites/")) {
     const chunks = [];
     req.on("data", (c) => chunks.push(c));

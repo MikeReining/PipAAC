@@ -90,6 +90,9 @@ public nonisolated final class PipHost: @unchecked Sendable {
     let session: URLSession
     let wsSession: URLSession
     let wsDelegate = PipWSDelegate()
+    /// 044 E6b: streamed fetches (the draw client's server-sent events).
+    let streamSession: URLSession
+    let streamDelegate = PipStreamDelegate()
 
     // Queue-only state (touched solely on core.jsQueue).
     var keys: [String: KeyBox] = [:]
@@ -100,6 +103,9 @@ public nonisolated final class PipHost: @unchecked Sendable {
     var timers: [Int: DispatchWorkItem] = [:]
     var tasks: [Int: URLSessionTask] = [:]
     var sockets: [Int: URLSessionWebSocketTask] = [:]
+    /// Streamed fetches whose head has reached JS (so a later failure is an
+    /// "error" event on the body, not a rejected fetch).
+    var streamHeads = Set<Int>()
     var pathMonitor: NWPathMonitor?
     private let online = OSAllocatedUnfairLock(initialState: true)
     /// The last NWPath verdict (navigator.onLine's stand-in); true until known.
@@ -130,7 +136,10 @@ public nonisolated final class PipHost: @unchecked Sendable {
         let wsConfig = URLSessionConfiguration.default
         wsConfig.waitsForConnectivity = false
         self.wsSession = URLSession(configuration: wsConfig, delegate: wsDelegate, delegateQueue: nil)
+        self.streamSession = URLSession(configuration: config.sessionConfiguration,
+                                        delegate: streamDelegate, delegateQueue: nil)
         wsDelegate.host = self
+        streamDelegate.host = self
         try? FileManager.default.createDirectory(at: config.blobDirectory, withIntermediateDirectories: true)
     }
 
@@ -276,6 +285,7 @@ public nonisolated final class PipHost: @unchecked Sendable {
             return
         }
         if op == "fetch" { startFetch(id, args); return }
+        if op == "fetchStream" { startFetchStream(id, args); return }
         if op.hasPrefix("passkey.") { startPasskey(id, op, args); return }
         do { settle(id, .success(try Self.encode(try run(op, args)))) }
         catch { settle(id, .failure(error)) }

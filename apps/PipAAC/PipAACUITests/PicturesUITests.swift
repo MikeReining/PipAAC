@@ -280,6 +280,81 @@ final class PicturesUITests: XCTestCase {
         XCTAssertEqual(server.requests("/api/v1/pictures/draw").count, 1)
         XCTAssertEqual(server.requests("/api/v1/pictures/draw").first?.body["text"] as? String, "wombat")
         XCTAssertEqual(try query("SELECT count(*) FROM group_membership WHERE group_id='grp_my_words'").first?.first, "3")
+
+        // E6b: the new words are voiced from the tile library, one at a time,
+        // with the web's mint body (the catalog word "want" costs nothing).
+        wait("both new words are sent to the tile library") { server.requests("/api/v1/voice/tile").count == 2 }
+        let mints = server.requests("/api/v1/voice/tile")
+        XCTAssertEqual(mints.compactMap { $0.body["text"] as? String }, ["narwhal", "wombat"])
+        XCTAssertEqual(Set(mints[0].body.keys), ["user_id", "voice", "locale", "text", "source", "license"])
+        XCTAssertEqual(mints[0].body["source"] as? String, "user_typed")
+        XCTAssertEqual(mints[0].body["license"] as? String, license)
+        XCTAssertEqual(mints[0].body["user_id"] as? String, try person())
+    }
+
+    /// E6b: the draw's stages show as the Worker reports them. The stub holds
+    /// the stream after "planning" for 4 s; the card's line must say so while
+    /// nothing is saved, then land on the drawing.
+    @MainActor
+    func testDrawStagesShowWhileTheDrawingIsInFlight() throws {
+        server.drawStageDelay = 4
+        let app = launch()
+        XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
+        enterEdit(app)
+        app.buttons["tile:sns_0013"].tap()
+        typeFind(app, "wanting")
+        let draw = app.buttons["wc-draw-this"]
+        XCTAssertTrue(draw.waitForExistence(timeout: 20))
+        draw.tap()
+        let line = app.staticTexts["wc-picstate"]
+        XCTAssertTrue(line.waitForExistence(timeout: 30))
+        wait("the first stage shows", timeout: 3.5) { line.label == "Planning the picture…" }
+        shot(app, "e6b-draw-stage-planning")
+        XCTAssertEqual(try query("SELECT count(*) FROM image_override WHERE sense_id='sns_0013' AND status='ready'").first?.first, "0",
+                       "nothing is saved while the stage shows")
+        wait("the drawing lands", timeout: 30) { line.label == "Drawn for you · 2 drawings left" }
+        XCTAssertEqual(try query("SELECT count(*) FROM image_override WHERE sense_id='sns_0013' AND status='ready'").first?.first, "1")
+    }
+
+    /// E6b: a word whose picture could not be found (the finder is down) is
+    /// parked; a relaunch keeps the list and the next boot fills it.
+    @MainActor
+    func testParkedPictureSurvivesARelaunch() throws {
+        server.findStatus = 503
+        var app = launch()
+        XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
+        enterEdit(app)
+        app.buttons["editLibrary"].tap()
+        XCTAssertTrue(app.buttons["lib-bulk"].waitForExistence(timeout: 10))
+        app.buttons["lib-bulk"].tap()
+        let paste = app.textViews["bulk-paste"]
+        XCTAssertTrue(paste.waitForExistence(timeout: 10))
+        paste.tap()
+        paste.typeText("pangolin")
+        let add = app.buttons["bulk-add"]
+        XCTAssertTrue(add.waitForExistence(timeout: 10))
+        wait("the form is ready") { add.isEnabled }
+        add.tap()
+        wait("the word is added and the finder was tried") {
+            ((try? self.query("SELECT count(*) FROM personal_entity WHERE spoken_name='pangolin'").first?.first) ?? "0") == "1"
+                && self.server.requests("/api/v1/pictures/find").count >= 1
+        }
+        XCTAssertEqual(try query("SELECT count(*) FROM personal_entity WHERE photo_key IS NOT NULL").first?.first, "0")
+        let before = server.requests("/api/v1/pictures/find").count
+        app.terminate()
+
+        // The finder is back; the app starts again with the same data.
+        server.findStatus = 200
+        app = XCUIApplication()
+        app.launchArguments = ["-PipDataDir", dir.path, "-PipBaseURL", "http://127.0.0.1:\(server.port)",
+                               "-pipUITestLicense", license]
+        app.launch()
+        XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
+        wait("the boot fills the parked word", timeout: 30) {
+            ((try? self.query("SELECT count(*) FROM personal_entity WHERE photo_key IS NOT NULL").first?.first) ?? "0") == "1"
+        }
+        XCTAssertGreaterThan(server.requests("/api/v1/pictures/find").count, before, "the finder was asked again")
+        XCTAssertEqual(server.requests("/api/v1/pictures/find").last?.body["text"] as? String, "pangolin")
     }
 
     /// PP-5: several photos become several words, only the named ones.
@@ -310,7 +385,12 @@ final class PicturesUITests: XCTestCase {
         shot(app, "e6-photo-drafts")
         app.buttons["photo-save"].tap()
         XCTAssertTrue(app.staticTexts["editToastText"].waitForExistence(timeout: 10))
-        XCTAssertEqual(app.staticTexts["editToastText"].label, "Added 2 photos")
+        // "Added 2 photos", then - as on the web - the voice progress replaces it.
+        let said = app.staticTexts["editToastText"].label
+        XCTAssertTrue(said == "Added 2 photos" || said.hasPrefix("Making Pip's voice, "), said)
+        wait("both named photos are voiced") { server.requests("/api/v1/voice/tile").count == 2 }
+        XCTAssertEqual(Set(server.requests("/api/v1/voice/tile").compactMap { $0.body["text"] as? String }),
+                       ["Grandpa", "Dog park"])
 
         let rows = try query("SELECT spoken_name, photo_key FROM personal_entity ORDER BY spoken_name")
         XCTAssertEqual(rows.map { $0[0] }, ["Dog park", "Grandpa"])

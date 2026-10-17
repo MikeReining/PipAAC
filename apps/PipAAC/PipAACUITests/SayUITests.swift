@@ -288,6 +288,10 @@ final class StubWorker: @unchecked Sendable {
     /// normalized text -> the find result body (default: three candidates, no auto, common word)
     var finds: [String: [String: Any]] = [:]
     var picLeft = 3
+    /// E6b: the finder is down (find and find-batch answer 503: the word is parked).
+    var findStatus = 200
+    /// E6b: seconds the draw stream holds after its first stage ("planning").
+    var drawStageDelay: Double = 0
     private func findBody(_ text: String) -> [String: Any] {
         if let f = finds[text] { return f }
         return ["candidates": [["image_id": "img_red", "asset": "/symbols/img_red.png", "source": "ours", "score": 0.9],
@@ -368,6 +372,8 @@ final class StubWorker: @unchecked Sendable {
         case "/api/v1/voice/speak", "/api/v1/voice/tile": send(200, "audio/mpeg", Self.clip)
         case "/api/v1/voice/tile/replaced": sendJSON(["ids": [String](), "next": 1])
         case "/api/v1/voice/tile/flag": send(204, "text/plain", Data()) // E8: "Sounds wrong"
+        case "/api/v1/pictures/find" where findStatus != 200, "/api/v1/pictures/find-batch" where findStatus != 200:
+            send(findStatus, "application/json", Data(#"{"error":"down"}"#.utf8))
         case "/api/v1/pictures/find": sendJSON(findBody(json["text"] as? String ?? ""))
         case "/api/v1/pictures/find-batch":
             let items = (json["items"] as? [[String: Any]]) ?? []
@@ -380,9 +386,17 @@ final class StubWorker: @unchecked Sendable {
             func ev(_ o: [String: Any]) -> String {
                 "data: " + String(decoding: (try? JSONSerialization.data(withJSONObject: o)) ?? Data(), as: UTF8.self) + "\n\n"
             }
-            let body = ev(["type": "stage", "stage": "drawing"])
+            // The stream goes out as the Worker would send it: the first stage now,
+            // the rest after `drawStageDelay` (the line on the card must show the
+            // first while the draw is still in flight).
+            let first = ev(["type": "stage", "stage": "planning"])
+            let rest = ev(["type": "stage", "stage": "drawing"])
                 + ev(["type": "done", "image": Self.png(.orange).base64EncodedString(), "key": key, "cache": "mint", "left": left])
-            send(200, "text/event-stream", Data(body.utf8))
+            let head = "HTTP/1.1 200 X\r\nContent-Type: text/event-stream\r\nConnection: close\r\n\r\n"
+            c.send(content: Data((head + first).utf8), completion: .contentProcessed { _ in })
+            q.asyncAfter(deadline: .now() + drawStageDelay) {
+                c.send(content: Data(rest.utf8), completion: .contentProcessed { _ in c.cancel() })
+            }
         default:
             if path.hasPrefix("/symbols/") || path.hasPrefix("/api/v1/pictures/img/") {
                 let name = (path as NSString).lastPathComponent.replacingOccurrences(of: ".png", with: "")

@@ -10,7 +10,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
-  LICENSE, P, USER, appId, blobBytes, blobs, cand, dbh, events, findResult, keystore, lastRow,
+  relaunch, LICENSE, P, USER, appId, blobBytes, blobs, cand, dbh, events, findResult, keystore, lastRow,
   maxSeq, newWord, opsSince, photoOf, pics, png, q, quiet, sha, sleep, until, worker, appSessionLicensed,
 } from "./app_pictures.fakes.mjs";
 
@@ -208,4 +208,43 @@ test("not entitled: the Worker's 403 shows the web's gate copy, and with no lice
   await until(() => lastRow("entity", id3)?.line === "Couldn't make a picture. Try again, or add a photo.", "denied copy");
   worker.trial = true;
   keystore.set(`user/${USER}/license`, had);
+});
+
+test("draw stages show live: the line follows each stage as the Worker reports it, not at the end", async () => {
+  worker.reset(); events.length = 0; worker.left = 3;
+  const id = q("SELECT sense_id AS s FROM label WHERE text='go' AND kind='lemma' AND status='approved' AND locale='en'")[0].s;
+  let release;
+  worker.drawHold = new Promise((r) => { release = r; });
+  pics.find(appId, { kind: "sense", id, q: "going" });
+  await until(() => lastRow("sense", id)?.results, "results");
+  pics.draw(appId, { kind: "sense", id, desc: "going" });
+  // The Worker has said "planning" and is holding the rest: the line says so NOW.
+  await until(() => lastRow("sense", id)?.line === "Planning the picture…", "the first stage shows while the draw is in flight");
+  assert.equal(lastRow("sense", id).drawing, true);
+  assert.equal(q("SELECT count(*) AS n FROM image_override WHERE sense_id=? AND status='ready'", id)[0].n, 0, "nothing saved yet");
+  release();
+  worker.drawHold = null;
+  await until(() => /^Drawn for you/.test(lastRow("sense", id)?.line ?? ""), "the drawing lands");
+  const lines = events.filter((e) => e.kind === "sense" && e.id === id && e.row).map((e) => e.row.line)
+    .filter((l, i, a) => l !== a[i - 1]);
+  const seen = ["Planning the picture…", "Drawing the picture…"].map((l) => lines.indexOf(l));
+  assert.ok(seen[0] >= 0 && seen[1] > seen[0], `stages in order: ${JSON.stringify(lines)}`);
+  assert.equal(lines.at(-1).startsWith("Drawn for you"), true);
+});
+
+test("a picture parked while offline survives a relaunch and is filled on the next boot", async () => {
+  worker.reset(); events.length = 0;
+  const id = newWord("pangolin");
+  worker.findStatus = 503;                 // the finder is unreachable: a transient answer
+  pics.cardOpen(appId, { kind: "entity", id });
+  await until(() => JSON.parse(keystore.get(`user/${USER}/pic-pending`) ?? "[]").includes(id), "parked, and written to the key store");
+  assert.equal(photoOf(id), null);
+  worker.findStatus = 200;
+  const finds = worker.of("/api/v1/pictures/find").length;
+
+  const again = relaunch();                // memory is gone; the key store is not
+  pics.identify(again, USER);
+  await until(() => photoOf(id), "the next boot fills the parked word");
+  assert.ok(worker.of("/api/v1/pictures/find").length > finds, "the finder was asked again");
+  await until(() => JSON.parse(keystore.get(`user/${USER}/pic-pending`) ?? "[]").length === 0, "unparked once filled");
 });

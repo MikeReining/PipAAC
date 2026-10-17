@@ -22,6 +22,7 @@ import { pathToFileURL } from "node:url";
 import { DatabaseSync } from "node:sqlite";
 import { makeTeamPeer } from "./e2e_team_peer.mjs";
 import { makeSpotPeer } from "./e2e_spot_peer.mjs";
+import { makePicPeer } from "./e2e_pic_peer.mjs";
 
 const root = new URL("../../", import.meta.url).pathname;
 const shared = join(root, "public/shared");
@@ -229,6 +230,7 @@ async function hostMode() {
   await waitFor("ui-saw-edit");
   if (scenario === "person") return personFlow(db, entityId, NAME, dumpTo);
   if (scenario === "media") return mediaFlow(db, entityId, client, userKey, dumpTo);
+  if (scenario === "pictures") return pic.picturesFlow(db, client, userKey, dumpTo);
   if (scenario === "offline") {
     await waitFor("ui-done");
     await sleep(1500);
@@ -445,6 +447,7 @@ async function joinMode() {
 }
 
 /* 044 D5: the `spotlight` scenarios live in e2e_spot_peer.mjs. */
+const pic = makePicPeer({ root, shared, put, waitFor, sleep, log, sc, syncUploadBlob, syncHealth });
 const spot = makeSpotPeer({ put, has, waitFor, sleep, log, spotMod, syncSendModel, syncSendLive, liveInbox });
 
 /* 044 F2: the `team` scenario lives in e2e_team_peer.mjs (this file's seams are handed over). */

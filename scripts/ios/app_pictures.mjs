@@ -359,8 +359,8 @@ export function find(appId, { kind, id, q }) {
 
 /** PP-3: Draw it for me (word-card-pictures.js draw() 359-391). One
  *  image call, counted (030 § 6.1). On a personal word the words are
- *  saved as its hint. The pipeline's stages reach this client in one
- *  piece (the host buffers a response), so the line says "Drawing…". */
+ *  saved as its hint. The stream is read live (jsc_shims streamFetch), so
+ *  the line follows the pipeline's stages as the Worker reports them. */
 export function draw(appId, { kind, id, desc = "" }) {
   const s = appSession(appId);
   const x = X(s);
@@ -376,6 +376,7 @@ export function draw(appId, { kind, id, desc = "" }) {
       description: ent ? e.hint : desc, locale: s.locale,
       onStage: (stage, ev) => {
         ss.state = { ...ss.state, phase: "drawing", step: stage, hint: ev?.hint ?? ss.state.hint ?? null };
+        repaintRow(x, kind, id); // each stage shows as it arrives (word-card-pictures.js draw())
       },
     });
     ss.state = { ...ss.state, phase: null, error: r.ok ? null : r.reason,

@@ -12,6 +12,7 @@ import {
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import { needsDraw, pictureAction, shouldConfirmDraws } from "../../public/shared/pictures.mjs";
 import { appSession } from "./app.mjs";
+import { tilePrefetch } from "./app_say.mjs";
 import {
   BLOB_KEY, PIP, X, boardPaint, creds, emit, one, wantThumbs,
 } from "./app_pictures_shared.mjs";
@@ -28,6 +29,20 @@ const groupNameOf = (s, id, fallback = "") => {
   return row ? PIP().groups.groupDisplayName(s.d, row, s.locale) : fallback;
 };
 const seedCategory = (s, groupId) => s.catalog.groups?.find((g) => g.id === groupId)?.category ?? null;
+
+/** 028 § 5.3: the new words' voices are made one at a time after the rows
+ *  land (add-flow.js bulk-add 465-497 / photo-save 543-576). The web's
+ *  toast names the voice with "'s voice" appended to voiceName(), which
+ *  for the default reads "Pip's voice's voice"; here the name is used
+ *  as speech.js tileStateMessage does (already "...voice" stays). */
+function prefetchVoices(s, texts) {
+  if (!texts.length) return;
+  const name = PIP().voices.voiceName(s.d, s.voiceId);
+  const voice = /voice/i.test(name ?? "") ? name : `${name ?? "Pip"}'s voice`;
+  tilePrefetch(s, texts, (p) => emit({
+    appId: s.appId, toast: `Making ${voice}, ${p.done + p.failed} of ${texts.length}`,
+  }));
+}
 
 /** add-flow.js rowPicture 244-249: the adult's cycled pick, else the
  *  server's auto, else nothing (drawn or chosen later). */
@@ -188,11 +203,13 @@ export function bulkAdd(appId, { groupId = null, text = "" }) {
     return { armed: true, bulk: bulkModel(x, s, gid, text).model };
   }
   x.armed = false;
+  const newTexts = b.rows.filter((r) => r.kind === "new" && !r.already && !r.overCap).map((r) => r.text);
   const res = applyPasteRows(s.d, b.rows, {
     groupId: gid, category: seedCategory(s, gid), maxNew: ownLeft(s),
   });
   s.addRecent = [gid, ...(s.addRecent ?? []).filter((v) => v !== gid)].slice(0, 3);
   s.kbIndex = null;
+  prefetchVoices(s, newTexts);
   void fillPastedPictures(x, s, res.newIds ?? []).catch((e) => console.error(`pics.fill: ${e}`));
   const name = groupNameOf(s, gid, "My Words");
   const msg = `Added ${res.placed} to ${name}` + (res.skipped ? ` (${res.skipped} already there)` : "");
@@ -259,6 +276,7 @@ export function photosSave(appId, { groupId = null, cell = null, drafts = [] }) 
     groupId: gid, category: seedCategory(s, gid), cell, maxNew: ownLeft(s),
   });
   s.kbIndex = null;
+  prefetchVoices(s, rows.filter((r) => r.name).map((r) => r.name));
   const plural = `photo${res.saved === 1 ? "" : "s"}`;
   const toast = res.refused
     ? `Added ${res.saved} ${plural} — ${res.refused} more need${res.refused === 1 ? "s" : ""} Pip Lifetime`

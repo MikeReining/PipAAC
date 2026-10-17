@@ -95,6 +95,8 @@ if (typeof g.TextDecoder !== "function") {
  * way through __pipFire / __pipWsEvent / __pipPlatformEvent.
  * ------------------------------------------------------------------ */
 
+import { makeStreamFetch } from "./jsc_stream.mjs";
+
 const B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 const B64_INV = new Int16Array(128).fill(-1);
 for (let i = 0; i < 64; i++) B64_INV[B64.charCodeAt(i)] = i;
@@ -365,6 +367,12 @@ class Response {
 if (typeof g.Headers !== "function") g.Headers = Headers;
 if (typeof g.Response !== "function") g.Response = Response;
 
+/* A server-sent-events request (the draw client's stages) is read live; see
+ * jsc_stream.mjs. */
+const { streamFetch, onEvent: streamEvent } = makeStreamFetch({
+  hostCall, newId: () => nextHostId++, Response, Blob, b64ToBytes });
+g.__pipFetchEvent = streamEvent;
+
 if (typeof g.fetch !== "function") {
   g.fetch = async (input, init = {}) => {
     let url = String(input?.url ?? input);
@@ -373,10 +381,14 @@ if (typeof g.fetch !== "function") {
     if (url.startsWith("/")) url = `${g.location.origin}${url}`;
     const headers = {};
     new Headers(init.headers).forEach((v, k) => { headers[k] = v; });
-    const r = await hostCall("fetch", {
+    const req = {
       url, method: String(init.method ?? "GET").toUpperCase(), headers,
       body: init.body == null ? null : bytesToB64(toBytes(init.body)),
-    }, init.signal ?? null);
+    };
+    // A server-sent-events request (the draw client's stages, 030) is read
+    // as it arrives: the web's res.body.getReader() sees each event live.
+    if (/text\/event-stream/i.test(headers.accept ?? "")) return streamFetch(req, init.signal ?? null);
+    const r = await hostCall("fetch", req, init.signal ?? null);
     return new Response(b64ToBytes(r.body), {
       status: r.status, statusText: r.statusText, headers: r.headers });
   };

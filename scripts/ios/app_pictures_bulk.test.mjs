@@ -8,7 +8,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
-  LICENSE, P, USER, appId, blobBytes, blobs, cand, dbh, events, findResult, keystore, lastRow,
+  LICENSE, P, USER, appId, blobBytes, blobs, caches, cand, dbh, events, findResult, keystore, lastRow,
   maxSeq, newWord, opsSince, photoOf, pics, png, q, quiet, sha, sleep, until, worker, appSessionLicensed,
 } from "./app_pictures.fakes.mjs";
 
@@ -162,5 +162,75 @@ test("several photos become several words, named ones only, through the shared o
   assert.equal(created.length, 2);
   assert.deepEqual(created.map(([, a]) => a.photoKey).sort(), [keys[0], keys[2]].sort());
   assert.throws(() => pics.photosSave(appId, { drafts: [{ key: "blob:xyz", name: "bad" }] }));
+  appSessionLicensed(false);
+});
+
+/* ---------------- voices for the new words (028 § 5.3) ---------------- */
+
+// Earlier tests' pastes mint in the background too: look only at this test's words.
+let mine = [];
+const tileCalls = () => worker.of("/api/v1/voice/tile").filter((r) => mine.includes(r.body.text));
+const progressToasts = () => events.filter((e) => e.toast).map((e) => e.toast);
+const fresh = async (words) => {
+  await sleep(300);   // let a previous test's mints finish
+  worker.reset(); events.length = 0; worker.log.length = 0; caches.clear();
+  mine = words;
+};
+
+test("a paste voices its new words one at a time: the web's mint body, its progress toast, hits are free", async () => {
+  await fresh(["Quokka", "numbat"]);
+  appSessionLicensed(true);
+  const text = ["want", "Quokka", "numbat", "quokka"].join("\n");
+  pics.bulkState(appId, { groupId: "grp_my_words", text });
+  await until(() => worker.of("/api/v1/pictures/find-batch").length === 1, "found");
+  pics.bulkAdd(appId, { groupId: "grp_my_words", text });
+  await until(() => tileCalls().length === 2, "two mints (the catalog word and the repeat cost none)");
+  assert.deepEqual(tileCalls().map((r) => r.body.text), ["Quokka", "numbat"]);
+  const b = tileCalls()[0].body;
+  assert.deepEqual(Object.keys(b).sort(), ["license", "locale", "source", "text", "user_id", "voice"]);
+  assert.equal(b.user_id, USER);
+  assert.equal(b.license, LICENSE);
+  assert.equal(b.locale, "en");
+  assert.equal(b.source, "user_typed");
+  await until(() => progressToasts().length === 2, "a toast per word");
+  assert.deepEqual(progressToasts().filter((t) => t.endsWith(" of 2")),
+    ["Making Pip's voice, 1 of 2", "Making Pip's voice, 2 of 2"]);
+  // The clips are in the voice cache now: pasting them again (renamed away
+  // and back) would not ask the Worker again - a prefetch of a cached word is free.
+  assert.equal([...caches.get("pip-tile-voice").keys()].length, 2, "both clips are cached");
+  await quiet();
+  appSessionLicensed(false);
+});
+
+test("a spent mint budget pauses the run (the web stops at the first budget answer)", async () => {
+  await fresh(["marmot", "lemur", "gecko"]);
+  worker.tileStatus = 503;
+  appSessionLicensed(true);
+  const text = ["marmot", "lemur", "gecko"].join("\n");
+  pics.bulkState(appId, { groupId: "grp_my_words", text });
+  await until(() => worker.of("/api/v1/pictures/find-batch").length === 1, "found");
+  pics.bulkAdd(appId, { groupId: "grp_my_words", text });
+  await until(() => tileCalls().length >= 1, "the first mint is tried");
+  await quiet();
+  assert.equal(tileCalls().length, 1, "no second request after a budget answer");
+  assert.deepEqual(progressToasts(), ["Making Pip's voice, 1 of 3"]);
+  worker.tileStatus = 200;
+  appSessionLicensed(false);
+});
+
+test("photos voice only the named ones", async () => {
+  await fresh(["Auntie Bea"]);
+  appSessionLicensed(true);
+  const keys = ["a", "b"].map((n) => {
+    const bytes = Buffer.from(`voiced photo ${n}`);
+    blobs.set(sha(bytes), bytes.toString("base64url"));
+    return `blob:${sha(bytes)}`;
+  });
+  pics.photosSave(appId, { groupId: "grp_my_words", drafts: [
+    { key: keys[0], name: "Auntie Bea" }, { key: keys[1], name: "" }] });
+  await until(() => tileCalls().length === 1, "one mint");
+  assert.equal(tileCalls()[0].body.text, "Auntie Bea");
+  await until(() => progressToasts().length === 1, "its toast");
+  assert.deepEqual(progressToasts(), ["Making Pip's voice, 1 of 1"]);
   appSessionLicensed(false);
 });

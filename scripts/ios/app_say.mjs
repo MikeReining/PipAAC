@@ -236,6 +236,21 @@ export function tileEnsure(s, text, source = "user_typed") {
   })();
 }
 
+/** speech.js tileApi.prefetch (028 § 5.3) - sequential ensures for the new
+ *  words of a paste or a photo batch: a word the voice already has is free,
+ *  a miss mints inside the Worker's caps, a budget answer ends the run.
+ *  Fire and forget; `onProgress({done, failed, total})` per word minted. */
+export function tilePrefetch(s, texts, onProgress) {
+  const x = X(s);
+  if (!x.userId || !texts.length) return;
+  void (async () => {
+    await tileVoice.prefetch({
+      userId: x.userId, license: await licenseOf(x), trial: trialActive(x),
+      voice: s.voiceId, locale: s.locale, texts, onProgress,
+    });
+  })().catch(() => {});
+}
+
 /** word-card.js #wc-flag -> tileApi.flag (028 § 5.5): "Sounds wrong" flags
  *  the shared clip for review - a signal, never a takedown. Returns at
  *  once; the answer is the "card.flag" host event {appId, ok, toast},

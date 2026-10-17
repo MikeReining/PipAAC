@@ -79,6 +79,61 @@ nonisolated extension PipHost {
         task.resume()
     }
 
+    /// 044 E6b: the same request, but the body is handed to JS as it
+    /// arrives. `id` settles ONCE with the head; the body follows as
+    /// __pipFetchEvent(sid, "chunk"|"end"|"error", data). A failure before
+    /// the head rejects the fetch.
+    func startFetchStream(_ id: Int, _ a: [String: Any]) {
+        guard let s = a["url"] as? String, let url = URL(string: s), let sid = a["sid"] as? Int else {
+            settle(id, .failure(PipHostError("fetch: bad url")))
+            return
+        }
+        var req = URLRequest(url: url)
+        req.httpMethod = a["method"] as? String ?? "GET"
+        for (k, v) in (a["headers"] as? [String: String]) ?? [:] { req.setValue(v, forHTTPHeaderField: k) }
+        if let b = a["body"] as? String, let d = Data(base64Encoded: b) { req.httpBody = d }
+        req.cachePolicy = .reloadIgnoringLocalCacheData
+        let task = streamSession.dataTask(with: req)
+        task.taskDescription = "\(id):\(sid)"
+        tasks[id] = task
+        task.resume()
+    }
+
+    /// Any thread. The head of a streamed fetch -> settles the fetch.
+    func streamHead(_ id: Int, _ http: HTTPURLResponse) {
+        let headers: [[String]] = http.allHeaderFields.compactMap { k, v in
+            guard let k = k as? String, let v = v as? String else { return nil }
+            return [k.lowercased(), v]
+        }
+        let head: [String: Any] = [
+            "status": http.statusCode,
+            "statusText": HTTPURLResponse.localizedString(forStatusCode: http.statusCode),
+            "headers": headers,
+        ]
+        let json = (try? Self.encode(head)) ?? ""
+        core?.post { [self] ctx in
+            streamHeads.insert(id)
+            call(ctx, "__pipSettle", [id, true, json])
+        }
+    }
+
+    /// Any thread. A body event for a streamed fetch whose head went out.
+    func streamEvent(_ id: Int, _ sid: Int, _ type: String, _ data: String?) {
+        core?.post { [self] ctx in
+            guard streamHeads.contains(id) else { return }
+            if type != "chunk" { streamHeads.remove(id); tasks[id] = nil }
+            call(ctx, "__pipFetchEvent", [sid, type, data ?? NSNull()])
+        }
+    }
+
+    /// Any thread. The stream ended before its head: reject the fetch.
+    func streamFailed(_ id: Int, _ message: String) {
+        core?.post { [self] _ in
+            guard !streamHeads.contains(id) else { return }
+            settle(id, .failure(PipHostError(message)))
+        }
+    }
+
     func cancelFetch(_ id: Int) {
         if let q = core?.jsQueue { dispatchPrecondition(condition: .onQueue(q)) }
         tasks.removeValue(forKey: id)?.cancel()
@@ -168,5 +223,44 @@ nonisolated final class PipWSDelegate: NSObject, URLSessionWebSocketDelegate, @u
         guard let i = id(t) else { return }
         if let error, (error as? URLError)?.code != .cancelled { host?.wsEmit(i, "error", nil) }
         host?.wsEmit(i, "close", nil)
+    }
+}
+
+/// Streamed fetch lifecycle -> JS (044 E6b). taskDescription is
+/// "<hostCall id>:<stream id>". Callbacks arrive on URLSession's queue and
+/// only hop through the host (a queue.async).
+nonisolated final class PipStreamDelegate: NSObject, URLSessionDataDelegate, @unchecked Sendable {
+    weak var host: PipHost?
+
+    private func ids(_ t: URLSessionTask) -> (Int, Int)? {
+        let p = (t.taskDescription ?? "").split(separator: ":").compactMap { Int($0) }
+        return p.count == 2 ? (p[0], p[1]) : nil
+    }
+
+    func urlSession(_ s: URLSession, dataTask t: URLSessionDataTask, didReceive response: URLResponse,
+                    completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+        guard let (id, _) = ids(t) else { completionHandler(.cancel); return }
+        if let http = response as? HTTPURLResponse {
+            host?.streamHead(id, http)
+            completionHandler(.allow)
+        } else {
+            host?.streamFailed(id, "fetch: not an HTTP response")
+            completionHandler(.cancel)
+        }
+    }
+
+    func urlSession(_ s: URLSession, dataTask t: URLSessionDataTask, didReceive data: Data) {
+        if let (id, sid) = ids(t) { host?.streamEvent(id, sid, "chunk", data.base64EncodedString()) }
+    }
+
+    func urlSession(_ s: URLSession, task t: URLSessionTask, didCompleteWithError error: Error?) {
+        guard let (id, sid) = ids(t) else { return }
+        if let error {
+            if (error as? URLError)?.code == .cancelled { return } // JS already rejected
+            host?.streamFailed(id, "fetch failed: \(error.localizedDescription)")
+            host?.streamEvent(id, sid, "error", error.localizedDescription)
+        } else {
+            host?.streamEvent(id, sid, "end", nil)
+        }
     }
 }

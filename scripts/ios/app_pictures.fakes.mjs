@@ -51,6 +51,9 @@ const worker = {
   finds: new Map(),         // normalized text -> find result
   drawStatus: 200,
   drawN: 0,
+  findStatus: 200,    // 503 = the finder is down (a transient answer: the word is parked)
+  tileStatus: 200,    // 503 = the mint budget is spent
+  drawHold: null,     // a promise: the stream stalls after its first stage until it resolves
   reset() {
     this.log = []; this.entitled = true; this.left = 3; this.finds = new Map(); this.drawStatus = 200;
   },
@@ -73,11 +76,19 @@ function workerHandle({ url, method, headers, body }) {
   // presented - a board that started its trial. A forged license is refused.
   const presented = json?.license ?? headers["x-pip-license"] ?? "";
   const licensed = presented === LICENSE || (!presented && worker.trial);
+  if (u.pathname === "/api/v1/voice/tile") { // the tile library mint (028): canned audio, never a provider
+    if (worker.tileStatus !== 200) return jsonRes({ error: "budget" }, worker.tileStatus);
+    if (!licensed) return jsonRes({ error: "bad_license" }, 403);
+    return { status: 200, headers: [["content-type", "audio/mpeg"], ["x-tile-cache", "mint"]],
+      body: b64u(Buffer.from(`clip:${json.text}`)) };
+  }
   if (u.pathname.startsWith("/api/v1/pictures/") && !(worker.entitled && licensed)) {
     return jsonRes({ error: "bad_license" }, 403);
   }
   switch (u.pathname) {
-    case "/api/v1/pictures/find": return jsonRes(findFor(json.text));
+    case "/api/v1/pictures/find":
+      if (worker.findStatus !== 200) return jsonRes({ error: "down" }, worker.findStatus);
+      return jsonRes(findFor(json.text));
     case "/api/v1/pictures/find-batch":
       return jsonRes({ results: json.items.map((i) => findFor(i.text)) });
     case "/api/v1/pictures/allowance": return jsonRes({ left: worker.left, total: 5 });
@@ -106,6 +117,7 @@ function workerHandle({ url, method, headers, body }) {
 
 const keystore = new Map();
 const blobs = new Map();      // sha -> base64url bytes
+const caches = new Map();     // Cache Storage replacement: name -> url -> {type, body}
 const events = [];            // every "pic" event, parsed
 const timers = new Map();
 let ctx;
@@ -118,7 +130,31 @@ const ops = {
   "blob.save": async ({ sha: s, b64 }) => { blobs.set(s, b64); },
   "blob.load": async ({ sha: s }) => blobs.get(s) ?? null,
   "blob.has": async ({ sha: s }) => blobs.has(s),
+  cache: async ({ op, cache, url, type, body }) => {
+    const m = caches.get(cache) ?? caches.set(cache, new Map()).get(cache);
+    if (op === "put") { m.set(url, { type, body }); return { file: `/cache/${cache}/${m.size}` }; }
+    if (op === "get") { const e = m.get(url); return e ? { body: e.body, type: e.type, file: `/cache/${cache}` } : null; }
+    if (op === "delete") return m.delete(url);
+    return [...m.keys()];
+  },
   fetch: async (req) => ({ statusText: "", ...workerHandle(req) }),
+  // Streamed fetch (jsc_shims streamFetch): the head settles the call, the
+  // body follows as events - one per SSE block, the first stage first, the
+  // rest after `worker.drawHold` (so a test can look at the line mid-draw).
+  fetchStream: async (req) => {
+    const r = workerHandle(req);
+    const bytes = Buffer.from(r.body, "base64url");
+    const blocks = bytes.toString("utf8").split("\n\n").filter(Boolean).map((b) => `${b}\n\n`);
+    setTimeout(async () => {
+      for (let i = 0; i < blocks.length; i++) {
+        if (i === 1 && worker.drawHold) await worker.drawHold;
+        deliver(() => ctx.__pipFetchEvent(req.sid, "chunk", Buffer.from(blocks[i]).toString("base64")));
+        await sleep(5);
+      }
+      deliver(() => ctx.__pipFetchEvent(req.sid, "end", null));
+    }, 10);
+    return { statusText: "", status: r.status, headers: r.headers };
+  },
 };
 const host = {
   baseURL: "https://worker.test",
@@ -172,6 +208,7 @@ const blobBytes = (key) => Buffer.from(blobs.get(key.replace("blob:", "")), "bas
 
 await pics.identify(appId, USER);
 await pics.testSeedLicense(appId, LICENSE);
+P.say.identify(appId, USER); // the tile voice's person (pasted words are voiced through it)
 
 /** Wait until the background work (fills, thumbnails) has gone quiet. */
 const quiet = async () => {
@@ -185,7 +222,14 @@ const quiet = async () => {
 /** The licence flag app_purchase.mjs sets on a session (ownLeft's seam). */
 function appSessionLicensed(on) { P.app.appSession(appId).licensed = on; }
 
+/** A second session on the same database and key store: what a relaunch is
+ *  to the core (the in-memory state is new; the disk and the keychain stay). */
+function relaunch() {
+  const { appId: again } = j(P.app.appOpen(1, readFileSync(join(root, "public/catalog.json"), "utf8"), null, null));
+  return again;
+}
+
 export {
-  LICENSE, P, USER, appId, blobBytes, blobs, cand, db, dbh, events, findResult, keystore, lastRow,
+  relaunch, LICENSE, P, USER, appId, blobBytes, blobs, caches, cand, db, dbh, events, findResult, keystore, lastRow,
   maxSeq, newWord, opsSince, photoOf, pics, png, q, quiet, sha, sleep, until, worker, appSessionLicensed,
 };

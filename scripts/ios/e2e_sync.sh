@@ -65,7 +65,8 @@ PROXY_PID=""
 start_proxy() { # <dir>  -> sets BASE
   echo pass > "$1/proxy-mode"
   rm -f "$1/proxy.port"
-  node scripts/ios/e2e_proxy.mjs "$PORT" "$1/proxy-mode" "$1/proxy.port" > "$1/proxy.log" 2>&1 &
+  E2E_CANNED_PICTURES="${CANNED_PICTURES:-}" \
+    node scripts/ios/e2e_proxy.mjs "$PORT" "$1/proxy-mode" "$1/proxy.port" > "$1/proxy.log" 2>&1 &
   PROXY_PID=$!
   for _ in $(seq 1 50); do [ -s "$1/proxy.port" ] && break; sleep 0.1; done
   BASE="http://127.0.0.1:$(cat "$1/proxy.port")"; [ -n "${PIP_E2E_NOPROXY:-}" ] && BASE="$WORKER"
@@ -157,12 +158,19 @@ run_two_people() {
   compare "$D/B/peer.dump" "$D/ipad-B.dump" "person B's web device"
 }
 
-# PIP_E2E_ONLY=both-ways|offline|media|two-people|restore-words|restore-scan|account|team|spotlight|spotlight-supporter runs one scenario (debugging).
+# PIP_E2E_ONLY=both-ways|offline|media|pictures|two-people|restore-words|restore-scan|account|team|spotlight|spotlight-supporter runs one scenario (debugging).
 only() { [ -z "${PIP_E2E_ONLY:-}" ] || [ "$PIP_E2E_ONLY" = "$1" ]; }
 only both-ways && run_scenario both-ways SyncE2ETests/testLinkAndSyncBothWays both-ways peer peer2
 only offline && run_scenario offline SyncE2ETests/testOfflineCatchUp offline peer
 only media && run_scenario media SyncMediaE2ETests/testMediaBothWays media peer
 only two-people && run_two_people
+# 044 E6b: a picture CHOSEN on one side reaches the other (web -> iPad file hashed by the test; iPad ->
+# web read from the peer's own table and the relay by hash). The finder is canned by the proxy: no paid API.
+if only pictures; then
+  CANNED_PICTURES=1
+  run_scenario pictures SyncMediaE2ETests/testPicturesBothWays pictures peer
+  CANNED_PICTURES=
+fi
 # 044 C5: restore a fresh iPad from the recovery card - typed words, then a scanned card image.
 only restore-words && run_scenario restore-words SyncE2ETests/testRestoreFromWords restore peer
 only restore-scan && run_scenario restore-scan SyncE2ETests/testRestoreByScanningTheCard restore peer

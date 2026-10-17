@@ -244,6 +244,74 @@ final class SyncMediaE2ETests: XCTestCase {
         _ = try wait("host-done", 60)
     }
 
+    // MARK: pictures chosen (044 E6b)
+
+    private struct Expect: Decodable { let ipadSha: String; let webSha: String; let ipadSense: String; let webSense: String }
+    private struct PictureVerified: Decodable {
+        let sense: String; let rowKey: String; let sha: String
+        let hashMatches: Bool; let bytesAreTheCannedPicture: Bool; let bytes: Int
+    }
+
+    /// A picture chosen on the web device reaches the iPad, and one chosen on
+    /// the iPad (real Find -> tap, through the finder client) reaches the web
+    /// device. The finder's answers are canned by the proxy (no paid API);
+    /// what is measured is on the OTHER side: this process hashes the file
+    /// the app saved against the sha the peer computed from its own bytes;
+    /// the peer reads its own image_override row and opens the blob from the
+    /// relay by hash.
+    func testPicturesBothWays() throws {
+        let app = launch(reset: true)
+        XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
+        let code = try wait("code.txt").trimmingCharacters(in: .whitespacesAndNewlines)
+        joinWithCode(app, code, first: true)
+        put("ui-linked")
+        _ = try wait("peer-edit.json")
+        Thread.sleep(forTimeInterval: 2)
+        put("ui-saw-edit")
+        let want = try decode(Expect.self, "peer-expect-pictures.json")
+        XCTAssertEqual(tileValue(app, "sns_0013"), "", "no picture yet")
+        XCTAssertEqual(tileValue(app, "sns_0014"), "", "no picture yet")
+
+        // Web -> iPad: the peer chose a picture for "go".
+        _ = try wait("peer-picked.json")
+        XCTAssertNotNil(poll(90) { FileManager.default.fileExists(atPath: self.blobFile(want.webSha).path) },
+                        "the web device's picture was downloaded")
+        XCTAssertEqual(sha256(of: blobFile(want.webSha)), want.webSha, "the file hashes to the peer's sha")
+        XCTAssertNotNil(poll(30) { self.tileValue(app, want.webSense) == "family photo" }, "the tile wears it")
+        attach(app, "e6b-web-pick-on-ipad")
+
+        // iPad -> web: Find, tap the match, Done.
+        app.buttons["settingsGear"].tap()
+        XCTAssertTrue(app.buttons["editBoard"].waitForExistence(timeout: 10))
+        app.buttons["editBoard"].tap()
+        XCTAssertTrue(app.buttons["editDone"].waitForExistence(timeout: 10))
+        app.buttons["tile:\(want.ipadSense)"].tap()
+        let field = app.textFields["wc-desc"]
+        XCTAssertTrue(field.waitForExistence(timeout: 10))
+        field.tap()
+        field.typeText("e2e apple")
+        app.buttons["wc-findgo"].tap()
+        let match = app.buttons["wc-result:img_e2e_ipad"]
+        XCTAssertTrue(match.waitForExistence(timeout: 30), "the finder's match shows")
+        attach(app, "e6b-ipad-find")
+        match.tap()
+        app.buttons["wc-done"].tap()
+        XCTAssertNotNil(poll(30) { self.tileValue(app, want.ipadSense) == "family photo" }, "the iPad's own tile wears it")
+        XCTAssertNotNil(poll(30) { FileManager.default.fileExists(atPath: self.blobFile(want.ipadSha).path) })
+        XCTAssertEqual(sha256(of: blobFile(want.ipadSha)), want.ipadSha, "the file the iPad saved is the picture offered")
+        put("ui-picked")
+        let v = try decode(PictureVerified.self, "peer-verified-ipad-picture.json", 120)
+        XCTAssertEqual(v.sense, want.ipadSense)
+        XCTAssertEqual(v.rowKey, "blob:\(want.ipadSha)", "the web device's own table names the picture")
+        XCTAssertTrue(v.hashMatches && v.bytesAreTheCannedPicture, "the web device opened it from the relay by hash")
+        print("E2E-PICTURES iPad -> web verified by hash (\(v.bytes) B); web -> iPad file hashed here")
+
+        app.terminate()
+        XCTAssertEqual(sha256(of: blobFile(want.webSha)), want.webSha)
+        put("ui-done")
+        _ = try wait("host-done", 60)
+    }
+
     // MARK: two people
 
     func testTwoPeopleSwitch() throws {
