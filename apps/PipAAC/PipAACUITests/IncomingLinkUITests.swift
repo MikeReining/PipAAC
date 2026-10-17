@@ -25,7 +25,9 @@ final class IncomingLinkUITests: XCTestCase {
 
     private func launch(opening url: String) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = ["-PipDataDir", dir.path, "-PipOpenURL", url]
+        // -pipUITestReset: a signed-in account another test left in the
+        // keychain (InviteE2ETests) would skip the sign-in this test checks.
+        app.launchArguments = ["-PipDataDir", dir.path, "-pipUITestReset", "-PipOpenURL", url]
         app.launch()
         return app
     }
