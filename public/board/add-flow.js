@@ -217,6 +217,7 @@ export function mountAddFlow({
     const name = groupName(bulkTarget);
     $("bulk-title").textContent = name ? `Add a list to ${name}` : "Add a list";
     $("bulk-paste").value = text;
+    refreshBulkLeft();
     renderBulkPreview();
     open("bulkform");
   }
@@ -229,6 +230,18 @@ export function mountAddFlow({
   let confirmArmed = false;
   let findTimer = null;
 
+  /** Drawings left, asked afresh each time the sheet opens: a paste
+   *  spends them, so an earlier answer is stale by the next one. */
+  let leftSeq = 0;
+  async function refreshBulkLeft() {
+    const mine = ++leftSeq;
+    bulkLeft = null;
+    if (!pictures) return;
+    const { userId, license } = await creds();
+    const a = await pictures.allowance({ userId, license }).catch(() => null);
+    if (a && mine === leftSeq) { bulkLeft = a.left; paintBulk(); }
+  }
+
   function queueFinds() {
     clearTimeout(findTimer);
     findTimer = setTimeout(async () => {
@@ -236,11 +249,6 @@ export function mountAddFlow({
       if (!todo.length || !pictures) return;
       for (const r of todo) finds.set(normalizeV1(r.text), "pending");
       const { userId, license } = await creds();
-      if (bulkLeft == null) {
-        pictures.allowance({ userId, license }).then((a) => {
-          if (a) { bulkLeft = a.left; paintBulk(); }
-        });
-      }
       for (let i = 0; i < todo.length; i += 50) {
         const chunk = todo.slice(i, i + 50);
         const res = await pictures.findBatch({
