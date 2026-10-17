@@ -141,8 +141,9 @@ const report = await evalJs(`(() => {
         delta: (moved - before) | 0 };
     })(),
     ring: (() => {
+      // The tour's first step is "you" (tour-ui.js steps: you, want, apple).
       const want = [...document.querySelectorAll("#grid .cell")].find((el) =>
-        el.querySelector(".tlabel")?.textContent?.trim().toLowerCase() === "want");
+        el.querySelector(".tlabel")?.textContent?.trim().toLowerCase() === "you");
       const ring = document.querySelector(".tour-ring");
       if (!want || !ring) return { want: !!want, ring: !!ring };
       const w = want.getBoundingClientRect();
