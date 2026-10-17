@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.31-8331012ef229",
-  "version": "1.1.31",
-  "payloadHash": "8331012ef229",
+  "buildId": "1.1.32-4d0308024249",
+  "version": "1.1.32",
+  "payloadHash": "4d0308024249",
   "files": [
     {
       "path": "/board.js",
@@ -55,8 +55,8 @@
     },
     {
       "path": "/board/devices-ui.js",
-      "bytes": 47117,
-      "sha256": "7e1c4774e9d9fd3430c654d66b7595f6da9a37f41d76553cbb73a9b9f6d335a2"
+      "bytes": 47129,
+      "sha256": "899259b0ded229ed60b38c464406ef03998087bc3e0c440ef7d408e400b3fcbf"
     },
     {
       "path": "/board/edit-shared.js",
@@ -1015,8 +1015,8 @@
     },
     {
       "path": "/shared/sync_client.mjs",
-      "bytes": 14291,
-      "sha256": "0d768d511e1c6d8c15e4e7a2d7b9c1fb1b39e531a63ab4bd7d52f884c3b2933a"
+      "bytes": 15095,
+      "sha256": "5a74da4f774be26023942b77eacff05cee91a9d572b06b9b2b2fe26131c792f2"
     },
     {
       "path": "/shared/sync_crypto.mjs",

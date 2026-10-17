@@ -10,7 +10,7 @@ import {
 import { recoveryProof } from "../shared/recovery.mjs";
 import { completeRemovalRotation, resumeSupporterRegrant } from "../shared/rotation.mjs";
 import { setSyncAccountOps } from "../shared/sync.mjs";
-import { invitePollFailure, joinDeviceWithToken, pairClient, pollPair, relayClient } from "../shared/sync_client.mjs";
+import { inviteEndLine, invitePollFailure, joinDeviceWithToken, pairClient, pollPair, relayClient } from "../shared/sync_client.mjs";
 import {
   accountPub, accountState, claimInvite, claimToken, createInvite,
   declineInvite, deleteAccount, grantInvite, importAccountUsers, inviteStatus,
@@ -662,18 +662,18 @@ export function mountDevices({
       pairPoll = null;
       if (w.error) { say(w.error); return; }
       if (w.value.status !== "granted") {
-        say("The family did not approve this share.");
+        say(inviteEndLine.refused(w.value.status));
         return;
       }
       say("Allowed — bringing the user over…");
-      await importAccountUsers({
+      const imported = await importAccountUsers({
         bundle: { users: [w.value.grant] }, priv: r.priv,
         keyStore: openKeyStore(), userStore, putUserKey, addUser,
         joinDevice: joinWithToken });
-      say("Done — the user is on this device.");
+      say(inviteEndLine.imported(imported));
       await renderUsers();
     } catch (e) {
-      say(`Invite failed — ${e.message}.`);
+      say(inviteEndLine.error(e));
     }
   }
 

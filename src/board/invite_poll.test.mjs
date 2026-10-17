@@ -7,7 +7,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { pollPair, invitePollFailure } from "../../public/shared/sync_client.mjs";
+import { pollPair, invitePollFailure, inviteEndLine } from "../../public/shared/sync_client.mjs";
 
 const net = () => new TypeError("fetch failed");
 const http = (status) => Object.assign(new Error(`http ${status}`), { status });
@@ -69,4 +69,18 @@ test("devices-ui imports pollPair and invitePollFailure from sync_client", () =>
   for (const name of ["pollPair", "invitePollFailure", "pairClient"]) {
     assert.match(imp, new RegExp(`\\b${name}\\b`), `${name} not imported`);
   }
+});
+
+test("inviteEndLine: the invitee's last line never shows a raw code or claims a locked user is done", () => {
+  assert.equal(inviteEndLine.refused("declined"), "The family did not approve this share.");
+  assert.equal(inviteEndLine.refused("revoked"), "The family cancelled this invite.");
+  assert.equal(inviteEndLine.imported([{ id: "u", unlocked: true, joined: true }]),
+    "Done — the user is on this device.");
+  // A no-PRF passkey: the grant cannot be opened here, so not "Done".
+  assert.match(inviteEndLine.imported([{ id: "u", unlocked: false, joined: false }]), /QR card/);
+  const http = (status) => Object.assign(new Error("bad_invite"), { status });
+  assert.equal(inviteEndLine.error(http(404)), "That invite isn't open any more. Ask them to send a new one.");
+  assert.equal(inviteEndLine.error(http(403)), "That invite didn't work. Ask them to send a new one.");
+  assert.match(inviteEndLine.error(new TypeError("Failed to fetch")), /check the connection/);
+  assert.equal(inviteEndLine.error(new Error("boom")), "Invite failed — boom.");
 });

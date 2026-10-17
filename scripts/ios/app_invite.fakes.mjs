@@ -161,7 +161,7 @@ export class FakeWorker {
     if (method === "POST" && (m = /^\/accounts\/invites\/([^/]+)$/.exec(path))) {
       const inv = this.invites.get(m[1]);
       if (body.action === "open") {
-        if (!inv || inv.status === "declined") return ok({ error: "bad_invite" }, 403);
+        if (!inv || inv.status === "declined" || inv.status === "revoked") return ok({ error: "no_invite" }, 404);
         let a = this.accounts.get(inv.email);
         if (!a) { a = { id: `acct_${b64u(randomBytes(8))}`, email: inv.email, creds: new Map(), session: null }; this.accounts.set(inv.email, a); }
         const token = b64u(randomBytes(24));

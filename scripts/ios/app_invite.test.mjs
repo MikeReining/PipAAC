@@ -108,20 +108,20 @@ test("the family does not approve: the web's sentence, nothing imported", async 
   assert.equal(dev.rows.size, 0);
 });
 
-test("a revoked invite ends the same way (the web's one sentence)", async () => {
+test("a revoked invite: the family cancelled it", async () => {
   const { worker, dev } = await fixture();
   accept(dev);
   await until(() => worker.invites.get(TOKEN).status === "pending_allow", "claimed");
   worker.invites.get(TOKEN).status = "revoked";
   await until(() => dev.lastOf("invite.landing")?.stage === "failed", "failed");
-  assert.equal(dev.lastOf("invite.landing").text, "The family did not approve this share.");
+  assert.equal(dev.lastOf("invite.landing").text, "The family cancelled this invite.");
 });
 
-test("an invite the Worker does not know: 'Invite failed' with the Worker's word, no passkey made", async () => {
+test("an invite the Worker does not know: the plain words, never a raw code, no passkey made", async () => {
   const { worker, auth, dev } = await fixture();
   accept(dev, `${BASE}/?invite=nopeNopeNopeNopeNope`);
   await until(() => dev.lastOf("invite.landing")?.stage === "failed", "failed");
-  assert.equal(dev.lastOf("invite.landing").text, "Invite failed — bad_invite.");
+  assert.equal(dev.lastOf("invite.landing").text, "That invite isn't open any more. Ask them to send a new one.");
   assert.equal(auth.creates.length, 0);
   assert.equal(worker.requests.filter((r) => r.path.endsWith("/register")).length, 0);
 });

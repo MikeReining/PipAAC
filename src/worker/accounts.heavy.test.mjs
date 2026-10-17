@@ -386,6 +386,10 @@ test("supporter invites: claim → Allow → grant → revoke", async () => {
   const after = await fetch(statusUrl(invToken, sign.body.session)).then((r) => r.json());
   assert.equal(after.status, "revoked");
   assert.equal(after.grant, undefined);
+  // A revoked link is dead: opening it must not mint a sign-in.
+  const revokedOpen = await post(`/accounts/invites/${invToken}`, { action: "open" });
+  assert.equal(revokedOpen.status, 404, "revoked invite still opens");
+  assert.equal(revokedOpen.body.link_token, undefined);
 
   // Decline: a second invite P declines never grants.
   const inv2 = await post(`/accounts/${p.acctId}/invites`, {
@@ -395,7 +399,7 @@ test("supporter invites: claim → Allow → grant → revoke", async () => {
     action: "decline", session: p.session });
   assert.equal(dec.status, 200);
   const badOpen = await post(`/accounts/invites/${t2}`, { action: "open" });
-  assert.equal(badOpen.status, 403, "declined invite still opens");
+  assert.equal(badOpen.status, 404, "declined invite still opens");
 });
 
 // 016 slice 6: POST /research — the route exists on the real worker,

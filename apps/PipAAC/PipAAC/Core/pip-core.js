@@ -8951,6 +8951,12 @@ ${ts}`);
   };
   var pairPollFailure = (e) => pollFailure(e, PAIR_COPY);
   var invitePollFailure = (e) => pollFailure(e, INVITE_COPY);
+  var inviteEndLine = {
+    refused: (status) => status === "revoked" ? "The family cancelled this invite." : "The family did not approve this share.",
+    // importAccountUsers rows: a no-PRF passkey lands the user locked.
+    imported: (rows) => rows.some((u) => u.unlocked) ? "Done \u2014 the user is on this device." : "Allowed \u2014 but this passkey can't open their words here. Scan their QR card on this device to finish.",
+    error: (e) => e?.status !== void 0 || e instanceof TypeError ? invitePollFailure(e) ?? "Couldn't reach Pip \u2014 check the connection, then open the link again." : `Invite failed \u2014 ${e?.message}.`
+  };
   async function pollPair(step, {
     intervalMs = 2e3,
     sleep: sleep2 = (ms) => new Promise((r) => setTimeout(r, ms)),
@@ -14382,7 +14388,7 @@ ${ts}`);
           return;
         }
         if (w.value.status !== "granted") {
-          emit11({ stage: "failed", text: "The family did not approve this share." });
+          emit11({ stage: "failed", text: inviteEndLine.refused(w.value.status) });
           return;
         }
         say("Allowed \u2014 bringing the user over\u2026");
@@ -14398,13 +14404,13 @@ ${ts}`);
         if (!stale()) {
           emit11({
             stage: "done",
-            text: "Done \u2014 the user is on this device.",
+            text: inviteEndLine.imported(imported),
             email: r.claim.email,
             imported: imported.map((u) => u.id)
           });
         }
       } catch (e) {
-        if (!stale()) emit11({ stage: "failed", text: `Invite failed \u2014 ${e.message}.` });
+        if (!stale()) emit11({ stage: "failed", text: inviteEndLine.error(e) });
       }
     })();
     return { accepted: true };

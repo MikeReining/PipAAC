@@ -21,7 +21,7 @@
  * the same seam the sign-in uses, so a relaunch finds them there.
  */
 import { importAccountUsers, claimInvite, inviteStatus, openInvite } from "../../public/shared/account.mjs";
-import { invitePollFailure, pollPair } from "../../public/shared/sync_client.mjs";
+import { inviteEndLine, invitePollFailure, pollPair } from "../../public/shared/sync_client.mjs";
 import { openKeyStore, putUserKey } from "./host/sync_crypto_host.mjs";
 import { cancelled, runLanding, userStore, addUser, joinWithToken } from "./app_account.mjs";
 
@@ -74,7 +74,7 @@ export function accept(baseUrl, linkOrToken, intervalMs = 2500) {
       if (w.cancelled || stale()) return;
       if (w.error) { emit({ stage: "failed", text: w.error }); return; }
       if (w.value.status !== "granted") {
-        emit({ stage: "failed", text: "The family did not approve this share." });
+        emit({ stage: "failed", text: inviteEndLine.refused(w.value.status) });
         return;
       }
       say("Allowed — bringing the user over…");
@@ -83,11 +83,11 @@ export function accept(baseUrl, linkOrToken, intervalMs = 2500) {
         keyStore: openKeyStore(), userStore, putUserKey, addUser,
         joinDevice: (userId, t) => joinWithToken(baseUrl, userId, t) });
       if (!stale()) {
-        emit({ stage: "done", text: "Done — the user is on this device.",
+        emit({ stage: "done", text: inviteEndLine.imported(imported),
           email: r.claim.email, imported: imported.map((u) => u.id) });
       }
     } catch (e) {
-      if (!stale()) emit({ stage: "failed", text: `Invite failed — ${e.message}.` });
+      if (!stale()) emit({ stage: "failed", text: inviteEndLine.error(e) });
     }
   })();
   return { accepted: true };

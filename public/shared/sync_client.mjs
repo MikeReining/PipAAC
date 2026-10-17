@@ -295,6 +295,21 @@ export const pairPollFailure = (e) => pollFailure(e, PAIR_COPY);
 /** The same for the supporter-invite wait. */
 export const invitePollFailure = (e) => pollFailure(e, INVITE_COPY);
 
+/** The invitee's last line (web inviteLanding + iOS app_invite). A relay
+ *  answer reads as INVITE_COPY, never a raw code like "bad_invite". */
+export const inviteEndLine = {
+  refused: (status) => status === "revoked"
+    ? "The family cancelled this invite."
+    : "The family did not approve this share.",
+  // importAccountUsers rows: a no-PRF passkey lands the user locked.
+  imported: (rows) => rows.some((u) => u.unlocked)
+    ? "Done — the user is on this device."
+    : "Allowed — but this passkey can't open their words here. Scan their QR card on this device to finish.",
+  error: (e) => e?.status !== undefined || e instanceof TypeError
+    ? invitePollFailure(e) ?? "Couldn't reach Pip — check the connection, then open the link again."
+    : `Invite failed — ${e?.message}.`,
+};
+
 /** Poll `step` every `intervalMs` until it returns a value (anything but
  *  undefined). Transient errors retry on the same cadence; a permanent
  *  one stops at once. `cancelled()` ends it quietly.

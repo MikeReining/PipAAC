@@ -268,7 +268,8 @@ export class SupporterAccounts {
     if (path === "/dir/invite/open" && request.method === "POST") {
       const inv = one("SELECT * FROM invite WHERE token = ?",
         String(body?.token ?? ""));
-      if (!inv || inv.status === "declined") return bad("bad_invite", 403);
+      // Unknown, declined or revoked: a dead link (404) — a revoked one must not mint a sign-in.
+      if (!inv || inv.status === "declined" || inv.status === "revoked") return bad("no_invite", 404);
       const row = one("SELECT acct_id FROM acct_map WHERE email = ?", inv.email);
       const acctId = row?.acct_id ?? `acct_${crypto.randomUUID().replaceAll("-", "")}`;
       if (!row) {
