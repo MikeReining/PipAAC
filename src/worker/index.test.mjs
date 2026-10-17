@@ -66,8 +66,8 @@ test("form_table route is gone: 404 through ASSETS", async () => {
 });
 
 /* 044 universal links: the AASA is JSON (Apple rejects octet-stream and
- * redirects), claims only the emailed sign-in link, and keeps webcredentials. */
-test("apple-app-site-association: served as JSON, applinks limited to /?signin=, webcredentials intact", async () => {
+ * redirects), claims only the emailed sign-in and supporter-invite links, and keeps webcredentials. */
+test("apple-app-site-association: served as JSON, applinks limited to /?signin= and /?invite=, webcredentials intact", async () => {
   const ID = "LP5YNK7A36.org.pipaac";
   for (const p of ["/.well-known/apple-app-site-association", "/apple-app-site-association"]) {
     const res = await worker.fetch(new Request(`https://app.pipaac.org${p}`), {});
@@ -78,10 +78,12 @@ test("apple-app-site-association: served as JSON, applinks limited to /?signin=,
     assert.deepEqual(body.webcredentials, { apps: [ID] });
     const [detail] = body.applinks.details;
     assert.deepEqual(detail.appIDs, [ID]);
-    assert.equal(detail.components.length, 1);
-    const { comment, ...rule } = detail.components[0];
-    assert.deepEqual(rule, { "/": "/", "?": { signin: "?*" } });
-    assert.ok(!JSON.stringify(body.applinks).includes("invite"), "invite links stay in Safari (no native landing yet)");
+    assert.equal(detail.components.length, 2);
+    const rules = detail.components.map(({ comment, ...rule }) => rule);
+    assert.deepEqual(rules, [
+      { "/": "/", "?": { signin: "?*" } },
+      { "/": "/", "?": { invite: "?*" } },
+    ]);
   }
   const head = await worker.fetch(new Request("https://app.pipaac.org/.well-known/apple-app-site-association", { method: "HEAD" }), {});
   assert.match(head.headers.get("content-type"), /^application\/json/);

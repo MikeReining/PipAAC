@@ -23,6 +23,7 @@ import { DatabaseSync } from "node:sqlite";
 import { makeTeamPeer } from "./e2e_team_peer.mjs";
 import { makeSpotPeer } from "./e2e_spot_peer.mjs";
 import { makePicPeer } from "./e2e_pic_peer.mjs";
+import { makeInvitePeer } from "./e2e_invite_peer.mjs";
 
 const root = new URL("../../", import.meta.url).pathname;
 const shared = join(root, "public/shared");
@@ -175,6 +176,15 @@ async function hostMode() {
   log("health after start", JSON.stringify(syncHealth()),
     "pending ops:", db.prepare("SELECT COUNT(*) c FROM sync_op WHERE relay_seq IS NULL").all()[0].c);
   put("person.json", JSON.stringify({ id: me.id, entityId, userId: me.sync.userId }));
+
+  if (scenario === "invite") {
+    // 044 IL: the family side of a supporter invite; the iPad is the invitee.
+    await invitePeer.ownerFlow({ me, client, entityId, identity, userKey, newName: NAME + "d", db,
+      settle: async (d) => { for (let i = 0; i < 100 && d.prepare("SELECT COUNT(*) c FROM sync_op WHERE relay_seq IS NULL").all()[0].c; i++) await sleep(100); } });
+    await sleep(1500);
+    put("host-done", Date.now());
+    process.exit(0);
+  }
 
   if (scenario === "restore") {
     // 044 C5 (SY-10, SY-9, SY-13): a fresh iPad restores this person from the
@@ -449,6 +459,9 @@ async function joinMode() {
 /* 044 D5: the `spotlight` scenarios live in e2e_spot_peer.mjs. */
 const pic = makePicPeer({ root, shared, put, waitFor, sleep, log, sc, syncUploadBlob, syncHealth });
 const spot = makeSpotPeer({ put, has, waitFor, sleep, log, spotMod, syncSendModel, syncSendLive, liveInbox });
+
+/* 044 IL: the `invite` scenario (the family's side) lives in e2e_invite_peer.mjs. */
+const invitePeer = makeInvitePeer({ baseUrl, put, waitFor, sleep, log, sc, groups });
 
 /* 044 F2: the `team` scenario lives in e2e_team_peer.mjs (this file's seams are handed over). */
 const team = makeTeamPeer({

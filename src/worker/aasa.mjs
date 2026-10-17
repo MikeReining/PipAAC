@@ -6,11 +6,13 @@
  * static-assets layer would serve octet-stream; the Worker answers it
  * instead (the assets layer only sees real files, and none exists here).
  *
- *  - applinks: only the emailed sign-in link, `/?signin=<token>`
- *    (accounts.js builds `<origin>/?signin=<token>`). Every other URL on
- *    the host keeps opening in Safari. The supporter invite link
- *    (`/?invite=<token>`) is deliberately NOT claimed: the app has no
- *    invitee landing flow yet, and the web has one that works.
+ *  - applinks: the emailed sign-in link, `/?signin=<token>`, and the
+ *    supporter invite link, `/?invite=<token>` (accounts.js builds
+ *    `<origin>/?signin=<token>` / `<origin>/?invite=<token>`). Every other
+ *    URL on the host keeps opening in Safari. The invite link opens the
+ *    app's invitee landing (044 slice IL, PIPCORE.invite). Deploy this
+ *    together with a TestFlight build that has it: an older build would
+ *    open on an invite link and ignore it.
  *  - webcredentials: the same app id the marketing site's file carries
  *    (site/public/.well-known/apple-app-site-association), so passkeys
  *    associate from either host.
@@ -25,6 +27,10 @@ export const AASA = {
         "/": "/",
         "?": { signin: "?*" },
         comment: "The emailed sign-in link opens in the app.",
+      }, {
+        "/": "/",
+        "?": { invite: "?*" },
+        comment: "The emailed supporter invite opens the app's invitee landing.",
       }],
     }],
   },

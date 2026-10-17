@@ -213,6 +213,9 @@ final class AppModel: ObservableObject {
     /// A universal link (IncomingLinks.swift) waiting to be pasted into
     /// Your account; the account page takes it and clears it.
     @Published var incomingSignIn: String?
+    /// A universal invite link (`?invite=`) waiting for the invitee landing
+    /// (InviteLanding.swift); the presenter takes it and clears it.
+    @Published var incomingInvite: String?
     // Edit mode + word card (EditMode.swift) — render state only.
     @Published var editing = false
     /// BS-24 / SN-10: the face that is dark while its audio is on the way.
@@ -265,6 +268,8 @@ final class AppModel: ObservableObject {
     let flow = AccountFlow()
     /// Team list, device list, deletion (044 F2).
     let team = TeamFlow()
+    /// The invitee's side of a supporter invite (044 IL).
+    let invite = InviteFlow()
     /// The person the process-wide sync loop runs for (sync.mjs `running`).
     var syncingId: String?
     var syncDbId: Int32 = 0

@@ -7,9 +7,10 @@
 //  Safari. The app does exactly what pasting the link does - Settings ->
 //  Your account, the link in the paste field, "Sign in" run - so there is
 //  one sign-in path (AccountFlow.signIn -> PIPCORE.account.land). The
+//  emailed supporter invite `https://app.pipaac.org/?invite=<token>` opens
+//  the invitee landing (InviteLanding.swift -> PIPCORE.invite, 044 IL). The
 //  association is the Worker's AASA (src/worker/aasa.mjs), which claims
-//  only this shape; the invite link (`?invite=`) is not claimed because
-//  the app has no invitee landing yet.
+//  exactly these two shapes.
 //
 
 import Foundation
@@ -17,12 +18,17 @@ import Foundation
 public nonisolated enum IncomingLink {
     /// The AASA component: path "/" with a non-empty `signin` query item, on
     /// the production app host (or the host a test points the app at).
-    public static func isSignIn(_ url: URL) -> Bool {
+    public static func isSignIn(_ url: URL) -> Bool { carries(url, "signin") }
+
+    /// The second AASA component: the same shape with a non-empty `invite`.
+    public static func isInvite(_ url: URL) -> Bool { carries(url, "invite") }
+
+    private static func carries(_ url: URL, _ name: String) -> Bool {
         guard let c = URLComponents(url: url, resolvingAgainstBaseURL: false),
               c.scheme == "https" || c.scheme == "http",
               ["app.pipaac.org", URL(string: PipRelay.baseURL)?.host].contains(c.host),
               c.path.isEmpty || c.path == "/",
-              c.queryItems?.contains(where: { $0.name == "signin" && !($0.value ?? "").isEmpty }) == true
+              c.queryItems?.contains(where: { $0.name == name && !($0.value ?? "").isEmpty }) == true
         else { return false }
         return true
     }
@@ -30,12 +36,19 @@ public nonisolated enum IncomingLink {
 
 extension AppModel {
     /// onOpenURL / onContinueUserActivity (and the `-PipOpenURL` test
-    /// hook) land here. Anything that is not the sign-in link is ignored.
+    /// hook) land here. Anything that is neither the sign-in link nor the
+    /// supporter invite is ignored.
     @discardableResult
     func handleIncomingURL(_ url: URL) -> Bool {
-        guard IncomingLink.isSignIn(url) else { return false }
-        incomingSignIn = url.absoluteString
-        return true
+        if IncomingLink.isSignIn(url) {
+            incomingSignIn = url.absoluteString
+            return true
+        }
+        if IncomingLink.isInvite(url) {
+            incomingInvite = url.absoluteString
+            return true
+        }
+        return false
     }
 
     /// UI tests cannot make iOS deliver a universal link (the simulator

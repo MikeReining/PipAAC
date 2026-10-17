@@ -87,9 +87,14 @@ extension AppModel {
             onRegistry: { op, argsJSON in
                 try Self.registryVerb(reg, op, argsJSON)
             },
-            passkeys: { op, req in try await PasskeyCeremony.shared.run(op, req) })
+            passkeys: { op, req in
+                // `-pipUITestSoftPasskey`: the simulator has no passkey sheet (SoftPasskey.swift).
+                if SoftPasskey.requested { return try await SoftPasskey.run(op, req) }
+                return try await PasskeyCeremony.shared.run(op, req)
+            })
         flow.model = self
         team.model = self
+        invite.model = self
         try core.sync { try core.install(host) }
         self.host = host
         host.startNetworkMonitor()
@@ -155,6 +160,7 @@ extension AppModel {
         case "pair.join": if let ev { joinEvent(ev) }
         case "account.link", "account.landing", "recovery.linked", "recovery.card", "recovery.restore":
             flow.handle(name, json)
+        case "invite.landing": invite.handle(json)
         case "team.state", "team.toast", "team.account", "team.myname", "team.deleted":
             team.handle(name, json)
         default: break

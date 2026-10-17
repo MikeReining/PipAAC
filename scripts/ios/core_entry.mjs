@@ -161,3 +161,6 @@ export function makeDb(dbId) {
     all: (sql, params = []) => rowify(globalThis.__pipHost.dbAll(dbId, sql, params)),
   };
 }
+
+/** The invitee's side of a supporter invite (044 slice IL) - PIPCORE.invite */
+export * as invite from "./app_invite.mjs";

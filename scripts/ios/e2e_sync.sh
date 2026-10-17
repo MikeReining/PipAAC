@@ -158,7 +158,7 @@ run_two_people() {
   compare "$D/B/peer.dump" "$D/ipad-B.dump" "person B's web device"
 }
 
-# PIP_E2E_ONLY=both-ways|offline|media|pictures|two-people|restore-words|restore-scan|account|team|spotlight|spotlight-supporter runs one scenario (debugging).
+# PIP_E2E_ONLY=both-ways|offline|media|pictures|two-people|restore-words|restore-scan|account|team|invite|spotlight|spotlight-supporter runs one scenario (debugging).
 only() { [ -z "${PIP_E2E_ONLY:-}" ] || [ "$PIP_E2E_ONLY" = "$1" ]; }
 only both-ways && run_scenario both-ways SyncE2ETests/testLinkAndSyncBothWays both-ways peer peer2
 only offline && run_scenario offline SyncE2ETests/testOfflineCatchUp offline peer
@@ -247,6 +247,47 @@ run_team() {
   done
 }
 only team && run_team
+
+# 044 IL: the iPad as the INVITEE. A node peer is the family (owns a person, invites the iPad's supporter by email,
+# Allows once the WORKER says the invite was claimed); the iPad opens the emailed link (-PipOpenURL), makes its
+# passkey in software, waits, is Allowed, and the person is still there after a kill + relaunch and opens with the
+# family's later edit - decrypted with the key the Allow brought, through the relay registration it made.
+run_invite() {
+  if ! curl -s "$WORKER/accounts/dev/mailbox?email=probe@example.com" | grep -q no_mail; then
+    echo; echo "== scenario: invite SKIPPED - the Worker's dev mailbox is closed (ENVIRONMENT is not development in .dev.vars)"
+    FAIL=1
+    return
+  fi
+  local D="$RUN/invite"; mkdir -p "$D/ipad"
+  echo; echo "== scenario: invite (InviteE2ETests)"
+  start_proxy "$D"
+  node scripts/ios/e2e_web_peer.mjs host "$D" "$BASE" "$SECRET" invite > "$D/peer.log" 2>&1 &
+  local PEER=$!
+  xcode_test "$D" "InviteE2ETests"
+  local XC=$?
+  grep -E "E2E-|Test Case.*(passed|failed)|error:" "$D/xcodebuild.log" | head -20
+  [ "$XC" != 0 ] && kill "$PEER" 2>/dev/null
+  wait "$PEER" 2>/dev/null
+  local PX=$?
+  echo "answers recorded by the peer (the Worker and the relay, not the iPad's screen):"
+  grep -hE "invite sent|invite is claimed|Allowed;|devices on the person" "$D/peer.log" | sed 's/^/  /'
+  stop_proxy
+  [ "$XC" = 0 ] || { echo "XCUITest FAILED ($XC) - see $D/xcodebuild.log"; FAIL=1; return; }
+  [ "$PX" = 0 ] || { echo "peer FAILED ($PX) - see $D/peer.log"; FAIL=1; return; }
+  local UID_
+  UID_="$(python3 -c "import json;print(json.load(open('$D/person.json'))['userId'])")"
+  # The registry FILE on the iPad (not the UI): the invited person, a partner, linked to the family's relay user.
+  python3 scripts/ios/e2e_invite_registry_check.py "$D/ipad/people.json" "$UID_" || { echo "  iPad registry check FAILED"; FAIL=1; }
+  for f in worker-claimed.json relay-devices.json; do
+    [ -f "$D/$f" ] && echo "  $f: $(cat "$D/$f")" || { echo "  MISSING $f"; FAIL=1; }
+  done
+  if ipad_dump "$D" "$UID_" "$D/ipad.dump" && grep -q "Zedd" "$D/ipad.dump"; then
+    echo "  the iPad's own database for the person holds the family's post-Allow edit 'Zedd'"
+  else
+    echo "  expected the person's database on the iPad to hold 'Zedd'"; FAIL=1
+  fi
+}
+only invite && run_invite
 
 echo; [ "$FAIL" = 0 ] && echo "E2E RESULT: PASS" || echo "E2E RESULT: FAIL"
 echo "artifacts: $RUN"

@@ -40,6 +40,8 @@ struct ContentView: View {
         // the web's .welcome layer; the demo's card sits on it.
         .overlay { FirstRunHost(flow: model.firstRun).environmentObject(model) }
         .task { model.boot() }
+        // The emailed supporter invite lands in its own sheet (InviteLanding.swift).
+        .modifier(InvitePresenter(model: model))
         // Universal links: the emailed sign-in link opens here, not Safari.
         .onOpenURL { model.handleIncomingURL($0) }
         .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in

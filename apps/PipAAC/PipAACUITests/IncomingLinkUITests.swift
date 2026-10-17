@@ -47,13 +47,34 @@ final class IncomingLinkUITests: XCTestCase {
         add(a)
     }
 
-    func testOtherLinksDoNotOpenSettings() {
-        // The invite link stays in Safari (the app has no invitee landing),
-        // and the AASA does not claim it; if one reaches the app anyway it
-        // is ignored rather than half-handled.
+    func testInviteLinkOpensTheInviteeLanding() {
+        // 044 IL: the supporter invite opens the app's landing, not Safari.
+        // The base URL is a refusing loopback port, so the first step ends
+        // in the web's own "Invite failed" line - never a request to prod.
+        // (The whole flow against a real Worker: InviteE2ETests.)
         let app = launch(opening: "https://app.pipaac.org/?invite=AbCdEfGhIjKlMnOpQrStUv")
+        let line = app.staticTexts["invite:line"]
+        XCTAssertTrue(line.waitForExistence(timeout: 30), "the invite opens the landing sheet")
+        XCTAssertTrue(app.navigationBars["Supporter invite"].exists)
+        let end = Date().addingTimeInterval(30)
+        while Date() < end, !line.label.hasPrefix("Invite failed — ") { Thread.sleep(forTimeInterval: 0.2) }
+        XCTAssertTrue(line.label.hasPrefix("Invite failed — "), "the web's own failure line; saw: \(line.label)")
+        XCTAssertFalse(app.textFields["acct:paste"].exists, "an invite is not a sign-in: Settings stays shut")
+        let a = XCTAttachment(screenshot: app.screenshot())
+        a.name = "incoming-invite-link"
+        a.lifetime = .keepAlways
+        add(a)
+        app.buttons["invite:close"].tap()
+        XCTAssertTrue(app.buttons["settingsGear"].waitForExistence(timeout: 10), "closing returns to the board")
+    }
+
+    func testOtherLinksDoNotOpenAnything() {
+        // Anything that is neither the sign-in link nor the invite is
+        // ignored rather than half-handled.
+        let app = launch(opening: "https://app.pipaac.org/?other=AbCdEfGhIjKlMnOpQrStUv")
         XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
         XCTAssertFalse(app.textFields["acct:paste"].exists)
+        XCTAssertFalse(app.staticTexts["invite:line"].exists)
         XCTAssertTrue(app.buttons["settingsGear"].exists)
     }
 }

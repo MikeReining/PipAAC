@@ -147,7 +147,7 @@ async function getPasskey(baseUrl, { challenge, credentialIds, prfSalt }) {
 }
 
 const randomSalt = () => bytesToB64u(globalThis.crypto.getRandomValues(new Uint8Array(32)));
-const cancelled = (e) => /cancel/i.test(String(e?.message ?? e));
+export const cancelled = (e) => /cancel/i.test(String(e?.message ?? e));
 
 /** First sign-in on a fresh account: create the passkey, mint the
  *  account keypair, seal its private key under the PRF output (never in
@@ -204,18 +204,18 @@ export async function signInAccount(baseUrl, { acctId, email, linkChallenge }) {
 
 /** users.mjs store contract over the native registry: only the verbs
  *  importAccountUsers / listUsers use. */
-const userStore = {
+export const userStore = {
   async keys() { return ((await hostCall("registry.list")) ?? []).map((r) => `user/${r.id}`); },
   async get(k) {
     return k.startsWith("user/") ? ((await hostCall("registry.get", { id: k.slice(5) })) ?? undefined) : undefined;
   },
 };
 /** users.mjs addUser, for an id the account brought: refresh or insert. */
-const addUser = (_store, row) => hostCall("registry.addImported", row);
+export const addUser = (_store, row) => hostCall("registry.addImported", row);
 
 /** This device joins a user's relay with a bundle join token (devices-ui.js
  *  joinWithToken) - the step after the keys arrive. */
-async function joinWithToken(baseUrl, userId, token) {
+export async function joinWithToken(baseUrl, userId, token) {
   const identity = await getDeviceIdentity(openKeyStore());
   return joinDeviceWithToken(baseUrl, userId, {
     token, device_id: identity.deviceId,
@@ -240,10 +240,51 @@ export function sendLink(baseUrl, email) {
   return { accepted: true };
 }
 
-/** The emailed link's token: claim it, run the passkey ceremony, pull
- *  every supported user into the registry (keys unsealed by the
- *  passkey's PRF output), then share this device's own synced users back
- *  to the account (devices-ui.js accountLanding). */
+/** devices-ui.js accountLanding's body, shared by the sign-in link (`land`)
+ *  and the invitee landing (app_invite.mjs): claim the link token, run the
+ *  passkey ceremony, pull every supported user in, keep the signed-in
+ *  state, share this device's users back. Throws on any failure (the
+ *  callers word it); `say` carries the web's progress lines.
+ *  -> { session, priv, claim, imported } */
+export async function runLanding(baseUrl, token, say) {
+  say("Checking the link…");
+  const claim = await claimToken(token);
+  let session, priv = null, imported = [];
+  if (claim.has_credentials) {
+    say("Sign in with your passkey…");
+    const r = await signInAccount(baseUrl, { acctId: claim.account_id,
+      email: claim.email, linkChallenge: claim.challenge });
+    session = r.session;
+    priv = r.priv;
+    say("Opening your users…");
+    imported = await importAccountUsers({
+      bundle: r.bundle, priv: r.priv, keyStore: openKeyStore(), userStore,
+      putUserKey, addUser,
+      // Keys alone don't pull ops - this device also registers on each
+      // unlocked user's relay with a bundle join token.
+      joinDevice: (userId, t) => joinWithToken(baseUrl, userId, t) });
+    const locked = imported.filter((u) => !u.unlocked).length;
+    const unjoined = imported.filter((u) => u.unlocked && !u.joined).length;
+    const notes = [];
+    if (locked) notes.push(`${locked} locked until an Allow or QR card brings their keys`);
+    if (unjoined) notes.push(`${unjoined} couldn't reach their relay — sign in again after a linked device refreshes their access`);
+    say(`${imported.length} user(s) added` + (notes.length ? ` — ${notes.join("; ")}.` : "."));
+  } else {
+    say("Create your passkey…");
+    const r = await registerAccount(baseUrl, {
+      acctId: claim.account_id, challenge: claim.challenge, email: claim.email });
+    session = r.session;
+    priv = r.priv;
+    say(r.prfOk ? "Signed in."
+      : "Signed in — this passkey has no PRF, so keys arrive by an Allow or QR card.");
+  }
+  const ks = openKeyStore();
+  await ks.put(STATE_NAME, { acct_id: claim.account_id, email: claim.email, session });
+  await shareBack(baseUrl, claim.account_id, session, ks);
+  return { session, priv, claim, imported };
+}
+
+/** The emailed link's token (devices-ui.js accountLanding). */
 export function land(baseUrl, linkOrToken) {
   const token = signinToken(linkOrToken);
   const say = (text) => emit("account.landing", { stage: "say", text });
@@ -254,38 +295,7 @@ export function land(baseUrl, linkOrToken) {
   }
   (async () => {
     try {
-      say("Checking the link…");
-      const claim = await claimToken(token);
-      let session, imported = [];
-      if (claim.has_credentials) {
-        say("Sign in with your passkey…");
-        const r = await signInAccount(baseUrl, { acctId: claim.account_id,
-          email: claim.email, linkChallenge: claim.challenge });
-        session = r.session;
-        say("Opening your users…");
-        imported = await importAccountUsers({
-          bundle: r.bundle, priv: r.priv, keyStore: openKeyStore(), userStore,
-          putUserKey, addUser,
-          // Keys alone don't pull ops - this device also registers on each
-          // unlocked user's relay with a bundle join token.
-          joinDevice: (userId, t) => joinWithToken(baseUrl, userId, t) });
-        const locked = imported.filter((u) => !u.unlocked).length;
-        const unjoined = imported.filter((u) => u.unlocked && !u.joined).length;
-        const notes = [];
-        if (locked) notes.push(`${locked} locked until an Allow or QR card brings their keys`);
-        if (unjoined) notes.push(`${unjoined} couldn't reach their relay — sign in again after a linked device refreshes their access`);
-        say(`${imported.length} user(s) added` + (notes.length ? ` — ${notes.join("; ")}.` : "."));
-      } else {
-        say("Create your passkey…");
-        const r = await registerAccount(baseUrl, {
-          acctId: claim.account_id, challenge: claim.challenge, email: claim.email });
-        session = r.session;
-        say(r.prfOk ? "Signed in."
-          : "Signed in — this passkey has no PRF, so keys arrive by an Allow or QR card.");
-      }
-      const ks = openKeyStore();
-      await ks.put(STATE_NAME, { acct_id: claim.account_id, email: claim.email, session });
-      await shareBack(baseUrl, claim.account_id, session, ks);
+      const { claim, imported } = await runLanding(baseUrl, token, say);
       emit("account.landing", { stage: "done", text: "Done — your users are on this device.",
         email: claim.email, imported: imported.map((u) => u.id) });
     } catch (e) {
