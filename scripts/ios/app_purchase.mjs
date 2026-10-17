@@ -83,7 +83,8 @@ export function model(argsJson) {
     priceNote: "once",
     priceFine: "No subscription. Ever.",
     lede: "Pip speaks whole sentences in a natural voice, turns a few taps into a proper sentence or a question, and lets every parent, teacher and therapist help.",
-    trialLine: owned ? null : trialLine(a.endsAt, a.now),
+    // Not yet answered (or offline): no line - never "ended" for a trial we haven't read.
+    trialLine: owned || a.trialKnown === false ? null : trialLine(a.endsAt, a.now),
     buyFine: `Whoever pays, the license lands on ${who}'s board.`,
     featuresLabel: owned ? "What's on" : "What Lifetime adds",
     features: FEATURES,
@@ -155,11 +156,13 @@ async function readStatus(appId, baseUrl, me, store) {
   const self = await client.selfKey();
   const licensed = await reconcile(client, store, me.id, self);
   let endsAt = null;
+  let trialKnown = licensed;
   if (!licensed) {
     const license = await store.get(licenseKey(me.id));
     const res = await fetch(`${baseUrl}/api/v1/trial`, {
       headers: { "x-pip-user": me.id, "x-pip-license": license ?? "" } }).catch(() => null);
     if (res?.ok) endsAt = (await res.json().catch(() => ({}))).endsAt ?? null;
+    trialKnown = !!res?.ok;
   }
   // The one flag the library gates read (app_library ownLeft / countLine).
   try { appSession(appId).licensed = licensed; } catch { /* session closed */ }
@@ -172,7 +175,7 @@ async function readStatus(appId, baseUrl, me, store) {
       issue = self.payment_issue;
     }
   }
-  return { userId: me.id, licensed, endsAt, issue, issueText: issueText(issue) };
+  return { userId: me.id, licensed, endsAt, trialKnown, issue, issueText: issueText(issue) };
 }
 
 /** Make sure the person is on the relay (the web does this before any
@@ -206,7 +209,7 @@ export function sync(appId, baseUrl, userRowJson, label, ref = null) {
       const endsAt = res?.ok ? ((await res.json().catch(() => ({}))).endsAt ?? null) : null;
       try { appSession(appId).licensed = false; } catch { /* session closed */ }
       reply(ref, { kind: "status", ok: true, newlyLinked: false,
-        status: { userId: row.id, licensed: false, endsAt, issue: null, issueText: null } });
+        status: { userId: row.id, licensed: false, endsAt, trialKnown: !!res?.ok, issue: null, issueText: null } });
       return;
     }
     const { me, store, newlyLinked } = await ensure(baseUrl, userRowJson, label);

@@ -55,6 +55,10 @@ test("owned vs for sale, and the countdown line, as the web renders them", () =>
     "Free trial · 1 day left. Everything below is on.");
   assert.equal(j(P.model({ licensed: false, endsAt: now - 1, now })).trialLine,
     "Free trial ended. Buy to turn it all back on.");
+  // Not answered yet, or offline: no line at all - never "ended" for an unread trial.
+  assert.equal(j(P.model({ licensed: false, endsAt: null, trialKnown: false, now })).trialLine, null);
+  assert.equal(j(P.model({ licensed: false, endsAt: null, trialKnown: true, now })).trialLine,
+    "Free trial ended. Buy to turn it all back on.", "the server says no trial: ended");
   const owned = j(P.model({ name: "Maya", licensed: true, endsAt: null }));
   assert.equal(owned.owned, true);
   assert.equal(owned.trialLine, null);

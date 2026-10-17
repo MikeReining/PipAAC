@@ -13592,7 +13592,8 @@ ${ts}`);
       priceNote: "once",
       priceFine: "No subscription. Ever.",
       lede: "Pip speaks whole sentences in a natural voice, turns a few taps into a proper sentence or a question, and lets every parent, teacher and therapist help.",
-      trialLine: owned ? null : trialLine(a.endsAt, a.now),
+      // Not yet answered (or offline): no line - never "ended" for a trial we haven't read.
+      trialLine: owned || a.trialKnown === false ? null : trialLine(a.endsAt, a.now),
       buyFine: `Whoever pays, the license lands on ${who}'s board.`,
       featuresLabel: owned ? "What's on" : "What Lifetime adds",
       features: FEATURES,
@@ -13650,12 +13651,14 @@ ${ts}`);
     const self = await client.selfKey();
     const licensed = await reconcile(client, store, me.id, self);
     let endsAt = null;
+    let trialKnown = licensed;
     if (!licensed) {
       const license = await store.get(licenseKey(me.id));
       const res = await fetch(`${baseUrl}/api/v1/trial`, {
         headers: { "x-pip-user": me.id, "x-pip-license": license ?? "" }
       }).catch(() => null);
       if (res?.ok) endsAt = (await res.json().catch(() => ({}))).endsAt ?? null;
+      trialKnown = !!res?.ok;
     }
     try {
       appSession(appId).licensed = licensed;
@@ -13669,7 +13672,7 @@ ${ts}`);
         issue = self.payment_issue;
       }
     }
-    return { userId: me.id, licensed, endsAt, issue, issueText: issueText(issue) };
+    return { userId: me.id, licensed, endsAt, trialKnown, issue, issueText: issueText(issue) };
   }
   async function ensure(baseUrl, userRowJson, label) {
     const me = parse6(userRowJson);
@@ -13697,7 +13700,7 @@ ${ts}`);
           kind: "status",
           ok: true,
           newlyLinked: false,
-          status: { userId: row2.id, licensed: false, endsAt, issue: null, issueText: null }
+          status: { userId: row2.id, licensed: false, endsAt, trialKnown: !!res?.ok, issue: null, issueText: null }
         });
         return;
       }

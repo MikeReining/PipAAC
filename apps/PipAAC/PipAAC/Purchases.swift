@@ -90,7 +90,8 @@ final class CoreLifetimeBackend: LifetimeBackend {
         guard let app else { return nil }
         let core = app.core
         let args: [String: Any] = ["name": name, "licensed": status.licensed,
-                                   "endsAt": status.endsAt ?? NSNull(), "issue": status.issue ?? NSNull()]
+                                   "endsAt": status.endsAt ?? NSNull(), "trialKnown": status.trialKnown ?? false,
+                                   "issue": status.issue ?? NSNull()]
         guard let data = try? JSONSerialization.data(withJSONObject: args) else { return nil }
         let json = String(decoding: data, as: UTF8.self)
         return try? await Task.detached {

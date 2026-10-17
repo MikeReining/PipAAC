@@ -162,12 +162,14 @@ public nonisolated struct LifetimeStatus: Decodable, Sendable, Equatable {
     public var userId: String?
     public var licensed: Bool = false
     public var endsAt: Double?
+    /// The Worker answered the trial read (nil/false: not yet, or offline).
+    public var trialKnown: Bool?
     public var issue: String?
     public var issueText: String?
     public init(userId: String? = nil, licensed: Bool = false, endsAt: Double? = nil,
-                issue: String? = nil, issueText: String? = nil) {
+                trialKnown: Bool? = nil, issue: String? = nil, issueText: String? = nil) {
         self.userId = userId; self.licensed = licensed; self.endsAt = endsAt
-        self.issue = issue; self.issueText = issueText
+        self.trialKnown = trialKnown; self.issue = issue; self.issueText = issueText
     }
 }
 

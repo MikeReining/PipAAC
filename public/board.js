@@ -308,9 +308,9 @@ let demoBar = null; // the child's bar, set aside while Try it runs
 let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
 let editing = false; // caregiver Edit mode — same gesture on index and pages
 let countsOn = false; // 018 D10: the 📊 badge — the child's own 30-day taps
-// 040: the 7-day trial — endsAt in ms while unlicensed; the server is
-// the truth and speech.js mirrors it into these for UI reads.
-let trialEndsAt = null;
+// 040: the 7-day trial — endsAt ms; speech.js mirrors the server's answer
+// here (undefined = not answered yet / offline; null = no trial).
+let trialEndsAt = undefined;
 let trialLicensed = false;
 const getCounts = () => useCounts(db);
 

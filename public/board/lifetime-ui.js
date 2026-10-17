@@ -40,7 +40,8 @@ export function mountLifetime({ me, sayClip, hearFree, toast, trial }) {
     }
     $("life-feats-label").textContent = owned ? "What's on" : "What Lifetime adds";
     const line = $("life-trial-line");
-    if (owned) { line.hidden = true; return; }
+    // Not answered yet (or offline): no line — never "ended" for a trial we haven't read.
+    if (owned || t.endsAt === undefined) { line.hidden = true; return; }
     line.hidden = false;
     const days = t.endsAt ? Math.ceil((t.endsAt - Date.now()) / 86_400_000) : 0;
     line.textContent = days > 0
