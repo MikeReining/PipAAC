@@ -31,7 +31,7 @@ export const tileCacheUrl = async (voice, text) =>
 
 /** "Mia" → "Mia's voice"; "Pip's voice" stays itself — `voiceName`
  *  answers "Pip's voice" for the default voice. */
-const possessiveVoice = (name) =>
+export const possessiveVoice = (name) =>
   /voice/i.test(name ?? "") ? name : `${name ?? "Pip"}'s voice`;
 
 /** § 5.2 supporter-facing copy for the tile badge and the word card —

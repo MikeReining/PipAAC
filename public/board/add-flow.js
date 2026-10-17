@@ -16,6 +16,7 @@ import { normalizeV1 } from "../shared/normalize.mjs";
 import { SENSE_ART_SQL } from "../shared/images.mjs";
 import { needsDraw, pictureAction, shouldConfirmDraws } from "../shared/pictures.mjs";
 import { kv } from "../shared/platform.mjs";
+import { possessiveVoice } from "../shared/voice_tile.mjs";
 
 const $ = (id) => document.getElementById(id);
 
@@ -627,7 +628,7 @@ export function mountAddFlow({
     if (newTexts.length) {
       tile?.prefetch(newTexts, {
         onProgress: (p) =>
-          toast(`Making ${tile.name()}'s voice, ${p.done + p.failed} of ${newTexts.length}`),
+          toast(`Making ${possessiveVoice(tile.name())}, ${p.done + p.failed} of ${newTexts.length}`),
       }).catch(() => {});
     }
     fillPastedPictures(res.newIds ?? []);

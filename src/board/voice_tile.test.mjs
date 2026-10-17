@@ -9,7 +9,7 @@ import assert from "node:assert/strict";
 
 import {
   armUtcRollRetry, msUntilUtcDayRoll,
-  tileCacheUrl, tileStateBadge, tileStateMessage, tileTextHash, voiceTile,
+  possessiveVoice, tileCacheUrl, tileStateBadge, tileStateMessage, tileTextHash, voiceTile,
 } from "../../public/shared/voice_tile.mjs";
 
 const fakeCaches = () => {
@@ -349,4 +349,10 @@ test("supporter copy: badge is short, card message is full", () => {
   assert.equal(tileStateMessage("budget", "Mia"),
     "Mia's voice for this word will be ready tomorrow.");
   assert.match(tileStateMessage("minting", "Mia"), /Making Mia's voice/);
+});
+
+test("possessiveVoice: the default voice's name already says voice (paste toast read \"Pip's voice's voice\")", () => {
+  assert.equal(possessiveVoice("Pip's voice"), "Pip's voice");
+  assert.equal(possessiveVoice("Mia"), "Mia's voice");
+  assert.equal(possessiveVoice(undefined), "Pip's voice");
 });

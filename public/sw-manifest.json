@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.30-8a3d171aeb23",
-  "version": "1.1.30",
-  "payloadHash": "8a3d171aeb23",
+  "buildId": "1.1.31-8331012ef229",
+  "version": "1.1.31",
+  "payloadHash": "8331012ef229",
   "files": [
     {
       "path": "/board.js",
@@ -15,8 +15,8 @@
     },
     {
       "path": "/board/add-flow.js",
-      "bytes": 29436,
-      "sha256": "2fef9ac915d73912cc7407c4ce1381b82c00d071c4aeea04ad6120ee2cb2baec"
+      "bytes": 29505,
+      "sha256": "9e9b907cca1932b88747ad154f3c3a559bd131faf2b2440b9ef1fc2a2ca7cd81"
     },
     {
       "path": "/board/avatar.js",
@@ -1060,8 +1060,8 @@
     },
     {
       "path": "/shared/voice_tile.mjs",
-      "bytes": 13994,
-      "sha256": "52a57ef18065c651c8e7443362213b967deda82da8c576b1561e5aeb9256455e"
+      "bytes": 14001,
+      "sha256": "59cda894cc2cd66f8405a747465d28582537e4b1e3c260ac8491ebf67c77be35"
     },
     {
       "path": "/shared/voice.mjs",
