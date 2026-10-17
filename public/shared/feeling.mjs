@@ -59,3 +59,13 @@ export function expressiveOn(db) {
     return true;
   }
 }
+
+/* 025 § 1: the three faces own the strip's last slot — from the first
+ *  word, when the setting is on, online, and not mid-typed-word.
+ *  Edit/pick/model modes keep every tap a selection, never speech; the
+ *  editor view is Edit mode, always (031 — as grid.js treats it). */
+export function facesShown({ live, ready, words, online }) {
+  const editing = live.editing || live.view === "editor";
+  return !!(!live.tour && ready && words && live.expressiveVoice
+    && online && !live.kbUi.text && !live.picking && !live.modeling && !editing);
+}

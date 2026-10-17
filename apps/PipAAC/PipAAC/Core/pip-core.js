@@ -5987,6 +5987,7 @@ ${a.a}` }
   __export(feeling_exports, {
     FEELINGS: () => FEELINGS,
     expressiveOn: () => expressiveOn,
+    facesShown: () => facesShown,
     loadFeelingData: () => loadFeelingData,
     suggestedFeeling: () => suggestedFeeling
   });
@@ -6030,6 +6031,10 @@ ${a.a}` }
     } catch {
       return true;
     }
+  }
+  function facesShown({ live, ready, words: words2, online }) {
+    const editing = live.editing || live.view === "editor";
+    return !!(!live.tour && ready && words2 && live.expressiveVoice && online && !live.kbUi.text && !live.picking && !live.modeling && !editing);
   }
 
   // public/shared/voices.mjs

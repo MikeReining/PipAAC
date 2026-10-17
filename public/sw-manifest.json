@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.39-2b2cc535808f",
-  "version": "1.1.39",
-  "payloadHash": "2b2cc535808f",
+  "buildId": "1.1.40-64adf9bbfba2",
+  "version": "1.1.40",
+  "payloadHash": "64adf9bbfba2",
   "files": [
     {
       "path": "/board.js",
@@ -300,8 +300,8 @@
     },
     {
       "path": "/board/strip.js",
-      "bytes": 14257,
-      "sha256": "d755ac63536551e7394097cb5c468e0a78d837a47765f9e892bd441140d87029"
+      "bytes": 13976,
+      "sha256": "52792e1cad079b65b14d1e6544721a92cc89ae71db32d1bd2be2522e8fc5aded"
     },
     {
       "path": "/board/team-name-ui.js",
@@ -830,8 +830,8 @@
     },
     {
       "path": "/shared/feeling.mjs",
-      "bytes": 2269,
-      "sha256": "5e441935896037c5366346899897bdf3bdc6e3dda1ca5ed984256470d037429d"
+      "bytes": 2822,
+      "sha256": "6cf75326cc8f50e4ef037ad23a2d14598db657c563036265bc3548761fda6abb"
     },
     {
       "path": "/shared/forms.mjs",

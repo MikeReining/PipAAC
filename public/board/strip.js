@@ -6,7 +6,7 @@ import { entityForSense, maskedSenseIds } from "../shared/groups.mjs";
 import {
   groupRanked, groupStarters, stampShownFinal, stripRanked,
 } from "../shared/funnel.mjs";
-import { FEELINGS, suggestedFeeling } from "../shared/feeling.mjs";
+import { FEELINGS, facesShown, suggestedFeeling } from "../shared/feeling.mjs";
 import { family as familyRow, familyItems } from "../shared/families.mjs";
 import { loadPhotoURL } from "../db.js";
 
@@ -115,13 +115,9 @@ export function mountStrip({
     return el;
   }
 
-  /* 025 § 1: the three faces own the strip's last slot — from the first
-   *  word, when the setting is on, online, and not mid-typed-word.
-   *  Edit/pick/model modes keep every tap a selection, never speech. */
   function facesOn() {
-    return !!(!live.tour && feelingData && sentence.length && live.expressiveVoice
-      && navigator.onLine !== false && !live.kbUi.text
-      && !live.picking && !live.modeling && !live.editing);
+    return facesShown({ live, ready: !!feelingData, words: sentence.length,
+      online: navigator.onLine !== false });
   }
 
   /** Cache: entity id → category — a people/pets entity (or an
@@ -320,3 +316,4 @@ export function mountStrip({
 
   return { renderStrip, paintStrip, sizeStrip, stripSlots, openExpand, clearExpand };
 }
+
