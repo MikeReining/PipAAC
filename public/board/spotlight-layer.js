@@ -153,6 +153,7 @@ export function mountSpotlightLayer({
     document.body.classList.toggle("modeling", modeling);
     $("modelbar").hidden = !modeling;
     if (modeling) live.coachUi?.renderBar();
+    syncTxButtons(); // ✨ / ❓ are modelable on an empty bar
   }
 
   /** The child pressed `key` (a word, or "control:fix" / "control:question")

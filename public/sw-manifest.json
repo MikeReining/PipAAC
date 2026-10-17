@@ -1,12 +1,12 @@
 {
-  "buildId": "1.1.36-85ab7ac43254",
-  "version": "1.1.36",
-  "payloadHash": "85ab7ac43254",
+  "buildId": "1.1.37-a12ea2bdc8ca",
+  "version": "1.1.37",
+  "payloadHash": "a12ea2bdc8ca",
   "files": [
     {
       "path": "/board.js",
-      "bytes": 69220,
-      "sha256": "ef165bf4f9445a3fd15fbec98c5a8e0c704928f0097f996ff18616def659bea6"
+      "bytes": 69288,
+      "sha256": "0e71592091638270b0c8f643f1a22cf2704366b79ef13d1dbc38f6bc0b8d3b71"
     },
     {
       "path": "/board/add-flow.css",
@@ -280,8 +280,8 @@
     },
     {
       "path": "/board/spotlight-layer.js",
-      "bytes": 8722,
-      "sha256": "de77ba190305dbc2efb2ea7b44d9942e300619dea93a4cf9c96f75a04ae7c19b"
+      "bytes": 8786,
+      "sha256": "e4b505c98d223ff29b83c37d6aaa8d2f6574dcc360d0afa28425142de0528f0d"
     },
     {
       "path": "/board/spotlight-sheet.css",
@@ -1040,8 +1040,8 @@
     },
     {
       "path": "/shared/txbar.mjs",
-      "bytes": 5610,
-      "sha256": "3af1d56f33f5dea2f90f68930a567abe277ced7790d58180fef6c3d8d0ad6142"
+      "bytes": 6208,
+      "sha256": "105ad4d91c4f4d874e71f4a1d462900b89e84380b308ab0e8470cd2da5f4831f"
     },
     {
       "path": "/shared/usecounts.mjs",

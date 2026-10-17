@@ -43,7 +43,7 @@ import {
 import { voiceName } from "./shared/voices.mjs";
 
 import {
-  applyTransform, noteBarEdit, restoreBar,
+  applyTransform, noteBarEdit, restoreBar, txButtonDisabled,
 } from "./shared/txbar.mjs";
 import { EOS, formFor } from "./shared/forms.mjs";
 import { expressiveOn, loadFeelingData } from "./shared/feeling.mjs";
@@ -330,9 +330,12 @@ function syncTxButtons() {
   const offline = typeof navigator !== "undefined" && !navigator.onLine;
   for (const id of ["tx-fix", "tx-question", "tx-past", "tx-future"]) {
     $(id).classList.toggle("offline", offline);
-    // In pick mode ✨ / ❓ are choosable targets, with or without words.
-    const pickable = !!attention.picking && (id === "tx-fix" || id === "tx-question");
-    $(id).disabled = !pickable && (!sentence.length || (offline && !tour));
+    // ✨ / ❓ are choosable targets (pick mode) and modelable (a
+    // supporter's session), with or without words.
+    $(id).disabled = txButtonDisabled(id, {
+      picking: !!attention.picking, modeling: !!attention.modeling,
+      words: sentence.length > 0, offline, tour,
+    });
   }
 }
 addEventListener("online", () => { syncTxButtons(); renderStrip(); });

@@ -11,8 +11,23 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   applyTransform, noteBarEdit, restoreBar, snapshotBar, transformSource,
-  wordLemmaCandidates,
+  txButtonDisabled, wordLemmaCandidates,
 } from "../../public/shared/txbar.mjs";
+
+test("a supporter can model ✨ and ❓ on an empty bar; ⏪ ⏩ and a child's empty bar stay off", () => {
+  const empty = { picking: false, modeling: false, words: false, offline: false, tour: false };
+  assert.equal(txButtonDisabled("tx-fix", empty), true, "child, empty bar: nothing to transform");
+  assert.equal(txButtonDisabled("tx-fix", { ...empty, modeling: true }), false);
+  assert.equal(txButtonDisabled("tx-question", { ...empty, modeling: true }), false);
+  assert.equal(txButtonDisabled("tx-past", { ...empty, modeling: true }), true, "past/future are not modelable controls");
+  assert.equal(txButtonDisabled("tx-fix", { ...empty, picking: true }), false);
+  // Offline modeling is only a light on her board: still pressable.
+  assert.equal(txButtonDisabled("tx-fix", { ...empty, modeling: true, offline: true }), false);
+  // Words + online is the ordinary case; offline greys the model buttons.
+  assert.equal(txButtonDisabled("tx-fix", { ...empty, words: true }), false);
+  assert.equal(txButtonDisabled("tx-fix", { ...empty, words: true, offline: true }), true);
+  assert.equal(txButtonDisabled("tx-fix", { ...empty, words: true, offline: true, tour: true }), false);
+});
 
 const fresh = () => ({
   sentence: [{ kind: "sense", id: "s1", text: "i" }, { kind: "sense", id: "s2", text: "go" }, { kind: "sense", id: "s3", text: "park" }],

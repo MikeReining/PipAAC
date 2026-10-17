@@ -76,6 +76,17 @@ export function noteBarEdit(barState) {
   barState.question = false;
 }
 
+/** Is a transform button greyed out? A press needs words and, for the
+ *  model, the internet — except where the press is not a transform at
+ *  all: choosing ✨ / ❓ as a spotlight target, or a supporter modeling
+ *  them for the child (the press lights the button on her board and
+ *  never reads this bar, which a supporter's taps never fill). */
+export function txButtonDisabled(id, { picking, modeling, words, offline, tour }) {
+  const lightable = id === "tx-fix" || id === "tx-question";
+  if (lightable && (picking || modeling)) return false;
+  return !words || (offline && !tour);
+}
+
 /* Display-only lemma candidates for a model-supplied token, strongest
  * first. The caller validates each against the label table — a wrong
  * guess can only mean no art, never the wrong symbol. Past-tense labels

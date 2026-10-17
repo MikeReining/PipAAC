@@ -4884,6 +4884,7 @@ var PIPCORE = (() => {
     snapshotBar: () => snapshotBar,
     sourceText: () => sourceText,
     transformSource: () => transformSource,
+    txButtonDisabled: () => txButtonDisabled,
     wordLemmaCandidates: () => wordLemmaCandidates
   });
   function applyTransform(sentence, out, mode, barState) {
@@ -4923,6 +4924,11 @@ var PIPCORE = (() => {
     barState.preTransform = null;
     barState.tense = "present";
     barState.question = false;
+  }
+  function txButtonDisabled(id, { picking, modeling, words: words2, offline, tour }) {
+    const lightable = id === "tx-fix" || id === "tx-question";
+    if (lightable && (picking || modeling)) return false;
+    return !words2 || offline && !tour;
   }
   var IRREG_LEMMA = {
     went: "go",
@@ -12343,6 +12349,7 @@ ${ts}`);
     async function autoFill(entityId, { onState, found: given = null } = {}) {
       const e = entity(entityId);
       if (!e || e.status !== "active") return { error: "gone" };
+      if (e.photo_key && e.fitzgerald_role != null) return { found: null, act: { kind: "none" } };
       const { userId, license } = await creds2();
       onState?.("finding");
       const found = given ?? await client.find({
