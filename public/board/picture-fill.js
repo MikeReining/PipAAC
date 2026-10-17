@@ -64,6 +64,10 @@ export function mountPictureFill({
   async function autoFill(entityId, { onState, found: given = null } = {}) {
     const e = entity(entityId);
     if (!e || e.status !== "active") return { error: "gone" };
+    // A word with its picture and its kind has nothing left to ask the
+    // finder; opening its card must not spend a find. (A pick-another
+    // search is the Find field's own call.)
+    if (e.photo_key && e.fitzgerald_role != null) return { found: null, act: { kind: "none" } };
     const { userId, license } = await creds();
     onState?.("finding");
     const found = given ?? await client.find({
