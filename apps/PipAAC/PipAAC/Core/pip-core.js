@@ -12285,7 +12285,7 @@ ${ts}`);
   };
 
   // public/board/picture-fill.js
-  var PENDING_KEY = "pip-pic-pending";
+  var PENDING_KEY_BASE = "pip-pic-pending";
   var TRANSIENT2 = /* @__PURE__ */ new Set(["offline", "unavailable", "fair_use"]);
   function mountPictureFill({
     db,
@@ -12296,8 +12296,13 @@ ${ts}`);
     savePhoto: savePhoto2,
     syncUploadBlob: syncUploadBlob2,
     onChanged,
-    storage = kv2
+    storage = kv2,
+    // Word ids belong to one person, but localStorage is the whole device:
+    // the parked list is keyed by person so one person's word is never
+    // filled into another's board. (The iPad hands in a per-person store.)
+    userId = null
   }) {
+    const PENDING_KEY = userId ? `${PENDING_KEY_BASE}:${userId}` : PENDING_KEY_BASE;
     const entity = (id) => all7(
       db,
       "SELECT id, spoken_name, hint, photo_key, fitzgerald_role, status FROM personal_entity WHERE id = ?",
@@ -12350,10 +12355,10 @@ ${ts}`);
       const e = entity(entityId);
       if (!e || e.status !== "active") return { error: "gone" };
       if (e.photo_key && e.fitzgerald_role != null) return { found: null, act: { kind: "none" } };
-      const { userId, license } = await creds2();
+      const { userId: userId2, license } = await creds2();
       onState?.("finding");
       const found = given ?? await client.find({
-        userId,
+        userId: userId2,
         license,
         text: e.spoken_name,
         description: e.hint,
@@ -12368,7 +12373,7 @@ ${ts}`);
       const act2 = pictureAction(found);
       if (entity(entityId)?.photo_key) return { found, act: act2 };
       if (act2.kind === "apply") {
-        const blob = await client.imageBlob({ userId, license, asset: act2.picture.asset });
+        const blob = await client.imageBlob({ userId: userId2, license, asset: act2.picture.asset });
         if (!blob) {
           return { found, act: { kind: "choose", others: act2.others } };
         }
@@ -12378,7 +12383,7 @@ ${ts}`);
       if (act2.kind === "draw") {
         onState?.("drawing");
         const r = await client.draw({
-          userId,
+          userId: userId2,
           license,
           text: e.spoken_name,
           description: e.hint,

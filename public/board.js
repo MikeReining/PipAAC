@@ -1117,7 +1117,7 @@ const pictures = pictureClient();
 const pictureCreds = async () => ({ userId: me.id, license: await voiceLicense() });
 const pictureFill = mountPictureFill({
   db, all: ALL, locale, client: pictures, creds: pictureCreds,
-  savePhoto, syncUploadBlob,
+  userId: me.id, savePhoto, syncUploadBlob,
   onChanged: (id) => {
     entityPhoto.delete(id);
     entityRole.delete(id);
