@@ -13,6 +13,7 @@ import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import { needsDraw, pictureAction, shouldConfirmDraws } from "../../public/shared/pictures.mjs";
 import { appSession } from "./app.mjs";
 import { tilePrefetch } from "./app_say.mjs";
+import { possessiveVoice } from "../../public/shared/voice_tile.mjs";
 import {
   BLOB_KEY, PIP, X, boardPaint, creds, emit, one, wantThumbs,
 } from "./app_pictures_shared.mjs";
@@ -31,14 +32,10 @@ const groupNameOf = (s, id, fallback = "") => {
 const seedCategory = (s, groupId) => s.catalog.groups?.find((g) => g.id === groupId)?.category ?? null;
 
 /** 028 § 5.3: the new words' voices are made one at a time after the rows
- *  land (add-flow.js bulk-add 465-497 / photo-save 543-576). The web's
- *  toast names the voice with "'s voice" appended to voiceName(), which
- *  for the default reads "Pip's voice's voice"; here the name is used
- *  as speech.js tileStateMessage does (already "...voice" stays). */
+ *  land (add-flow.js bulk-add / photo-save), with the web's progress toast. */
 function prefetchVoices(s, texts) {
   if (!texts.length) return;
-  const name = PIP().voices.voiceName(s.d, s.voiceId);
-  const voice = /voice/i.test(name ?? "") ? name : `${name ?? "Pip"}'s voice`;
+  const voice = possessiveVoice(PIP().voices.voiceName(s.d, s.voiceId));
   tilePrefetch(s, texts, (p) => emit({
     appId: s.appId, toast: `Making ${voice}, ${p.done + p.failed} of ${texts.length}`,
   }));

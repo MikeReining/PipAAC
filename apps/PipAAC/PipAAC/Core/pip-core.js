@@ -11095,6 +11095,7 @@ ${ts}`);
     return hex3(await crypto.subtle.digest("SHA-256", te9.encode(normalizeV1(text))));
   }
   var tileCacheUrl = async (voice, text) => `https://voice.local/tile/${voice}/${await tileTextHash(text)}`;
+  var possessiveVoice = (name) => /voice/i.test(name ?? "") ? name : `${name ?? "Pip"}'s voice`;
   var reasonFor = (status, body) => {
     if (status === 422) return "held";
     if (status === 409) return "withheld";
@@ -12554,8 +12555,7 @@ ${ts}`);
   var seedCategory2 = (s, groupId) => s.catalog.groups?.find((g2) => g2.id === groupId)?.category ?? null;
   function prefetchVoices(s, texts) {
     if (!texts.length) return;
-    const name = PIP8().voices.voiceName(s.d, s.voiceId);
-    const voice = /voice/i.test(name ?? "") ? name : `${name ?? "Pip"}'s voice`;
+    const voice = possessiveVoice(PIP8().voices.voiceName(s.d, s.voiceId));
     tilePrefetch(s, texts, (p) => emit7({
       appId: s.appId,
       toast: `Making ${voice}, ${p.done + p.failed} of ${texts.length}`
