@@ -421,6 +421,7 @@ extension SettingsView {
                     Text("Silent is usually best: your voice does the teaching.")
                 }
                 Section {
+                    if !sp.look.isEmpty { spotLookPreview(sp, s) }
                     Picker("Glow", selection: Binding(
                         get: { s.spotPulse ? 1 : 0 },
                         set: { model.setSetting("spot_pulse", $0) })) {
@@ -447,6 +448,29 @@ extension SettingsView {
         }
         .navigationTitle("Spotlight")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    /// spotlight-sheet.js renderLook: four of the board's own tiles with
+    /// the real marks - the lit ones glow (and pulse), the rest dim - so a
+    /// setting change shows at once. aria-hidden on the web; here one
+    /// element whose value says what is lit.
+    private func spotLookPreview(_ sp: SpotPageModel, _ s: SettingsModel) -> some View {
+        let words = sp.look.map { "\($0.label) \($0.lit ? "glowing" : "dimmed")" }.joined(separator: ", ")
+        let mode = s.spotPulse ? "pulsing" : "steady"
+        return HStack(spacing: 10) {
+            ForEach(sp.look) { t in
+                WordTile(label: t.label, role: t.role, art: t.art)
+                    .frame(width: 84, height: 84)
+                    .spotMark(SpotMark(glow: t.lit, pulse: t.lit && s.spotPulse, dimmed: !t.lit),
+                              dim: Double(s.spotDim) / 100)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.vertical, 8).padding(.horizontal, 4)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Preview")
+        .accessibilityValue("\(words), \(mode), others dimmed to \(s.spotDim) percent")
+        .accessibilityIdentifier("spot:lookPreview")
     }
 
     /// ST-3: turning it on proves one scan works; turning it off is free.

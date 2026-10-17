@@ -72,6 +72,12 @@ final class AccessibilityUITests: XCTestCase {
             //    truncated with an ellipsis, text and box fully visible.
             if issue.auditType == .textClipped, el?.identifier == "settingsSearch" { return true }
             if issue.auditType == .contrast, el?.isEnabled == false { return true }
+            //  - contrast on the Spotlight Look preview's four tiles: a decorative
+            //    sample (aria-hidden on the web) whose other words are DIMMED on
+            //    purpose, which is the thing it shows; the lit one sits on its glow.
+            //    It is one labelled element for VoiceOver ("spot:lookPreview").
+            if issue.auditType == .contrast, screen == "settings/spotlight",
+               ["more", "go", "we", "play"].contains(el?.label ?? "") { return true }
             //  - contrast on an unlabelled, unidentified region at AXXXL on the
             //    Spotlight page only: the screenshot shows page text scrolling
             //    blurred under the translucent navigation bar (the audit samples

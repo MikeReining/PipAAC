@@ -118,6 +118,11 @@ final class SettingsRowsUITests: XCTestCase {
         XCTAssertEqual(app.staticTexts["spot:role"].label, "This is this person's board.")
         XCTAssertTrue(app.staticTexts["Steady glow · dim medium"].exists)
         shot(app, "e9-spotlight-page")
+        // The Look preview: the board's own four tiles, "more" glowing (First words), the rest dimmed.
+        let prev = app.descendants(matching: .any)["spot:lookPreview"]
+        XCTAssertTrue(prev.waitForExistence(timeout: 10), "the Look preview is drawn")
+        XCTAssertEqual(prev.value as? String,
+                       "more glowing, go dimmed, we dimmed, play dimmed, steady, others dimmed to 45 percent")
 
         app.segmentedControls["spot:pulse"].buttons["Pulse"].tap()
         app.segmentedControls["spot:dim"].buttons["A lot"].tap()
@@ -126,6 +131,9 @@ final class SettingsRowsUITests: XCTestCase {
             profile("spot_pulse") == "1" && profile("spot_dim") == "30" && profile("model_speaks") == "1"
         }
         XCTAssertTrue(app.staticTexts["Pulsing glow · dim a lot"].waitForExistence(timeout: 10))
+        XCTAssertEqual(prev.value as? String,
+                       "more glowing, go dimmed, we dimmed, play dimmed, pulsing, others dimmed to 30 percent",
+                       "the preview follows the settings")
         // Each write was the web's synced op.
         XCTAssertEqual(settingOps("spot_pulse"), 1)
         XCTAssertEqual(settingOps("spot_dim"), 1)

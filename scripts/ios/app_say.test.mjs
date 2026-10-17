@@ -596,6 +596,33 @@ test("BS-24: the faces ride the strip's last slot from the first word; the lit o
   assert.equal(app.appStrip(id).faces, null);
 });
 
+test("BS-24 Edit mode and the tour: faces hide and release their slot in the core (strip.js facesOn: !editing, !tour)", async () => {
+  const { id } = await newSession({ ends: Date.now() + 3 * DAY2 });
+  app.appClear(id);
+  tapIds(id, "sns_0013");
+  assert.notEqual(app.appStrip(id).faces, null);
+  P.edit.editOpen(id);
+  assert.equal(app.appStrip(id).faces, null, "Edit mode: no faces, slot back to words");
+  P.edit.editClose(id);
+  assert.notEqual(app.appStrip(id).faces, null, "leaving Edit mode brings them back");
+  // The slot, not just the cell: a family that fits the strip only without
+  // the faces' slot is one page in Edit mode, two with the faces.
+  const db = P.makeDb(1);
+  const cap = app.appStrip(id).cap;
+  const fam = P.families.families(db).map((f) => f.id)
+    .find((fid) => P.families.familyItems(db, fid, "en", new Set()).length === cap);
+  assert.ok(fam, `a catalog family of exactly ${cap} tiles`);
+  assert.equal(app.appOpenFamily(id, fam).pages, 2, "faces on: the slot is taken");
+  P.edit.editOpen(id);
+  const inEdit = app.appOpenFamily(id, fam);
+  assert.equal(inEdit.faces, null);
+  assert.equal(inEdit.pages, 1, "Edit mode: the slot goes back to words, no ghost cell");
+  P.edit.editClose(id);
+  P.firstrun.tourStart(id, { online: true });
+  assert.equal(app.appStrip(id).faces, null, "the tour: no faces");
+  P.firstrun.tourEnd(id);
+});
+
 test("BS-24: a face tap (trial running) sends the web's speak request with the feeling and plays the cloud clip", async () => {
   const { id } = await newSession({ ends: Date.now() + 3 * DAY2 });
   const n0 = says.length;

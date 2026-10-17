@@ -25,6 +25,8 @@ nonisolated struct HubSection: Decodable, Sendable, Identifiable {
     var intro: String?
     var group: String = "person"
     let summary: String
+    /// settings-ui.js WARN: the nav item wears the attention dot.
+    var attention: Bool = false
 }
 
 nonisolated struct HubChecklistItem: Decodable, Sendable, Identifiable {
@@ -257,6 +259,12 @@ struct SettingsView: View {
                                 }
                             }
                             Spacer(minLength: 0)
+                            if sec.attention {
+                                // .set-dot: 10pt #b07f00; VoiceOver hears it via the value.
+                                Circle().fill(Color(red: 0.69, green: 0.50, blue: 0))
+                                    .frame(width: 10, height: 10)
+                                    .accessibilityHidden(true)
+                            }
                         }
                         .foregroundStyle(PipStyle.ink)
                         .padding(.horizontal, 12).padding(.vertical, 10)
@@ -268,6 +276,7 @@ struct SettingsView: View {
                     .buttonStyle(.plain)
                     .accessibilityElement(children: .combine)
                     .accessibilityAddTraits(section == sec.id ? .isSelected : [])
+                    .accessibilityValue(sec.attention ? "Needs attention" : "")
                     .accessibilityIdentifier("settingsSection:\(sec.id)")
                 }
             }

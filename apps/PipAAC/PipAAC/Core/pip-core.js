@@ -6526,23 +6526,337 @@ ${a.a}` }
     resolveTyped: () => resolveTyped
   });
 
-  // scripts/ios/app_faces.mjs
-  function facesModel(s) {
-    const data = s.catalog.feelingVoice;
-    if (!data?.feelings || !s.sentence.length || s.kbBuffer) return null;
-    if (globalThis.__pipOnline === false) return null;
-    if (!expressiveOn(s.d)) return null;
-    const pos = (id) => s.d.prepare(
-      `SELECT part_of_speech AS p FROM label
-     WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`
-    ).all(id, s.locale)[0]?.p ?? null;
-    const lit = suggestedFeeling(
-      s.sentence,
-      data,
-      (id) => pos(id) === "Pronoun",
-      (id) => s.d.prepare("SELECT category AS c FROM personal_entity WHERE id = ?").all(id)[0]?.c ?? null
-    );
-    return { lit, feelings: FEELINGS };
+  // scripts/ios/app_firstrun.mjs
+  var app_firstrun_exports = {};
+  __export(app_firstrun_exports, {
+    OFFER_WORLD_IN_FIRST_RUN: () => OFFER_WORLD_IN_FIRST_RUN,
+    SCRIPT: () => SCRIPT,
+    lookOf: () => lookOf,
+    setLook: () => setLook,
+    tourActive: () => tourActive,
+    tourEnd: () => tourEnd,
+    tourStart: () => tourStart,
+    tourTap: () => tourTap,
+    tourTransform: () => tourTransform,
+    welcome: () => welcome,
+    welcomeSave: () => welcomeSave,
+    worldApply: () => worldApply,
+    worldDone: () => worldDone,
+    worldOpen: () => worldOpen,
+    worldPreview: () => worldPreview
+  });
+
+  // scripts/ios/app_say.mjs
+  var app_say_exports = {};
+  __export(app_say_exports, {
+    SPEAK_VOICE_WAIT_MS: () => SPEAK_VOICE_WAIT_MS,
+    X: () => X,
+    artForWord: () => artForWord,
+    emit: () => emit,
+    entitled: () => entitled,
+    flagTile: () => flagTile,
+    identify: () => identify,
+    licenseOf: () => licenseOf,
+    nudgeFor: () => nudgeFor,
+    painted: () => painted,
+    sentenceVoice: () => sentenceVoice,
+    speak: () => speak,
+    speakCore: () => speakCore,
+    speakStart: () => speakStart,
+    tapSpeech: () => tapSpeech,
+    tileEnsure: () => tileEnsure,
+    tilePrefetch: () => tilePrefetch,
+    transform: () => transform,
+    trialActive: () => trialActive,
+    trialRefresh: () => trialRefresh
+  });
+
+  // public/shared/voice_sentence.mjs
+  var te2 = new TextEncoder();
+  var hex = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+  var normalizeSpeakText = (text) => String(text).trim().toLowerCase().replace(/\s+/g, " ");
+  function sentenceSpeakText(items) {
+    const text = items.map((it) => it.text).join(" ").replace(/\s+/g, " ").trim();
+    return /[.!?]$/.test(text) ? text : `${text}.`;
+  }
+  function voiceSentence({ cacheName = "pip-voice", deadlineMs = 300 } = {}) {
+    let cacheP = null;
+    const store = () => cacheP ?? (cacheP = (async () => {
+      const c = await caches.open(cacheName);
+      if (typeof c.keys === "function" && typeof c.delete === "function") {
+        for (const req of await c.keys().catch(() => [])) {
+          if (req.url.endsWith("/")) await c.delete(req).catch(() => {
+          });
+        }
+      }
+      return c;
+    })());
+    const urlFor = async (voice, text, feeling = "neutral") => `https://voice.local/${voice}/${feeling}/${hex(
+      await crypto.subtle.digest("SHA-256", te2.encode(normalizeSpeakText(text)))
+    )}`;
+    async function cached(voice, text, feeling = "neutral") {
+      if (typeof caches === "undefined") return null;
+      const res = await (await store()).match(await urlFor(voice, text, feeling)).catch(() => null);
+      return res ? res.blob() : null;
+    }
+    async function remember2(voice, text, blob, feeling = "neutral") {
+      if (typeof caches === "undefined") return;
+      await (await store()).put(
+        await urlFor(voice, text, feeling),
+        new Response(blob, { headers: { "content-type": "audio/mpeg" } })
+      ).catch(() => {
+      });
+    }
+    const inflight = /* @__PURE__ */ new Map();
+    const fetchOnce = async (key, endpoint, body) => {
+      if (!inflight.has(key)) {
+        inflight.set(key, (async () => {
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(body)
+          });
+          if (!res.ok) return null;
+          const blob = await res.blob();
+          await remember2(body.voice, body.text, blob, body.feeling);
+          return blob;
+        })().catch(() => null).finally(() => inflight.delete(key)));
+      }
+      return inflight.get(key);
+    };
+    async function request({
+      userId,
+      license,
+      voice,
+      text,
+      feeling = "neutral",
+      endpoint = "/api/v1/voice/speak",
+      deadlineMs: deadline = deadlineMs,
+      trial = false
+    }) {
+      if (!userId || !(license || trial) || !voice || !text) return null;
+      const hit = await cached(voice, text, feeling);
+      if (hit) return hit;
+      const key = await urlFor(voice, text, feeling);
+      const first = await Promise.race([
+        fetchOnce(key, endpoint, { user_id: userId, license, voice, text, feeling }),
+        new Promise((r) => setTimeout(() => r("deadline"), deadline))
+      ]);
+      return first === "deadline" ? null : first;
+    }
+    return { request, cached, remember: remember2 };
+  }
+
+  // public/shared/voice_tile.mjs
+  var te3 = new TextEncoder();
+  var hex2 = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+  async function tileTextHash(text) {
+    return hex2(await crypto.subtle.digest("SHA-256", te3.encode(normalizeV1(text))));
+  }
+  var tileCacheUrl = async (voice, text) => `https://voice.local/tile/${voice}/${await tileTextHash(text)}`;
+  var possessiveVoice = (name) => /voice/i.test(name ?? "") ? name : `${name ?? "Pip"}'s voice`;
+  var reasonFor = (status, body) => {
+    if (status === 422) return "held";
+    if (status === 409) return "withheld";
+    if (status === 429) return "budget";
+    if (status === 502) return "failed";
+    if (status === 503) return body?.error === "budget" ? "budget" : "unavailable";
+    if (status === 400 || status === 403) return "denied";
+    return "unavailable";
+  };
+  var TRANSIENT = /* @__PURE__ */ new Set(["offline", "failed", "budget", "unavailable"]);
+  function voiceTile({
+    cacheName = "pip-tile-voice",
+    queueName = "pip-tile-queue",
+    endpoint = "/api/v1/voice/tile",
+    flagEndpoint = "/api/v1/voice/tile/flag",
+    replacedEndpoint = "/api/v1/voice/tile/replaced",
+    deadlineMs = 900
+  } = {}) {
+    let cacheP = null;
+    let queueP = null;
+    const store = () => cacheP ?? (cacheP = caches.open(cacheName));
+    const qstore = () => queueP ?? (queueP = caches.open(queueName));
+    const urlFor = (voice, text) => tileCacheUrl(voice, text);
+    async function cached(voice, text) {
+      if (typeof caches === "undefined") return null;
+      const res = await (await store()).match(await urlFor(voice, text)).catch(() => null);
+      return res ? res.blob() : null;
+    }
+    async function remember2(voice, text, blob) {
+      if (typeof caches === "undefined") return;
+      await (await store()).put(
+        await urlFor(voice, text),
+        new Response(blob, { headers: { "content-type": "audio/mpeg" } })
+      ).catch(() => {
+      });
+    }
+    async function evict(voice, textHash) {
+      if (typeof caches === "undefined") return;
+      await (await store()).delete(`https://voice.local/tile/${voice}/${textHash}`).catch(() => {
+      });
+    }
+    const inflight = /* @__PURE__ */ new Map();
+    const fetchOnce = (key, body) => {
+      if (!inflight.has(key)) {
+        inflight.set(key, (async () => {
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(body)
+          });
+          if (!res.ok) {
+            return { ok: false, reason: reasonFor(res.status, await res.json().catch(() => null)) };
+          }
+          const blob = await res.blob();
+          await remember2(body.voice, body.text, blob);
+          return { ok: true, blob, cache: res.headers.get("x-tile-cache") ?? "mint" };
+        })().catch(() => ({ ok: false, reason: "offline" })).then((r) => {
+          if (r.ok) setTimeout(() => inflight.delete(key), 50);
+          else inflight.delete(key);
+          return r;
+        }));
+      }
+      return inflight.get(key);
+    };
+    const states = /* @__PURE__ */ new Map();
+    const listeners2 = /* @__PURE__ */ new Set();
+    const onStatus = (cb) => (listeners2.add(cb), () => listeners2.delete(cb));
+    const setState = async (voice, text, state4) => {
+      const key = `${voice}|${normalizeV1(text)}`;
+      if (state4 === states.get(key) && state4 !== "minting") return;
+      states.set(key, state4);
+      for (const cb of listeners2) cb(key, state4);
+    };
+    const status = (voice, text) => states.get(`${voice}|${normalizeV1(text)}`) ?? null;
+    const queueKey = async (voice, locale, text, source) => `https://voice.local/tile-queue/${voice}|${locale}|${await tileTextHash(text)}|${source}`;
+    async function enqueue(entry) {
+      if (typeof caches === "undefined") return;
+      await (await qstore()).put(
+        await queueKey(entry.voice, entry.locale, entry.text, entry.source),
+        new Response(
+          JSON.stringify(entry),
+          { headers: { "content-type": "application/json" } }
+        )
+      ).catch(() => {
+      });
+    }
+    async function request({ userId, license, trial = false, voice, locale, text, source = "user_typed", deadlineMs: deadline = deadlineMs }) {
+      if (!voice || !text) return { ok: false, reason: "unavailable" };
+      const hit = await cached(voice, text);
+      if (hit) return { ok: true, blob: hit, cache: "hit" };
+      if (!userId || !(license || trial)) return { ok: false, reason: "unavailable" };
+      const key = `${await urlFor(voice, text)}|${locale}|${source}`;
+      const work = fetchOnce(key, {
+        user_id: userId,
+        license,
+        voice,
+        locale,
+        text,
+        source
+      });
+      if (deadline == null) return work;
+      const first = await Promise.race([
+        work,
+        new Promise((r) => setTimeout(() => r("deadline"), deadline))
+      ]);
+      return first === "deadline" ? { ok: false, reason: "deadline" } : first;
+    }
+    async function ensure2(args) {
+      const { voice, text } = args;
+      await setState(voice, text, "minting");
+      const r = await request({ ...args, deadlineMs: null });
+      const state4 = r.ok ? "ready" : r.reason;
+      await setState(voice, text, state4);
+      if (!r.ok && TRANSIENT.has(r.reason)) {
+        await enqueue({ voice, locale: args.locale, text, source: args.source ?? "user_typed" });
+      }
+      return r;
+    }
+    async function drainQueue({ userId, license, trial = false, onProgress } = {}) {
+      if (typeof caches === "undefined" || !userId || !(license || trial)) return { done: 0, pending: 0 };
+      const reqs = await (await qstore()).keys().catch(() => []);
+      let done = 0, pending2 = 0;
+      for (const req of reqs) {
+        const entry = await (await (await qstore()).match(req).catch(() => null))?.json().catch(() => null);
+        if (!entry?.text || !entry?.voice) {
+          await (await qstore()).delete(req).catch(() => {
+          });
+          continue;
+        }
+        const r = await request({ userId, license, trial, ...entry, deadlineMs: null });
+        if (r.ok || !TRANSIENT.has(r.reason)) {
+          await (await qstore()).delete(req).catch(() => {
+          });
+          if (r.ok) {
+            done++;
+            await setState(entry.voice, entry.text, "ready");
+          } else {
+            await setState(entry.voice, entry.text, r.reason);
+          }
+          onProgress?.(entry, r);
+        } else {
+          await setState(entry.voice, entry.text, r.reason);
+          break;
+        }
+      }
+      pending2 = (await (await qstore()).keys().catch(() => [])).length;
+      return { done, pending: pending2 };
+    }
+    async function prefetch({ userId, license, voice, locale, texts, onProgress } = {}) {
+      let done = 0, skipped = 0, failed2 = 0;
+      for (const text of [...new Set(texts)].filter(Boolean)) {
+        if (await cached(voice, text)) {
+          skipped++;
+          continue;
+        }
+        const r = await ensure2({ userId, license, voice, locale, text });
+        r.ok ? done++ : failed2++;
+        onProgress?.({ text, done, skipped, failed: failed2, total: texts.length });
+        if (!r.ok && r.reason === "budget") break;
+      }
+      return { done, skipped, failed: failed2 };
+    }
+    async function flag({ userId, license, trial = false, voice, locale, text }) {
+      if (!userId || !(license || trial)) return false;
+      const res = await fetch(flagEndpoint, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ user_id: userId, license, voice, locale, text })
+      }).catch(() => null);
+      return res?.status === 204;
+    }
+    async function replacedSince({ userId, license, trial = false, voice, since }) {
+      if (!userId || !(license || trial)) return null;
+      const res = await fetch(
+        `${replacedEndpoint}?since=${Number(since) || 0}&voice=${encodeURIComponent(voice)}`,
+        {
+          headers: { "x-pip-user": userId, "x-pip-license": license ?? "" }
+        }
+      ).catch(() => null);
+      return res?.ok ? res.json().catch(() => null) : null;
+    }
+    async function sweepReplaced({ userId, license, trial = false, voice, since }) {
+      const res = await replacedSince({ userId, license, trial, voice, since });
+      if (!res) return null;
+      const ids = Array.isArray(res.ids) ? res.ids : [];
+      for (const id of ids) await evict(voice, id);
+      return { evicted: ids.length, next: res.next ?? null };
+    }
+    return {
+      request,
+      ensure: ensure2,
+      cached,
+      remember: remember2,
+      evict,
+      prefetch,
+      drainQueue,
+      flag,
+      replacedSince,
+      sweepReplaced,
+      status,
+      onStatus
+    };
   }
 
   // scripts/ios/app_research.mjs
@@ -6552,1921 +6866,6 @@ ${a.a}` }
     } catch (e) {
       console.error(`research: ${e}`);
     }
-  }
-
-  // scripts/ios/app.mjs
-  var PIP = () => globalThis.PIPCORE;
-  var apps = /* @__PURE__ */ new Map();
-  var nextAppId = 1;
-  var parse = (x) => typeof x === "string" ? JSON.parse(x) : x;
-  var one4 = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
-  var all5 = (d, sql, p = []) => d.prepare(sql).all(...p);
-  function appOpen(dbId, catalogJson, phrasesJson, formTableJson) {
-    const d = PIP().makeDb(dbId);
-    const catalog = parse(catalogJson);
-    d.exec("PRAGMA foreign_keys = ON");
-    PIP().migrate.migrateSchema(d, catalog.schemaSql, PIP().migrate.ADDITIVE_COLUMNS);
-    d.exec(catalog.schemaSql);
-    PIP().migrate.ensureAdditiveColumns(d);
-    d.exec("DROP TABLE IF EXISTS history_count");
-    d.exec("DROP TABLE IF EXISTS prediction_weights");
-    PIP().importer.importCatalog(d, catalog);
-    const profile3 = one4(d, "SELECT * FROM learner_profile WHERE id = 'prf_local'") ?? {};
-    const id = `a${nextAppId++}`;
-    apps.set(id, {
-      appId: id,
-      d,
-      catalog,
-      phrases: phrasesJson == null ? null : parse(phrasesJson),
-      formTable: formTableJson == null ? null : parse(formTableJson),
-      locale: profile3.locale ?? "en",
-      voiceId: profile3.preferred_voice_id ?? "voi_default_en",
-      grammarHelp: profile3.grammar_help !== 0,
-      freshAfterSpeak: !!profile3.fresh_after_speak,
-      topRowOn: !!profile3.group_top_row,
-      sentence: [],
-      sentenceId: null,
-      picks: 0,
-      freshNext: false,
-      kbOpen: false,
-      kbBuffer: "",
-      kbPendingAccent: null,
-      kbLead: null,
-      kbIndex: null,
-      kbOrder: profile3.keyboard_order ?? "standard",
-      kbMode: profile3.keyboard_mode ?? "pip",
-      barState: { tense: "present", question: false, preTransform: null },
-      lastImpressionKey: null,
-      openImpressionId: null,
-      expand: null,
-      // { familyId, page, depth }
-      view: "board",
-      groupId: null,
-      page: 0,
-      meta: /* @__PURE__ */ new Map(),
-      // senseId -> { role, art }
-      pos: /* @__PURE__ */ new Map(),
-      // senseId -> part of speech
-      entRole: /* @__PURE__ */ new Map(),
-      entPhoto: /* @__PURE__ */ new Map()
-    });
-    const s = apps.get(id);
-    return {
-      appId: id,
-      locale: s.locale,
-      voiceId: s.voiceId,
-      speechRate: SPEECH_RATES[profile3.speech_rate] ?? 1
-    };
-  }
-  var SPEECH_RATES = { slower: 0.8, normal: 1, faster: 1.2 };
-  function applyProfile(s) {
-    const p = one4(s.d, "SELECT * FROM learner_profile WHERE id = 'prf_local'") ?? {};
-    s.locale = p.locale ?? s.locale;
-    s.voiceId = p.preferred_voice_id ?? s.voiceId;
-    s.grammarHelp = p.grammar_help !== 0;
-    s.freshAfterSpeak = !!p.fresh_after_speak;
-    s.topRowOn = !!p.group_top_row;
-    s.kbOrder = p.keyboard_order ?? "standard";
-    s.kbMode = p.keyboard_mode ?? "pip";
-    s.kbIndex = null;
-    return p;
-  }
-  function appClose(appId) {
-    apps.delete(appId);
-  }
-  var S = (appId) => {
-    const s = apps.get(appId);
-    if (!s) throw new Error(`appClose: no session ${appId}`);
-    return s;
-  };
-  var appSession = S;
-  var appMeta = (s, senseId) => metaFor(s, senseId);
-  var appGeom = (s) => boardGeom(s);
-  var appDb = (appId) => S(appId).d;
-  function metaFor(s, senseId) {
-    if (!s.meta.has(senseId)) {
-      s.meta.set(senseId, one4(
-        s.d,
-        `SELECT s.fitzgerald_role AS role, ${PIP().images.SENSE_ART_SQL} AS art
-       FROM sense s WHERE s.id = ?`,
-        [senseId]
-      ) ?? { role: null, art: null });
-    }
-    return s.meta.get(senseId);
-  }
-  function posOfSense(s, senseId) {
-    if (!s.pos.has(senseId)) {
-      s.pos.set(senseId, one4(
-        s.d,
-        `SELECT part_of_speech AS p FROM label
-       WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`,
-        [senseId, s.locale]
-      )?.p ?? null);
-    }
-    return s.pos.get(senseId);
-  }
-  function photoFor(s, id) {
-    if (!s.entPhoto.has(id)) {
-      s.entPhoto.set(
-        id,
-        one4(s.d, "SELECT photo_key AS p FROM personal_entity WHERE id = ?", [id])?.p ?? null
-      );
-    }
-    return s.entPhoto.get(id);
-  }
-  var masked = (s) => PIP().groups.maskedSenseIds(s.d);
-  var shownLabel = (s, senseId, fallback) => s.grammarHelp ? PIP().forms.formFor(s.d, s.formTable, s.sentence, senseId).text ?? fallback : fallback;
-  function boardGeom(s) {
-    const name = one4(
-      s.d,
-      "SELECT board_layout AS l FROM learner_profile WHERE id = 'prf_local'"
-    )?.l ?? "grid60";
-    const layout = s.catalog.layouts?.[name] ?? s.catalog.layouts?.grid60 ?? { cols: 10, rows: 6, anchors: [] };
-    return {
-      name: s.catalog.layouts?.[name] ? name : "grid60",
-      cols: layout.cols,
-      rows: layout.rows,
-      cells: layout.cols * layout.rows,
-      anchors: new Map((layout.anchors ?? []).map((a) => [a.slot, a]))
-    };
-  }
-  var wordModel = (s, { kind, id, label, role, art = null, photoKey = null }) => ({ type: "word", kind, id, label, role: role ?? "None", art, photoKey });
-  function homeSlot(s, c, mask) {
-    if (c.kind === "entity") {
-      return wordModel(s, {
-        kind: "entity",
-        id: c.entity_id,
-        label: c.label,
-        role: c.fitzgerald_role ?? "None",
-        photoKey: photoFor(s, c.entity_id)
-      });
-    }
-    if (mask.has(c.sense_id)) {
-      if (!s.editing) return { type: "empty" };
-      return { ...wordModel(s, {
-        kind: "sense",
-        id: c.sense_id,
-        label: c.label,
-        role: c.fitzgerald_role,
-        art: metaFor(s, c.sense_id).art
-      }), hidden: true };
-    }
-    const label = s.editing ? c.label : shownLabel(s, c.sense_id, c.label);
-    return wordModel(s, {
-      kind: "sense",
-      id: c.sense_id,
-      label,
-      role: c.fitzgerald_role,
-      art: metaFor(s, c.sense_id).art
-    });
-  }
-  function boardModel(s) {
-    const geom = boardGeom(s);
-    const cells = PIP().coremove.coreCells(s.d, geom.name, s.locale);
-    const bySlot = new Map(cells.map((c) => [c.slot_index, c]));
-    const mask = masked(s);
-    const slots = [];
-    for (let slot = 0; slot < geom.cells; slot++) {
-      const anchor = geom.anchors.get(slot);
-      if (anchor?.kind === "groups") {
-        slots.push({ type: "groups", slot });
-        continue;
-      }
-      if (anchor?.kind === "family") {
-        const f = PIP().families.family(s.d, anchor.family);
-        slots.push({
-          type: "family",
-          slot,
-          familyId: anchor.family,
-          label: f?.name ?? "?",
-          glyph: f?.glyph ?? "\u25B8",
-          speaks: f?.speaks ?? null
-        });
-        continue;
-      }
-      if (anchor?.kind === "reserved") {
-        slots.push({ type: "empty", slot, locked: true });
-        continue;
-      }
-      const c = bySlot.get(slot);
-      if (!c) {
-        slots.push({ type: "empty", slot });
-        continue;
-      }
-      slots.push({ ...homeSlot(s, c, mask), slot });
-    }
-    return { cols: geom.cols, rows: geom.rows, cells: slots };
-  }
-  var appBoard = (appId) => boardModel(S(appId));
-  function barModel(s) {
-    const texts = PIP().keyboard.displaySentence(s.sentence, s.locale);
-    return s.sentence.map((item, i) => ({
-      kind: item.kind,
-      id: item.id,
-      display: texts[i] ?? item.text,
-      art: item.kind === "sense" && item.id ? metaFor(s, item.id).art : item.art ?? null,
-      photoKey: item.kind === "entity" && item.id ? photoFor(s, item.id) : null
-    }));
-  }
-  var appBar = (appId) => barModel(S(appId));
-  function stripCardFor(s, c) {
-    if (c.kind === "entity") {
-      const e = one4(s.d, "SELECT * FROM personal_entity WHERE id = ?", [c.id]);
-      if (!e) return null;
-      return {
-        kind: "entity",
-        id: e.id,
-        label: e.spoken_name,
-        role: e.fitzgerald_role ?? "None",
-        photoKey: e.photo_key
-      };
-    }
-    const standIn = PIP().groups.entityForSense(s.d, c.id);
-    if (standIn) {
-      return {
-        kind: "entity",
-        id: standIn.id,
-        label: standIn.spoken_name,
-        role: standIn.fitzgerald_role ?? "None",
-        photoKey: standIn.photo_key
-      };
-    }
-    const w = one4(
-      s.d,
-      `SELECT s.id, l.text AS label, s.fitzgerald_role FROM sense s
-     JOIN label l ON l.sense_id = s.id
-       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
-     WHERE s.id = ?`,
-      [s.locale, c.id]
-    );
-    if (!w) return null;
-    const label = shownLabel(s, w.id, w.label);
-    return {
-      kind: "sense",
-      id: w.id,
-      label,
-      role: w.fitzgerald_role,
-      art: metaFor(s, w.id).art
-    };
-  }
-  var stripSlots = (cols) => Math.min(4, Math.max(3, cols - 2));
-  var ensureSentence = (s) => s.sentenceId ?? (s.sentenceId = PIP().funnel.openSentence(s.d));
-  function maybeImpression(s, candidates, shown, { mode = "picture", cap = null, gate = null } = {}) {
-    if (s.sentenceId === null) return false;
-    const shownKeys = shown.map((c) => `${c.kind}:${c.id}`);
-    const key = `${s.sentenceId}:${s.picks}:${shownKeys.join()}`;
-    if (key === s.lastImpressionKey) return false;
-    s.lastImpressionKey = key;
-    s.openImpressionId = PIP().funnel.logImpression(s.d, {
-      sentenceId: s.sentenceId,
-      position: s.picks,
-      candidates,
-      shown: shownKeys,
-      mode,
-      gate,
-      shortlistCap: cap
-    });
-    return true;
-  }
-  function stripModel(s) {
-    const geom = boardGeom(s);
-    const cap = stripSlots(geom.cols);
-    const faces = facesModel(s);
-    if (s.kbBuffer) {
-      s.kbIndex ?? (s.kbIndex = buildKbIndex(s));
-      const cards2 = PIP().spelling.suggest(s.kbIndex, s.kbBuffer, cap).map((e) => e.kind === "entity" ? stripCardFor(s, { kind: "entity", id: e.id }) : {
-        kind: "sense",
-        id: e.id,
-        label: e.text,
-        role: e.role ?? "None",
-        art: metaFor(s, e.id).art
-      }).filter(Boolean);
-      return { cap, mode: "complete", cards: cards2, faces: null };
-    }
-    if (s.expand) {
-      const fam = PIP().families.family(s.d, s.expand.familyId);
-      if (!fam) s.expand = null;
-      else {
-        const items2 = PIP().families.familyItems(s.d, s.expand.familyId, s.locale, masked(s));
-        const fcap = Math.max(1, cap - (faces ? 1 : 0));
-        const pageSize = fcap - 1;
-        const pages = items2.length > fcap ? Math.ceil(items2.length / pageSize) : 1;
-        const realSize = pages > 1 ? pageSize : fcap;
-        s.expand.page = Math.min(s.expand.page, pages - 1);
-        const shown = items2.slice(s.expand.page * realSize, s.expand.page * realSize + realSize);
-        const cards2 = shown.map((it) => it.kind === "family" ? {
-          kind: "family",
-          id: it.id,
-          label: it.label,
-          glyph: it.glyph,
-          speaks: it.speaks,
-          nextFamily: it.nextFamily
-        } : stripCardFor(s, it) ?? {
-          kind: it.kind,
-          id: it.id,
-          label: it.label,
-          role: it.role ?? "None",
-          art: it.kind === "sense" ? metaFor(s, it.id).art : null
-        });
-        if (pages > 1) cards2.push({ kind: "more", label: "more \u203A" });
-        return {
-          cap,
-          mode: "family",
-          familyId: s.expand.familyId,
-          page: s.expand.page,
-          pages,
-          cards: cards2,
-          faces
-        };
-      }
-    }
-    const sents = s.sentence.map((x) => ({ kind: x.kind, id: x.id }));
-    const groupId = s.view === "group" ? s.groupId : null;
-    const starting = !sents.length || s.freshNext;
-    const ranked = !groupId ? PIP().funnel.stripRanked(s.d, sents, Date.now(), s.locale, s.phrases) : starting ? PIP().funnel.groupStarters(
-      s.d,
-      groupId,
-      { starters: s.catalog.groupStarters, visible: visibleKeys(s) }
-    ) : PIP().funnel.groupRanked(s.d, sents, groupId, Date.now());
-    const items = ranked.shown;
-    ensureSentence(s);
-    maybeImpression(s, ranked.ranked, items, {
-      cap,
-      mode: s.kbOpen ? "keyboard" : "picture",
-      gate: groupId ? { group: groupId } : { ending: ranked.ending }
-    });
-    const cards = items.map((c) => stripCardFor(s, c)).filter(Boolean);
-    if (s.openImpressionId !== null) {
-      PIP().funnel.stampShownFinal(
-        s.d,
-        s.openImpressionId,
-        cards.slice(0, cap - (faces ? 1 : 0)).map((c) => `${c.kind}:${c.id}`)
-      );
-    }
-    return { cap, mode: "predict", cards, faces };
-  }
-  var appStrip = (appId) => stripModel(S(appId));
-  function visibleKeys(s) {
-    const keys3 = /* @__PURE__ */ new Set();
-    const layout = PIP().groups_shared.activeLayout(s.d);
-    const geom = PIP().groups_shared.geometryOf(s.d, layout);
-    const home2 = PIP().coremove.coreCells(s.d, boardGeom(s).name, s.locale);
-    for (const c of home2) {
-      if (geom.frame.includes(c.slot_index) || s.topRowOn && geom.topRow.includes(c.slot_index)) {
-        keys3.add(`${c.kind}:${c.sense_id ?? c.entity_id}`);
-      }
-    }
-    if (s.groupId) {
-      for (const c of PIP().groups.groupPage(s.d, s.groupId, s.page, s.locale, layout)) {
-        keys3.add(`${c.item_kind}:${c.item_id}`);
-      }
-    }
-    return keys3;
-  }
-  function appOpenFamily(appId, familyId, depth = 0) {
-    const s = S(appId);
-    s.expand = { familyId, page: 0, depth };
-    return stripModel(s);
-  }
-  function appFamilyPage(appId) {
-    const s = S(appId);
-    if (s.expand) s.expand.page++;
-    return stripModel(s);
-  }
-  function appGroups(appId) {
-    const s = S(appId);
-    s.kbOpen = false;
-    const layout = PIP().groups_shared.activeLayout(s.d);
-    const geom = PIP().groups_shared.geometryOf(s.d, layout);
-    const home2 = new Map(PIP().coremove.coreCells(s.d, boardGeom(s).name, s.locale).map((c) => [c.slot_index, c]));
-    const mask = masked(s);
-    const mealsOn = (one4(
-      s.d,
-      "SELECT occasions_visible AS o FROM learner_profile WHERE id = 'prf_local'"
-    )?.o ?? 1) === 1;
-    const isMeal = (id) => (one4(s.d, "SELECT occasion FROM group_meta WHERE group_id = ?", [id])?.occasion ?? 0) === 1;
-    const doors = PIP().groups_shared.groupIndex(s.d).filter((g2) => !g2.hidden && PIP().groups_shared.shownOn(s.d, g2.id, layout) && (mealsOn || !isMeal(g2.id)));
-    const byVisual = /* @__PURE__ */ new Map();
-    for (const g2 of doors) {
-      const v = PIP().groups_shared.indexVisual(g2.index_slot, geom.cells);
-      const name = PIP().groups.groupDisplayName(s.d, g2, s.locale);
-      const face = PIP().groupsEdit.groupFace(s.d, { ...g2, name }, s.locale);
-      byVisual.set(`${v.page}:${v.slot}`, {
-        type: "group",
-        slot: v.slot,
-        groupId: g2.id,
-        name,
-        glyph: g2.glyph ?? null,
-        photoKey: g2.photo_key ?? null,
-        kind: g2.kind,
-        icon: face.icon ?? null,
-        picture: face.picture ?? null,
-        emoji: face.emoji ?? null,
-        initial: face.initial ?? null
-      });
-    }
-    const pages = Math.max(1, ...doors.map((g2) => PIP().groups_shared.indexVisual(g2.index_slot, geom.cells).page + 1));
-    const out = [];
-    for (let p = 0; p < pages; p++) {
-      const slots = [];
-      for (let slot = 0; slot < geom.cells; slot++) {
-        if (geom.frame.includes(slot) || geom.topRow.includes(slot)) {
-          const showHome = geom.frame.includes(slot) || s.topRowOn;
-          const c = showHome ? home2.get(slot) : null;
-          slots.push(c ? { ...homeSlot(s, c, mask), slot, reserved: true } : { type: "empty", slot });
-          continue;
-        }
-        slots.push(byVisual.get(`${p}:${slot}`) ?? { type: "empty", slot });
-      }
-      out.push({ page: p, cells: slots });
-    }
-    return { cols: geom.cols, rows: geom.rows, pages: out };
-  }
-  function appGroupPage(appId, groupId, page = 0) {
-    const s = S(appId);
-    const layout = PIP().groups_shared.activeLayout(s.d);
-    const geom = PIP().groups_shared.geometryOf(s.d, layout);
-    const pages = PIP().groups.pageCount(s.d, groupId, layout);
-    const row2 = one4(s.d, "SELECT * FROM board_group WHERE id = ?", [groupId]);
-    const name = row2 ? PIP().groups.groupDisplayName(s.d, row2, s.locale) : "";
-    const mask = masked(s);
-    const home2 = new Map(PIP().coremove.coreCells(s.d, boardGeom(s).name, s.locale).map((c) => [c.slot_index, c]));
-    const cells = new Map(
-      PIP().groups.groupPage(s.d, groupId, page, s.locale, layout).map((c) => [c.slot_index, c])
-    );
-    const slots = [];
-    for (let slot = 0; slot < geom.cells; slot++) {
-      if (slot === geom.next) {
-        slots.push({ type: "next", slot });
-        continue;
-      }
-      if (geom.frame.includes(slot) || geom.topRow.includes(slot)) {
-        const showHome = geom.frame.includes(slot) || s.topRowOn;
-        const c2 = showHome ? home2.get(slot) : null;
-        slots.push(c2 ? { ...homeSlot(s, c2, mask), slot, reserved: true } : { type: "empty", slot, locked: true });
-        continue;
-      }
-      const c = cells.get(slot);
-      if (!c) {
-        slots.push({ type: "empty", slot });
-        continue;
-      }
-      if (c.item_kind === "sense" && mask.has(c.item_id)) {
-        if (!s.editing) {
-          slots.push({ type: "empty", slot });
-          continue;
-        }
-        slots.push({ ...wordModel(s, {
-          kind: "sense",
-          id: c.item_id,
-          label: c.label,
-          role: c.fitzgerald_role,
-          art: c.art
-        }), hidden: true, slot });
-        continue;
-      }
-      if (c.item_kind === "entity") {
-        slots.push(wordModel(s, {
-          kind: "entity",
-          id: c.item_id,
-          label: c.label,
-          role: c.fitzgerald_role,
-          photoKey: c.photo_key
-        }));
-      } else {
-        const label = shownLabel(s, c.item_id, c.label);
-        slots.push(wordModel(s, {
-          kind: "sense",
-          id: c.item_id,
-          label,
-          role: c.fitzgerald_role,
-          art: c.art
-        }));
-      }
-      slots[slots.length - 1].slot = slot;
-    }
-    s.view = "group";
-    s.groupId = groupId;
-    s.page = page;
-    s.kbOpen = false;
-    return { cols: geom.cols, rows: geom.rows, groupId, name, page, pages, cells: slots };
-  }
-  function appShowBoard(appId) {
-    const s = S(appId);
-    s.view = "board";
-    s.groupId = null;
-    return appBoard(appId);
-  }
-  function revisitPrev(s, atIndex) {
-    if (!s.grammarHelp || atIndex < 1) return null;
-    const prev = s.sentence[atIndex - 1];
-    const cur = s.sentence[atIndex];
-    if (prev.kind === "entity" && cur?.kind === "sense" && cur.id && posOfSense(s, cur.id) === "Noun" && !prev.text.endsWith("'s")) {
-      prev.text = `${prev.text}'s`;
-      return { pos: atIndex - 1, text: prev.text };
-    }
-    if (prev.kind !== "sense" || !prev.id || prev.fixed) return null;
-    const f = PIP().forms.formFor(s.d, s.formTable, s.sentence.slice(0, atIndex - 1), prev.id, cur);
-    if (f.text === prev.text) return null;
-    prev.text = f.text;
-    prev.labelId = f.labelId;
-    prev.features = f.features;
-    if (s.sentenceId !== null) {
-      const pos = s.sentence.slice(0, atIndex - 1).filter((it) => it.id).length;
-      s.d.prepare(
-        "UPDATE learner_event_log SET label_id = ? WHERE sentence_id = ? AND position = ?"
-      ).run(f.labelId, s.sentenceId, pos);
-    }
-    return { pos: atIndex - 1, text: f.text };
-  }
-  var startFresh = (s, editing = false) => {
-    if (s.freshNext && !editing) s.sentence.length = 0;
-    s.freshNext = false;
-  };
-  var state = (s) => {
-    const board = boardModel(s);
-    return {
-      bar: barModel(s),
-      strip: stripModel(s),
-      board,
-      likely: PIP().lang.likelyIds(s, board),
-      typing: s.kbBuffer || null,
-      kb: s.kbOpen ? kbModel(s) : null,
-      controls: [...PIP().bar.barControls(s.d)],
-      tense: s.barState.tense,
-      question: s.barState.question
-    };
-  };
-  function appRepaint(appId) {
-    const s = S(appId);
-    applyProfile(s);
-    s.entRole.clear();
-    s.entPhoto.clear();
-    s.meta.clear();
-    return { ...state(s), settings: settingsModel(s) };
-  }
-  function appTap(appId, tap) {
-    const s = S(appId);
-    const { kind, id, text } = tap;
-    const source = tap.source ?? "grid";
-    s.expand = null;
-    startFresh(s);
-    if (source === "keyboard") {
-      s.kbBuffer = "";
-      s.kbPendingAccent = null;
-      s.kbLead = null;
-    }
-    let item = { kind, id, text };
-    if (kind === "sense" && id && s.grammarHelp) {
-      const f = PIP().forms.formFor(s.d, s.formTable, s.sentence, id);
-      item = {
-        kind: "sense",
-        id: f.senseId,
-        text: f.text ?? text,
-        labelId: f.labelId,
-        fixed: f.merged,
-        features: f.features
-      };
-    }
-    s.sentence.push(item);
-    PIP().txbar.noteBarEdit(s.barState);
-    revisitPrev(s, s.sentence.length - 1);
-    let speech = null;
-    if (id) {
-      ensureSentence(s);
-      PIP().funnel.fillChosen?.(s.d, s.sentenceId, { kind, id: item.id ?? id, source });
-      PIP().funnel.logSelection(s.d, kind, item.id ?? id, Date.now(), {
-        sentenceId: s.sentenceId,
-        position: s.picks++,
-        source,
-        spotlit: PIP().spot.childTap(`${kind}:${id}`),
-        // board.js attention.childTap (044 D5)
-        labelId: item.labelId ?? null,
-        groupId: s.view === "group" ? s.groupId : null
-      });
-      speech = PIP().voice.resolveSlot(s.d, item, s.locale, s.voiceId);
-    }
-    return { speech: afterTap(s, speech), ...state(s) };
-  }
-  function appBackspace(appId) {
-    const s = S(appId);
-    startFresh(s, true);
-    if (s.kbBuffer) {
-      s.kbBuffer = "";
-    } else {
-      const last = s.sentence.pop();
-      PIP().txbar.noteBarEdit(s.barState);
-      if (last?.id && s.sentenceId !== null && s.picks > 0) {
-        PIP().funnel.detachEvent(s.d, s.sentenceId, s.picks - 1);
-        s.picks--;
-      }
-    }
-    return { speech: null, ...state(s) };
-  }
-  function appClear(appId) {
-    const s = S(appId);
-    startFresh(s, true);
-    if (s.sentenceId !== null) {
-      PIP().funnel.closeSentence(s.d, s.sentenceId, Date.now(), "cleared");
-      s.sentenceId = null;
-      s.picks = 0;
-      s.lastImpressionKey = null;
-      s.openImpressionId = null;
-    }
-    s.sentence.length = 0;
-    s.kbBuffer = "";
-    s.kbPendingAccent = null;
-    s.kbLead = null;
-    PIP().txbar.noteBarEdit(s.barState);
-    return { speech: null, ...state(s) };
-  }
-  function prepareSpeak(s) {
-    if (s.grammarHelp && s.sentence.length) {
-      const last = s.sentence[s.sentence.length - 1];
-      if (last.kind === "sense" && last.id) {
-        const f = PIP().forms.formFor(
-          s.d,
-          s.formTable,
-          s.sentence.slice(0, -1),
-          last.id,
-          PIP().forms.EOS,
-          last.features
-        );
-        if (f.text !== last.text) {
-          last.text = f.text;
-          last.labelId = f.labelId;
-          last.features = f.features;
-          if (s.sentenceId !== null) {
-            const pos = s.sentence.slice(0, -1).filter((it) => it.id).length;
-            s.d.prepare(
-              "UPDATE learner_event_log SET label_id = ? WHERE sentence_id = ? AND position = ?"
-            ).run(f.labelId, s.sentenceId, pos);
-          }
-        }
-      }
-    }
-  }
-  function finishSpeak(s, feeling = null) {
-    if (s.sentenceId !== null) {
-      PIP().funnel.closeSentence(s.d, s.sentenceId, Date.now(), "spoken", feeling);
-      s.sentenceId = null;
-      s.picks = 0;
-      s.lastImpressionKey = null;
-      s.openImpressionId = null;
-    }
-    s.freshNext = s.freshAfterSpeak;
-  }
-  var barSlots = (s) => s.sentence.map((item) => PIP().voice.resolveSlot(s.d, item, s.locale, s.voiceId));
-  var appSpeakParts = { prepareSpeak, finishSpeak, barSlots, state, metaFor: (s, id) => metaFor(s, id) };
-  function afterTap(s, speech) {
-    return PIP().say.tapSpeech(s, speech);
-  }
-  function partnerInfo(s, senseId) {
-    const w = one4(
-      s.d,
-      `SELECT s.id, l.text AS label, s.fitzgerald_role AS role FROM sense s
-     JOIN label l ON l.sense_id = s.id
-       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
-     WHERE s.id = ?`,
-      [s.locale, senseId]
-    );
-    if (!w) return null;
-    return { id: w.id, label: w.label, role: w.role, art: metaFor(s, w.id).art };
-  }
-  function kbModel(s) {
-    const mapped = PIP().keyboard.keyMap(s.locale, s.kbOrder) ?? [];
-    const device = s.kbMode === "device" || !mapped.length;
-    const partners = PIP().keymaps.PARTNER_SENSES;
-    const keys3 = device ? partners.map((value, i) => ({ slot: 10 - partners.length + i, span: 1, kind: "partner", value })) : mapped;
-    return {
-      mode: device ? "device" : "pip",
-      keys: keys3.map((k) => {
-        const m = { slot: k.slot, span: k.span, kind: k.kind };
-        if (k.kind === "partner") {
-          const p = partnerInfo(s, k.value);
-          return p ? { ...m, senseId: p.id, label: p.label, role: p.role, art: p.art } : { ...m, kind: "empty" };
-        }
-        m.value = k.value;
-        if (k.kind === "dead" && s.kbPendingAccent === k.value) m.latched = true;
-        return m;
-      })
-    };
-  }
-  function buildKbIndex(s) {
-    const senses = all5(
-      s.d,
-      `SELECT s.id, l.text AS label, l.kind AS label_kind, s.fitzgerald_role,
-       (SELECT COUNT(*) FROM learner_event_log le
-         WHERE le.item_kind = 'sense' AND le.item_id = s.id) AS freq
-     FROM label l JOIN sense s ON s.id = l.sense_id
-     WHERE l.status = 'approved' AND l.locale = ?
-       AND NOT EXISTS (SELECT 1 FROM sense_mask m
-                       WHERE m.sense_id = s.id AND m.status = 'hidden')`,
-      [s.locale]
-    ).map((w) => ({
-      kind: "sense",
-      id: w.id,
-      text: w.label,
-      labelKind: w.label_kind,
-      freq: w.freq,
-      role: w.fitzgerald_role
-    }));
-    const ents = all5(
-      s.d,
-      `SELECT e.*,
-       (SELECT COUNT(*) FROM learner_event_log le
-         WHERE le.item_kind = 'entity' AND le.item_id = e.id) AS freq
-     FROM personal_entity e WHERE e.status = 'active'`
-    ).map((e) => ({
-      kind: "entity",
-      id: e.id,
-      text: e.spoken_name,
-      freq: e.freq,
-      entity: e
-    }));
-    return PIP().spelling.buildIndex([...senses, ...ents], s.locale);
-  }
-  function resolveTyped(s, text) {
-    const norm = PIP().normalize.normalizeV1(text);
-    const hit = all5(
-      s.d,
-      `SELECT s.id, l.text AS label, l.kind, l.id AS label_id
-     FROM label l JOIN sense s ON s.id = l.sense_id
-     WHERE l.normalized_text = ? AND l.locale = ? AND l.status = 'approved'
-     ORDER BY (l.kind = 'lemma') DESC, l.default_for_text DESC`,
-      [norm, s.locale]
-    )[0];
-    if (hit) return {
-      kind: "sense",
-      id: hit.id,
-      display: hit.kind === "lemma" ? hit.label : text,
-      formLabel: hit.kind === "form" ? { id: hit.label_id, text } : null
-    };
-    const ent = all5(
-      s.d,
-      "SELECT id, spoken_name FROM personal_entity WHERE status = 'active'"
-    ).find((e) => PIP().normalize.normalizeV1(e.spoken_name) === norm);
-    if (ent) return { kind: "entity", id: ent.id, display: ent.spoken_name };
-    return { kind: "typed", id: null, display: text };
-  }
-  function commitKbItem(s, index) {
-    const raw = s.sentence[index];
-    const hit = resolveTyped(s, raw.text);
-    let item = { kind: hit.kind, id: hit.id, text: hit.display };
-    if (hit.kind === "sense" && hit.id && s.grammarHelp) {
-      if (hit.formLabel) {
-        item = {
-          kind: "sense",
-          id: hit.id,
-          text: hit.formLabel.text,
-          labelId: hit.formLabel.id,
-          fixed: true
-        };
-      } else {
-        const f = PIP().forms.formFor(
-          s.d,
-          s.formTable,
-          s.sentence.slice(0, index),
-          hit.id
-        );
-        item = {
-          kind: "sense",
-          id: f.senseId,
-          text: f.text ?? item.text,
-          labelId: f.labelId,
-          fixed: !!f.merged,
-          features: f.features
-        };
-      }
-    }
-    if (raw.punct) item.punct = raw.punct;
-    if (raw.lead) item.lead = raw.lead;
-    s.sentence[index] = item;
-    if (item.kind === "typed") PIP().say?.tileEnsure(s, item.text, "user_keyboard");
-    const speech = PIP().voice.resolveSlot(s.d, item, s.locale, s.voiceId);
-    if (item.id) {
-      ensureSentence(s);
-      const position = s.picks++;
-      PIP().funnel.fillChosen?.(
-        s.d,
-        s.sentenceId,
-        { kind: item.kind, id: item.id, source: "keyboard" }
-      );
-      PIP().funnel.logSelection(s.d, item.kind, item.id, Date.now(), {
-        sentenceId: s.sentenceId,
-        position,
-        source: "keyboard",
-        spotlit: PIP().spot.childTap(`${item.kind}:${item.id}`),
-        labelId: item.labelId ?? null
-      });
-      revisitPrev(s, index);
-    }
-    return speech;
-  }
-  function appKbOpen(appId) {
-    const s = S(appId);
-    s.kbOpen = true;
-    s.kbIndex ?? (s.kbIndex = buildKbIndex(s));
-    return { speech: null, ...state(s) };
-  }
-  function appKbClose(appId) {
-    const s = S(appId);
-    s.kbOpen = false;
-    return { speech: null, ...state(s) };
-  }
-  function appKbPress(appId, key) {
-    const s = S(appId);
-    if (key !== "Enter") startFresh(s, key === "Backspace");
-    const prevLast = s.sentence[s.sentence.length - 1];
-    const res = PIP().keyboard.applyKey(
-      {
-        buffer: s.kbBuffer,
-        pendingAccent: s.kbPendingAccent,
-        lead: s.kbLead,
-        items: s.sentence
-      },
-      key,
-      s.locale
-    );
-    s.kbBuffer = res.state.buffer;
-    s.kbPendingAccent = res.state.pendingAccent;
-    s.kbLead = res.state.lead;
-    if (key === "Backspace" && res.state.items.length < s.sentence.length && prevLast?.id && s.sentenceId !== null && s.picks > 0) {
-      PIP().funnel.detachEvent(s.d, s.sentenceId, s.picks - 1);
-      s.picks--;
-      PIP().txbar.noteBarEdit(s.barState);
-    }
-    s.sentence.splice(0, s.sentence.length, ...res.state.items);
-    let speech = null;
-    for (const e of res.effects) {
-      if (e.type === "commit") {
-        speech = commitKbItem(s, e.index);
-        PIP().txbar.noteBarEdit(s.barState);
-      } else if (e.type === "speak") {
-        PIP().say.speakStart(s);
-      }
-    }
-    return { speech: afterTap(s, speech), ...state(s) };
-  }
-  var KB_DEV_TERM = /[\s.,!?¿¡]/;
-  function appKbDevice(appId, value) {
-    const s = S(appId);
-    const v = String(value ?? "");
-    if (v) startFresh(s);
-    let last = -1;
-    for (let i = 0; i < v.length; i++) if (KB_DEV_TERM.test(v[i])) last = i;
-    s.kbPendingAccent = null;
-    if (last < 0) {
-      s.kbBuffer = v;
-      return { rest: v, speech: null, ...state(s) };
-    }
-    const rest = v.slice(last + 1);
-    s.kbBuffer = "";
-    let speech = null;
-    for (const ch of v.slice(0, last + 1)) {
-      const r = appKbPress(appId, ch);
-      if (r.speech) speech = r.speech;
-    }
-    s.kbBuffer = rest;
-    return { rest, ...state(s), speech };
-  }
-  function appKbPartner(appId, senseId) {
-    const s = S(appId);
-    PIP().funnel.logSelection(s.d, "sense", senseId, Date.now(), {
-      sentenceId: s.sentenceId,
-      position: null,
-      source: "keyboard",
-      spotlit: PIP().spot.childTap(`sense:${senseId}`)
-    });
-    const speech = PIP().voice.resolveSlot(
-      s.d,
-      { kind: "sense", id: senseId },
-      s.locale,
-      s.voiceId
-    );
-    return { speech: afterTap(s, speech), ...state(s) };
-  }
-  function settingsModel(s) {
-    const p = one4(s.d, "SELECT * FROM learner_profile WHERE id = 'prf_local'") ?? {};
-    return {
-      grammarHelp: p.grammar_help !== 0,
-      freshAfterSpeak: !!p.fresh_after_speak,
-      expressiveVoice: p.expressive_voice !== 0,
-      groupTopRow: !!p.group_top_row,
-      occasionsVisible: p.occasions_visible !== 0,
-      shareResearch: p.share_research !== 0,
-      // Profile_Presentation_Modes § 2: 'symbol' (pictures and words) | 'label' (words only)
-      look: p.presentation_mode === "label" ? "label" : "symbol",
-      speechRate: p.speech_rate ?? "normal",
-      keyboardOrder: p.keyboard_order ?? "standard",
-      keyboardStandardName: PIP().keyboard.resolveKeymap(s.locale)?.standardName ?? "Standard",
-      keyboardMode: p.keyboard_mode === "device" ? "device" : "pip",
-      highlightNext: !!p.highlight_next,
-      spotPulse: p.spot_pulse === 1,
-      spotDim: p.spot_dim ?? 45,
-      modelSpeaks: p.model_speaks === 1,
-      boardLayout: p.board_layout ?? "grid60",
-      layouts: Object.keys(s.catalog.layouts ?? {}),
-      barControls: [...PIP().bar.barControls(s.d)],
-      barPresets: PIP().bar.BAR_PRESETS,
-      allControls: PIP().bar.BAR_CONTROLS,
-      controlNames: PIP().bar.BAR_NAMES
-    };
-  }
-  function appSettings(appId) {
-    return settingsModel(S(appId));
-  }
-  function appSetSetting(appId, key, value) {
-    const s = S(appId);
-    PIP().groups.setSetting(
-      s.d,
-      key,
-      Array.isArray(value) ? JSON.stringify(value) : value
-    );
-    const p = applyProfile(s);
-    if (key === "share_research" && value) report(s.d);
-    return {
-      speechRate: SPEECH_RATES[p.speech_rate] ?? 1,
-      settings: settingsModel(s),
-      ...state(s)
-    };
-  }
-
-  // scripts/ios/app_edit.mjs
-  var app_edit_exports = {};
-  __export(app_edit_exports, {
-    boardDrop: () => boardDrop,
-    cardOpen: () => cardOpen,
-    cardRemove: () => cardRemove,
-    cardRename: () => cardRename,
-    cardSpeech: () => cardSpeech,
-    cardToggleHidden: () => cardToggleHidden,
-    editCardModel: () => cardModel,
-    editClose: () => editClose,
-    editInvalidate: () => invalidate,
-    editOpen: () => editOpen,
-    editPaint: () => paint,
-    editState: () => editState,
-    editToastWith: () => toastWith,
-    editUndo: () => editUndo,
-    groupDrop: () => groupDrop,
-    leaveGroup: () => leaveGroup,
-    testSeedPerson: () => testSeedPerson
-  });
-
-  // scripts/ios/app_media.mjs
-  var app_media_exports = {};
-  __export(app_media_exports, {
-    cardSetPhoto: () => cardSetPhoto,
-    cardUseOurPicture: () => cardUseOurPicture,
-    mediaFor: () => mediaFor,
-    personPhoto: () => personPhoto,
-    personPhotoSet: () => personPhotoSet,
-    voiceChoose: () => voiceChoose,
-    voiceSave: () => voiceSave
-  });
-  var PIP2 = () => globalThis.PIPCORE;
-  var one5 = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
-  var BLOB_KEY = /^blob:[0-9a-f]{64}$/;
-  function voiceTarget(s, kind, id) {
-    if (kind === "entity") {
-      const e = one5(s.d, "SELECT spoken_name FROM personal_entity WHERE id = ?", [id]);
-      return e ? { itemKind: "entity", itemId: id, text: e.spoken_name } : null;
-    }
-    const l = one5(
-      s.d,
-      `SELECT l.utterance_id, u.spoken_text FROM label l
-     JOIN utterance u ON u.id = l.utterance_id
-     WHERE l.sense_id = ? AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?`,
-      [id, s.locale]
-    );
-    return l ? { itemKind: "utterance", itemId: l.utterance_id, text: l.spoken_text } : null;
-  }
-  function mediaFor(s, kind, id) {
-    const t = voiceTarget(s, kind, id);
-    const rec = t ? PIP2().voice.latestRecording(s.d, t.itemKind, t.itemId, t.text) : null;
-    const mine = t ? !!PIP2().voice.overrideFor(s.d, t.itemKind, t.itemId) : false;
-    const ovr = kind === "sense" ? PIP2().images.imageOverrideFor(s.d, id) : null;
-    return {
-      // "Use our picture": only a catalog word's family photo can retire.
-      canUseOurs: !!ovr?.photo_key,
-      voice: t ? {
-        name: one5(s.d, "SELECT display_name AS n FROM voice WHERE id = ?", [s.voiceId])?.n ?? "Pip",
-        text: t.text,
-        hasRecording: !!rec,
-        mineOn: mine
-      } : null
-    };
-  }
-  var forget = (s, kind, id) => {
-    if (kind === "entity") s.entPhoto.delete(id);
-    else s.meta.delete(id);
-    PIP2().edit.editInvalidate(s);
-  };
-  var repaint = (appId, kind, id, extra = {}) => ({
-    ...PIP2().edit.cardOpen(appId, { kind, id }),
-    ...extra
-  });
-  function cardSetPhoto(appId, { kind, id, key }) {
-    const s = appSession(appId);
-    if (!BLOB_KEY.test(key)) throw new Error("cardSetPhoto: not a blob key");
-    if (kind === "entity") PIP2().groups.setEntityPhoto(s.d, id, key);
-    else PIP2().images.setImageOverride(s.d, { senseId: id, photoKey: key });
-    PIP2().mediasync.queueUpload(key);
-    forget(s, kind, id);
-    PIP2().pics.afterPhoto(appId, { kind, id, key });
-    return repaint(appId, kind, id);
-  }
-  function cardUseOurPicture(appId, { id }) {
-    const s = appSession(appId);
-    PIP2().images.clearImageOverride(s.d, id);
-    forget(s, "sense", id);
-    return repaint(appId, "sense", id);
-  }
-  function voiceSave(appId, { kind, id, key }) {
-    const s = appSession(appId);
-    const t = voiceTarget(s, kind, id);
-    if (!t) return repaint(appId, kind, id);
-    if (!BLOB_KEY.test(key)) throw new Error("voiceSave: not a blob key");
-    const before = PIP2().voice.overrideFor(s.d, t.itemKind, t.itemId)?.key ?? null;
-    PIP2().voice.setOverride(s.d, { itemKind: t.itemKind, itemId: t.itemId, key, recordedText: t.text });
-    PIP2().mediasync.queueUpload(key);
-    const toast2 = PIP2().edit.editToastWith(s, `Your voice plays for \u201C${t.text}\u201D`, () => {
-      if (before) {
-        PIP2().voice.setOverride(s.d, {
-          itemKind: t.itemKind,
-          itemId: t.itemId,
-          key: before,
-          recordedText: t.text
-        });
-      } else {
-        PIP2().voice.clearOverride(s.d, t.itemKind, t.itemId);
-      }
-      return PIP2().edit.cardOpen(appId, { kind, id });
-    });
-    return repaint(appId, kind, id, { toast: toast2 });
-  }
-  function voiceChoose(appId, { kind, id, mine }) {
-    const s = appSession(appId);
-    const t = voiceTarget(s, kind, id);
-    if (!t) return repaint(appId, kind, id);
-    if (!mine) {
-      PIP2().voice.clearOverride(s.d, t.itemKind, t.itemId);
-    } else {
-      const r = PIP2().voice.latestRecording(s.d, t.itemKind, t.itemId, t.text);
-      if (r && !PIP2().voice.overrideFor(s.d, t.itemKind, t.itemId)) {
-        PIP2().voice.setOverride(s.d, {
-          itemKind: t.itemKind,
-          itemId: t.itemId,
-          key: r.key,
-          recordedText: t.text
-        });
-      }
-    }
-    return repaint(appId, kind, id);
-  }
-  function personPhotoSet(appId, { key }) {
-    const s = appSession(appId);
-    if (key !== null && !BLOB_KEY.test(key)) throw new Error("personPhotoSet: not a blob key");
-    PIP2().personName.setProfilePhoto(s.d, key);
-    if (key) PIP2().mediasync.queueUpload(key);
-    return { photo: PIP2().personName.profilePhoto(s.d) };
-  }
-  function personPhoto(appId) {
-    return { photo: PIP2().personName.profilePhoto(appSession(appId).d) };
-  }
-
-  // public/board/group-glyph.js
-  var GROUP_ICONS = {
-    grp_people: "/icons/groups/people.svg",
-    grp_my_words: "/icons/groups/my_words.svg",
-    grp_social: "/icons/groups/social.svg",
-    grp_numbers: "/icons/groups/numbers.svg",
-    grp_time: "/icons/groups/time.svg",
-    grp_home: "/icons/groups/home.svg",
-    grp_animals: "/icons/groups/animals.svg",
-    grp_body: "/icons/groups/body.svg",
-    grp_feelings: "/icons/groups/feelings.svg",
-    grp_clothes: "/icons/groups/clothes.svg",
-    grp_play: "/icons/groups/play.svg",
-    grp_drinks: "/icons/groups/drinks.svg",
-    grp_little_words: "/icons/groups/little_words.svg",
-    grp_more_people: "/icons/groups/more_people.svg",
-    grp_more_doing: "/icons/groups/more_doing.svg",
-    grp_more_where: "/icons/groups/more_where.svg",
-    grp_more_describing: "/icons/groups/more_describing.svg",
-    grp_more_people_thirty: "/icons/groups/more_people.svg",
-    grp_more_doing_thirty: "/icons/groups/more_doing.svg",
-    grp_more_where_thirty: "/icons/groups/more_where.svg",
-    grp_more_describing_thirty: "/icons/groups/more_describing.svg",
-    grp_going_out: "/icons/groups/places.svg",
-    grp_senses: "/icons/groups/actions.svg",
-    grp_colors: "/icons/groups/describing.svg",
-    grp_who_which: "/icons/question.svg",
-    grp_breakfast: "/icons/groups/breakfast.svg",
-    grp_lunch: "/icons/groups/lunch.svg",
-    grp_dinner: "/icons/groups/food.svg",
-    grp_snack: "/icons/groups/snack.svg",
-    grp_treats: "/icons/groups/treats.svg",
-    grp_fruit: "/icons/groups/fruit.svg",
-    grp_things: "/icons/groups/things.svg",
-    grp_describing: "/icons/groups/shapes.svg",
-    grp_outside: "/icons/groups/outside.svg",
-    grp_school: "/icons/groups/school.svg",
-    grp_art_music: "/icons/groups/art_music.svg",
-    grp_bathroom: "/icons/groups/bathroom.svg",
-    grp_screens: "/icons/groups/screens.svg",
-    grp_weather: "/icons/groups/weather.svg"
-  };
-
-  // public/shared/pictures.mjs
-  function pictureAction(found) {
-    if (!found) return { kind: "none" };
-    const candidates = Array.isArray(found.candidates) ? found.candidates : [];
-    if (found.auto) {
-      const pick2 = candidates.find((c) => c.image_id === found.auto);
-      if (pick2) {
-        return {
-          kind: "apply",
-          picture: pick2,
-          others: candidates.filter((c) => c.image_id !== found.auto).slice(0, 3)
-        };
-      }
-    }
-    if (found.suggestion) {
-      return {
-        kind: "choose",
-        suggestion: found.suggestion,
-        others: candidates.slice(0, 4),
-        personal: false
-      };
-    }
-    if (found.scope === "common" && found.calibrated) {
-      return { kind: "draw", others: candidates.slice(0, 3) };
-    }
-    if (candidates.length) {
-      return { kind: "choose", others: candidates.slice(0, 4), personal: found.scope === "personal" };
-    }
-    return { kind: "none", personal: found.scope === "personal" };
-  }
-  var roleForKind = (kind) => ["None", "Yellow", "Green", "Blue", "Pink", "Purple", "Red"].includes(kind) ? kind : null;
-  var needsDraw = (found) => pictureAction(found).kind === "draw";
-  var shouldConfirmDraws = (count, left) => count > 10 || typeof left === "number" && count > left;
-  var failReason = (status, body) => {
-    if (status === 402) return "allowance";
-    if (status === 422) return "unsafe";
-    if (status === 429) return "fair_use";
-    if (status === 400) return body?.error === "bad_description" ? "needs_description" : "bad_text";
-    if (status === 403) return "denied";
-    return "unavailable";
-  };
-  var DRAW_STAGE_LABELS = {
-    checking: "Checking our pictures\u2026",
-    reading: "Reading the word\u2026",
-    planning: "Planning the picture\u2026",
-    planned: "Planning the picture\u2026",
-    drawing: "Drawing the picture\u2026",
-    saving: "Saving the picture\u2026",
-    waiting: "Waiting on another drawing\u2026",
-    serving: "Serving your picture\u2026"
-  };
-  var b64ToBlob = (b642) => {
-    const bin = atob(b642);
-    const bytes2 = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) bytes2[i] = bin.charCodeAt(i);
-    return new Blob([bytes2], { type: "image/png" });
-  };
-  async function readDrawStream(res, onStage) {
-    const reader = res.body.getReader();
-    const dec = new TextDecoder();
-    let buf = "";
-    let result = { ok: false, reason: "unavailable" };
-    for (; ; ) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buf += dec.decode(value, { stream: true });
-      let i;
-      while ((i = buf.indexOf("\n\n")) >= 0) {
-        const block = buf.slice(0, i);
-        buf = buf.slice(i + 2);
-        for (const line of block.split("\n")) {
-          if (!line.startsWith("data: ")) continue;
-          let ev;
-          try {
-            ev = JSON.parse(line.slice(6));
-          } catch {
-            continue;
-          }
-          if (ev.type === "stage") onStage?.(ev.stage, ev);
-          else if (ev.type === "done") {
-            result = {
-              ok: true,
-              blob: b64ToBlob(ev.image),
-              imageId: ev.key ? `drw_${ev.key}` : null,
-              cache: ev.cache ?? "mint",
-              left: ev.left ?? null
-            };
-          } else if (ev.type === "error") {
-            result = { ok: false, reason: failReason(ev.status, ev), left: ev.left ?? null };
-          }
-        }
-      }
-    }
-    return result;
-  }
-  function pictureClient({ base = "", fetchFn = (...a) => fetch(...a) } = {}) {
-    const post2 = async (path, body) => {
-      const res = await fetchFn(`${base}${path}`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(body)
-      });
-      return res;
-    };
-    async function find2({ userId, license, text, description = null, locale }) {
-      if (!userId) return { error: "unavailable" };
-      try {
-        const res = await post2(
-          "/api/v1/pictures/find",
-          { user_id: userId, license, text, description, locale }
-        );
-        if (!res.ok) return { error: failReason(res.status, await res.json().catch(() => null)) };
-        return await res.json();
-      } catch {
-        return { error: "offline" };
-      }
-    }
-    async function findBatch({ userId, license, items, locale }) {
-      if (!userId || !items.length) return { error: "unavailable" };
-      try {
-        const res = await post2(
-          "/api/v1/pictures/find-batch",
-          { user_id: userId, license, items, locale }
-        );
-        if (!res.ok) return { error: failReason(res.status, await res.json().catch(() => null)) };
-        return await res.json();
-      } catch {
-        return { error: "offline" };
-      }
-    }
-    async function draw2({ userId, license, text, description = null, locale, onStage }) {
-      if (!userId) return { ok: false, reason: "unavailable" };
-      try {
-        const res = await fetchFn(`${base}/api/v1/pictures/draw`, {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-            accept: "text/event-stream"
-          },
-          body: JSON.stringify({ user_id: userId, license, text, description, locale })
-        });
-        if (!res.ok) {
-          const body = await res.json().catch(() => null);
-          return { ok: false, reason: failReason(res.status, body), left: body?.left ?? null };
-        }
-        if (res.headers.get("content-type")?.includes("text/event-stream")) {
-          return await readDrawStream(res, onStage);
-        }
-        const key = res.headers.get("x-draw-key");
-        const left = res.headers.get("x-drawings-left");
-        return {
-          ok: true,
-          blob: await res.blob(),
-          imageId: key ? `drw_${key}` : null,
-          cache: res.headers.get("x-draw-cache") ?? "mint",
-          left: left == null ? null : Number(left)
-        };
-      } catch {
-        return { ok: false, reason: "offline" };
-      }
-    }
-    async function pick2({ userId, license, text, description = null, imageId }) {
-      if (!userId || !imageId) return false;
-      const res = await post2(
-        "/api/v1/pictures/pick",
-        { user_id: userId, license, text, description, image_id: imageId }
-      ).catch(() => null);
-      return res?.status === 204;
-    }
-    async function reject({ userId, license, text, description = null, ours, action, theirs = null }) {
-      if (!userId || !ours) return false;
-      const body = { user_id: userId, license, text, description, ours, action };
-      if (action !== "photo" && theirs) body.theirs = theirs;
-      const res = await post2("/api/v1/pictures/reject", body).catch(() => null);
-      return res?.status === 204;
-    }
-    async function allowance({ userId, license }) {
-      if (!userId) return null;
-      try {
-        const res = await fetchFn(`${base}/api/v1/pictures/allowance`, {
-          headers: { "x-pip-user": userId, "x-pip-license": license ?? "" }
-        });
-        return res.ok ? await res.json() : null;
-      } catch {
-        return null;
-      }
-    }
-    async function imageBlob({ userId, license, asset }) {
-      if (!asset) return null;
-      try {
-        const gated = asset.startsWith("/api/v1/pictures/img/");
-        const res = await fetchFn(`${base}${asset}`, gated ? { headers: { "x-pip-user": userId, "x-pip-license": license ?? "" } } : void 0);
-        return res.ok ? await res.blob() : null;
-      } catch {
-        return null;
-      }
-    }
-    return { find: find2, findBatch, draw: draw2, pick: pick2, reject, allowance, imageBlob };
-  }
-
-  // public/board/word-card-pictures.js
-  function pictureLine({ phase, act: act2, error, name, drawn, step } = {}) {
-    if (phase === "finding") return "Finding a picture\u2026";
-    if (phase === "drawing") return DRAW_STAGE_LABELS[step] ?? "Drawing\u2026";
-    if (error === "offline" || error === "unavailable" || error === "fair_use") {
-      return "We'll find a picture when you're back online.";
-    }
-    if (error === "allowance") return "No drawings left. Add a photo, or pick one of ours.";
-    if (error === "unsafe") return "We can't draw that. Try other words, or add a photo.";
-    if (error === "needs_description") return "Tell us what it should show first.";
-    if (error) return "Couldn't make a picture. Try again, or add a photo.";
-    if (drawn?.cache === "mint" && typeof drawn.left === "number") {
-      return `Drawn for you \xB7 ${drawn.left} drawing${drawn.left === 1 ? "" : "s"} left`;
-    }
-    if (!act2 || act2.kind === "apply" || act2.kind === "draw") return "";
-    if (act2.personal) return `Add a photo of ${name}, or use one of ours.`;
-    return act2.others?.length ? "Pick one of ours, or draw one." : "Draw one, or add a photo.";
-  }
-
-  // public/board/word-card.js
-  var KINDS2 = [
-    ["None", "Thing"],
-    ["Yellow", "Person"],
-    ["Green", "Action"],
-    ["Blue", "Describing word"],
-    ["Pink", "Little word"],
-    ["Purple", "Question word"],
-    ["Red", "Safety word"]
-  ];
-
-  // scripts/ios/app_edit.mjs
-  var PIP3 = () => globalThis.PIPCORE;
-  var one6 = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
-  function withCounts(s, board) {
-    if (!s.editing || !s.countsOn) return board;
-    const counts = PIP3().usecounts.useCounts(s.d);
-    return {
-      ...board,
-      cells: board.cells.map((c) => c.type === "word" ? { ...c, count: counts.get(`${c.kind}:${c.id}`) ?? 0 } : c)
-    };
-  }
-  function paint(appId, extra = {}) {
-    const s = appSession(appId);
-    const group = s.view === "group" && s.groupId !== null;
-    return {
-      editing: !!s.editing,
-      countsOn: !!s.countsOn && !!s.editing,
-      surface: group ? "group" : "board",
-      board: withCounts(s, appBoard(appId)),
-      groupPage: group ? appGroupPage(appId, s.groupId, s.page) : null,
-      card: null,
-      toast: null,
-      ...extra
-    };
-  }
-  function cardModel(s, kind, id, opts = {}) {
-    const d = s.d;
-    const layout = PIP3().groups_shared.activeLayout(d);
-    let base;
-    if (kind === "entity") {
-      const e = one6(
-        d,
-        `SELECT id, spoken_name, fitzgerald_role, photo_key FROM personal_entity
-       WHERE id = ? AND status = 'active'`,
-        [id]
-      );
-      if (!e) return null;
-      base = {
-        label: e.spoken_name,
-        role: e.fitzgerald_role ?? "None",
-        art: null,
-        photoKey: e.photo_key
-      };
-    } else {
-      const row2 = one6(
-        d,
-        `SELECT l.text AS label FROM sense s JOIN label l ON l.sense_id = s.id
-         AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
-       WHERE s.id = ?`,
-        [s.locale, id]
-      );
-      if (!row2) return null;
-      const m = appMeta(s, id);
-      base = { label: row2.label, role: m.role ?? "None", art: m.art, photoKey: null };
-    }
-    const isEnt = kind === "entity";
-    const homes = isEnt ? PIP3().groups.entityGroups(d, id, s.locale) : PIP3().groups.senseGroups(d, id, s.locale);
-    return {
-      kind,
-      id,
-      ...base,
-      media: mediaFor(s, kind, id),
-      isEntity: isEnt,
-      canRename: isEnt,
-      canHide: !isEnt,
-      canRemove: isEnt,
-      hidden: !isEnt && PIP3().groups.maskedSenseIds(d).has(id),
-      hint: isEnt ? "Tap the name to change it" : "Tap the word to hear it",
-      onMainBoard: PIP3().coremove.cellSlot(d, appGeom(s).name, kind, id) !== null,
-      // Colour row (word-card.js paintKind): personal words only.
-      canColour: isEnt,
-      kindName: KINDS2.find(([r]) => r === base.role)?.[1] ?? "Thing",
-      kinds: isEnt ? KINDS2.map(([r, label]) => ({ role: r, label, selected: r === base.role })) : [],
-      // "Sounds wrong" (word-card.js paintVoice): personal names on a shared board voice.
-      canFlag: isEnt && one6(d, "SELECT source AS s FROM voice WHERE id = ?", [s.voiceId])?.s !== "device_tts",
-      // Swap (editor-ui.js showCard): only where the word holds a cell, and
-      // only when the card was opened from the board (opts.swap).
-      swap: opts.swap ? swapContext(s, kind, id) : null,
-      groups: homes.filter((g2) => PIP3().groups_shared.shownOn(d, g2.id, layout)).map((g2) => ({ id: g2.id, name: g2.name }))
-    };
-  }
-  function swapContext(s, kind, id) {
-    const d = s.d;
-    if (s.view === "group" && s.groupId !== null) {
-      const cell = one6(
-        d,
-        `SELECT page, slot_index FROM group_cell
-       WHERE group_id = ? AND layout = ? AND item_kind = ? AND item_id = ?`,
-        [s.groupId, PIP3().groups_shared.activeLayout(d), kind, id]
-      );
-      return cell ? { where: "group", groupId: s.groupId, page: cell.page, slot: cell.slot_index } : null;
-    }
-    const slot = PIP3().coremove.cellSlot(d, appGeom(s).name, kind, id);
-    return slot === null ? null : { where: "main", slot };
-  }
-  function toastWith(s, text, undo) {
-    if (!undo) return { text };
-    s.editUndo ?? (s.editUndo = /* @__PURE__ */ new Map());
-    s.editUndoSeq = (s.editUndoSeq ?? 0) + 1;
-    const token = `u${s.editUndoSeq}`;
-    s.editUndo.set(token, undo);
-    if (s.editUndo.size > 20) s.editUndo.delete(s.editUndo.keys().next().value);
-    return { text, undo: token };
-  }
-  var invalidate = (s) => {
-    s.kbIndex = null;
-  };
-  function editOpen(appId) {
-    const s = appSession(appId);
-    s.editing = true;
-    s.expand = null;
-    s.kbOpen = false;
-    return paint(appId);
-  }
-  function editClose(appId) {
-    const s = appSession(appId);
-    s.editing = false;
-    s.countsOn = false;
-    invalidate(s);
-    return paint(appId);
-  }
-  function editState(appId) {
-    return paint(appId);
-  }
-  function cardOpen(appId, { kind, id, swap = false }) {
-    const s = appSession(appId);
-    return paint(appId, { card: cardModel(s, kind, id, { swap }) });
-  }
-  function cardSpeech(appId, { kind, id, text }) {
-    const s = appSession(appId);
-    return { speech: PIP3().voice.resolveSlot(s.d, { kind, id, text }, s.locale, s.voiceId) };
-  }
-  function cardRename(appId, { kind, id, name }) {
-    const s = appSession(appId);
-    const card2 = cardModel(s, kind, id);
-    if (!card2 || !card2.canRename) return paint(appId, { card: card2 });
-    const next = String(name ?? "").replace(/\s+/g, " ").trim();
-    if (!next || next === card2.label) return paint(appId, { card: card2 });
-    PIP3().groups.renameEntity(s.d, id, next);
-    s.entRole.delete(id);
-    invalidate(s);
-    return paint(appId, { card: cardModel(s, kind, id) });
-  }
-  function cardToggleHidden(appId, { id }) {
-    const s = appSession(appId);
-    const card2 = cardModel(s, "sense", id);
-    if (!card2) return paint(appId);
-    const hidden = !PIP3().groups.maskedSenseIds(s.d).has(id);
-    PIP3().groups.setMask(s.d, id, hidden);
-    invalidate(s);
-    return paint(appId, {
-      toast: toastWith(s, hidden ? `Hid ${card2.label}` : `Showing ${card2.label}`)
-    });
-  }
-  function cardRemove(appId, { id }) {
-    const s = appSession(appId);
-    const card2 = cardModel(s, "entity", id);
-    if (!card2) return paint(appId);
-    PIP3().groups.retireEntity(s.d, id);
-    s.entRole.delete(id);
-    invalidate(s);
-    return paint(appId, {
-      toast: toastWith(s, `Removed ${card2.label}`, () => {
-        PIP3().groups.restoreEntity(s.d, id);
-        invalidate(s);
-        return paint(appId);
-      })
-    });
-  }
-  function leaveGroup(appId, { kind, id, groupId, label, fromCard = false }) {
-    const s = appSession(appId);
-    const row2 = one6(s.d, "SELECT * FROM board_group WHERE id = ?", [groupId]);
-    const gname = row2 ? PIP3().groups.groupDisplayName(s.d, row2, s.locale) : "";
-    const undo = PIP3().groupsOps.removeItemUndoable(s.d, groupId, kind, id);
-    const word = label ?? cardModel(s, kind, id)?.label ?? "";
-    return paint(appId, {
-      card: fromCard ? cardModel(s, kind, id) : null,
-      toast: toastWith(s, `Removed from ${gname}`, () => {
-        const { moved } = undo.undo();
-        return paint(appId, {
-          card: fromCard ? cardModel(s, kind, id) : null,
-          toast: moved ? toastWith(s, fromCard ? `${word} is back in ${gname} \u2014 its cell was taken, so it moved` : `${word} is back \u2014 its cell was taken, so it moved`) : null
-        });
-      })
-    });
-  }
-  function editUndo(appId, { token }) {
-    const s = appSession(appId);
-    const run = s.editUndo?.get(token);
-    if (!run) return paint(appId);
-    s.editUndo.delete(token);
-    return run();
-  }
-  function boardDrop(appId, { kind, id, toSlot, label }) {
-    const s = appSession(appId);
-    const geom = appGeom(s);
-    const opts = { anchors: new Set(geom.anchors.keys()) };
-    const back = (to) => kind === "sense" ? PIP3().coremove.moveCore(s.d, geom.name, id, to) : PIP3().coremove.placeOnBoard(s.d, geom.name, "entity", id, to);
-    const mv = kind === "sense" ? PIP3().coremove.moveCore(s.d, geom.name, id, toSlot, opts) : PIP3().coremove.placeOnBoard(s.d, geom.name, "entity", id, toSlot, opts);
-    if (!mv) return paint(appId);
-    const word = label ?? cardModel(s, kind, id)?.label ?? "";
-    return paint(appId, {
-      toast: toastWith(s, `Moved ${word}`, () => {
-        back(mv.from);
-        return paint(appId);
-      })
-    });
-  }
-  function groupDrop(appId, { groupId, kind, id, toSlot }) {
-    const s = appSession(appId);
-    const layout = PIP3().groups_shared.activeLayout(s.d);
-    const page = s.page;
-    const here = PIP3().groups.groupPage(s.d, groupId, page, s.locale, layout);
-    const target = here.find((r) => r.slot_index === toSlot);
-    if (target) {
-      if (target.item_kind === kind && target.item_id === id) return paint(appId);
-      PIP3().groupsOps.swapItems(
-        s.d,
-        groupId,
-        { item_kind: kind, item_id: id },
-        { item_kind: target.item_kind, item_id: target.item_id },
-        layout
-      );
-    } else if (PIP3().groups_shared.geometryOf(s.d, layout).content.includes(toSlot)) {
-      PIP3().groupsOps.moveItem(s.d, groupId, kind, id, page, toSlot, layout);
-    }
-    return paint(appId);
-  }
-  function testSeedPerson(appId, { name }) {
-    const s = appSession(appId);
-    const { id } = PIP3().groups.createEntity(s.d, { name, role: "Yellow" });
-    PIP3().coremove.seatSetupPeople(s.d, [id], s.locale);
-    invalidate(s);
-    return { id, ...paint(appId) };
-  }
-
-  // scripts/ios/app_library.mjs
-  var app_library_exports = {};
-  __export(app_library_exports, {
-    addMake: () => addMake,
-    addMakeGroup: () => addMakeGroup,
-    addPlace: () => addPlace,
-    addState: () => addState,
-    libraryState: () => libraryState,
-    otherGroups: () => otherGroups,
-    otherGroupsSave: () => otherGroupsSave,
-    placeList: () => placeList,
-    placePick: () => placePick,
-    placeUniFor: () => kidsUni
-  });
-  var PIP4 = () => globalThis.PIPCORE;
-  var one7 = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
-  var fold = (s) => PIP4().normalize.normalizeV1(s).replace(/[\s\-‐-―]+/g, "");
-  var ownLeft = (s) => s.licensed ? Infinity : Math.max(0, PIP4().groups.OWN_WORDS_FREE - PIP4().groups.liveOwnWords(s.d));
-  function groupName(s, id, fallback = "") {
-    const row2 = one7(s.d, "SELECT id, name FROM board_group WHERE id = ?", [id]);
-    return row2 ? PIP4().groups.groupDisplayName(s.d, row2, s.locale) : fallback;
-  }
-  var noteRecent = (s, id) => {
-    s.addRecent = [id, ...(s.addRecent ?? []).filter((x) => x !== id)].slice(0, 3);
-  };
-  var seedCategory = (s, groupId) => s.catalog.groups?.find((g2) => g2.id === groupId)?.category ?? null;
-  function matchRows(s, groupId, text) {
-    const d = s.d;
-    const seed = seedCategory(s, groupId);
-    const want2 = fold(text);
-    const here = new Set(
-      d.prepare("SELECT item_kind || ':' || item_id AS k FROM group_membership WHERE group_id = ?").all(groupId).map((r) => r.k)
-    );
-    const destName = groupName(s, groupId, "My Words");
-    const rows = [];
-    let exact = -1;
-    for (const m of PIP4().groups.entityMatches(d, text, "__any__", s.locale, seed)) {
-      const isHere = here.has(`entity:${m.id}`);
-      rows.push({
-        key: `entity:${m.id}`,
-        kind: "entity",
-        id: m.id,
-        label: m.name,
-        role: m.fitzgerald_role ?? "None",
-        art: null,
-        photoKey: m.photo_key ?? null,
-        sub: isHere ? `Already in ${destName}` : m.groups.length ? `In ${m.groups.join(", ")}` : "Your word",
-        action: isHere ? "Open" : "Add",
-        here: isHere
-      });
-      if (exact < 0 && fold(m.name) === want2) exact = rows.length - 1;
-    }
-    const seen = /* @__PURE__ */ new Set();
-    const cat = [...PIP4().groups.catalogMatches(d, text, "__any__", s.locale, seed)];
-    if (want2 !== PIP4().normalize.normalizeV1(text)) {
-      cat.push(...PIP4().groups.catalogMatches(d, want2, "__any__", s.locale, seed));
-    }
-    for (const m of cat) {
-      if (seen.has(m.id)) continue;
-      seen.add(m.id);
-      const isHere = here.has(`sense:${m.id}`);
-      rows.push({
-        key: `sense:${m.id}`,
-        kind: "sense",
-        id: m.id,
-        label: m.label,
-        role: m.fitzgerald_role ?? "None",
-        art: m.art ?? null,
-        photoKey: null,
-        sub: isHere ? `Already in ${destName}` : "Our picture and voice",
-        action: isHere ? "Open" : "Add",
-        here: isHere
-      });
-      if (exact < 0 && fold(m.label) === want2) exact = rows.length - 1;
-    }
-    const capped = ownLeft(s) <= 0;
-    rows.push({
-      key: "make",
-      kind: "make",
-      id: null,
-      label: `\u201C${text}\u201D`,
-      role: "None",
-      art: null,
-      photoKey: null,
-      sub: capped ? `Your ${PIP4().groups.OWN_WORDS_FREE} free words are used` : "New word \u2014 picture and voice made for you",
-      action: capped ? "See Pip Lifetime" : "Make",
-      here: false,
-      capped
-    });
-    const hi = exact >= 0 ? exact : rows.length - 1;
-    return rows.map((r, i) => ({ ...r, highlighted: i === hi }));
-  }
-  function countLine(s) {
-    const n = PIP4().groups.liveOwnWords(s.d);
-    const cap = PIP4().groups.OWN_WORDS_FREE;
-    return {
-      hidden: !!s.licensed,
-      text: n >= cap ? `All ${cap} free words used \u2014 Pip Lifetime adds unlimited.` : `${n} of ${cap} free words`
-    };
-  }
-  function groupPicker(s, target, q) {
-    const norm = PIP4().normalize.normalizeV1(q ?? "");
-    const groups = PIP4().groups_shared.groupIndex(s.d).filter((g2) => !g2.hidden).map((g2) => ({
-      id: g2.id,
-      name: PIP4().groups.groupDisplayName(s.d, g2, s.locale),
-      glyph: g2.glyph ?? null,
-      selected: g2.id === target
-    }));
-    const recent = norm ? [] : (s.addRecent ?? []).map((id) => groups.find((g2) => g2.id === id)).filter(Boolean);
-    const all7 = groups.filter((g2) => !norm || PIP4().normalize.normalizeV1(g2.name).includes(norm));
-    const typed = String(q ?? "").trim();
-    const canMake = !!norm && all7.length === 0;
-    return {
-      recent,
-      all: all7,
-      make: { canMake, label: canMake ? `Make a group called \u201C${typed}\u201D` : "New group", name: typed }
-    };
-  }
-  function addState(appId, { groupId = null, cell = null, text = "", picker = null }) {
-    const s = appSession(appId);
-    const target = groupId ?? "grp_my_words";
-    const t = String(text ?? "").trim();
-    return {
-      title: "Add a word",
-      target: { id: target, name: groupName(s, target, "My Words") },
-      cell,
-      count: countLine(s),
-      matches: t ? matchRows(s, target, t) : [],
-      picker: picker === null ? null : groupPicker(s, target, picker)
-    };
-  }
-  function addMakeGroup(appId, { name }) {
-    const s = appSession(appId);
-    const clean = String(name ?? "").trim().replace(/\s+/g, " ");
-    if (!clean) return { groupId: null };
-    const { id } = PIP4().groups.createGroup(s.d, { name: clean });
-    invalidate(s);
-    return { groupId: id, toast: { text: `New group \u201C${clean}\u201D \u2014 its door is in Groups` } };
-  }
-  function addPlace(appId, { groupId, cell = null, kind, id, label }) {
-    const s = appSession(appId);
-    try {
-      PIP4().groupsOps.placeItem(s.d, groupId, kind, id, cell);
-    } catch (e) {
-      return paint(appId, { toast: { text: "That cell is taken \u2014 pick another" } });
-    }
-    noteRecent(s, groupId);
-    invalidate(s);
-    return paint(appId, {
-      toast: {
-        text: `Added ${label}`,
-        actionLabel: "Add to other groups",
-        other: { kind, id, label }
-      }
-    });
-  }
-  function addMake(appId, { groupId, cell = null, text }) {
-    const s = appSession(appId);
-    const name = String(text ?? "").trim();
-    if (!name) return paint(appId);
-    if (ownLeft(s) <= 0) {
-      return paint(appId, {
-        toast: { text: `That's your ${PIP4().groups.OWN_WORDS_FREE} free words \u2014 Pip Lifetime adds unlimited.` }
-      });
-    }
-    const id = `ent_${crypto.randomUUID().replaceAll("-", "")}`;
-    PIP4().groups.createEntity(s.d, { id, name, category: seedCategory(s, groupId) });
-    try {
-      PIP4().groupsOps.placeItem(s.d, groupId, "entity", id, cell);
-    } catch {
-      PIP4().groupsOps.placeItem(s.d, groupId, "entity", id, null);
-    }
-    noteRecent(s, groupId);
-    invalidate(s);
-    const card2 = cardModel(s, "entity", id);
-    return paint(appId, {
-      card: card2 ? { ...card2, justAdded: { groupName: groupName(s, groupId, "My Words") } } : null
-    });
-  }
-  function otherGroups(appId, { kind, id, label }) {
-    const s = appSession(appId);
-    const layout = PIP4().groups_shared.activeLayout(s.d);
-    const holds = new Set(
-      s.d.prepare("SELECT group_id FROM group_membership WHERE item_kind = ? AND item_id = ?").all(kind, id).map((r) => r.group_id)
-    );
-    return {
-      kind,
-      id,
-      label,
-      title: `Add ${label} to other groups`,
-      groups: PIP4().groups_shared.groupIndex(s.d).filter((g2) => !holds.has(g2.id) && PIP4().groups_shared.shownOn(s.d, g2.id, layout)).map((g2) => ({ id: g2.id, name: PIP4().groups.groupDisplayName(s.d, g2, s.locale) }))
-    };
-  }
-  function otherGroupsSave(appId, { kind, id, label, groupIds }) {
-    const s = appSession(appId);
-    if (!groupIds?.length) return paint(appId);
-    const { added, undo } = PIP4().groupsOps.addToGroups(s.d, kind, id, groupIds);
-    invalidate(s);
-    if (!added.length) return paint(appId);
-    const names = added.map((g2) => groupName(s, g2)).join(", ");
-    return paint(appId, {
-      toast: toastWith(s, `Added ${label} to ${names}`, () => {
-        undo();
-        invalidate(s);
-        return paint(appId);
-      })
-    });
-  }
-  function libraryState(appId, { tab = "added", q = "" }) {
-    const s = appSession(appId);
-    const L2 = PIP4().library;
-    const text = String(q ?? "").trim();
-    const rows = text ? L2.librarySearch(s.d, text, s.locale, PIP4().normalize.normalizeV1) : tab === "added" ? L2.libraryAdded(s.d, s.locale) : tab === "all" ? L2.libraryAll(s.d, s.locale) : L2.librarySuggested(s.d, s.locale);
-    return {
-      tab,
-      q: text,
-      tabs: [
-        { id: "added", label: "Added" },
-        { id: "suggested", label: "Suggested" },
-        { id: "all", label: "All" }
-      ],
-      empty: rows.length ? null : text ? "No matches." : tab === "suggested" ? "Nothing here yet \u2014 words the device hears appear once the child does not have them yet." : "Nothing here yet.",
-      rows: rows.map((r) => {
-        const homes = L2.libraryHomes(s.d, r.kind, r.id, s.locale);
-        return {
-          key: `${r.kind}:${r.id}`,
-          kind: r.kind,
-          id: r.id,
-          label: r.label,
-          role: r.role ?? "None",
-          art: r.art ?? null,
-          photoKey: r.photo_key ?? null,
-          sub: homes.length ? `in ${homes.join(", ")}` : null
-        };
-      }),
-      total: rows.length
-    };
-  }
-  function kidsUni(s) {
-    if (s.kidsUniCache) return s.kidsUniCache;
-    const uni = {};
-    const ph = s.phrases;
-    if (ph?.uni) {
-      for (const [k, n] of Object.entries(ph.uni)) {
-        uni[`sns_${String(parseInt(k, 36)).padStart(4, "0")}`] = n;
-      }
-    } else {
-      for (const row2 of Object.values(ph?.contexts ?? {})) {
-        for (const [id, n] of Object.entries(row2)) uni[id] = (uni[id] ?? 0) + n;
-      }
-    }
-    return s.kidsUniCache = uni;
-  }
-  function placeList(appId, { q = "" }) {
-    const s = appSession(appId);
-    const rows = PIP4().usecounts.offBoardItems(s.d, appGeom(s).name, s.locale, {
-      counts: PIP4().usecounts.useCounts(s.d),
-      uni: kidsUni(s),
-      q
-    });
-    return {
-      title: "What goes here?",
-      empty: rows.length ? null : "Nothing matches.",
-      rows: rows.slice(0, 30).map((r) => ({
-        key: `${r.kind}:${r.id}`,
-        kind: r.kind,
-        id: r.id,
-        label: r.label,
-        role: r.role ?? "None",
-        count: r.count
-      }))
-    };
-  }
-  function placePick(appId, { slot, kind, id, label }) {
-    const s = appSession(appId);
-    const geom = appGeom(s);
-    const mv = PIP4().coremove.placeOnBoard(s.d, geom.name, kind, id, slot, {
-      anchors: new Set(geom.anchors.keys())
-    });
-    if (!mv) return paint(appId);
-    invalidate(s);
-    return paint(appId, {
-      toast: toastWith(s, `Placed ${label}`, () => {
-        PIP4().coremove.placeOnBoard(s.d, geom.name, kind, id, mv.from);
-        invalidate(s);
-        return paint(appId);
-      })
-    });
-  }
-
-  // scripts/ios/app_card.mjs
-  var app_card_exports = {};
-  __export(app_card_exports, {
-    INCOMPATIBLE_TEXT: () => INCOMPATIBLE_TEXT,
-    cardSetKind: () => cardSetKind,
-    editorStatusOf: () => editorStatusOf,
-    swapList: () => swapList,
-    swapPick: () => swapPick,
-    withProtocol: () => withProtocol
-  });
-
-  // scripts/ios/app_sync.mjs
-  var app_sync_exports = {};
-  __export(app_sync_exports, {
-    isIncompatible: () => isIncompatible,
-    syncHealth: () => syncHealth2,
-    syncStart: () => syncStart,
-    syncStartDb: () => syncStartDb,
-    syncStop: () => syncStop
-  });
-
-  // scripts/ios/host/db_blob_host.mjs
-  var blobFetcher = null;
-  var setBlobFetcher = (fn) => {
-    blobFetcher = fn;
-  };
-  async function saveBlobBytes(sha, bytes2) {
-    await hostCall("blob.save", { sha, b64: bytesToB64u(bytes2) });
-  }
-  async function loadBlobBytes(sha) {
-    const b642 = await hostCall("blob.load", { sha }).catch(() => null);
-    return b642 == null ? null : b64uToBytes(b642);
   }
 
   // scripts/ios/host/sync_crypto_host.mjs
@@ -8579,18 +6978,18 @@ ${a.a}` }
 
   // public/shared/sync_crypto.mjs
   var subtle = globalThis.crypto.subtle;
-  var te2 = new TextEncoder();
+  var te4 = new TextEncoder();
   var td = new TextDecoder();
   var userKeyName = (userId, epoch) => `user/${userId}/key_e${epoch}`;
   var userRootName = (userId) => `user/${userId}/root`;
   var retiredRootsName = (userId) => `user/${userId}/roots`;
 
   // scripts/ios/host/sync_crypto_host.mjs
-  var te3 = new TextEncoder();
+  var te5 = new TextEncoder();
   var td2 = new TextDecoder();
   var call = hostCall;
   var asBytes = (b) => b instanceof Uint8Array ? b : new Uint8Array(b);
-  var toBytes2 = (b) => b instanceof Uint8Array ? b : te3.encode(String(b));
+  var toBytes2 = (b) => b instanceof Uint8Array ? b : te5.encode(String(b));
   var b64 = (b) => bytesToB64u(asBytes(b));
   var U8 = "__pipU8";
   var encodeJson = (v) => JSON.stringify(v, (_k, x) => x instanceof Uint8Array ? { [U8]: bytesToB64u(x) } : x);
@@ -8718,16 +7117,761 @@ ${a.a}` }
   var createAccountKeys = (prf = null) => call("account.create", { prf });
   var openAccountPrivWithPrf = (env, prf) => call("account.open", { env: { iv: env.iv, sealed: env.sealed }, prf });
 
+  // scripts/ios/host/platform_host.mjs
+  var listeners = { online: /* @__PURE__ */ new Set(), visible: /* @__PURE__ */ new Set(), hidden: /* @__PURE__ */ new Set() };
+  var onOnline = (fn) => {
+    listeners.online.add(fn);
+  };
+  var onVisible = (fn) => {
+    listeners.visible.add(fn);
+  };
+  globalThis.__pipPlatformEvent = (kind) => {
+    if (kind === "netUp" || kind === "netDown") {
+      globalThis.__pipOnline = kind === "netUp";
+      globalThis.__pipHost?.emit?.("net.changed", JSON.stringify({ online: kind === "netUp" }));
+      return;
+    }
+    for (const fn of [...listeners[kind] ?? []]) {
+      try {
+        fn();
+      } catch (err) {
+        console.error(`platform ${kind}: ${err?.stack ?? err}`);
+      }
+    }
+  };
+
+  // scripts/ios/app_say.mjs
+  var SPEAK_VOICE_WAIT_MS = 1e4;
+  var TRANSFORM_WAIT_MS = 15e3;
+  var sentenceVoice = voiceSentence();
+  var tileVoice = voiceTile();
+  var keys = openKeyStore();
+  var emit = (payload) => globalThis.__pipHost.emit("say", JSON.stringify({ play: null, toast: null, state: null, ...payload }));
+  var sessions = /* @__PURE__ */ new Map();
+  function X(s) {
+    let x = sessions.get(s.appId);
+    if (!x) {
+      x = {
+        userId: null,
+        trialEndsAt: null,
+        busy: false,
+        askShown: false,
+        speakSeq: 0,
+        tapSeq: 0
+      };
+      sessions.set(s.appId, x);
+    }
+    return x;
+  }
+  var trialActive = (x) => (x.trialEndsAt ?? 0) > Date.now();
+  var licenseOf = async (x) => {
+    try {
+      return await keys.get(`user/${x.userId}/license`) || void 0;
+    } catch {
+      return void 0;
+    }
+  };
+  var painted = (s) => appSpeakParts.state(s);
+  function identify(appId, userId) {
+    const s = appSession(appId);
+    const x = X(s);
+    x.userId = userId;
+    void boot(s, x);
+    return { ok: true };
+  }
+  async function refreshTrial(x) {
+    const license = await licenseOf(x);
+    const okKey = `user/${x.userId}/trial-ok`;
+    if (!await keys.get(okKey).catch(() => null) && !license) {
+      const res2 = await fetch("/api/v1/trial/start", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ user_id: x.userId })
+      }).catch(() => null);
+      if (res2?.ok) await keys.put(okKey, "1").catch(() => {
+      });
+    }
+    const res = await fetch("/api/v1/trial", {
+      headers: { "x-pip-user": x.userId, "x-pip-license": license ?? "" }
+    }).catch(() => null);
+    if (!res?.ok) return false;
+    const body = await res.json().catch(() => ({}));
+    x.trialLicensed = body.licensed === true;
+    x.trialEndsAt = typeof body.endsAt === "number" ? body.endsAt : null;
+    return true;
+  }
+  async function drain(x) {
+    await tileVoice.drainQueue({
+      userId: x.userId,
+      license: await licenseOf(x),
+      trial: trialActive(x)
+    }).catch(() => {
+    });
+  }
+  async function sweep(s, x) {
+    const key = `user/${x.userId}/tile-sweep:${s.voiceId}`;
+    const since = Number(await keys.get(key).catch(() => 0) ?? 0);
+    if (since && Date.now() - since < 864e5) return;
+    const res = await tileVoice.sweepReplaced({
+      userId: x.userId,
+      license: await licenseOf(x),
+      trial: trialActive(x),
+      voice: s.voiceId,
+      since
+    }).catch(() => null);
+    if (res?.next) await keys.put(key, String(res.next)).catch(() => {
+    });
+  }
+  function nudgeFor(endsAt, now, marks = [], licensed = false) {
+    if (licensed || !endsAt) return null;
+    const daysLeft = Math.ceil((endsAt - now) / 864e5);
+    const pick2 = daysLeft <= 0 ? ["expired", "The free trial is over \u2014 Pip Lifetime keeps the natural voice and every helper: $49 once."] : daysLeft === 3 ? ["d5", "Free trial \xB7 3 days left \u2014 Pip Lifetime keeps it all: $49 once."] : daysLeft === 2 ? ["d6", "Free trial \xB7 2 days left \u2014 Pip Lifetime keeps it all: $49 once."] : null;
+    return pick2 && !marks.includes(pick2[0]) ? { tag: pick2[0], msg: pick2[1] } : null;
+  }
+  async function trialNudge(s, x) {
+    const key = `user/${x.userId}/trial-nudge`;
+    let marks = [];
+    try {
+      marks = JSON.parse(await keys.get(key) ?? "[]");
+    } catch {
+    }
+    const n = nudgeFor(x.trialEndsAt, Date.now(), marks, x.trialLicensed === true);
+    if (!n) return;
+    await keys.put(key, JSON.stringify([...marks, n.tag])).catch(() => {
+    });
+    emit({ appId: s.appId, toast: n.msg });
+  }
+  async function syncTrialVoice(s, x) {
+    const defId = s.d.prepare(
+      "SELECT id FROM voice WHERE locale = ? AND is_default = 1"
+    ).all(s.locale)[0]?.id;
+    if (!defId) return false;
+    const wantedKey = `user/${x.userId}/voice-wanted`;
+    const wanted2 = await keys.get(wantedKey).catch(() => null);
+    const set = (id) => globalThis.PIPCORE.app.appSetSetting(s.appId, "preferred_voice_id", id);
+    if (x.trialLicensed === true || s.licensed === true || trialActive(x)) {
+      if (wanted2 && wanted2 !== s.voiceId && s.d.prepare("SELECT 1 AS x FROM voice WHERE id = ? AND status = 'active'").all(wanted2)[0]) {
+        set(wanted2);
+        await keys.put(wantedKey, void 0).catch(() => {
+        });
+        return true;
+      }
+      return false;
+    }
+    if (s.voiceId !== defId && !s.d.prepare("SELECT is_default AS d FROM voice WHERE id = ?").all(s.voiceId)[0]?.d) {
+      await keys.put(wantedKey, s.voiceId).catch(() => {
+      });
+      set(defId);
+      return true;
+    }
+    return false;
+  }
+  async function trialBoot(s, x) {
+    if (!await refreshTrial(x).catch(() => false)) return false;
+    const changed2 = await syncTrialVoice(s, x).catch(() => false);
+    await trialNudge(s, x).catch(() => {
+    });
+    if (changed2) emit({ appId: s.appId, state: painted(s) });
+    return true;
+  }
+  async function boot(s, x) {
+    await trialBoot(s, x);
+    await drain(x);
+    await sweep(s, x).catch(() => {
+    });
+  }
+  function trialRefresh(appId) {
+    const s = appSession(appId);
+    const x = X(s);
+    if (x.userId) void trialBoot(s, x).catch(() => {
+    });
+    return { ok: true };
+  }
+  onOnline(() => {
+    for (const [id, x] of sessions) {
+      if (!x.userId) continue;
+      void (async () => {
+        let s;
+        try {
+          s = appSession(id);
+        } catch {
+          return;
+        }
+        if (!trialActive(x)) await trialBoot(s, x);
+        await drain(x);
+      })();
+    }
+  });
+  function tileEnsure(s, text, source = "user_typed") {
+    const x = X(s);
+    if (!x.userId) return;
+    void (async () => {
+      await tileVoice.ensure({
+        userId: x.userId,
+        license: await licenseOf(x),
+        trial: trialActive(x),
+        voice: s.voiceId,
+        locale: s.locale,
+        text,
+        source
+      }).catch(() => ({ ok: false, reason: "failed" }));
+    })();
+  }
+  function tilePrefetch(s, texts, onProgress) {
+    const x = X(s);
+    if (!x.userId || !texts.length) return;
+    void (async () => {
+      await tileVoice.prefetch({
+        userId: x.userId,
+        license: await licenseOf(x),
+        trial: trialActive(x),
+        voice: s.voiceId,
+        locale: s.locale,
+        texts,
+        onProgress
+      });
+    })().catch(() => {
+    });
+  }
+  function flagTile(appId, text) {
+    const s = appSession(appId);
+    const x = X(s);
+    void (async () => {
+      const ok = x.userId ? await tileVoice.flag({
+        userId: x.userId,
+        license: await licenseOf(x),
+        trial: trialActive(x),
+        voice: s.voiceId,
+        locale: s.locale,
+        text
+      }).catch(() => false) : false;
+      globalThis.__pipHost.emit("card.flag", JSON.stringify({
+        appId,
+        ok,
+        toast: ok ? "Flagged for review \u2014 it keeps playing meanwhile" : "Couldn't flag \u2014 try again when you're online"
+      }));
+    })();
+    return { accepted: true };
+  }
+  async function tileFile(x, slot) {
+    const r = await tileVoice.request({
+      userId: x.userId,
+      license: await licenseOf(x),
+      trial: trialActive(x),
+      voice: slot.voice,
+      locale: slot.locale,
+      text: slot.text
+    }).catch(() => null);
+    return r?.ok && r.blob?._file ? { type: "file", key: r.blob._file } : null;
+  }
+  function tapSpeech(s, speech) {
+    const x = X(s);
+    const t = ++x.tapSeq;
+    if (speech?.type !== "tileclip") return speech;
+    void (async () => {
+      const file = await tileFile(x, speech);
+      if (t !== x.tapSeq || !file) return;
+      emit({ appId: s.appId, play: [file] });
+    })();
+    return null;
+  }
+  async function speakCore(s, x, feeling = null) {
+    const { prepareSpeak: prepareSpeak2, finishSpeak: finishSpeak2, barSlots: barSlots2 } = appSpeakParts;
+    const seq = ++x.speakSeq;
+    x.tapSeq++;
+    prepareSpeak2(s);
+    const text = sentenceSpeakText(s.sentence);
+    let play = null;
+    if (s.sentence.length >= 2 || feeling) {
+      const blob = await sentenceVoice.request({
+        userId: x.userId,
+        license: await licenseOf(x),
+        trial: trialActive(x),
+        voice: s.voiceId,
+        text,
+        feeling: feeling ?? "neutral",
+        deadlineMs: SPEAK_VOICE_WAIT_MS
+      });
+      if (seq !== x.speakSeq) return null;
+      if (text !== sentenceSpeakText(s.sentence)) return speakCore(s, x, feeling);
+      if (blob?._file) play = [{ type: "file", key: blob._file }];
+    }
+    if (!play) {
+      play = [];
+      for (const slot of barSlots2(s)) {
+        if (slot.type === "tileclip") {
+          const file = await tileFile(x, slot);
+          if (seq !== x.speakSeq || text !== sentenceSpeakText(s.sentence)) return null;
+          play.push(file ?? { type: "silence" });
+        } else {
+          play.push(slot);
+        }
+      }
+    }
+    finishSpeak2(s, feeling);
+    try {
+      refreshStatsDays(s.d);
+    } catch (e) {
+      console.error(`stats: ${e}`);
+    }
+    report(s.d);
+    return play;
+  }
+  function speakStart(s) {
+    const x = X(s);
+    void speakCore(s, x).then(
+      (play) => {
+        if (play) emit({ appId: s.appId, play, state: painted(s) });
+      },
+      (e) => console.error(`say.speak: ${e}`)
+    );
+  }
+  function speak(appId) {
+    const s = appSession(appId);
+    const x = X(s);
+    if (!s.sentence.length || x.busy) return painted(s);
+    restoreBar(s.sentence, s.barState);
+    speakStart(s);
+    return painted(s);
+  }
+  var NAMES = {
+    fix: "Fix it",
+    question: "Ask it",
+    past: "Say it in the past",
+    future: "Say it in the future"
+  };
+  function artForWord(s, word) {
+    const w = normalizeV1(
+      String(word).replace(/^[^\p{L}\p{N}'-]+|[^\p{L}\p{N}'-]+$/gu, "")
+    );
+    if (!w) return null;
+    for (const cand of wordLemmaCandidates(w)) {
+      const row2 = s.d.prepare(
+        `SELECT l.sense_id FROM label l
+       WHERE l.normalized_text = ? AND l.locale = ? AND l.status = 'approved'
+       ORDER BY (l.kind = 'lemma') DESC, l.default_for_text DESC LIMIT 1`
+      ).all(cand, s.locale)[0];
+      if (row2) return appSpeakParts.metaFor(s, row2.sense_id).art;
+    }
+    return null;
+  }
+  async function transformCore(s, x, mode) {
+    const raw = sourceText(s.sentence, s.barState);
+    const { masked: masked2, unmask } = maskNames(raw, entityNames(s.d));
+    let timedOut = false;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => {
+      timedOut = true;
+      ctrl.abort();
+    }, TRANSFORM_WAIT_MS);
+    const res = x.userId ? await fetch("/api/v1/transform", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      signal: ctrl.signal,
+      body: JSON.stringify({
+        user_id: x.userId,
+        license: await licenseOf(x),
+        mode,
+        text: masked2,
+        // ❓ asks in the bar's tense; ⏪/⏩ on a question keep it one.
+        tense: s.barState.tense,
+        question: s.barState.question
+      })
+    }).catch(() => null) : null;
+    clearTimeout(timer);
+    const body = res ? await res.json().catch(() => ({})) : {};
+    const out = res?.ok ? body.text : null;
+    const fresh = sourceText(s.sentence, s.barState) === raw;
+    let toast2 = null;
+    if (out && fresh) {
+      snapshotBar(s.sentence, s.barState);
+      applyTransform(s.sentence, unmask(out), mode, s.barState);
+      for (const it of s.sentence) {
+        if (it.kind === "typed") it.art = artForWord(s, it.text);
+      }
+    } else if (!out) {
+      const name = NAMES[mode] ?? "That button";
+      if (!res) {
+        toast2 = timedOut ? `${name} took too long \u2014 spoke it as it was.` : `${name} needs the internet \u2014 spoke it as it was.`;
+      } else if (body?.error === "bad_license") {
+        if (!x.askShown) {
+          x.askShown = true;
+          toast2 = `${name} comes with Pip Lifetime \u2014 the free trial has ended.`;
+        }
+      } else if (body?.error === "fair_use") {
+        toast2 = `${name} reached today's limit \u2014 it will be back tomorrow.`;
+      } else {
+        toast2 = `${name} couldn't work just now \u2014 spoke it as it was.`;
+      }
+    }
+    return { toast: toast2, play: await speakCore(s, x) };
+  }
+  function transform(appId, mode) {
+    const s = appSession(appId);
+    const x = X(s);
+    if (!s.sentence.length || x.busy) return painted(s);
+    const settled = mode === "question" && s.barState.question || mode === "past" && s.barState.tense === "past" || mode === "future" && s.barState.tense === "future";
+    if (settled) {
+      speakStart(s);
+      return painted(s);
+    }
+    x.busy = true;
+    logTransform(s.d, mode, globalThis.PIPCORE.spot.childTap(`control:${mode}`));
+    void transformCore(s, x, mode).then(
+      ({ toast: toast2, play }) => {
+        x.busy = false;
+        if (toast2 || play) emit({ appId: s.appId, play, toast: toast2, state: painted(s) });
+        else emit({ appId: s.appId, state: painted(s) });
+      },
+      (e) => {
+        x.busy = false;
+        console.error(`say.transform: ${e}`);
+      }
+    );
+    return painted(s);
+  }
+  function entitled(s) {
+    const x = sessions.get(s.appId);
+    return !!(x && (x.trialLicensed === true || s.licensed === true || trialActive(x)));
+  }
+
+  // scripts/ios/app_firstrun.mjs
+  var PIP = () => globalThis.PIPCORE;
+  var one4 = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
+  var clip = (key) => ({ key, path: PIP().onrampAudio.onrampClipPath(key) });
+  var PREVIEW = ["sns_0013", "sns_0128"];
+  var OFFER_WORLD_IN_FIRST_RUN = false;
+  function welcome(appId, { name = "" } = {}) {
+    const s = appSession(appId);
+    const tile = (id) => {
+      const l = one4(
+        s.d,
+        `SELECT l.text AS label, s.fitzgerald_role AS role FROM sense s
+       JOIN label l ON l.sense_id = s.id AND l.kind = 'lemma'
+         AND l.status = 'approved' AND l.locale = ? WHERE s.id = ?`,
+        [s.locale, id]
+      );
+      return { id, label: l?.label ?? id, role: l?.role ?? "None", art: appMeta(s, id).art };
+    };
+    return {
+      welcome: {
+        title: "Let's set up Pip",
+        nameLabel: "Name",
+        namePlaceholder: "Their name, or yours",
+        name,
+        whoQ: "Who's it for?",
+        choices: [
+          { value: "child", label: "A child", clip: clip("a-child") },
+          { value: "adult", label: "A teen or adult", clip: clip("a-teen-or-adult") }
+        ],
+        go: "Continue",
+        joinLead: "Already use Pip on another device? ",
+        join: "Enter a code",
+        clip: clip("welcome-setup")
+      },
+      look: {
+        title: "How should the buttons look?",
+        sub: "You can change this any time in Settings.",
+        choices: [
+          { value: "symbol", label: "Pictures and words", clip: clip("pictures-and-words") },
+          { value: "label", label: "Words only", clip: clip("words-only") }
+        ],
+        go: "Continue",
+        preview: PREVIEW.map(tile),
+        clip: clip("welcome-look")
+      },
+      offersWorld: OFFER_WORLD_IN_FIRST_RUN
+    };
+  }
+  function welcomeSave(appId, { name = "", audience }) {
+    if (audience !== "child" && audience !== "adult") throw new Error("welcomeSave: audience");
+    const s = appSession(appId);
+    const clean = String(name).trim();
+    PIP().personName.nameToProfile(s.d, { name: clean });
+    return { name: clean, audience };
+  }
+  var LOOKS = ["symbol", "label"];
+  function setLook(appId, { look }) {
+    if (!LOOKS.includes(look)) throw new Error(`setLook: ${look}`);
+    appSetSetting(appId, "presentation_mode", look);
+    return lookOf(appId);
+  }
+  function lookOf(appId) {
+    const m = one4(
+      appSession(appId).d,
+      "SELECT presentation_mode AS m FROM learner_profile WHERE id = 'prf_local'"
+    )?.m ?? "symbol";
+    return { look: m, wordsOnly: m === "label" };
+  }
+  var WORLD = [
+    { key: "people", hint: "A name for each person. Tap the square to add their photo.", next: "Next" },
+    { key: "pets", title: "Any pets?", hint: "A name each, one per line \u2014 Buddy, Whiskers.", next: "Next" },
+    {
+      key: "foods",
+      title: "Favorite foods",
+      hint: "One per line \u2014 pizza, mac and cheese. Words the library knows get their picture.",
+      next: "Next"
+    },
+    {
+      key: "places",
+      title: "Places they go",
+      hint: "One per line \u2014 school, the park, Grandma's.",
+      next: "Done"
+    }
+  ];
+  var stepOf = (key) => WORLD.find((m) => m.key === key) ?? (() => {
+    throw new Error(`world step ${key}`);
+  })();
+  var groupOf = (key) => PIP().setup.stepGroup(key);
+  var ownLeft = (s) => s.licensed ? Infinity : Math.max(0, PIP().groups.OWN_WORDS_FREE - PIP().groups.liveOwnWords(s.d));
+  var capToast = () => `That's your ${PIP().groups.OWN_WORDS_FREE} free words \u2014 Pip Lifetime adds unlimited.`;
+  var categoryOf = (s, key) => s.catalog.groups.find((g2) => g2.id === groupOf(key))?.category ?? null;
+  var personName = (s, name) => (name ?? "").trim() || PIP().personName.profileName(s.d) || "";
+  function worldOpen(appId, { name } = {}) {
+    const s = appSession(appId);
+    const who = personName(s, name);
+    const people = PIP().setup.setupPeople(s.d).map((p) => ({ id: p.id, name: p.name, photoKey: p.photoKey }));
+    while (people.length < 2) people.push({ id: null, name: "", photoKey: null });
+    return {
+      steps: WORLD.map((m) => ({
+        key: m.key,
+        title: m.key === "people" ? `Who does ${who || "your child"} call for?` : m.title,
+        hint: m.hint,
+        next: m.next
+      })),
+      examples: ["Mom", "Dad"],
+      otherExample: "Grandma",
+      namePlaceholder: "Name",
+      people,
+      addRow: "Add someone",
+      skip: "Skip this step",
+      back: "Back"
+    };
+  }
+  function worldPreview(appId, { step, text = "" }) {
+    const s = appSession(appId);
+    const rows = PIP().bulk.resolvePasteRows(s.d, text, { groupId: groupOf(step), locale: s.locale });
+    return {
+      rows: rows.map((r) => {
+        const art = r.kind === "sense" ? one4(s.d, `SELECT ${PIP().images.SENSE_ART_SQL} AS art FROM sense s WHERE s.id = ?`, [r.id])?.art : null;
+        return {
+          label: r.label,
+          kind: r.kind,
+          art: art ?? null,
+          initial: (r.label[0] ?? "").toUpperCase(),
+          already: r.already,
+          tag: r.already ? "already here" : r.kind === "new" ? "new \u2014 picture later" : null
+        };
+      })
+    };
+  }
+  function worldApply(appId, { step, people = [], text = "" }) {
+    const s = appSession(appId);
+    stepOf(step);
+    let wrote = false, toast2 = null;
+    if (step === "people") {
+      const rows = people.filter((p) => (p.name ?? "").trim()).map((p) => ({ id: p.id ?? void 0, name: p.name, photoKey: p.photoKey ?? null }));
+      const res = PIP().setup.applySetupPeople(s.d, {
+        people: rows,
+        locale: s.locale,
+        category: categoryOf(s, "people"),
+        maxNew: ownLeft(s)
+      });
+      for (const r of rows) if (r.photoKey) PIP().mediasync.queueUpload(r.photoKey);
+      if (res.refused) toast2 = capToast();
+      wrote = !!(res.added || res.updated);
+    } else {
+      const rows = PIP().bulk.resolvePasteRows(s.d, text, { groupId: groupOf(step), locale: s.locale });
+      if (rows.some((r) => !r.already)) {
+        const res = PIP().bulk.applyPasteRows(s.d, rows, {
+          groupId: groupOf(step),
+          category: categoryOf(s, step),
+          maxNew: ownLeft(s)
+        });
+        if (res.refused) toast2 = capToast();
+        wrote = true;
+      }
+    }
+    return { wrote, toast: toast2, state: wrote ? appRepaint(appId) : null };
+  }
+  var worldDone = ({ wrote }) => ({ toast: wrote ? "Their world is set up" : null });
+  var SCRIPT = {
+    you: "sns_0002",
+    want: "sns_0013",
+    apple: "sns_0128",
+    fix: "You want an apple.",
+    question: "Do you want an apple?"
+  };
+  var tours = /* @__PURE__ */ new Map();
+  function buildSteps(s) {
+    const shown = PIP().bar.barControls(s.d);
+    const steps = [
+      { id: "you", say: "Tap you.", clip: "tour-you", target: { kind: "cell", id: SCRIPT.you } },
+      { id: "want", say: "Tap want.", clip: "tour-want", target: { kind: "cell", id: SCRIPT.want } },
+      {
+        id: "apple",
+        say: "Now tap apple in the Smart bar.",
+        clip: "tour-apple",
+        target: { kind: "strip", id: SCRIPT.apple }
+      }
+    ];
+    if (shown.has("fix")) {
+      steps.push({
+        id: "fix",
+        say: "Tap \u2728 to make it a sentence.",
+        clip: "tour-fix",
+        target: { kind: "button", id: "fix" }
+      });
+    }
+    if (shown.has("question")) {
+      steps.push({
+        id: "question",
+        say: "Now tap \u2753 to ask it.",
+        clip: "tour-question",
+        target: { kind: "button", id: "question" }
+      });
+    }
+    steps.push({ id: "done", say: "That's Pip. Now try your own.", clip: "tour-done", target: null, done: true });
+    return steps;
+  }
+  function cardOf(t, online) {
+    const st = t.steps[t.step];
+    const hasModel = t.steps.some((x) => x.id === "fix" || x.id === "question");
+    const card2 = {
+      id: st.id,
+      say: st.say,
+      clip: clip(st.clip),
+      target: st.target,
+      done: !!st.done,
+      skip: st.done ? null : "Skip"
+    };
+    if (st.done) {
+      card2.note = !hasModel ? "Build a sentence and \u25B6 speaks it." : online === false ? "\u2728 and \u2753 need the internet to work on your own sentences. Connect when you can." : "\u2728 and \u2753 work on any sentence you build.";
+      card2.voices = "Try other voices";
+      card2.go = "Start talking";
+    }
+    return card2;
+  }
+  function tourStrip(s, t) {
+    if (t.steps[t.step].id !== "apple") return { cap: 4, mode: "predict", cards: [] };
+    const w = one4(
+      s.d,
+      `SELECT s.id, l.text AS label, s.fitzgerald_role AS role FROM sense s
+     JOIN label l ON l.sense_id = s.id AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
+     WHERE s.id = ?`,
+      [s.locale, SCRIPT.apple]
+    );
+    return {
+      cap: 4,
+      mode: "predict",
+      cards: [{ kind: "sense", id: w.id, label: w.label, role: w.role, art: appMeta(s, w.id).art }]
+    };
+  }
+  function paint(appId, t, { online, ...extra } = {}) {
+    const s = appSession(appId);
+    if (online !== void 0) t.online = online;
+    return {
+      active: true,
+      card: cardOf(t, t.online),
+      bar: appBar(appId),
+      strip: tourStrip(s, t),
+      tense: s.barState.tense,
+      question: s.barState.question,
+      ...extra
+    };
+  }
+  var slotOf = (s, item) => PIP().voice.resolveSlot(s.d, item, s.locale, s.voiceId);
+  var clipSlot = (key) => ({ type: "file", key: clip(key).path, text: null });
+  function tourStart(appId, { online } = {}) {
+    const s = appSession(appId);
+    const t = { steps: buildSteps(s), step: 0 };
+    tours.set(appId, t);
+    return paint(appId, t, { online, play: [clipSlot(t.steps[0].clip)] });
+  }
+  function tourTap(appId, { kind, id, online } = {}) {
+    const s = appSession(appId);
+    const t = tours.get(appId);
+    if (!t) throw new Error("tourTap: no tour");
+    const cur = t.steps[t.step];
+    if (!["you", "want", "apple"].includes(cur.id) || kind !== "sense" || id !== SCRIPT[cur.id]) {
+      return paint(appId, t, { online, play: [] });
+    }
+    const label = one4(
+      s.d,
+      `SELECT l.text AS t FROM label l WHERE l.sense_id = ? AND l.kind = 'lemma'
+     AND l.status = 'approved' AND l.locale = ?`,
+      [id, s.locale]
+    )?.t ?? "";
+    const item = { kind: "sense", id, text: label };
+    s.sentence.push(item);
+    PIP().txbar.noteBarEdit(s.barState);
+    t.step++;
+    return paint(appId, t, { online, play: [slotOf(s, item), clipSlot(t.steps[t.step].clip)] });
+  }
+  function tourTransform(appId, { mode, online } = {}) {
+    const s = appSession(appId);
+    const t = tours.get(appId);
+    if (!t) throw new Error("tourTransform: no tour");
+    const cur = t.steps[t.step];
+    if (cur.id !== mode || mode !== "fix" && mode !== "question") {
+      return paint(appId, t, { online, play: [] });
+    }
+    PIP().txbar.applyTransform(s.sentence, SCRIPT[mode], mode, s.barState);
+    for (const it of s.sentence) {
+      if (it.kind === "typed") it.art = artForWord(s, it.text);
+    }
+    t.step++;
+    const said = mode === "fix" ? "you-want-an-apple" : "do-you-want-an-apple";
+    return paint(appId, t, { online, play: [clipSlot(said), clipSlot(t.steps[t.step].clip)] });
+  }
+  function tourEnd(appId) {
+    tours.delete(appId);
+    return { ...appClear(appId), active: false, settings: appSettings(appId) };
+  }
+  var tourActive = (appId) => ({ active: tours.has(appId) });
+
+  // scripts/ios/app_spotlight.mjs
+  var app_spotlight_exports = {};
+  __export(app_spotlight_exports, {
+    ECHO_MS: () => ECHO_MS,
+    MODEL_FADE_MS: () => MODEL_FADE_MS,
+    applied: () => applied,
+    attach: () => attach,
+    bind: () => bind,
+    childTap: () => childTap,
+    controlPress: () => controlPress,
+    end: () => end,
+    modelTap: () => modelTap,
+    modelingActive: () => modelingActive,
+    onLive: () => onLive,
+    state: () => state,
+    tick: () => tick,
+    unbind: () => unbind
+  });
+
+  // scripts/ios/host/db_blob_host.mjs
+  var blobFetcher = null;
+  var setBlobFetcher = (fn) => {
+    blobFetcher = fn;
+  };
+  async function saveBlobBytes(sha, bytes2) {
+    await hostCall("blob.save", { sha, b64: bytesToB64u(bytes2) });
+  }
+  async function loadBlobBytes(sha) {
+    const b642 = await hostCall("blob.load", { sha }).catch(() => null);
+    return b642 == null ? null : b64uToBytes(b642);
+  }
+
   // public/shared/sync_client.mjs
   var fetch2 = (url, init) => timedFetch(url, init).catch((e) => {
     throw Object.assign(e instanceof Error ? e : new Error(String(e)), { unreachable: true });
   });
   var relayUnreachable = (e) => e?.unreachable === true || e?.status === 408 || e?.status === 429 || e?.status >= 500;
-  var te4 = new TextEncoder();
-  var hex = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+  var te6 = new TextEncoder();
+  var hex3 = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
   async function signedHeaders(identity, method, path, body) {
     const ts = Date.now();
-    const bodyHash = hex(await crypto.subtle.digest(
+    const bodyHash = hex3(await crypto.subtle.digest(
       "SHA-256",
       body ?? new Uint8Array()
     ));
@@ -8740,7 +7884,7 @@ ${bodyHash}`);
   function relayClient({ userId, baseUrl, identity, userKey }) {
     const path = (suffix) => `/users/${userId}${suffix}`;
     const call2 = async (method, suffix, body) => {
-      const bytes2 = body === void 0 ? void 0 : te4.encode(JSON.stringify(body));
+      const bytes2 = body === void 0 ? void 0 : te6.encode(JSON.stringify(body));
       const signedPath = path(suffix).split("?")[0];
       const res = await fetch2(`${baseUrl}${path(suffix)}`, {
         method,
@@ -8814,7 +7958,7 @@ ${bodyHash}`);
        *  through seq; GET returns the stored payload or null. */
       async putSnapshot(payload, seq) {
         const p = path(`/snapshot?seq=${seq}`);
-        const body = te4.encode(JSON.stringify(payload));
+        const body = te6.encode(JSON.stringify(payload));
         const res = await fetch2(`${baseUrl}${p}`, {
           method: "PUT",
           headers: {
@@ -8838,7 +7982,7 @@ ${bodyHash}`);
       /** Blob transport — the envelope's sha is the address. */
       async putBlob(sealed) {
         const p = path(`/blobs/${sealed.sha}`);
-        const body = te4.encode(JSON.stringify(sealed.env));
+        const body = te6.encode(JSON.stringify(sealed.env));
         const res = await fetch2(`${baseUrl}${p}`, {
           method: "PUT",
           headers: { "content-type": "application/json", ...await signedHeaders(identity, "PUT", p, body) },
@@ -8982,32 +8126,9 @@ ${ts}`);
     }
   }
 
-  // scripts/ios/host/platform_host.mjs
-  var listeners = { online: /* @__PURE__ */ new Set(), visible: /* @__PURE__ */ new Set(), hidden: /* @__PURE__ */ new Set() };
-  var onOnline = (fn) => {
-    listeners.online.add(fn);
-  };
-  var onVisible = (fn) => {
-    listeners.visible.add(fn);
-  };
-  globalThis.__pipPlatformEvent = (kind) => {
-    if (kind === "netUp" || kind === "netDown") {
-      globalThis.__pipOnline = kind === "netUp";
-      globalThis.__pipHost?.emit?.("net.changed", JSON.stringify({ online: kind === "netUp" }));
-      return;
-    }
-    for (const fn of [...listeners[kind] ?? []]) {
-      try {
-        fn();
-      } catch (err) {
-        console.error(`platform ${kind}: ${err?.stack ?? err}`);
-      }
-    }
-  };
-
   // public/shared/recovery.mjs
   var subtle2 = globalThis.crypto.subtle;
-  var te5 = new TextEncoder();
+  var te7 = new TextEncoder();
   var b64u = (buf) => {
     const bytes2 = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
     let s = "";
@@ -9046,7 +8167,7 @@ ${ts}`);
   async function recoveryProof(rootBytes) {
     const msg = new Uint8Array(rootBytes.length + 16);
     msg.set(rootBytes);
-    msg.set(te5.encode("pip-recovery-v1"), rootBytes.length);
+    msg.set(te7.encode("pip-recovery-v1"), rootBytes.length);
     return b64u(await subtle2.digest("SHA-256", msg));
   }
   var HASH = "#restore=";
@@ -9734,6 +8855,2143 @@ ${ts}`);
     return sha;
   }
 
+  // scripts/ios/app_spotlight.mjs
+  var PIP2 = () => globalThis.PIPCORE;
+  var parse = (x) => typeof x === "string" ? JSON.parse(x) : x;
+  var emit2 = (name, payload = {}) => globalThis.__pipHost?.emit(name, JSON.stringify(payload));
+  var MODEL_FADE_MS = 4e3;
+  var ECHO_MS = 700;
+  var TICK_MS = 3e4;
+  var L = {
+    appId: null,
+    db: null,
+    role: null,
+    name: null,
+    timer: null,
+    modelGlow: /* @__PURE__ */ new Map(),
+    // "kind:id" -> fade timer
+    modelSent: /* @__PURE__ */ new Set(),
+    // local echo on a supporter's device
+    counts: { s: null, c: {} },
+    // the child's presses this session (coach-ui)
+    tip: null
+    // the last modeled word's tip
+  };
+  var changed = () => emit2("spot.changed");
+  var supporter = () => L.role === "partner";
+  function attach(db, role) {
+    L.db = db;
+    if (role !== void 0) L.role = role ?? null;
+  }
+  function bind(appId, role, name) {
+    L.appId = appId;
+    L.db = appDb(appId);
+    L.role = role ?? null;
+    L.name = name ?? null;
+    for (const t of L.modelGlow.values()) clearTimeout(t);
+    L.modelGlow.clear();
+    L.modelSent.clear();
+    L.tip = null;
+    clearInterval(L.timer);
+    resumeSession(L.db);
+    L.timer = setInterval(tick, TICK_MS);
+    changed();
+    return { ok: true };
+  }
+  function unbind() {
+    clearInterval(L.timer);
+    L.timer = null;
+    for (const t of L.modelGlow.values()) clearTimeout(t);
+    L.modelGlow.clear();
+    L.modelSent.clear();
+    L.appId = L.db = null;
+    return { ok: true };
+  }
+  function tick() {
+    if (!L.db) return;
+    const was = !!spotlight();
+    resumeSession(L.db);
+    if (was !== !!spotlight()) changed();
+  }
+  function applied(db) {
+    const d = db ?? L.db;
+    if (!d) return;
+    resumeSession(d);
+    changed();
+  }
+  function end() {
+    if (!L.db) return { ok: false };
+    endSession(L.db);
+    changed();
+    return { ok: true };
+  }
+  var profile2 = () => L.db?.prepare("SELECT spot_dim, spot_pulse, model_speaks FROM learner_profile WHERE id = 'prf_local'").all()[0] ?? {};
+  function clearModel(key) {
+    const t = L.modelGlow.get(key);
+    if (t === void 0) return;
+    clearTimeout(t);
+    L.modelGlow.delete(key);
+    changed();
+  }
+  function onLive(m) {
+    if (m?.k === "tap") return onChildTap(m);
+    if (m?.k !== "model" || typeof m.t !== "string") return;
+    clearTimeout(L.modelGlow.get(m.t));
+    L.modelGlow.set(m.t, setTimeout(() => {
+      L.modelGlow.delete(m.t);
+      changed();
+    }, MODEL_FADE_MS));
+    const [kind, id] = m.t.split(":");
+    if (profile2().model_speaks === 1 && m.w && kind !== "control") speakModeled(kind, id, m.w);
+    changed();
+  }
+  function speakModeled(kind, id, text) {
+    try {
+      const s = appSession(L.appId);
+      const slot = PIP2().voice.resolveSlot(s.d, { kind, id, text }, s.locale, s.voiceId);
+      const speech = PIP2().say.tapSpeech(s, slot);
+      if (speech) emit2("spot.speak", { speech });
+    } catch (e) {
+      console.error(`spot.speak: ${e}`);
+    }
+  }
+  function onChildTap(m) {
+    const s = spotlight();
+    if (!supporter() || !s?.session || typeof m.t !== "string") return;
+    if (m.s !== s.startedAt) return;
+    if (L.counts.s !== s.startedAt) L.counts = { s: s.startedAt, c: {} };
+    L.counts.c[m.t] = (L.counts.c[m.t] ?? 0) + 1;
+    changed();
+  }
+  var sessionCounts = () => {
+    const s = spotlight();
+    return s?.session && L.counts.s === s.startedAt ? L.counts.c : {};
+  };
+  var countOf = (key) => supporter() ? sessionCounts()[key] ?? 0 : 0;
+  function childTap(key) {
+    const s = spotlight();
+    const lit = glowsHere(s, supporter()) && s.targets.has(key) || L.modelGlow.has(key);
+    if (s?.session && !supporter()) {
+      syncSendLive({ k: "tap", t: key, s: s.startedAt }).catch(() => {
+      });
+    }
+    clearModel(key);
+    return lit;
+  }
+  var modelingNow = () => supporter() && !!spotlight()?.session;
+  var modelingActive = () => modelingNow();
+  function coachLabel(kind, id) {
+    if (kind === "control") return CONTROLS[id]?.label ?? id;
+    const s = appSession(L.appId);
+    if (kind === "entity") {
+      return s.d.prepare("SELECT spoken_name AS t FROM personal_entity WHERE id = ?").all(id)[0]?.t ?? id;
+    }
+    return s.d.prepare(
+      `SELECT text AS t FROM label
+     WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`
+    ).all(id, s.locale)[0]?.t ?? id;
+  }
+  function onModeled(kind, id) {
+    const s = appSession(L.appId);
+    L.tip = tipFor(L.db, s.catalog, kind, id) ?? `Say \u201C${coachLabel(kind, id)}\u201D as you tap it, then wait.`;
+  }
+  function modelTap(kind, id, text) {
+    if (!id || !modelingNow()) return false;
+    const key = `${kind}:${id}`;
+    syncSendModel(key, text).catch(() => {
+    });
+    onModeled(kind, id);
+    echo(key);
+    return true;
+  }
+  function controlPress(name) {
+    if (!CONTROLS[name] || !modelingNow()) return false;
+    const key = `control:${name}`;
+    syncSendLive({ k: "model", t: key, w: CONTROLS[name].label }).catch(() => {
+    });
+    onModeled("control", name);
+    echo(key);
+    return true;
+  }
+  function echo(key) {
+    L.modelSent.add(key);
+    changed();
+    setTimeout(() => {
+      L.modelSent.delete(key);
+      changed();
+    }, ECHO_MS);
+  }
+  function state(appId, keysJSON = "[]") {
+    const keys3 = parse(keysJSON);
+    const s = spotlight();
+    const steady = glowsHere(s, supporter());
+    const p = profile2();
+    const pulse = (p.spot_pulse ?? 0) === 1;
+    const marks = {};
+    for (const key of keys3) {
+      const modeled = L.modelGlow.has(key);
+      const target = steady && s.targets.has(key);
+      marks[key] = {
+        glow: target || modeled || L.modelSent.has(key),
+        pulse: target && pulse,
+        modeled,
+        dimmed: steady && !target && !modeled,
+        count: countOf(key)
+      };
+    }
+    let walk = false;
+    if (steady || L.modelGlow.size) {
+      const ss = appSession(appId);
+      const geom = appGeom(ss);
+      const onBoard = new Set(PIP2().coremove.coreCells(ss.d, geom.name, ss.locale).map((c) => c.sense_id));
+      walk = steady && needsRouteWalk(s.targets, onBoard) || L.modelGlow.size > 0 && needsRouteWalk(new Set(L.modelGlow.keys()), onBoard);
+    }
+    const controls = {};
+    for (const name of Object.keys(CONTROLS)) {
+      const key = `control:${name}`;
+      const modeled = L.modelGlow.has(key);
+      controls[name] = { glow: steady && s.targets.has(key) || modeled, modeled, count: countOf(key) };
+    }
+    const modeling = modelingNow();
+    const who = L.name?.trim() || null;
+    const total = Object.values(sessionCounts()).reduce((a, b) => a + b, 0);
+    return {
+      on: !!s,
+      steady,
+      name: s?.name ?? null,
+      chip: steady && s ? `\u{1F526} ${s.name} \xB7 End` : null,
+      dim: (p.spot_dim ?? 45) / 100,
+      marks,
+      groups: walk,
+      controls,
+      modeling,
+      line: modeling ? L.tip ?? `Your taps light up on ${who ? `${who}'s` : "their"} board. Say each word as you tap it.` : null,
+      count: modeling && total ? `${who ?? "They"} pressed ${total} time${total === 1 ? "" : "s"}` : ""
+    };
+  }
+
+  // scripts/ios/app_faces.mjs
+  function facesModel(s) {
+    const data = s.catalog.feelingVoice;
+    if (!data?.feelings || !s.sentence.length || s.kbBuffer) return null;
+    if (s.editing || modelingActive() || tourActive(s.appId).active) return null;
+    if (globalThis.__pipOnline === false) return null;
+    if (!expressiveOn(s.d)) return null;
+    const pos = (id) => s.d.prepare(
+      `SELECT part_of_speech AS p FROM label
+     WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`
+    ).all(id, s.locale)[0]?.p ?? null;
+    const lit = suggestedFeeling(
+      s.sentence,
+      data,
+      (id) => pos(id) === "Pronoun",
+      (id) => s.d.prepare("SELECT category AS c FROM personal_entity WHERE id = ?").all(id)[0]?.c ?? null
+    );
+    return { lit, feelings: FEELINGS };
+  }
+
+  // scripts/ios/app.mjs
+  var PIP3 = () => globalThis.PIPCORE;
+  var apps = /* @__PURE__ */ new Map();
+  var nextAppId = 1;
+  var parse2 = (x) => typeof x === "string" ? JSON.parse(x) : x;
+  var one5 = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
+  var all5 = (d, sql, p = []) => d.prepare(sql).all(...p);
+  function appOpen(dbId, catalogJson, phrasesJson, formTableJson) {
+    const d = PIP3().makeDb(dbId);
+    const catalog = parse2(catalogJson);
+    d.exec("PRAGMA foreign_keys = ON");
+    PIP3().migrate.migrateSchema(d, catalog.schemaSql, PIP3().migrate.ADDITIVE_COLUMNS);
+    d.exec(catalog.schemaSql);
+    PIP3().migrate.ensureAdditiveColumns(d);
+    d.exec("DROP TABLE IF EXISTS history_count");
+    d.exec("DROP TABLE IF EXISTS prediction_weights");
+    PIP3().importer.importCatalog(d, catalog);
+    const profile3 = one5(d, "SELECT * FROM learner_profile WHERE id = 'prf_local'") ?? {};
+    const id = `a${nextAppId++}`;
+    apps.set(id, {
+      appId: id,
+      d,
+      catalog,
+      phrases: phrasesJson == null ? null : parse2(phrasesJson),
+      formTable: formTableJson == null ? null : parse2(formTableJson),
+      locale: profile3.locale ?? "en",
+      voiceId: profile3.preferred_voice_id ?? "voi_default_en",
+      grammarHelp: profile3.grammar_help !== 0,
+      freshAfterSpeak: !!profile3.fresh_after_speak,
+      topRowOn: !!profile3.group_top_row,
+      sentence: [],
+      sentenceId: null,
+      picks: 0,
+      freshNext: false,
+      kbOpen: false,
+      kbBuffer: "",
+      kbPendingAccent: null,
+      kbLead: null,
+      kbIndex: null,
+      kbOrder: profile3.keyboard_order ?? "standard",
+      kbMode: profile3.keyboard_mode ?? "pip",
+      barState: { tense: "present", question: false, preTransform: null },
+      lastImpressionKey: null,
+      openImpressionId: null,
+      expand: null,
+      // { familyId, page, depth }
+      view: "board",
+      groupId: null,
+      page: 0,
+      meta: /* @__PURE__ */ new Map(),
+      // senseId -> { role, art }
+      pos: /* @__PURE__ */ new Map(),
+      // senseId -> part of speech
+      entRole: /* @__PURE__ */ new Map(),
+      entPhoto: /* @__PURE__ */ new Map()
+    });
+    const s = apps.get(id);
+    return {
+      appId: id,
+      locale: s.locale,
+      voiceId: s.voiceId,
+      speechRate: SPEECH_RATES[profile3.speech_rate] ?? 1
+    };
+  }
+  var SPEECH_RATES = { slower: 0.8, normal: 1, faster: 1.2 };
+  function applyProfile(s) {
+    const p = one5(s.d, "SELECT * FROM learner_profile WHERE id = 'prf_local'") ?? {};
+    s.locale = p.locale ?? s.locale;
+    s.voiceId = p.preferred_voice_id ?? s.voiceId;
+    s.grammarHelp = p.grammar_help !== 0;
+    s.freshAfterSpeak = !!p.fresh_after_speak;
+    s.topRowOn = !!p.group_top_row;
+    s.kbOrder = p.keyboard_order ?? "standard";
+    s.kbMode = p.keyboard_mode ?? "pip";
+    s.kbIndex = null;
+    return p;
+  }
+  function appClose(appId) {
+    apps.delete(appId);
+  }
+  var S = (appId) => {
+    const s = apps.get(appId);
+    if (!s) throw new Error(`appClose: no session ${appId}`);
+    return s;
+  };
+  var appSession = S;
+  var appMeta = (s, senseId) => metaFor(s, senseId);
+  var appGeom = (s) => boardGeom(s);
+  var appDb = (appId) => S(appId).d;
+  function metaFor(s, senseId) {
+    if (!s.meta.has(senseId)) {
+      s.meta.set(senseId, one5(
+        s.d,
+        `SELECT s.fitzgerald_role AS role, ${PIP3().images.SENSE_ART_SQL} AS art
+       FROM sense s WHERE s.id = ?`,
+        [senseId]
+      ) ?? { role: null, art: null });
+    }
+    return s.meta.get(senseId);
+  }
+  function posOfSense(s, senseId) {
+    if (!s.pos.has(senseId)) {
+      s.pos.set(senseId, one5(
+        s.d,
+        `SELECT part_of_speech AS p FROM label
+       WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`,
+        [senseId, s.locale]
+      )?.p ?? null);
+    }
+    return s.pos.get(senseId);
+  }
+  function photoFor(s, id) {
+    if (!s.entPhoto.has(id)) {
+      s.entPhoto.set(
+        id,
+        one5(s.d, "SELECT photo_key AS p FROM personal_entity WHERE id = ?", [id])?.p ?? null
+      );
+    }
+    return s.entPhoto.get(id);
+  }
+  var masked = (s) => PIP3().groups.maskedSenseIds(s.d);
+  var shownLabel = (s, senseId, fallback) => s.grammarHelp ? PIP3().forms.formFor(s.d, s.formTable, s.sentence, senseId).text ?? fallback : fallback;
+  function boardGeom(s) {
+    const name = one5(
+      s.d,
+      "SELECT board_layout AS l FROM learner_profile WHERE id = 'prf_local'"
+    )?.l ?? "grid60";
+    const layout = s.catalog.layouts?.[name] ?? s.catalog.layouts?.grid60 ?? { cols: 10, rows: 6, anchors: [] };
+    return {
+      name: s.catalog.layouts?.[name] ? name : "grid60",
+      cols: layout.cols,
+      rows: layout.rows,
+      cells: layout.cols * layout.rows,
+      anchors: new Map((layout.anchors ?? []).map((a) => [a.slot, a]))
+    };
+  }
+  var wordModel = (s, { kind, id, label, role, art = null, photoKey = null }) => ({ type: "word", kind, id, label, role: role ?? "None", art, photoKey });
+  function homeSlot(s, c, mask) {
+    if (c.kind === "entity") {
+      return wordModel(s, {
+        kind: "entity",
+        id: c.entity_id,
+        label: c.label,
+        role: c.fitzgerald_role ?? "None",
+        photoKey: photoFor(s, c.entity_id)
+      });
+    }
+    if (mask.has(c.sense_id)) {
+      if (!s.editing) return { type: "empty" };
+      return { ...wordModel(s, {
+        kind: "sense",
+        id: c.sense_id,
+        label: c.label,
+        role: c.fitzgerald_role,
+        art: metaFor(s, c.sense_id).art
+      }), hidden: true };
+    }
+    const label = s.editing ? c.label : shownLabel(s, c.sense_id, c.label);
+    return wordModel(s, {
+      kind: "sense",
+      id: c.sense_id,
+      label,
+      role: c.fitzgerald_role,
+      art: metaFor(s, c.sense_id).art
+    });
+  }
+  function boardModel(s) {
+    const geom = boardGeom(s);
+    const cells = PIP3().coremove.coreCells(s.d, geom.name, s.locale);
+    const bySlot = new Map(cells.map((c) => [c.slot_index, c]));
+    const mask = masked(s);
+    const slots = [];
+    for (let slot = 0; slot < geom.cells; slot++) {
+      const anchor = geom.anchors.get(slot);
+      if (anchor?.kind === "groups") {
+        slots.push({ type: "groups", slot });
+        continue;
+      }
+      if (anchor?.kind === "family") {
+        const f = PIP3().families.family(s.d, anchor.family);
+        slots.push({
+          type: "family",
+          slot,
+          familyId: anchor.family,
+          label: f?.name ?? "?",
+          glyph: f?.glyph ?? "\u25B8",
+          speaks: f?.speaks ?? null
+        });
+        continue;
+      }
+      if (anchor?.kind === "reserved") {
+        slots.push({ type: "empty", slot, locked: true });
+        continue;
+      }
+      const c = bySlot.get(slot);
+      if (!c) {
+        slots.push({ type: "empty", slot });
+        continue;
+      }
+      slots.push({ ...homeSlot(s, c, mask), slot });
+    }
+    return { cols: geom.cols, rows: geom.rows, cells: slots };
+  }
+  var appBoard = (appId) => boardModel(S(appId));
+  function barModel(s) {
+    const texts = PIP3().keyboard.displaySentence(s.sentence, s.locale);
+    return s.sentence.map((item, i) => ({
+      kind: item.kind,
+      id: item.id,
+      display: texts[i] ?? item.text,
+      art: item.kind === "sense" && item.id ? metaFor(s, item.id).art : item.art ?? null,
+      photoKey: item.kind === "entity" && item.id ? photoFor(s, item.id) : null
+    }));
+  }
+  var appBar = (appId) => barModel(S(appId));
+  function stripCardFor(s, c) {
+    if (c.kind === "entity") {
+      const e = one5(s.d, "SELECT * FROM personal_entity WHERE id = ?", [c.id]);
+      if (!e) return null;
+      return {
+        kind: "entity",
+        id: e.id,
+        label: e.spoken_name,
+        role: e.fitzgerald_role ?? "None",
+        photoKey: e.photo_key
+      };
+    }
+    const standIn = PIP3().groups.entityForSense(s.d, c.id);
+    if (standIn) {
+      return {
+        kind: "entity",
+        id: standIn.id,
+        label: standIn.spoken_name,
+        role: standIn.fitzgerald_role ?? "None",
+        photoKey: standIn.photo_key
+      };
+    }
+    const w = one5(
+      s.d,
+      `SELECT s.id, l.text AS label, s.fitzgerald_role FROM sense s
+     JOIN label l ON l.sense_id = s.id
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
+     WHERE s.id = ?`,
+      [s.locale, c.id]
+    );
+    if (!w) return null;
+    const label = shownLabel(s, w.id, w.label);
+    return {
+      kind: "sense",
+      id: w.id,
+      label,
+      role: w.fitzgerald_role,
+      art: metaFor(s, w.id).art
+    };
+  }
+  var stripSlots = (cols) => Math.min(4, Math.max(3, cols - 2));
+  var ensureSentence = (s) => s.sentenceId ?? (s.sentenceId = PIP3().funnel.openSentence(s.d));
+  function maybeImpression(s, candidates, shown, { mode = "picture", cap = null, gate = null } = {}) {
+    if (s.sentenceId === null) return false;
+    const shownKeys = shown.map((c) => `${c.kind}:${c.id}`);
+    const key = `${s.sentenceId}:${s.picks}:${shownKeys.join()}`;
+    if (key === s.lastImpressionKey) return false;
+    s.lastImpressionKey = key;
+    s.openImpressionId = PIP3().funnel.logImpression(s.d, {
+      sentenceId: s.sentenceId,
+      position: s.picks,
+      candidates,
+      shown: shownKeys,
+      mode,
+      gate,
+      shortlistCap: cap
+    });
+    return true;
+  }
+  function stripModel(s) {
+    const geom = boardGeom(s);
+    const cap = stripSlots(geom.cols);
+    const faces = facesModel(s);
+    if (s.kbBuffer) {
+      s.kbIndex ?? (s.kbIndex = buildKbIndex(s));
+      const cards2 = PIP3().spelling.suggest(s.kbIndex, s.kbBuffer, cap).map((e) => e.kind === "entity" ? stripCardFor(s, { kind: "entity", id: e.id }) : {
+        kind: "sense",
+        id: e.id,
+        label: e.text,
+        role: e.role ?? "None",
+        art: metaFor(s, e.id).art
+      }).filter(Boolean);
+      return { cap, mode: "complete", cards: cards2, faces: null };
+    }
+    if (s.expand) {
+      const fam = PIP3().families.family(s.d, s.expand.familyId);
+      if (!fam) s.expand = null;
+      else {
+        const items2 = PIP3().families.familyItems(s.d, s.expand.familyId, s.locale, masked(s));
+        const fcap = Math.max(1, cap - (faces ? 1 : 0));
+        const pageSize = fcap - 1;
+        const pages = items2.length > fcap ? Math.ceil(items2.length / pageSize) : 1;
+        const realSize = pages > 1 ? pageSize : fcap;
+        s.expand.page = Math.min(s.expand.page, pages - 1);
+        const shown = items2.slice(s.expand.page * realSize, s.expand.page * realSize + realSize);
+        const cards2 = shown.map((it) => it.kind === "family" ? {
+          kind: "family",
+          id: it.id,
+          label: it.label,
+          glyph: it.glyph,
+          speaks: it.speaks,
+          nextFamily: it.nextFamily
+        } : stripCardFor(s, it) ?? {
+          kind: it.kind,
+          id: it.id,
+          label: it.label,
+          role: it.role ?? "None",
+          art: it.kind === "sense" ? metaFor(s, it.id).art : null
+        });
+        if (pages > 1) cards2.push({ kind: "more", label: "more \u203A" });
+        return {
+          cap,
+          mode: "family",
+          familyId: s.expand.familyId,
+          page: s.expand.page,
+          pages,
+          cards: cards2,
+          faces
+        };
+      }
+    }
+    const sents = s.sentence.map((x) => ({ kind: x.kind, id: x.id }));
+    const groupId = s.view === "group" ? s.groupId : null;
+    const starting = !sents.length || s.freshNext;
+    const ranked = !groupId ? PIP3().funnel.stripRanked(s.d, sents, Date.now(), s.locale, s.phrases) : starting ? PIP3().funnel.groupStarters(
+      s.d,
+      groupId,
+      { starters: s.catalog.groupStarters, visible: visibleKeys(s) }
+    ) : PIP3().funnel.groupRanked(s.d, sents, groupId, Date.now());
+    const items = ranked.shown;
+    ensureSentence(s);
+    maybeImpression(s, ranked.ranked, items, {
+      cap,
+      mode: s.kbOpen ? "keyboard" : "picture",
+      gate: groupId ? { group: groupId } : { ending: ranked.ending }
+    });
+    const cards = items.map((c) => stripCardFor(s, c)).filter(Boolean);
+    if (s.openImpressionId !== null) {
+      PIP3().funnel.stampShownFinal(
+        s.d,
+        s.openImpressionId,
+        cards.slice(0, cap - (faces ? 1 : 0)).map((c) => `${c.kind}:${c.id}`)
+      );
+    }
+    return { cap, mode: "predict", cards, faces };
+  }
+  var appStrip = (appId) => stripModel(S(appId));
+  function visibleKeys(s) {
+    const keys3 = /* @__PURE__ */ new Set();
+    const layout = PIP3().groups_shared.activeLayout(s.d);
+    const geom = PIP3().groups_shared.geometryOf(s.d, layout);
+    const home2 = PIP3().coremove.coreCells(s.d, boardGeom(s).name, s.locale);
+    for (const c of home2) {
+      if (geom.frame.includes(c.slot_index) || s.topRowOn && geom.topRow.includes(c.slot_index)) {
+        keys3.add(`${c.kind}:${c.sense_id ?? c.entity_id}`);
+      }
+    }
+    if (s.groupId) {
+      for (const c of PIP3().groups.groupPage(s.d, s.groupId, s.page, s.locale, layout)) {
+        keys3.add(`${c.item_kind}:${c.item_id}`);
+      }
+    }
+    return keys3;
+  }
+  function appOpenFamily(appId, familyId, depth = 0) {
+    const s = S(appId);
+    s.expand = { familyId, page: 0, depth };
+    return stripModel(s);
+  }
+  function appFamilyPage(appId) {
+    const s = S(appId);
+    if (s.expand) s.expand.page++;
+    return stripModel(s);
+  }
+  function appGroups(appId) {
+    const s = S(appId);
+    s.kbOpen = false;
+    const layout = PIP3().groups_shared.activeLayout(s.d);
+    const geom = PIP3().groups_shared.geometryOf(s.d, layout);
+    const home2 = new Map(PIP3().coremove.coreCells(s.d, boardGeom(s).name, s.locale).map((c) => [c.slot_index, c]));
+    const mask = masked(s);
+    const mealsOn = (one5(
+      s.d,
+      "SELECT occasions_visible AS o FROM learner_profile WHERE id = 'prf_local'"
+    )?.o ?? 1) === 1;
+    const isMeal = (id) => (one5(s.d, "SELECT occasion FROM group_meta WHERE group_id = ?", [id])?.occasion ?? 0) === 1;
+    const doors = PIP3().groups_shared.groupIndex(s.d).filter((g2) => !g2.hidden && PIP3().groups_shared.shownOn(s.d, g2.id, layout) && (mealsOn || !isMeal(g2.id)));
+    const byVisual = /* @__PURE__ */ new Map();
+    for (const g2 of doors) {
+      const v = PIP3().groups_shared.indexVisual(g2.index_slot, geom.cells);
+      const name = PIP3().groups.groupDisplayName(s.d, g2, s.locale);
+      const face = PIP3().groupsEdit.groupFace(s.d, { ...g2, name }, s.locale);
+      byVisual.set(`${v.page}:${v.slot}`, {
+        type: "group",
+        slot: v.slot,
+        groupId: g2.id,
+        name,
+        glyph: g2.glyph ?? null,
+        photoKey: g2.photo_key ?? null,
+        kind: g2.kind,
+        icon: face.icon ?? null,
+        picture: face.picture ?? null,
+        emoji: face.emoji ?? null,
+        initial: face.initial ?? null
+      });
+    }
+    const pages = Math.max(1, ...doors.map((g2) => PIP3().groups_shared.indexVisual(g2.index_slot, geom.cells).page + 1));
+    const out = [];
+    for (let p = 0; p < pages; p++) {
+      const slots = [];
+      for (let slot = 0; slot < geom.cells; slot++) {
+        if (geom.frame.includes(slot) || geom.topRow.includes(slot)) {
+          const showHome = geom.frame.includes(slot) || s.topRowOn;
+          const c = showHome ? home2.get(slot) : null;
+          slots.push(c ? { ...homeSlot(s, c, mask), slot, reserved: true } : { type: "empty", slot });
+          continue;
+        }
+        slots.push(byVisual.get(`${p}:${slot}`) ?? { type: "empty", slot });
+      }
+      out.push({ page: p, cells: slots });
+    }
+    return { cols: geom.cols, rows: geom.rows, pages: out };
+  }
+  function appGroupPage(appId, groupId, page = 0) {
+    const s = S(appId);
+    const layout = PIP3().groups_shared.activeLayout(s.d);
+    const geom = PIP3().groups_shared.geometryOf(s.d, layout);
+    const pages = PIP3().groups.pageCount(s.d, groupId, layout);
+    const row2 = one5(s.d, "SELECT * FROM board_group WHERE id = ?", [groupId]);
+    const name = row2 ? PIP3().groups.groupDisplayName(s.d, row2, s.locale) : "";
+    const mask = masked(s);
+    const home2 = new Map(PIP3().coremove.coreCells(s.d, boardGeom(s).name, s.locale).map((c) => [c.slot_index, c]));
+    const cells = new Map(
+      PIP3().groups.groupPage(s.d, groupId, page, s.locale, layout).map((c) => [c.slot_index, c])
+    );
+    const slots = [];
+    for (let slot = 0; slot < geom.cells; slot++) {
+      if (slot === geom.next) {
+        slots.push({ type: "next", slot });
+        continue;
+      }
+      if (geom.frame.includes(slot) || geom.topRow.includes(slot)) {
+        const showHome = geom.frame.includes(slot) || s.topRowOn;
+        const c2 = showHome ? home2.get(slot) : null;
+        slots.push(c2 ? { ...homeSlot(s, c2, mask), slot, reserved: true } : { type: "empty", slot, locked: true });
+        continue;
+      }
+      const c = cells.get(slot);
+      if (!c) {
+        slots.push({ type: "empty", slot });
+        continue;
+      }
+      if (c.item_kind === "sense" && mask.has(c.item_id)) {
+        if (!s.editing) {
+          slots.push({ type: "empty", slot });
+          continue;
+        }
+        slots.push({ ...wordModel(s, {
+          kind: "sense",
+          id: c.item_id,
+          label: c.label,
+          role: c.fitzgerald_role,
+          art: c.art
+        }), hidden: true, slot });
+        continue;
+      }
+      if (c.item_kind === "entity") {
+        slots.push(wordModel(s, {
+          kind: "entity",
+          id: c.item_id,
+          label: c.label,
+          role: c.fitzgerald_role,
+          photoKey: c.photo_key
+        }));
+      } else {
+        const label = shownLabel(s, c.item_id, c.label);
+        slots.push(wordModel(s, {
+          kind: "sense",
+          id: c.item_id,
+          label,
+          role: c.fitzgerald_role,
+          art: c.art
+        }));
+      }
+      slots[slots.length - 1].slot = slot;
+    }
+    s.view = "group";
+    s.groupId = groupId;
+    s.page = page;
+    s.kbOpen = false;
+    return { cols: geom.cols, rows: geom.rows, groupId, name, page, pages, cells: slots };
+  }
+  function appShowBoard(appId) {
+    const s = S(appId);
+    s.view = "board";
+    s.groupId = null;
+    return appBoard(appId);
+  }
+  function revisitPrev(s, atIndex) {
+    if (!s.grammarHelp || atIndex < 1) return null;
+    const prev = s.sentence[atIndex - 1];
+    const cur = s.sentence[atIndex];
+    if (prev.kind === "entity" && cur?.kind === "sense" && cur.id && posOfSense(s, cur.id) === "Noun" && !prev.text.endsWith("'s")) {
+      prev.text = `${prev.text}'s`;
+      return { pos: atIndex - 1, text: prev.text };
+    }
+    if (prev.kind !== "sense" || !prev.id || prev.fixed) return null;
+    const f = PIP3().forms.formFor(s.d, s.formTable, s.sentence.slice(0, atIndex - 1), prev.id, cur);
+    if (f.text === prev.text) return null;
+    prev.text = f.text;
+    prev.labelId = f.labelId;
+    prev.features = f.features;
+    if (s.sentenceId !== null) {
+      const pos = s.sentence.slice(0, atIndex - 1).filter((it) => it.id).length;
+      s.d.prepare(
+        "UPDATE learner_event_log SET label_id = ? WHERE sentence_id = ? AND position = ?"
+      ).run(f.labelId, s.sentenceId, pos);
+    }
+    return { pos: atIndex - 1, text: f.text };
+  }
+  var startFresh = (s, editing = false) => {
+    if (s.freshNext && !editing) s.sentence.length = 0;
+    s.freshNext = false;
+  };
+  var state2 = (s) => {
+    const board = boardModel(s);
+    return {
+      bar: barModel(s),
+      strip: stripModel(s),
+      board,
+      likely: PIP3().lang.likelyIds(s, board),
+      typing: s.kbBuffer || null,
+      kb: s.kbOpen ? kbModel(s) : null,
+      controls: [...PIP3().bar.barControls(s.d)],
+      tense: s.barState.tense,
+      question: s.barState.question
+    };
+  };
+  function appRepaint(appId) {
+    const s = S(appId);
+    applyProfile(s);
+    s.entRole.clear();
+    s.entPhoto.clear();
+    s.meta.clear();
+    return { ...state2(s), settings: settingsModel(s) };
+  }
+  function appTap(appId, tap) {
+    const s = S(appId);
+    const { kind, id, text } = tap;
+    const source = tap.source ?? "grid";
+    s.expand = null;
+    startFresh(s);
+    if (source === "keyboard") {
+      s.kbBuffer = "";
+      s.kbPendingAccent = null;
+      s.kbLead = null;
+    }
+    let item = { kind, id, text };
+    if (kind === "sense" && id && s.grammarHelp) {
+      const f = PIP3().forms.formFor(s.d, s.formTable, s.sentence, id);
+      item = {
+        kind: "sense",
+        id: f.senseId,
+        text: f.text ?? text,
+        labelId: f.labelId,
+        fixed: f.merged,
+        features: f.features
+      };
+    }
+    s.sentence.push(item);
+    PIP3().txbar.noteBarEdit(s.barState);
+    revisitPrev(s, s.sentence.length - 1);
+    let speech = null;
+    if (id) {
+      ensureSentence(s);
+      PIP3().funnel.fillChosen?.(s.d, s.sentenceId, { kind, id: item.id ?? id, source });
+      PIP3().funnel.logSelection(s.d, kind, item.id ?? id, Date.now(), {
+        sentenceId: s.sentenceId,
+        position: s.picks++,
+        source,
+        spotlit: PIP3().spot.childTap(`${kind}:${id}`),
+        // board.js attention.childTap (044 D5)
+        labelId: item.labelId ?? null,
+        groupId: s.view === "group" ? s.groupId : null
+      });
+      speech = PIP3().voice.resolveSlot(s.d, item, s.locale, s.voiceId);
+    }
+    return { speech: afterTap(s, speech), ...state2(s) };
+  }
+  function appBackspace(appId) {
+    const s = S(appId);
+    startFresh(s, true);
+    if (s.kbBuffer) {
+      s.kbBuffer = "";
+    } else {
+      const last = s.sentence.pop();
+      PIP3().txbar.noteBarEdit(s.barState);
+      if (last?.id && s.sentenceId !== null && s.picks > 0) {
+        PIP3().funnel.detachEvent(s.d, s.sentenceId, s.picks - 1);
+        s.picks--;
+      }
+    }
+    return { speech: null, ...state2(s) };
+  }
+  function appClear(appId) {
+    const s = S(appId);
+    startFresh(s, true);
+    if (s.sentenceId !== null) {
+      PIP3().funnel.closeSentence(s.d, s.sentenceId, Date.now(), "cleared");
+      s.sentenceId = null;
+      s.picks = 0;
+      s.lastImpressionKey = null;
+      s.openImpressionId = null;
+    }
+    s.sentence.length = 0;
+    s.kbBuffer = "";
+    s.kbPendingAccent = null;
+    s.kbLead = null;
+    PIP3().txbar.noteBarEdit(s.barState);
+    return { speech: null, ...state2(s) };
+  }
+  function prepareSpeak(s) {
+    if (s.grammarHelp && s.sentence.length) {
+      const last = s.sentence[s.sentence.length - 1];
+      if (last.kind === "sense" && last.id) {
+        const f = PIP3().forms.formFor(
+          s.d,
+          s.formTable,
+          s.sentence.slice(0, -1),
+          last.id,
+          PIP3().forms.EOS,
+          last.features
+        );
+        if (f.text !== last.text) {
+          last.text = f.text;
+          last.labelId = f.labelId;
+          last.features = f.features;
+          if (s.sentenceId !== null) {
+            const pos = s.sentence.slice(0, -1).filter((it) => it.id).length;
+            s.d.prepare(
+              "UPDATE learner_event_log SET label_id = ? WHERE sentence_id = ? AND position = ?"
+            ).run(f.labelId, s.sentenceId, pos);
+          }
+        }
+      }
+    }
+  }
+  function finishSpeak(s, feeling = null) {
+    if (s.sentenceId !== null) {
+      PIP3().funnel.closeSentence(s.d, s.sentenceId, Date.now(), "spoken", feeling);
+      s.sentenceId = null;
+      s.picks = 0;
+      s.lastImpressionKey = null;
+      s.openImpressionId = null;
+    }
+    s.freshNext = s.freshAfterSpeak;
+  }
+  var barSlots = (s) => s.sentence.map((item) => PIP3().voice.resolveSlot(s.d, item, s.locale, s.voiceId));
+  var appSpeakParts = { prepareSpeak, finishSpeak, barSlots, state: state2, metaFor: (s, id) => metaFor(s, id) };
+  function afterTap(s, speech) {
+    return PIP3().say.tapSpeech(s, speech);
+  }
+  function partnerInfo(s, senseId) {
+    const w = one5(
+      s.d,
+      `SELECT s.id, l.text AS label, s.fitzgerald_role AS role FROM sense s
+     JOIN label l ON l.sense_id = s.id
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
+     WHERE s.id = ?`,
+      [s.locale, senseId]
+    );
+    if (!w) return null;
+    return { id: w.id, label: w.label, role: w.role, art: metaFor(s, w.id).art };
+  }
+  function kbModel(s) {
+    const mapped = PIP3().keyboard.keyMap(s.locale, s.kbOrder) ?? [];
+    const device = s.kbMode === "device" || !mapped.length;
+    const partners = PIP3().keymaps.PARTNER_SENSES;
+    const keys3 = device ? partners.map((value, i) => ({ slot: 10 - partners.length + i, span: 1, kind: "partner", value })) : mapped;
+    return {
+      mode: device ? "device" : "pip",
+      keys: keys3.map((k) => {
+        const m = { slot: k.slot, span: k.span, kind: k.kind };
+        if (k.kind === "partner") {
+          const p = partnerInfo(s, k.value);
+          return p ? { ...m, senseId: p.id, label: p.label, role: p.role, art: p.art } : { ...m, kind: "empty" };
+        }
+        m.value = k.value;
+        if (k.kind === "dead" && s.kbPendingAccent === k.value) m.latched = true;
+        return m;
+      })
+    };
+  }
+  function buildKbIndex(s) {
+    const senses = all5(
+      s.d,
+      `SELECT s.id, l.text AS label, l.kind AS label_kind, s.fitzgerald_role,
+       (SELECT COUNT(*) FROM learner_event_log le
+         WHERE le.item_kind = 'sense' AND le.item_id = s.id) AS freq
+     FROM label l JOIN sense s ON s.id = l.sense_id
+     WHERE l.status = 'approved' AND l.locale = ?
+       AND NOT EXISTS (SELECT 1 FROM sense_mask m
+                       WHERE m.sense_id = s.id AND m.status = 'hidden')`,
+      [s.locale]
+    ).map((w) => ({
+      kind: "sense",
+      id: w.id,
+      text: w.label,
+      labelKind: w.label_kind,
+      freq: w.freq,
+      role: w.fitzgerald_role
+    }));
+    const ents = all5(
+      s.d,
+      `SELECT e.*,
+       (SELECT COUNT(*) FROM learner_event_log le
+         WHERE le.item_kind = 'entity' AND le.item_id = e.id) AS freq
+     FROM personal_entity e WHERE e.status = 'active'`
+    ).map((e) => ({
+      kind: "entity",
+      id: e.id,
+      text: e.spoken_name,
+      freq: e.freq,
+      entity: e
+    }));
+    return PIP3().spelling.buildIndex([...senses, ...ents], s.locale);
+  }
+  function resolveTyped(s, text) {
+    const norm = PIP3().normalize.normalizeV1(text);
+    const hit = all5(
+      s.d,
+      `SELECT s.id, l.text AS label, l.kind, l.id AS label_id
+     FROM label l JOIN sense s ON s.id = l.sense_id
+     WHERE l.normalized_text = ? AND l.locale = ? AND l.status = 'approved'
+     ORDER BY (l.kind = 'lemma') DESC, l.default_for_text DESC`,
+      [norm, s.locale]
+    )[0];
+    if (hit) return {
+      kind: "sense",
+      id: hit.id,
+      display: hit.kind === "lemma" ? hit.label : text,
+      formLabel: hit.kind === "form" ? { id: hit.label_id, text } : null
+    };
+    const ent = all5(
+      s.d,
+      "SELECT id, spoken_name FROM personal_entity WHERE status = 'active'"
+    ).find((e) => PIP3().normalize.normalizeV1(e.spoken_name) === norm);
+    if (ent) return { kind: "entity", id: ent.id, display: ent.spoken_name };
+    return { kind: "typed", id: null, display: text };
+  }
+  function commitKbItem(s, index) {
+    const raw = s.sentence[index];
+    const hit = resolveTyped(s, raw.text);
+    let item = { kind: hit.kind, id: hit.id, text: hit.display };
+    if (hit.kind === "sense" && hit.id && s.grammarHelp) {
+      if (hit.formLabel) {
+        item = {
+          kind: "sense",
+          id: hit.id,
+          text: hit.formLabel.text,
+          labelId: hit.formLabel.id,
+          fixed: true
+        };
+      } else {
+        const f = PIP3().forms.formFor(
+          s.d,
+          s.formTable,
+          s.sentence.slice(0, index),
+          hit.id
+        );
+        item = {
+          kind: "sense",
+          id: f.senseId,
+          text: f.text ?? item.text,
+          labelId: f.labelId,
+          fixed: !!f.merged,
+          features: f.features
+        };
+      }
+    }
+    if (raw.punct) item.punct = raw.punct;
+    if (raw.lead) item.lead = raw.lead;
+    s.sentence[index] = item;
+    if (item.kind === "typed") PIP3().say?.tileEnsure(s, item.text, "user_keyboard");
+    const speech = PIP3().voice.resolveSlot(s.d, item, s.locale, s.voiceId);
+    if (item.id) {
+      ensureSentence(s);
+      const position = s.picks++;
+      PIP3().funnel.fillChosen?.(
+        s.d,
+        s.sentenceId,
+        { kind: item.kind, id: item.id, source: "keyboard" }
+      );
+      PIP3().funnel.logSelection(s.d, item.kind, item.id, Date.now(), {
+        sentenceId: s.sentenceId,
+        position,
+        source: "keyboard",
+        spotlit: PIP3().spot.childTap(`${item.kind}:${item.id}`),
+        labelId: item.labelId ?? null
+      });
+      revisitPrev(s, index);
+    }
+    return speech;
+  }
+  function appKbOpen(appId) {
+    const s = S(appId);
+    s.kbOpen = true;
+    s.kbIndex ?? (s.kbIndex = buildKbIndex(s));
+    return { speech: null, ...state2(s) };
+  }
+  function appKbClose(appId) {
+    const s = S(appId);
+    s.kbOpen = false;
+    return { speech: null, ...state2(s) };
+  }
+  function appKbPress(appId, key) {
+    const s = S(appId);
+    if (key !== "Enter") startFresh(s, key === "Backspace");
+    const prevLast = s.sentence[s.sentence.length - 1];
+    const res = PIP3().keyboard.applyKey(
+      {
+        buffer: s.kbBuffer,
+        pendingAccent: s.kbPendingAccent,
+        lead: s.kbLead,
+        items: s.sentence
+      },
+      key,
+      s.locale
+    );
+    s.kbBuffer = res.state.buffer;
+    s.kbPendingAccent = res.state.pendingAccent;
+    s.kbLead = res.state.lead;
+    if (key === "Backspace" && res.state.items.length < s.sentence.length && prevLast?.id && s.sentenceId !== null && s.picks > 0) {
+      PIP3().funnel.detachEvent(s.d, s.sentenceId, s.picks - 1);
+      s.picks--;
+      PIP3().txbar.noteBarEdit(s.barState);
+    }
+    s.sentence.splice(0, s.sentence.length, ...res.state.items);
+    let speech = null;
+    for (const e of res.effects) {
+      if (e.type === "commit") {
+        speech = commitKbItem(s, e.index);
+        PIP3().txbar.noteBarEdit(s.barState);
+      } else if (e.type === "speak") {
+        PIP3().say.speakStart(s);
+      }
+    }
+    return { speech: afterTap(s, speech), ...state2(s) };
+  }
+  var KB_DEV_TERM = /[\s.,!?¿¡]/;
+  function appKbDevice(appId, value) {
+    const s = S(appId);
+    const v = String(value ?? "");
+    if (v) startFresh(s);
+    let last = -1;
+    for (let i = 0; i < v.length; i++) if (KB_DEV_TERM.test(v[i])) last = i;
+    s.kbPendingAccent = null;
+    if (last < 0) {
+      s.kbBuffer = v;
+      return { rest: v, speech: null, ...state2(s) };
+    }
+    const rest = v.slice(last + 1);
+    s.kbBuffer = "";
+    let speech = null;
+    for (const ch of v.slice(0, last + 1)) {
+      const r = appKbPress(appId, ch);
+      if (r.speech) speech = r.speech;
+    }
+    s.kbBuffer = rest;
+    return { rest, ...state2(s), speech };
+  }
+  function appKbPartner(appId, senseId) {
+    const s = S(appId);
+    PIP3().funnel.logSelection(s.d, "sense", senseId, Date.now(), {
+      sentenceId: s.sentenceId,
+      position: null,
+      source: "keyboard",
+      spotlit: PIP3().spot.childTap(`sense:${senseId}`)
+    });
+    const speech = PIP3().voice.resolveSlot(
+      s.d,
+      { kind: "sense", id: senseId },
+      s.locale,
+      s.voiceId
+    );
+    return { speech: afterTap(s, speech), ...state2(s) };
+  }
+  function settingsModel(s) {
+    const p = one5(s.d, "SELECT * FROM learner_profile WHERE id = 'prf_local'") ?? {};
+    return {
+      grammarHelp: p.grammar_help !== 0,
+      freshAfterSpeak: !!p.fresh_after_speak,
+      expressiveVoice: p.expressive_voice !== 0,
+      groupTopRow: !!p.group_top_row,
+      occasionsVisible: p.occasions_visible !== 0,
+      shareResearch: p.share_research !== 0,
+      // Profile_Presentation_Modes § 2: 'symbol' (pictures and words) | 'label' (words only)
+      look: p.presentation_mode === "label" ? "label" : "symbol",
+      speechRate: p.speech_rate ?? "normal",
+      keyboardOrder: p.keyboard_order ?? "standard",
+      keyboardStandardName: PIP3().keyboard.resolveKeymap(s.locale)?.standardName ?? "Standard",
+      keyboardMode: p.keyboard_mode === "device" ? "device" : "pip",
+      highlightNext: !!p.highlight_next,
+      spotPulse: p.spot_pulse === 1,
+      spotDim: p.spot_dim ?? 45,
+      modelSpeaks: p.model_speaks === 1,
+      boardLayout: p.board_layout ?? "grid60",
+      layouts: Object.keys(s.catalog.layouts ?? {}),
+      barControls: [...PIP3().bar.barControls(s.d)],
+      barPresets: PIP3().bar.BAR_PRESETS,
+      allControls: PIP3().bar.BAR_CONTROLS,
+      controlNames: PIP3().bar.BAR_NAMES
+    };
+  }
+  function appSettings(appId) {
+    return settingsModel(S(appId));
+  }
+  function appSetSetting(appId, key, value) {
+    const s = S(appId);
+    PIP3().groups.setSetting(
+      s.d,
+      key,
+      Array.isArray(value) ? JSON.stringify(value) : value
+    );
+    const p = applyProfile(s);
+    if (key === "share_research" && value) report(s.d);
+    return {
+      speechRate: SPEECH_RATES[p.speech_rate] ?? 1,
+      settings: settingsModel(s),
+      ...state2(s)
+    };
+  }
+
+  // scripts/ios/app_edit.mjs
+  var app_edit_exports = {};
+  __export(app_edit_exports, {
+    boardDrop: () => boardDrop,
+    cardOpen: () => cardOpen,
+    cardRemove: () => cardRemove,
+    cardRename: () => cardRename,
+    cardSpeech: () => cardSpeech,
+    cardToggleHidden: () => cardToggleHidden,
+    editCardModel: () => cardModel,
+    editClose: () => editClose,
+    editInvalidate: () => invalidate,
+    editOpen: () => editOpen,
+    editPaint: () => paint2,
+    editState: () => editState,
+    editToastWith: () => toastWith,
+    editUndo: () => editUndo,
+    groupDrop: () => groupDrop,
+    leaveGroup: () => leaveGroup,
+    testSeedPerson: () => testSeedPerson
+  });
+
+  // scripts/ios/app_media.mjs
+  var app_media_exports = {};
+  __export(app_media_exports, {
+    cardSetPhoto: () => cardSetPhoto,
+    cardUseOurPicture: () => cardUseOurPicture,
+    mediaFor: () => mediaFor,
+    personPhoto: () => personPhoto,
+    personPhotoSet: () => personPhotoSet,
+    voiceChoose: () => voiceChoose,
+    voiceSave: () => voiceSave
+  });
+  var PIP4 = () => globalThis.PIPCORE;
+  var one6 = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
+  var BLOB_KEY = /^blob:[0-9a-f]{64}$/;
+  function voiceTarget(s, kind, id) {
+    if (kind === "entity") {
+      const e = one6(s.d, "SELECT spoken_name FROM personal_entity WHERE id = ?", [id]);
+      return e ? { itemKind: "entity", itemId: id, text: e.spoken_name } : null;
+    }
+    const l = one6(
+      s.d,
+      `SELECT l.utterance_id, u.spoken_text FROM label l
+     JOIN utterance u ON u.id = l.utterance_id
+     WHERE l.sense_id = ? AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?`,
+      [id, s.locale]
+    );
+    return l ? { itemKind: "utterance", itemId: l.utterance_id, text: l.spoken_text } : null;
+  }
+  function mediaFor(s, kind, id) {
+    const t = voiceTarget(s, kind, id);
+    const rec = t ? PIP4().voice.latestRecording(s.d, t.itemKind, t.itemId, t.text) : null;
+    const mine = t ? !!PIP4().voice.overrideFor(s.d, t.itemKind, t.itemId) : false;
+    const ovr = kind === "sense" ? PIP4().images.imageOverrideFor(s.d, id) : null;
+    return {
+      // "Use our picture": only a catalog word's family photo can retire.
+      canUseOurs: !!ovr?.photo_key,
+      voice: t ? {
+        name: one6(s.d, "SELECT display_name AS n FROM voice WHERE id = ?", [s.voiceId])?.n ?? "Pip",
+        text: t.text,
+        hasRecording: !!rec,
+        mineOn: mine
+      } : null
+    };
+  }
+  var forget = (s, kind, id) => {
+    if (kind === "entity") s.entPhoto.delete(id);
+    else s.meta.delete(id);
+    PIP4().edit.editInvalidate(s);
+  };
+  var repaint = (appId, kind, id, extra = {}) => ({
+    ...PIP4().edit.cardOpen(appId, { kind, id }),
+    ...extra
+  });
+  function cardSetPhoto(appId, { kind, id, key }) {
+    const s = appSession(appId);
+    if (!BLOB_KEY.test(key)) throw new Error("cardSetPhoto: not a blob key");
+    if (kind === "entity") PIP4().groups.setEntityPhoto(s.d, id, key);
+    else PIP4().images.setImageOverride(s.d, { senseId: id, photoKey: key });
+    PIP4().mediasync.queueUpload(key);
+    forget(s, kind, id);
+    PIP4().pics.afterPhoto(appId, { kind, id, key });
+    return repaint(appId, kind, id);
+  }
+  function cardUseOurPicture(appId, { id }) {
+    const s = appSession(appId);
+    PIP4().images.clearImageOverride(s.d, id);
+    forget(s, "sense", id);
+    return repaint(appId, "sense", id);
+  }
+  function voiceSave(appId, { kind, id, key }) {
+    const s = appSession(appId);
+    const t = voiceTarget(s, kind, id);
+    if (!t) return repaint(appId, kind, id);
+    if (!BLOB_KEY.test(key)) throw new Error("voiceSave: not a blob key");
+    const before = PIP4().voice.overrideFor(s.d, t.itemKind, t.itemId)?.key ?? null;
+    PIP4().voice.setOverride(s.d, { itemKind: t.itemKind, itemId: t.itemId, key, recordedText: t.text });
+    PIP4().mediasync.queueUpload(key);
+    const toast2 = PIP4().edit.editToastWith(s, `Your voice plays for \u201C${t.text}\u201D`, () => {
+      if (before) {
+        PIP4().voice.setOverride(s.d, {
+          itemKind: t.itemKind,
+          itemId: t.itemId,
+          key: before,
+          recordedText: t.text
+        });
+      } else {
+        PIP4().voice.clearOverride(s.d, t.itemKind, t.itemId);
+      }
+      return PIP4().edit.cardOpen(appId, { kind, id });
+    });
+    return repaint(appId, kind, id, { toast: toast2 });
+  }
+  function voiceChoose(appId, { kind, id, mine }) {
+    const s = appSession(appId);
+    const t = voiceTarget(s, kind, id);
+    if (!t) return repaint(appId, kind, id);
+    if (!mine) {
+      PIP4().voice.clearOverride(s.d, t.itemKind, t.itemId);
+    } else {
+      const r = PIP4().voice.latestRecording(s.d, t.itemKind, t.itemId, t.text);
+      if (r && !PIP4().voice.overrideFor(s.d, t.itemKind, t.itemId)) {
+        PIP4().voice.setOverride(s.d, {
+          itemKind: t.itemKind,
+          itemId: t.itemId,
+          key: r.key,
+          recordedText: t.text
+        });
+      }
+    }
+    return repaint(appId, kind, id);
+  }
+  function personPhotoSet(appId, { key }) {
+    const s = appSession(appId);
+    if (key !== null && !BLOB_KEY.test(key)) throw new Error("personPhotoSet: not a blob key");
+    PIP4().personName.setProfilePhoto(s.d, key);
+    if (key) PIP4().mediasync.queueUpload(key);
+    return { photo: PIP4().personName.profilePhoto(s.d) };
+  }
+  function personPhoto(appId) {
+    return { photo: PIP4().personName.profilePhoto(appSession(appId).d) };
+  }
+
+  // public/board/group-glyph.js
+  var GROUP_ICONS = {
+    grp_people: "/icons/groups/people.svg",
+    grp_my_words: "/icons/groups/my_words.svg",
+    grp_social: "/icons/groups/social.svg",
+    grp_numbers: "/icons/groups/numbers.svg",
+    grp_time: "/icons/groups/time.svg",
+    grp_home: "/icons/groups/home.svg",
+    grp_animals: "/icons/groups/animals.svg",
+    grp_body: "/icons/groups/body.svg",
+    grp_feelings: "/icons/groups/feelings.svg",
+    grp_clothes: "/icons/groups/clothes.svg",
+    grp_play: "/icons/groups/play.svg",
+    grp_drinks: "/icons/groups/drinks.svg",
+    grp_little_words: "/icons/groups/little_words.svg",
+    grp_more_people: "/icons/groups/more_people.svg",
+    grp_more_doing: "/icons/groups/more_doing.svg",
+    grp_more_where: "/icons/groups/more_where.svg",
+    grp_more_describing: "/icons/groups/more_describing.svg",
+    grp_more_people_thirty: "/icons/groups/more_people.svg",
+    grp_more_doing_thirty: "/icons/groups/more_doing.svg",
+    grp_more_where_thirty: "/icons/groups/more_where.svg",
+    grp_more_describing_thirty: "/icons/groups/more_describing.svg",
+    grp_going_out: "/icons/groups/places.svg",
+    grp_senses: "/icons/groups/actions.svg",
+    grp_colors: "/icons/groups/describing.svg",
+    grp_who_which: "/icons/question.svg",
+    grp_breakfast: "/icons/groups/breakfast.svg",
+    grp_lunch: "/icons/groups/lunch.svg",
+    grp_dinner: "/icons/groups/food.svg",
+    grp_snack: "/icons/groups/snack.svg",
+    grp_treats: "/icons/groups/treats.svg",
+    grp_fruit: "/icons/groups/fruit.svg",
+    grp_things: "/icons/groups/things.svg",
+    grp_describing: "/icons/groups/shapes.svg",
+    grp_outside: "/icons/groups/outside.svg",
+    grp_school: "/icons/groups/school.svg",
+    grp_art_music: "/icons/groups/art_music.svg",
+    grp_bathroom: "/icons/groups/bathroom.svg",
+    grp_screens: "/icons/groups/screens.svg",
+    grp_weather: "/icons/groups/weather.svg"
+  };
+
+  // public/shared/pictures.mjs
+  function pictureAction(found) {
+    if (!found) return { kind: "none" };
+    const candidates = Array.isArray(found.candidates) ? found.candidates : [];
+    if (found.auto) {
+      const pick2 = candidates.find((c) => c.image_id === found.auto);
+      if (pick2) {
+        return {
+          kind: "apply",
+          picture: pick2,
+          others: candidates.filter((c) => c.image_id !== found.auto).slice(0, 3)
+        };
+      }
+    }
+    if (found.suggestion) {
+      return {
+        kind: "choose",
+        suggestion: found.suggestion,
+        others: candidates.slice(0, 4),
+        personal: false
+      };
+    }
+    if (found.scope === "common" && found.calibrated) {
+      return { kind: "draw", others: candidates.slice(0, 3) };
+    }
+    if (candidates.length) {
+      return { kind: "choose", others: candidates.slice(0, 4), personal: found.scope === "personal" };
+    }
+    return { kind: "none", personal: found.scope === "personal" };
+  }
+  var roleForKind = (kind) => ["None", "Yellow", "Green", "Blue", "Pink", "Purple", "Red"].includes(kind) ? kind : null;
+  var needsDraw = (found) => pictureAction(found).kind === "draw";
+  var shouldConfirmDraws = (count, left) => count > 10 || typeof left === "number" && count > left;
+  var failReason = (status, body) => {
+    if (status === 402) return "allowance";
+    if (status === 422) return "unsafe";
+    if (status === 429) return "fair_use";
+    if (status === 400) return body?.error === "bad_description" ? "needs_description" : "bad_text";
+    if (status === 403) return "denied";
+    return "unavailable";
+  };
+  var DRAW_STAGE_LABELS = {
+    checking: "Checking our pictures\u2026",
+    reading: "Reading the word\u2026",
+    planning: "Planning the picture\u2026",
+    planned: "Planning the picture\u2026",
+    drawing: "Drawing the picture\u2026",
+    saving: "Saving the picture\u2026",
+    waiting: "Waiting on another drawing\u2026",
+    serving: "Serving your picture\u2026"
+  };
+  var b64ToBlob = (b642) => {
+    const bin = atob(b642);
+    const bytes2 = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes2[i] = bin.charCodeAt(i);
+    return new Blob([bytes2], { type: "image/png" });
+  };
+  async function readDrawStream(res, onStage) {
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = "";
+    let result = { ok: false, reason: "unavailable" };
+    for (; ; ) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      let i;
+      while ((i = buf.indexOf("\n\n")) >= 0) {
+        const block = buf.slice(0, i);
+        buf = buf.slice(i + 2);
+        for (const line of block.split("\n")) {
+          if (!line.startsWith("data: ")) continue;
+          let ev;
+          try {
+            ev = JSON.parse(line.slice(6));
+          } catch {
+            continue;
+          }
+          if (ev.type === "stage") onStage?.(ev.stage, ev);
+          else if (ev.type === "done") {
+            result = {
+              ok: true,
+              blob: b64ToBlob(ev.image),
+              imageId: ev.key ? `drw_${ev.key}` : null,
+              cache: ev.cache ?? "mint",
+              left: ev.left ?? null
+            };
+          } else if (ev.type === "error") {
+            result = { ok: false, reason: failReason(ev.status, ev), left: ev.left ?? null };
+          }
+        }
+      }
+    }
+    return result;
+  }
+  function pictureClient({ base = "", fetchFn = (...a) => fetch(...a) } = {}) {
+    const post2 = async (path, body) => {
+      const res = await fetchFn(`${base}${path}`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      return res;
+    };
+    async function find2({ userId, license, text, description = null, locale }) {
+      if (!userId) return { error: "unavailable" };
+      try {
+        const res = await post2(
+          "/api/v1/pictures/find",
+          { user_id: userId, license, text, description, locale }
+        );
+        if (!res.ok) return { error: failReason(res.status, await res.json().catch(() => null)) };
+        return await res.json();
+      } catch {
+        return { error: "offline" };
+      }
+    }
+    async function findBatch({ userId, license, items, locale }) {
+      if (!userId || !items.length) return { error: "unavailable" };
+      try {
+        const res = await post2(
+          "/api/v1/pictures/find-batch",
+          { user_id: userId, license, items, locale }
+        );
+        if (!res.ok) return { error: failReason(res.status, await res.json().catch(() => null)) };
+        return await res.json();
+      } catch {
+        return { error: "offline" };
+      }
+    }
+    async function draw2({ userId, license, text, description = null, locale, onStage }) {
+      if (!userId) return { ok: false, reason: "unavailable" };
+      try {
+        const res = await fetchFn(`${base}/api/v1/pictures/draw`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            accept: "text/event-stream"
+          },
+          body: JSON.stringify({ user_id: userId, license, text, description, locale })
+        });
+        if (!res.ok) {
+          const body = await res.json().catch(() => null);
+          return { ok: false, reason: failReason(res.status, body), left: body?.left ?? null };
+        }
+        if (res.headers.get("content-type")?.includes("text/event-stream")) {
+          return await readDrawStream(res, onStage);
+        }
+        const key = res.headers.get("x-draw-key");
+        const left = res.headers.get("x-drawings-left");
+        return {
+          ok: true,
+          blob: await res.blob(),
+          imageId: key ? `drw_${key}` : null,
+          cache: res.headers.get("x-draw-cache") ?? "mint",
+          left: left == null ? null : Number(left)
+        };
+      } catch {
+        return { ok: false, reason: "offline" };
+      }
+    }
+    async function pick2({ userId, license, text, description = null, imageId }) {
+      if (!userId || !imageId) return false;
+      const res = await post2(
+        "/api/v1/pictures/pick",
+        { user_id: userId, license, text, description, image_id: imageId }
+      ).catch(() => null);
+      return res?.status === 204;
+    }
+    async function reject({ userId, license, text, description = null, ours, action, theirs = null }) {
+      if (!userId || !ours) return false;
+      const body = { user_id: userId, license, text, description, ours, action };
+      if (action !== "photo" && theirs) body.theirs = theirs;
+      const res = await post2("/api/v1/pictures/reject", body).catch(() => null);
+      return res?.status === 204;
+    }
+    async function allowance({ userId, license }) {
+      if (!userId) return null;
+      try {
+        const res = await fetchFn(`${base}/api/v1/pictures/allowance`, {
+          headers: { "x-pip-user": userId, "x-pip-license": license ?? "" }
+        });
+        return res.ok ? await res.json() : null;
+      } catch {
+        return null;
+      }
+    }
+    async function imageBlob({ userId, license, asset }) {
+      if (!asset) return null;
+      try {
+        const gated = asset.startsWith("/api/v1/pictures/img/");
+        const res = await fetchFn(`${base}${asset}`, gated ? { headers: { "x-pip-user": userId, "x-pip-license": license ?? "" } } : void 0);
+        return res.ok ? await res.blob() : null;
+      } catch {
+        return null;
+      }
+    }
+    return { find: find2, findBatch, draw: draw2, pick: pick2, reject, allowance, imageBlob };
+  }
+
+  // public/board/word-card-pictures.js
+  function pictureLine({ phase, act: act2, error, name, drawn, step } = {}) {
+    if (phase === "finding") return "Finding a picture\u2026";
+    if (phase === "drawing") return DRAW_STAGE_LABELS[step] ?? "Drawing\u2026";
+    if (error === "offline" || error === "unavailable" || error === "fair_use") {
+      return "We'll find a picture when you're back online.";
+    }
+    if (error === "allowance") return "No drawings left. Add a photo, or pick one of ours.";
+    if (error === "unsafe") return "We can't draw that. Try other words, or add a photo.";
+    if (error === "needs_description") return "Tell us what it should show first.";
+    if (error) return "Couldn't make a picture. Try again, or add a photo.";
+    if (drawn?.cache === "mint" && typeof drawn.left === "number") {
+      return `Drawn for you \xB7 ${drawn.left} drawing${drawn.left === 1 ? "" : "s"} left`;
+    }
+    if (!act2 || act2.kind === "apply" || act2.kind === "draw") return "";
+    if (act2.personal) return `Add a photo of ${name}, or use one of ours.`;
+    return act2.others?.length ? "Pick one of ours, or draw one." : "Draw one, or add a photo.";
+  }
+
+  // public/board/word-card.js
+  var KINDS2 = [
+    ["None", "Thing"],
+    ["Yellow", "Person"],
+    ["Green", "Action"],
+    ["Blue", "Describing word"],
+    ["Pink", "Little word"],
+    ["Purple", "Question word"],
+    ["Red", "Safety word"]
+  ];
+
+  // scripts/ios/app_edit.mjs
+  var PIP5 = () => globalThis.PIPCORE;
+  var one7 = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
+  function withCounts(s, board) {
+    if (!s.editing || !s.countsOn) return board;
+    const counts = PIP5().usecounts.useCounts(s.d);
+    return {
+      ...board,
+      cells: board.cells.map((c) => c.type === "word" ? { ...c, count: counts.get(`${c.kind}:${c.id}`) ?? 0 } : c)
+    };
+  }
+  function paint2(appId, extra = {}) {
+    const s = appSession(appId);
+    const group = s.view === "group" && s.groupId !== null;
+    return {
+      editing: !!s.editing,
+      countsOn: !!s.countsOn && !!s.editing,
+      surface: group ? "group" : "board",
+      board: withCounts(s, appBoard(appId)),
+      groupPage: group ? appGroupPage(appId, s.groupId, s.page) : null,
+      card: null,
+      toast: null,
+      ...extra
+    };
+  }
+  function cardModel(s, kind, id, opts = {}) {
+    const d = s.d;
+    const layout = PIP5().groups_shared.activeLayout(d);
+    let base;
+    if (kind === "entity") {
+      const e = one7(
+        d,
+        `SELECT id, spoken_name, fitzgerald_role, photo_key FROM personal_entity
+       WHERE id = ? AND status = 'active'`,
+        [id]
+      );
+      if (!e) return null;
+      base = {
+        label: e.spoken_name,
+        role: e.fitzgerald_role ?? "None",
+        art: null,
+        photoKey: e.photo_key
+      };
+    } else {
+      const row2 = one7(
+        d,
+        `SELECT l.text AS label FROM sense s JOIN label l ON l.sense_id = s.id
+         AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
+       WHERE s.id = ?`,
+        [s.locale, id]
+      );
+      if (!row2) return null;
+      const m = appMeta(s, id);
+      base = { label: row2.label, role: m.role ?? "None", art: m.art, photoKey: null };
+    }
+    const isEnt = kind === "entity";
+    const homes = isEnt ? PIP5().groups.entityGroups(d, id, s.locale) : PIP5().groups.senseGroups(d, id, s.locale);
+    return {
+      kind,
+      id,
+      ...base,
+      media: mediaFor(s, kind, id),
+      isEntity: isEnt,
+      canRename: isEnt,
+      canHide: !isEnt,
+      canRemove: isEnt,
+      hidden: !isEnt && PIP5().groups.maskedSenseIds(d).has(id),
+      hint: isEnt ? "Tap the name to change it" : "Tap the word to hear it",
+      onMainBoard: PIP5().coremove.cellSlot(d, appGeom(s).name, kind, id) !== null,
+      // Colour row (word-card.js paintKind): personal words only.
+      canColour: isEnt,
+      kindName: KINDS2.find(([r]) => r === base.role)?.[1] ?? "Thing",
+      kinds: isEnt ? KINDS2.map(([r, label]) => ({ role: r, label, selected: r === base.role })) : [],
+      // "Sounds wrong" (word-card.js paintVoice): personal names on a shared board voice.
+      canFlag: isEnt && one7(d, "SELECT source AS s FROM voice WHERE id = ?", [s.voiceId])?.s !== "device_tts",
+      // Swap (editor-ui.js showCard): only where the word holds a cell, and
+      // only when the card was opened from the board (opts.swap).
+      swap: opts.swap ? swapContext(s, kind, id) : null,
+      groups: homes.filter((g2) => PIP5().groups_shared.shownOn(d, g2.id, layout)).map((g2) => ({ id: g2.id, name: g2.name }))
+    };
+  }
+  function swapContext(s, kind, id) {
+    const d = s.d;
+    if (s.view === "group" && s.groupId !== null) {
+      const cell = one7(
+        d,
+        `SELECT page, slot_index FROM group_cell
+       WHERE group_id = ? AND layout = ? AND item_kind = ? AND item_id = ?`,
+        [s.groupId, PIP5().groups_shared.activeLayout(d), kind, id]
+      );
+      return cell ? { where: "group", groupId: s.groupId, page: cell.page, slot: cell.slot_index } : null;
+    }
+    const slot = PIP5().coremove.cellSlot(d, appGeom(s).name, kind, id);
+    return slot === null ? null : { where: "main", slot };
+  }
+  function toastWith(s, text, undo) {
+    if (!undo) return { text };
+    s.editUndo ?? (s.editUndo = /* @__PURE__ */ new Map());
+    s.editUndoSeq = (s.editUndoSeq ?? 0) + 1;
+    const token = `u${s.editUndoSeq}`;
+    s.editUndo.set(token, undo);
+    if (s.editUndo.size > 20) s.editUndo.delete(s.editUndo.keys().next().value);
+    return { text, undo: token };
+  }
+  var invalidate = (s) => {
+    s.kbIndex = null;
+  };
+  function editOpen(appId) {
+    const s = appSession(appId);
+    s.editing = true;
+    s.expand = null;
+    s.kbOpen = false;
+    return paint2(appId);
+  }
+  function editClose(appId) {
+    const s = appSession(appId);
+    s.editing = false;
+    s.countsOn = false;
+    invalidate(s);
+    return paint2(appId);
+  }
+  function editState(appId) {
+    return paint2(appId);
+  }
+  function cardOpen(appId, { kind, id, swap = false }) {
+    const s = appSession(appId);
+    return paint2(appId, { card: cardModel(s, kind, id, { swap }) });
+  }
+  function cardSpeech(appId, { kind, id, text }) {
+    const s = appSession(appId);
+    return { speech: PIP5().voice.resolveSlot(s.d, { kind, id, text }, s.locale, s.voiceId) };
+  }
+  function cardRename(appId, { kind, id, name }) {
+    const s = appSession(appId);
+    const card2 = cardModel(s, kind, id);
+    if (!card2 || !card2.canRename) return paint2(appId, { card: card2 });
+    const next = String(name ?? "").replace(/\s+/g, " ").trim();
+    if (!next || next === card2.label) return paint2(appId, { card: card2 });
+    PIP5().groups.renameEntity(s.d, id, next);
+    s.entRole.delete(id);
+    invalidate(s);
+    return paint2(appId, { card: cardModel(s, kind, id) });
+  }
+  function cardToggleHidden(appId, { id }) {
+    const s = appSession(appId);
+    const card2 = cardModel(s, "sense", id);
+    if (!card2) return paint2(appId);
+    const hidden = !PIP5().groups.maskedSenseIds(s.d).has(id);
+    PIP5().groups.setMask(s.d, id, hidden);
+    invalidate(s);
+    return paint2(appId, {
+      toast: toastWith(s, hidden ? `Hid ${card2.label}` : `Showing ${card2.label}`)
+    });
+  }
+  function cardRemove(appId, { id }) {
+    const s = appSession(appId);
+    const card2 = cardModel(s, "entity", id);
+    if (!card2) return paint2(appId);
+    PIP5().groups.retireEntity(s.d, id);
+    s.entRole.delete(id);
+    invalidate(s);
+    return paint2(appId, {
+      toast: toastWith(s, `Removed ${card2.label}`, () => {
+        PIP5().groups.restoreEntity(s.d, id);
+        invalidate(s);
+        return paint2(appId);
+      })
+    });
+  }
+  function leaveGroup(appId, { kind, id, groupId, label, fromCard = false }) {
+    const s = appSession(appId);
+    const row2 = one7(s.d, "SELECT * FROM board_group WHERE id = ?", [groupId]);
+    const gname = row2 ? PIP5().groups.groupDisplayName(s.d, row2, s.locale) : "";
+    const undo = PIP5().groupsOps.removeItemUndoable(s.d, groupId, kind, id);
+    const word = label ?? cardModel(s, kind, id)?.label ?? "";
+    return paint2(appId, {
+      card: fromCard ? cardModel(s, kind, id) : null,
+      toast: toastWith(s, `Removed from ${gname}`, () => {
+        const { moved } = undo.undo();
+        return paint2(appId, {
+          card: fromCard ? cardModel(s, kind, id) : null,
+          toast: moved ? toastWith(s, fromCard ? `${word} is back in ${gname} \u2014 its cell was taken, so it moved` : `${word} is back \u2014 its cell was taken, so it moved`) : null
+        });
+      })
+    });
+  }
+  function editUndo(appId, { token }) {
+    const s = appSession(appId);
+    const run = s.editUndo?.get(token);
+    if (!run) return paint2(appId);
+    s.editUndo.delete(token);
+    return run();
+  }
+  function boardDrop(appId, { kind, id, toSlot, label }) {
+    const s = appSession(appId);
+    const geom = appGeom(s);
+    const opts = { anchors: new Set(geom.anchors.keys()) };
+    const back = (to) => kind === "sense" ? PIP5().coremove.moveCore(s.d, geom.name, id, to) : PIP5().coremove.placeOnBoard(s.d, geom.name, "entity", id, to);
+    const mv = kind === "sense" ? PIP5().coremove.moveCore(s.d, geom.name, id, toSlot, opts) : PIP5().coremove.placeOnBoard(s.d, geom.name, "entity", id, toSlot, opts);
+    if (!mv) return paint2(appId);
+    const word = label ?? cardModel(s, kind, id)?.label ?? "";
+    return paint2(appId, {
+      toast: toastWith(s, `Moved ${word}`, () => {
+        back(mv.from);
+        return paint2(appId);
+      })
+    });
+  }
+  function groupDrop(appId, { groupId, kind, id, toSlot }) {
+    const s = appSession(appId);
+    const layout = PIP5().groups_shared.activeLayout(s.d);
+    const page = s.page;
+    const here = PIP5().groups.groupPage(s.d, groupId, page, s.locale, layout);
+    const target = here.find((r) => r.slot_index === toSlot);
+    if (target) {
+      if (target.item_kind === kind && target.item_id === id) return paint2(appId);
+      PIP5().groupsOps.swapItems(
+        s.d,
+        groupId,
+        { item_kind: kind, item_id: id },
+        { item_kind: target.item_kind, item_id: target.item_id },
+        layout
+      );
+    } else if (PIP5().groups_shared.geometryOf(s.d, layout).content.includes(toSlot)) {
+      PIP5().groupsOps.moveItem(s.d, groupId, kind, id, page, toSlot, layout);
+    }
+    return paint2(appId);
+  }
+  function testSeedPerson(appId, { name }) {
+    const s = appSession(appId);
+    const { id } = PIP5().groups.createEntity(s.d, { name, role: "Yellow" });
+    PIP5().coremove.seatSetupPeople(s.d, [id], s.locale);
+    invalidate(s);
+    return { id, ...paint2(appId) };
+  }
+
+  // scripts/ios/app_library.mjs
+  var app_library_exports = {};
+  __export(app_library_exports, {
+    addMake: () => addMake,
+    addMakeGroup: () => addMakeGroup,
+    addPlace: () => addPlace,
+    addState: () => addState,
+    libraryState: () => libraryState,
+    otherGroups: () => otherGroups,
+    otherGroupsSave: () => otherGroupsSave,
+    placeList: () => placeList,
+    placePick: () => placePick,
+    placeUniFor: () => kidsUni
+  });
+  var PIP6 = () => globalThis.PIPCORE;
+  var one8 = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
+  var fold = (s) => PIP6().normalize.normalizeV1(s).replace(/[\s\-‐-―]+/g, "");
+  var ownLeft2 = (s) => s.licensed ? Infinity : Math.max(0, PIP6().groups.OWN_WORDS_FREE - PIP6().groups.liveOwnWords(s.d));
+  function groupName(s, id, fallback = "") {
+    const row2 = one8(s.d, "SELECT id, name FROM board_group WHERE id = ?", [id]);
+    return row2 ? PIP6().groups.groupDisplayName(s.d, row2, s.locale) : fallback;
+  }
+  var noteRecent = (s, id) => {
+    s.addRecent = [id, ...(s.addRecent ?? []).filter((x) => x !== id)].slice(0, 3);
+  };
+  var seedCategory = (s, groupId) => s.catalog.groups?.find((g2) => g2.id === groupId)?.category ?? null;
+  function matchRows(s, groupId, text) {
+    const d = s.d;
+    const seed = seedCategory(s, groupId);
+    const want2 = fold(text);
+    const here = new Set(
+      d.prepare("SELECT item_kind || ':' || item_id AS k FROM group_membership WHERE group_id = ?").all(groupId).map((r) => r.k)
+    );
+    const destName = groupName(s, groupId, "My Words");
+    const rows = [];
+    let exact = -1;
+    for (const m of PIP6().groups.entityMatches(d, text, "__any__", s.locale, seed)) {
+      const isHere = here.has(`entity:${m.id}`);
+      rows.push({
+        key: `entity:${m.id}`,
+        kind: "entity",
+        id: m.id,
+        label: m.name,
+        role: m.fitzgerald_role ?? "None",
+        art: null,
+        photoKey: m.photo_key ?? null,
+        sub: isHere ? `Already in ${destName}` : m.groups.length ? `In ${m.groups.join(", ")}` : "Your word",
+        action: isHere ? "Open" : "Add",
+        here: isHere
+      });
+      if (exact < 0 && fold(m.name) === want2) exact = rows.length - 1;
+    }
+    const seen = /* @__PURE__ */ new Set();
+    const cat = [...PIP6().groups.catalogMatches(d, text, "__any__", s.locale, seed)];
+    if (want2 !== PIP6().normalize.normalizeV1(text)) {
+      cat.push(...PIP6().groups.catalogMatches(d, want2, "__any__", s.locale, seed));
+    }
+    for (const m of cat) {
+      if (seen.has(m.id)) continue;
+      seen.add(m.id);
+      const isHere = here.has(`sense:${m.id}`);
+      rows.push({
+        key: `sense:${m.id}`,
+        kind: "sense",
+        id: m.id,
+        label: m.label,
+        role: m.fitzgerald_role ?? "None",
+        art: m.art ?? null,
+        photoKey: null,
+        sub: isHere ? `Already in ${destName}` : "Our picture and voice",
+        action: isHere ? "Open" : "Add",
+        here: isHere
+      });
+      if (exact < 0 && fold(m.label) === want2) exact = rows.length - 1;
+    }
+    const capped = ownLeft2(s) <= 0;
+    rows.push({
+      key: "make",
+      kind: "make",
+      id: null,
+      label: `\u201C${text}\u201D`,
+      role: "None",
+      art: null,
+      photoKey: null,
+      sub: capped ? `Your ${PIP6().groups.OWN_WORDS_FREE} free words are used` : "New word \u2014 picture and voice made for you",
+      action: capped ? "See Pip Lifetime" : "Make",
+      here: false,
+      capped
+    });
+    const hi = exact >= 0 ? exact : rows.length - 1;
+    return rows.map((r, i) => ({ ...r, highlighted: i === hi }));
+  }
+  function countLine(s) {
+    const n = PIP6().groups.liveOwnWords(s.d);
+    const cap = PIP6().groups.OWN_WORDS_FREE;
+    return {
+      hidden: !!s.licensed,
+      text: n >= cap ? `All ${cap} free words used \u2014 Pip Lifetime adds unlimited.` : `${n} of ${cap} free words`
+    };
+  }
+  function groupPicker(s, target, q) {
+    const norm = PIP6().normalize.normalizeV1(q ?? "");
+    const groups = PIP6().groups_shared.groupIndex(s.d).filter((g2) => !g2.hidden).map((g2) => ({
+      id: g2.id,
+      name: PIP6().groups.groupDisplayName(s.d, g2, s.locale),
+      glyph: g2.glyph ?? null,
+      selected: g2.id === target
+    }));
+    const recent = norm ? [] : (s.addRecent ?? []).map((id) => groups.find((g2) => g2.id === id)).filter(Boolean);
+    const all7 = groups.filter((g2) => !norm || PIP6().normalize.normalizeV1(g2.name).includes(norm));
+    const typed = String(q ?? "").trim();
+    const canMake = !!norm && all7.length === 0;
+    return {
+      recent,
+      all: all7,
+      make: { canMake, label: canMake ? `Make a group called \u201C${typed}\u201D` : "New group", name: typed }
+    };
+  }
+  function addState(appId, { groupId = null, cell = null, text = "", picker = null }) {
+    const s = appSession(appId);
+    const target = groupId ?? "grp_my_words";
+    const t = String(text ?? "").trim();
+    return {
+      title: "Add a word",
+      target: { id: target, name: groupName(s, target, "My Words") },
+      cell,
+      count: countLine(s),
+      matches: t ? matchRows(s, target, t) : [],
+      picker: picker === null ? null : groupPicker(s, target, picker)
+    };
+  }
+  function addMakeGroup(appId, { name }) {
+    const s = appSession(appId);
+    const clean = String(name ?? "").trim().replace(/\s+/g, " ");
+    if (!clean) return { groupId: null };
+    const { id } = PIP6().groups.createGroup(s.d, { name: clean });
+    invalidate(s);
+    return { groupId: id, toast: { text: `New group \u201C${clean}\u201D \u2014 its door is in Groups` } };
+  }
+  function addPlace(appId, { groupId, cell = null, kind, id, label }) {
+    const s = appSession(appId);
+    try {
+      PIP6().groupsOps.placeItem(s.d, groupId, kind, id, cell);
+    } catch (e) {
+      return paint2(appId, { toast: { text: "That cell is taken \u2014 pick another" } });
+    }
+    noteRecent(s, groupId);
+    invalidate(s);
+    return paint2(appId, {
+      toast: {
+        text: `Added ${label}`,
+        actionLabel: "Add to other groups",
+        other: { kind, id, label }
+      }
+    });
+  }
+  function addMake(appId, { groupId, cell = null, text }) {
+    const s = appSession(appId);
+    const name = String(text ?? "").trim();
+    if (!name) return paint2(appId);
+    if (ownLeft2(s) <= 0) {
+      return paint2(appId, {
+        toast: { text: `That's your ${PIP6().groups.OWN_WORDS_FREE} free words \u2014 Pip Lifetime adds unlimited.` }
+      });
+    }
+    const id = `ent_${crypto.randomUUID().replaceAll("-", "")}`;
+    PIP6().groups.createEntity(s.d, { id, name, category: seedCategory(s, groupId) });
+    try {
+      PIP6().groupsOps.placeItem(s.d, groupId, "entity", id, cell);
+    } catch {
+      PIP6().groupsOps.placeItem(s.d, groupId, "entity", id, null);
+    }
+    noteRecent(s, groupId);
+    invalidate(s);
+    const card2 = cardModel(s, "entity", id);
+    return paint2(appId, {
+      card: card2 ? { ...card2, justAdded: { groupName: groupName(s, groupId, "My Words") } } : null
+    });
+  }
+  function otherGroups(appId, { kind, id, label }) {
+    const s = appSession(appId);
+    const layout = PIP6().groups_shared.activeLayout(s.d);
+    const holds = new Set(
+      s.d.prepare("SELECT group_id FROM group_membership WHERE item_kind = ? AND item_id = ?").all(kind, id).map((r) => r.group_id)
+    );
+    return {
+      kind,
+      id,
+      label,
+      title: `Add ${label} to other groups`,
+      groups: PIP6().groups_shared.groupIndex(s.d).filter((g2) => !holds.has(g2.id) && PIP6().groups_shared.shownOn(s.d, g2.id, layout)).map((g2) => ({ id: g2.id, name: PIP6().groups.groupDisplayName(s.d, g2, s.locale) }))
+    };
+  }
+  function otherGroupsSave(appId, { kind, id, label, groupIds }) {
+    const s = appSession(appId);
+    if (!groupIds?.length) return paint2(appId);
+    const { added, undo } = PIP6().groupsOps.addToGroups(s.d, kind, id, groupIds);
+    invalidate(s);
+    if (!added.length) return paint2(appId);
+    const names = added.map((g2) => groupName(s, g2)).join(", ");
+    return paint2(appId, {
+      toast: toastWith(s, `Added ${label} to ${names}`, () => {
+        undo();
+        invalidate(s);
+        return paint2(appId);
+      })
+    });
+  }
+  function libraryState(appId, { tab = "added", q = "" }) {
+    const s = appSession(appId);
+    const L2 = PIP6().library;
+    const text = String(q ?? "").trim();
+    const rows = text ? L2.librarySearch(s.d, text, s.locale, PIP6().normalize.normalizeV1) : tab === "added" ? L2.libraryAdded(s.d, s.locale) : tab === "all" ? L2.libraryAll(s.d, s.locale) : L2.librarySuggested(s.d, s.locale);
+    return {
+      tab,
+      q: text,
+      tabs: [
+        { id: "added", label: "Added" },
+        { id: "suggested", label: "Suggested" },
+        { id: "all", label: "All" }
+      ],
+      empty: rows.length ? null : text ? "No matches." : tab === "suggested" ? "Nothing here yet \u2014 words the device hears appear once the child does not have them yet." : "Nothing here yet.",
+      rows: rows.map((r) => {
+        const homes = L2.libraryHomes(s.d, r.kind, r.id, s.locale);
+        return {
+          key: `${r.kind}:${r.id}`,
+          kind: r.kind,
+          id: r.id,
+          label: r.label,
+          role: r.role ?? "None",
+          art: r.art ?? null,
+          photoKey: r.photo_key ?? null,
+          sub: homes.length ? `in ${homes.join(", ")}` : null
+        };
+      }),
+      total: rows.length
+    };
+  }
+  function kidsUni(s) {
+    if (s.kidsUniCache) return s.kidsUniCache;
+    const uni = {};
+    const ph = s.phrases;
+    if (ph?.uni) {
+      for (const [k, n] of Object.entries(ph.uni)) {
+        uni[`sns_${String(parseInt(k, 36)).padStart(4, "0")}`] = n;
+      }
+    } else {
+      for (const row2 of Object.values(ph?.contexts ?? {})) {
+        for (const [id, n] of Object.entries(row2)) uni[id] = (uni[id] ?? 0) + n;
+      }
+    }
+    return s.kidsUniCache = uni;
+  }
+  function placeList(appId, { q = "" }) {
+    const s = appSession(appId);
+    const rows = PIP6().usecounts.offBoardItems(s.d, appGeom(s).name, s.locale, {
+      counts: PIP6().usecounts.useCounts(s.d),
+      uni: kidsUni(s),
+      q
+    });
+    return {
+      title: "What goes here?",
+      empty: rows.length ? null : "Nothing matches.",
+      rows: rows.slice(0, 30).map((r) => ({
+        key: `${r.kind}:${r.id}`,
+        kind: r.kind,
+        id: r.id,
+        label: r.label,
+        role: r.role ?? "None",
+        count: r.count
+      }))
+    };
+  }
+  function placePick(appId, { slot, kind, id, label }) {
+    const s = appSession(appId);
+    const geom = appGeom(s);
+    const mv = PIP6().coremove.placeOnBoard(s.d, geom.name, kind, id, slot, {
+      anchors: new Set(geom.anchors.keys())
+    });
+    if (!mv) return paint2(appId);
+    invalidate(s);
+    return paint2(appId, {
+      toast: toastWith(s, `Placed ${label}`, () => {
+        PIP6().coremove.placeOnBoard(s.d, geom.name, kind, id, mv.from);
+        invalidate(s);
+        return paint2(appId);
+      })
+    });
+  }
+
+  // scripts/ios/app_card.mjs
+  var app_card_exports = {};
+  __export(app_card_exports, {
+    INCOMPATIBLE_TEXT: () => INCOMPATIBLE_TEXT,
+    cardSetKind: () => cardSetKind,
+    editorStatusOf: () => editorStatusOf,
+    swapList: () => swapList,
+    swapPick: () => swapPick,
+    withProtocol: () => withProtocol
+  });
+
+  // scripts/ios/app_sync.mjs
+  var app_sync_exports = {};
+  __export(app_sync_exports, {
+    isIncompatible: () => isIncompatible,
+    syncHealth: () => syncHealth2,
+    syncStart: () => syncStart,
+    syncStartDb: () => syncStartDb,
+    syncStop: () => syncStop
+  });
+
   // scripts/ios/app_mediasync.mjs
   var app_mediasync_exports = {};
   __export(app_mediasync_exports, {
@@ -9743,7 +11001,7 @@ ${ts}`);
     scanMedia: () => scanMedia,
     setPuller: () => setPuller
   });
-  var emit = (name, payload = {}) => globalThis.__pipHost.emit(name, JSON.stringify(payload));
+  var emit3 = (name, payload = {}) => globalThis.__pipHost.emit(name, JSON.stringify(payload));
   var puller = null;
   var setPuller = (fn) => {
     puller = fn;
@@ -9767,7 +11025,7 @@ ${ts}`);
     const h = syncHealth();
     return { pending: pending2, missing, uploading: h.mediaPending, uploadError: h.mediaError ? String(h.mediaError.message ?? h.mediaError) : null };
   }
-  var report2 = () => emit("media.state", mediaStatus());
+  var report2 = () => emit3("media.state", mediaStatus());
   function scanMedia(db) {
     let refs;
     try {
@@ -9810,7 +11068,7 @@ ${ts}`);
     }
     if (have) {
       wanted.delete(sha);
-      emit("media.ready", { sha });
+      emit3("media.ready", { sha });
       report2();
       return;
     }
@@ -9823,7 +11081,7 @@ ${ts}`);
       const bytes2 = await puller(sha);
       await saveBlobBytes(sha, bytes2);
       wanted.delete(sha);
-      emit("media.ready", { sha });
+      emit3("media.ready", { sha });
     } catch (err) {
       w.tries++;
       w.st = err?.status === 404 ? "missing" : "pending";
@@ -9882,7 +11140,7 @@ ${ts}`);
   var getUser = (store, id) => store.get(USER_PREFIX + id);
 
   // public/shared/account.mjs
-  var te6 = new TextEncoder();
+  var te8 = new TextEncoder();
   var td3 = new TextDecoder();
   var post = async (path, body) => {
     const r = await fetch(path, {
@@ -9934,7 +11192,7 @@ ${ts}`);
     }
     const sealed_profile = await sealBlob(
       await getUserKey2(keyStore, userId, epochs[0]),
-      te6.encode(JSON.stringify({ name, photo })),
+      te8.encode(JSON.stringify({ name, photo })),
       epochs[0]
     );
     await post(`/accounts/${acctId}/users`, {
@@ -10022,8 +11280,8 @@ ${ts}`);
     offerCancel: () => offerCancel,
     showCode: () => showCode
   });
-  var parse2 = (x) => typeof x === "string" ? JSON.parse(x) : x;
-  var emit2 = (name, payload) => globalThis.__pipHost.emit(name, JSON.stringify(payload));
+  var parse3 = (x) => typeof x === "string" ? JSON.parse(x) : x;
+  var emit4 = (name, payload) => globalThis.__pipHost.emit(name, JSON.stringify(payload));
   var sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   var POLL_MS = 2e3;
   var cleanCode = (v) => String(v ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
@@ -10052,7 +11310,7 @@ ${ts}`);
           label
         });
       } catch (e) {
-        emit2("pair.join", {
+        emit4("pair.join", {
           stage: "error",
           status: e.status ?? 0,
           message: e.status === 410 ? "That code ran out. Make a new one on the other device." : e.status === 409 ? "That code was already used. Make a new one on the other device." : e.status === 404 ? "That code isn't open \u2014 check the letters, or make a new one." : `Could not reach Pip: ${e.message}`
@@ -10060,7 +11318,7 @@ ${ts}`);
         return;
       }
       if (gen2 !== joinGen) return;
-      emit2("pair.join", { stage: "claimed", message: "Connected \u2014 finishing on the other device\u2026" });
+      emit4("pair.join", { stage: "claimed", message: "Connected \u2014 finishing on the other device\u2026" });
       const r = await pollPair(async () => {
         const st2 = await pairClient(baseUrl).status(code);
         if (st2.status === "refused") return st2;
@@ -10080,16 +11338,16 @@ ${ts}`);
       }, { intervalMs: POLL_MS, sleep, cancelled: () => gen2 !== joinGen });
       if (r.cancelled) return;
       if (r.error) {
-        emit2("pair.join", { stage: "error", status: r.cause?.status ?? 0, message: r.error });
+        emit4("pair.join", { stage: "error", status: r.cause?.status ?? 0, message: r.error });
         return;
       }
       const st = r.value;
       if (st.status === "refused") {
-        emit2("pair.join", { stage: "refused", message: st.grant?.refused ?? "The other device declined." });
+        emit4("pair.join", { stage: "refused", message: st.grant?.refused ?? "The other device declined." });
         return;
       }
-      emit2("pair.join", { stage: "granted", userId: st.grant.user_id, epoch: st.grant.epoch ?? 1 });
-    })().catch((e) => emit2("pair.join", {
+      emit4("pair.join", { stage: "granted", userId: st.grant.user_id, epoch: st.grant.epoch ?? 1 });
+    })().catch((e) => emit4("pair.join", {
       stage: "error",
       status: 0,
       message: `Could not reach Pip: ${e.message}`
@@ -10120,34 +11378,34 @@ ${ts}`);
   }
   function offer(baseUrl, userRowJson, label) {
     const gen2 = ++offerGen;
-    const me = parse2(userRowJson);
+    const me = parse3(userRowJson);
     (async () => {
       const store = openKeyStore();
       const identity = await getDeviceIdentity(store);
       if (!me.sync?.userId) {
         await ensureRelayUser(baseUrl, me, label, store, identity);
-        emit2("pair.offer", { stage: "linked", sync: me.sync });
+        emit4("pair.offer", { stage: "linked", sync: me.sync });
       }
       const userKey = await getUserKey(store, me.id, me.sync.epoch ?? 1);
       const client = relayClient({ userId: me.sync.userId, baseUrl, identity, userKey });
       const who = me.name || "this board";
       const [{ devices }, self] = await Promise.all([client.listDevices(), client.selfKey()]);
       if (self?.owner === false) {
-        emit2("pair.offer", { stage: "refused", lines: [
+        emit4("pair.offer", { stage: "refused", lines: [
           `Only ${who}'s owner can add devices. On the owner's phone or tablet: Settings \u2192 Team & devices \u2192 Add a device. It shows a code to type on the new device.`,
           "The owner can also make you an owner in Team & devices."
         ] });
         return;
       }
       if (self?.entitlement !== "lifetime" && devices.length >= 1) {
-        emit2("pair.offer", { stage: "refused", lines: [
+        emit4("pair.offer", { stage: "refused", lines: [
           `Free Pip is on one device. Pip Lifetime puts ${who} on every phone, laptop, and tablet \u2014 $49 once.`
         ] });
         return;
       }
       const { pair } = await pairClient(baseUrl).offer();
       if (gen2 !== offerGen) return;
-      emit2("pair.offer", {
+      emit4("pair.offer", {
         stage: "code",
         code: pair,
         shown: showCode(pair),
@@ -10161,7 +11419,7 @@ ${ts}`);
       }, { intervalMs: POLL_MS, sleep, cancelled: () => gen2 !== offerGen });
       if (r.cancelled) return;
       if (r.error) {
-        emit2("pair.offer", r.cause?.status === 410 ? { stage: "expired", message: "This code ran out." } : { stage: "error", message: r.error });
+        emit4("pair.offer", r.cause?.status === 410 ? { stage: "expired", message: "This code ran out." } : { stage: "error", message: r.error });
         return;
       }
       const st = r.value;
@@ -10172,7 +11430,7 @@ ${ts}`);
         const msg = e.message === "upgrade_required" ? "Pip Lifetime is needed for more than one device." : `Pip refused the device: ${e.message}`;
         await pairClient(baseUrl).grant(pair, { refused: msg }).catch(() => {
         });
-        emit2("pair.offer", { stage: "refused", lines: [msg] });
+        emit4("pair.offer", { stage: "refused", lines: [msg] });
         return;
       }
       const wrapped = await wrapUserKey(userKey, st.dh_pub);
@@ -10188,17 +11446,17 @@ ${ts}`);
         ...wrapped,
         keys: keys3
       });
-      emit2("pair.offer", { stage: "done", message: `\u2713 ${who} is on ${name}.` });
+      emit4("pair.offer", { stage: "done", message: `\u2713 ${who} is on ${name}.` });
       return;
-    })().catch((e) => emit2("pair.offer", { stage: "error", message: `Could not reach Pip: ${e.message}` }));
+    })().catch((e) => emit4("pair.offer", { stage: "error", message: `Could not reach Pip: ${e.message}` }));
     return { accepted: true };
   }
 
   // scripts/ios/app_team.mjs
-  var parse3 = (x) => typeof x === "string" ? JSON.parse(x) : x;
-  var emit3 = (name, payload) => globalThis.__pipHost.emit(name, JSON.stringify(payload));
-  var toast = (text) => emit3("team.toast", { text });
-  var te7 = new TextEncoder();
+  var parse4 = (x) => typeof x === "string" ? JSON.parse(x) : x;
+  var emit5 = (name, payload) => globalThis.__pipHost.emit(name, JSON.stringify(payload));
+  var toast = (text) => emit5("team.toast", { text });
+  var te9 = new TextEncoder();
   var STATE_NAME = "account/state";
   var MY_NAME = "account/my_name";
   var relayBase = null;
@@ -10239,7 +11497,7 @@ ${ts}`);
     const epoch = u.sync?.epoch ?? 1;
     const sealed_profile = keys3.length ? await sealBlob(
       await getUserKey(ks, u.id, epoch),
-      te7.encode(JSON.stringify({ name: u.name ?? "", photo: u.photo ?? null })),
+      te9.encode(JSON.stringify({ name: u.name ?? "", photo: u.photo ?? null })),
       epoch
     ) : null;
     return { keys: keys3, sealed_profile, join_tokens: joinTokens };
@@ -10382,10 +11640,10 @@ ${ts}`);
   }
   function refresh(baseUrl, userRowJson, label, appId) {
     noteBase(baseUrl);
-    const me = parse3(userRowJson);
+    const me = parse4(userRowJson);
     build(baseUrl, me, label, appId).then(
-      (m) => emit3("team.state", { userId: me.id, ...m }),
-      (e) => emit3("team.state", {
+      (m) => emit5("team.state", { userId: me.id, ...m }),
+      (e) => emit5("team.state", {
         userId: me.id,
         linked: !!me.sync?.userId,
         error: `Could not load the team: ${e.message}`,
@@ -10478,9 +11736,9 @@ ${ts}`);
       const { client } = await userClient(baseUrl, me);
       const { delete_at } = await client.deleteUser();
       toast(`User scheduled for deletion on ${new Date(delete_at).toLocaleDateString()}`);
-      emit3("team.deleted", { ok: true });
+      emit5("team.deleted", { ok: true });
     } catch (e) {
-      emit3("team.deleted", { ok: false, message: `Could not reach the relay: ${e.message}` });
+      emit5("team.deleted", { ok: false, message: `Could not reach the relay: ${e.message}` });
     }
   }
   async function undeleteCloud(baseUrl, me) {
@@ -10498,7 +11756,7 @@ ${ts}`);
     try {
       await deleteAccount(st.acct_id, st.session);
       await openKeyStore().del(STATE_NAME);
-      emit3("team.account", { email: null });
+      emit5("team.account", { email: null });
       toast("Account deleted.");
     } catch (e) {
       toast(`Could not delete (${e.message})`);
@@ -10524,8 +11782,8 @@ ${ts}`);
   };
   function act(baseUrl, userRowJson, label, appId, action, argsJson) {
     noteBase(baseUrl);
-    const me = parse3(userRowJson);
-    const args = parse3(argsJson ?? "{}") ?? {};
+    const me = parse4(userRowJson);
+    const args = parse4(argsJson ?? "{}") ?? {};
     const fn = ACTIONS[action];
     if (!fn) return { accepted: false };
     (async () => {
@@ -10541,7 +11799,7 @@ ${ts}`);
     (async () => {
       const st = await accountState();
       if (!st?.acct_id) {
-        emit3("team.myname", { name: "" });
+        emit5("team.myname", { name: "" });
         return;
       }
       const store = openKeyStore();
@@ -10550,14 +11808,14 @@ ${ts}`);
       const synced = supporterNames(db).get(st.acct_id) ?? "";
       if (mine && mine !== synced) setSupporterName(db, st.acct_id, mine);
       else if (!mine && synced) await store.put(MY_NAME, synced);
-      emit3("team.myname", { name: mine || synced });
+      emit5("team.myname", { name: mine || synced });
     })().catch(() => {
     });
     return { accepted: true };
   }
   function resume2(baseUrl, userRowJson, label, appId) {
     noteBase(baseUrl);
-    const me = parse3(userRowJson);
+    const me = parse4(userRowJson);
     (async () => {
       if (me.sync?.userId) {
         const { client, store } = await userClient(baseUrl, me);
@@ -10567,240 +11825,10 @@ ${ts}`);
     return { accepted: true };
   }
 
-  // scripts/ios/app_spotlight.mjs
-  var app_spotlight_exports = {};
-  __export(app_spotlight_exports, {
-    ECHO_MS: () => ECHO_MS,
-    MODEL_FADE_MS: () => MODEL_FADE_MS,
-    applied: () => applied,
-    attach: () => attach,
-    bind: () => bind,
-    childTap: () => childTap,
-    controlPress: () => controlPress,
-    end: () => end,
-    modelTap: () => modelTap,
-    onLive: () => onLive,
-    state: () => state2,
-    tick: () => tick,
-    unbind: () => unbind
-  });
-  var PIP5 = () => globalThis.PIPCORE;
-  var parse4 = (x) => typeof x === "string" ? JSON.parse(x) : x;
-  var emit4 = (name, payload = {}) => globalThis.__pipHost?.emit(name, JSON.stringify(payload));
-  var MODEL_FADE_MS = 4e3;
-  var ECHO_MS = 700;
-  var TICK_MS = 3e4;
-  var L = {
-    appId: null,
-    db: null,
-    role: null,
-    name: null,
-    timer: null,
-    modelGlow: /* @__PURE__ */ new Map(),
-    // "kind:id" -> fade timer
-    modelSent: /* @__PURE__ */ new Set(),
-    // local echo on a supporter's device
-    counts: { s: null, c: {} },
-    // the child's presses this session (coach-ui)
-    tip: null
-    // the last modeled word's tip
-  };
-  var changed = () => emit4("spot.changed");
-  var supporter = () => L.role === "partner";
-  function attach(db, role) {
-    L.db = db;
-    if (role !== void 0) L.role = role ?? null;
-  }
-  function bind(appId, role, name) {
-    L.appId = appId;
-    L.db = appDb(appId);
-    L.role = role ?? null;
-    L.name = name ?? null;
-    for (const t of L.modelGlow.values()) clearTimeout(t);
-    L.modelGlow.clear();
-    L.modelSent.clear();
-    L.tip = null;
-    clearInterval(L.timer);
-    resumeSession(L.db);
-    L.timer = setInterval(tick, TICK_MS);
-    changed();
-    return { ok: true };
-  }
-  function unbind() {
-    clearInterval(L.timer);
-    L.timer = null;
-    for (const t of L.modelGlow.values()) clearTimeout(t);
-    L.modelGlow.clear();
-    L.modelSent.clear();
-    L.appId = L.db = null;
-    return { ok: true };
-  }
-  function tick() {
-    if (!L.db) return;
-    const was = !!spotlight();
-    resumeSession(L.db);
-    if (was !== !!spotlight()) changed();
-  }
-  function applied(db) {
-    const d = db ?? L.db;
-    if (!d) return;
-    resumeSession(d);
-    changed();
-  }
-  function end() {
-    if (!L.db) return { ok: false };
-    endSession(L.db);
-    changed();
-    return { ok: true };
-  }
-  var profile2 = () => L.db?.prepare("SELECT spot_dim, spot_pulse, model_speaks FROM learner_profile WHERE id = 'prf_local'").all()[0] ?? {};
-  function clearModel(key) {
-    const t = L.modelGlow.get(key);
-    if (t === void 0) return;
-    clearTimeout(t);
-    L.modelGlow.delete(key);
-    changed();
-  }
-  function onLive(m) {
-    if (m?.k === "tap") return onChildTap(m);
-    if (m?.k !== "model" || typeof m.t !== "string") return;
-    clearTimeout(L.modelGlow.get(m.t));
-    L.modelGlow.set(m.t, setTimeout(() => {
-      L.modelGlow.delete(m.t);
-      changed();
-    }, MODEL_FADE_MS));
-    const [kind, id] = m.t.split(":");
-    if (profile2().model_speaks === 1 && m.w && kind !== "control") speakModeled(kind, id, m.w);
-    changed();
-  }
-  function speakModeled(kind, id, text) {
-    try {
-      const s = appSession(L.appId);
-      const slot = PIP5().voice.resolveSlot(s.d, { kind, id, text }, s.locale, s.voiceId);
-      const speech = PIP5().say.tapSpeech(s, slot);
-      if (speech) emit4("spot.speak", { speech });
-    } catch (e) {
-      console.error(`spot.speak: ${e}`);
-    }
-  }
-  function onChildTap(m) {
-    const s = spotlight();
-    if (!supporter() || !s?.session || typeof m.t !== "string") return;
-    if (m.s !== s.startedAt) return;
-    if (L.counts.s !== s.startedAt) L.counts = { s: s.startedAt, c: {} };
-    L.counts.c[m.t] = (L.counts.c[m.t] ?? 0) + 1;
-    changed();
-  }
-  var sessionCounts = () => {
-    const s = spotlight();
-    return s?.session && L.counts.s === s.startedAt ? L.counts.c : {};
-  };
-  var countOf = (key) => supporter() ? sessionCounts()[key] ?? 0 : 0;
-  function childTap(key) {
-    const s = spotlight();
-    const lit = glowsHere(s, supporter()) && s.targets.has(key) || L.modelGlow.has(key);
-    if (s?.session && !supporter()) {
-      syncSendLive({ k: "tap", t: key, s: s.startedAt }).catch(() => {
-      });
-    }
-    clearModel(key);
-    return lit;
-  }
-  var modelingNow = () => supporter() && !!spotlight()?.session;
-  function coachLabel(kind, id) {
-    if (kind === "control") return CONTROLS[id]?.label ?? id;
-    const s = appSession(L.appId);
-    if (kind === "entity") {
-      return s.d.prepare("SELECT spoken_name AS t FROM personal_entity WHERE id = ?").all(id)[0]?.t ?? id;
-    }
-    return s.d.prepare(
-      `SELECT text AS t FROM label
-     WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`
-    ).all(id, s.locale)[0]?.t ?? id;
-  }
-  function onModeled(kind, id) {
-    const s = appSession(L.appId);
-    L.tip = tipFor(L.db, s.catalog, kind, id) ?? `Say \u201C${coachLabel(kind, id)}\u201D as you tap it, then wait.`;
-  }
-  function modelTap(kind, id, text) {
-    if (!id || !modelingNow()) return false;
-    const key = `${kind}:${id}`;
-    syncSendModel(key, text).catch(() => {
-    });
-    onModeled(kind, id);
-    echo(key);
-    return true;
-  }
-  function controlPress(name) {
-    if (!CONTROLS[name] || !modelingNow()) return false;
-    const key = `control:${name}`;
-    syncSendLive({ k: "model", t: key, w: CONTROLS[name].label }).catch(() => {
-    });
-    onModeled("control", name);
-    echo(key);
-    return true;
-  }
-  function echo(key) {
-    L.modelSent.add(key);
-    changed();
-    setTimeout(() => {
-      L.modelSent.delete(key);
-      changed();
-    }, ECHO_MS);
-  }
-  function state2(appId, keysJSON = "[]") {
-    const keys3 = parse4(keysJSON);
-    const s = spotlight();
-    const steady = glowsHere(s, supporter());
-    const p = profile2();
-    const pulse = (p.spot_pulse ?? 0) === 1;
-    const marks = {};
-    for (const key of keys3) {
-      const modeled = L.modelGlow.has(key);
-      const target = steady && s.targets.has(key);
-      marks[key] = {
-        glow: target || modeled || L.modelSent.has(key),
-        pulse: target && pulse,
-        modeled,
-        dimmed: steady && !target && !modeled,
-        count: countOf(key)
-      };
-    }
-    let walk = false;
-    if (steady || L.modelGlow.size) {
-      const ss = appSession(appId);
-      const geom = appGeom(ss);
-      const onBoard = new Set(PIP5().coremove.coreCells(ss.d, geom.name, ss.locale).map((c) => c.sense_id));
-      walk = steady && needsRouteWalk(s.targets, onBoard) || L.modelGlow.size > 0 && needsRouteWalk(new Set(L.modelGlow.keys()), onBoard);
-    }
-    const controls = {};
-    for (const name of Object.keys(CONTROLS)) {
-      const key = `control:${name}`;
-      const modeled = L.modelGlow.has(key);
-      controls[name] = { glow: steady && s.targets.has(key) || modeled, modeled, count: countOf(key) };
-    }
-    const modeling = modelingNow();
-    const who = L.name?.trim() || null;
-    const total = Object.values(sessionCounts()).reduce((a, b) => a + b, 0);
-    return {
-      on: !!s,
-      steady,
-      name: s?.name ?? null,
-      chip: steady && s ? `\u{1F526} ${s.name} \xB7 End` : null,
-      dim: (p.spot_dim ?? 45) / 100,
-      marks,
-      groups: walk,
-      controls,
-      modeling,
-      line: modeling ? L.tip ?? `Your taps light up on ${who ? `${who}'s` : "their"} board. Say each word as you tap it.` : null,
-      count: modeling && total ? `${who ?? "They"} pressed ${total} time${total === 1 ? "" : "s"}` : ""
-    };
-  }
-
   // scripts/ios/app_sync.mjs
   var gen = 0;
   var parse5 = (x) => typeof x === "string" ? JSON.parse(x) : x;
-  var emit5 = (name, payload = {}) => globalThis.__pipHost.emit(name, JSON.stringify(payload));
+  var emit6 = (name, payload = {}) => globalThis.__pipHost.emit(name, JSON.stringify(payload));
   function syncStart(appId, userRow, baseUrl, opts) {
     return syncStartDb(appDb(appId), userRow, baseUrl, opts);
   }
@@ -10820,7 +11848,7 @@ ${ts}`);
       baseUrl || globalThis.location.origin,
       // ops may carry new blob: refs (C4); a session started/ended elsewhere lands (D5)
       () => {
-        emit5("sync.applied");
+        emit6("sync.applied");
         scanMedia(db);
         applied(db);
       },
@@ -10844,9 +11872,9 @@ ${ts}`);
           }
           report(db);
         }
-        emit5("sync.started", handle ? { ok: true, linked: true, deviceId: handle.identity.deviceId, epoch: handle.getEpoch() } : { ok: true, linked: false });
+        emit6("sync.started", handle ? { ok: true, linked: true, deviceId: handle.identity.deviceId, epoch: handle.getEpoch() } : { ok: true, linked: false });
       },
-      (err) => myGen === gen && emit5("sync.started", { ok: false, linked: true, error: String(err?.message ?? err) })
+      (err) => myGen === gen && emit6("sync.started", { ok: false, linked: true, error: String(err?.message ?? err) })
     );
     return { accepted: true };
   }
@@ -10869,8 +11897,8 @@ ${ts}`);
     setPuller(null);
     resetMedia();
     stopSync(opts ? parse5(opts) : {}).then(
-      () => emit5("sync.stopped", { ok: true }),
-      (err) => emit5("sync.stopped", { ok: false, error: String(err?.message ?? err) })
+      () => emit6("sync.stopped", { ok: true }),
+      (err) => emit6("sync.stopped", { ok: false, error: String(err?.message ?? err) })
     );
     return { accepted: true };
   }
@@ -10891,13 +11919,13 @@ ${ts}`);
   }
 
   // scripts/ios/app_card.mjs
-  var PIP6 = () => globalThis.PIPCORE;
-  var one8 = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
+  var PIP7 = () => globalThis.PIPCORE;
+  var one9 = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
   function swapList(appId, { kind, id, groupId = null, q = "" }) {
     const s = appSession(appId);
-    const counts = PIP6().usecounts.useCounts(s.d);
+    const counts = PIP7().usecounts.useCounts(s.d);
     const uni = kidsUni(s);
-    const rows = groupId ? PIP6().usecounts.notInGroupItems(s.d, groupId, s.locale, { counts, uni, q }) : PIP6().usecounts.offBoardItems(s.d, appGeom(s).name, s.locale, { counts, uni, q });
+    const rows = groupId ? PIP7().usecounts.notInGroupItems(s.d, groupId, s.locale, { counts, uni, q }) : PIP7().usecounts.offBoardItems(s.d, appGeom(s).name, s.locale, { counts, uni, q });
     const card2 = cardModel(s, kind, id);
     return {
       head: card2 ? {
@@ -10935,7 +11963,7 @@ ${ts}`);
     }
     let rep;
     try {
-      rep = PIP6().groupsOps.replaceGroupItem(
+      rep = PIP7().groupsOps.replaceGroupItem(
         s.d,
         groupId,
         { kind, id },
@@ -10943,31 +11971,31 @@ ${ts}`);
         { page, slot_index: slot }
       );
     } catch {
-      return paint(appId);
+      return paint2(appId);
     }
     invalidate(s);
-    return paint(appId, {
+    return paint2(appId, {
       toast: toastWith(s, `Replaced ${label} with ${pickLabel}`, () => {
         rep.undo();
         invalidate(s);
-        return paint(appId);
+        return paint2(appId);
       })
     });
   }
   function cardSetKind(appId, { id, role }) {
     const s = appSession(appId);
     const card2 = cardModel(s, "entity", id);
-    if (!card2 || !card2.canColour || role === card2.role) return paint(appId, { card: card2 });
-    PIP6().groups.setEntityRole(s.d, id, role);
+    if (!card2 || !card2.canColour || role === card2.role) return paint2(appId, { card: card2 });
+    PIP7().groups.setEntityRole(s.d, id, role);
     s.entRole.delete(id);
     invalidate(s);
-    return paint(appId, { card: cardModel(s, "entity", id) });
+    return paint2(appId, { card: cardModel(s, "entity", id) });
   }
   var INCOMPATIBLE_TEXT = "Update Pip to sync \u2014 your changes are kept on this iPad";
   var withProtocol = (h, status) => h.incompatible ? { text: INCOMPATIBLE_TEXT, tone: "warn" } : status;
   function editorStatusOf(appId, { linked = false, online = true, saveError = false } = {}) {
     const s = appSession(appId);
-    const pending2 = one8(s.d, "SELECT COUNT(*) AS n FROM sync_op WHERE relay_seq IS NULL")?.n ?? 0;
+    const pending2 = one9(s.d, "SELECT COUNT(*) AS n FROM sync_op WHERE relay_seq IS NULL")?.n ?? 0;
     const h = syncHealth2();
     return withProtocol(h, editorStatus({
       linked,
@@ -10988,733 +12016,25 @@ ${ts}`);
   });
 
   // public/shared/profile.mjs
-  var one9 = (db, sql, params = []) => db.prepare(sql).all(...params)[0];
+  var one10 = (db, sql, params = []) => db.prepare(sql).all(...params)[0];
   function resolveProfile(db) {
-    const p = one9(
+    const p = one10(
       db,
       "SELECT locale, preferred_voice_id FROM learner_profile ORDER BY rowid LIMIT 1"
     );
     if (!p) throw new Error("resolveProfile: no learner_profile row");
-    const preferred = one9(
+    const preferred = one10(
       db,
       "SELECT id FROM voice WHERE id = ? AND status = 'active' AND locale = ?",
       [p.preferred_voice_id, p.locale]
     );
     if (preferred) return { locale: p.locale, voiceId: preferred.id };
-    const fallback = one9(
+    const fallback = one10(
       db,
       "SELECT id FROM voice WHERE locale = ? AND is_default = 1 AND status = 'active'",
       [p.locale]
     );
     return { locale: p.locale, voiceId: fallback?.id ?? null };
-  }
-
-  // scripts/ios/app_say.mjs
-  var app_say_exports = {};
-  __export(app_say_exports, {
-    SPEAK_VOICE_WAIT_MS: () => SPEAK_VOICE_WAIT_MS,
-    X: () => X,
-    artForWord: () => artForWord,
-    emit: () => emit6,
-    entitled: () => entitled,
-    flagTile: () => flagTile,
-    identify: () => identify,
-    licenseOf: () => licenseOf,
-    nudgeFor: () => nudgeFor,
-    painted: () => painted,
-    sentenceVoice: () => sentenceVoice,
-    speak: () => speak,
-    speakCore: () => speakCore,
-    speakStart: () => speakStart,
-    tapSpeech: () => tapSpeech,
-    tileEnsure: () => tileEnsure,
-    tilePrefetch: () => tilePrefetch,
-    transform: () => transform,
-    trialActive: () => trialActive,
-    trialRefresh: () => trialRefresh
-  });
-
-  // public/shared/voice_sentence.mjs
-  var te8 = new TextEncoder();
-  var hex2 = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
-  var normalizeSpeakText = (text) => String(text).trim().toLowerCase().replace(/\s+/g, " ");
-  function sentenceSpeakText(items) {
-    const text = items.map((it) => it.text).join(" ").replace(/\s+/g, " ").trim();
-    return /[.!?]$/.test(text) ? text : `${text}.`;
-  }
-  function voiceSentence({ cacheName = "pip-voice", deadlineMs = 300 } = {}) {
-    let cacheP = null;
-    const store = () => cacheP ?? (cacheP = (async () => {
-      const c = await caches.open(cacheName);
-      if (typeof c.keys === "function" && typeof c.delete === "function") {
-        for (const req of await c.keys().catch(() => [])) {
-          if (req.url.endsWith("/")) await c.delete(req).catch(() => {
-          });
-        }
-      }
-      return c;
-    })());
-    const urlFor = async (voice, text, feeling = "neutral") => `https://voice.local/${voice}/${feeling}/${hex2(
-      await crypto.subtle.digest("SHA-256", te8.encode(normalizeSpeakText(text)))
-    )}`;
-    async function cached(voice, text, feeling = "neutral") {
-      if (typeof caches === "undefined") return null;
-      const res = await (await store()).match(await urlFor(voice, text, feeling)).catch(() => null);
-      return res ? res.blob() : null;
-    }
-    async function remember2(voice, text, blob, feeling = "neutral") {
-      if (typeof caches === "undefined") return;
-      await (await store()).put(
-        await urlFor(voice, text, feeling),
-        new Response(blob, { headers: { "content-type": "audio/mpeg" } })
-      ).catch(() => {
-      });
-    }
-    const inflight = /* @__PURE__ */ new Map();
-    const fetchOnce = async (key, endpoint, body) => {
-      if (!inflight.has(key)) {
-        inflight.set(key, (async () => {
-          const res = await fetch(endpoint, {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify(body)
-          });
-          if (!res.ok) return null;
-          const blob = await res.blob();
-          await remember2(body.voice, body.text, blob, body.feeling);
-          return blob;
-        })().catch(() => null).finally(() => inflight.delete(key)));
-      }
-      return inflight.get(key);
-    };
-    async function request({
-      userId,
-      license,
-      voice,
-      text,
-      feeling = "neutral",
-      endpoint = "/api/v1/voice/speak",
-      deadlineMs: deadline = deadlineMs,
-      trial = false
-    }) {
-      if (!userId || !(license || trial) || !voice || !text) return null;
-      const hit = await cached(voice, text, feeling);
-      if (hit) return hit;
-      const key = await urlFor(voice, text, feeling);
-      const first = await Promise.race([
-        fetchOnce(key, endpoint, { user_id: userId, license, voice, text, feeling }),
-        new Promise((r) => setTimeout(() => r("deadline"), deadline))
-      ]);
-      return first === "deadline" ? null : first;
-    }
-    return { request, cached, remember: remember2 };
-  }
-
-  // public/shared/voice_tile.mjs
-  var te9 = new TextEncoder();
-  var hex3 = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
-  async function tileTextHash(text) {
-    return hex3(await crypto.subtle.digest("SHA-256", te9.encode(normalizeV1(text))));
-  }
-  var tileCacheUrl = async (voice, text) => `https://voice.local/tile/${voice}/${await tileTextHash(text)}`;
-  var possessiveVoice = (name) => /voice/i.test(name ?? "") ? name : `${name ?? "Pip"}'s voice`;
-  var reasonFor = (status, body) => {
-    if (status === 422) return "held";
-    if (status === 409) return "withheld";
-    if (status === 429) return "budget";
-    if (status === 502) return "failed";
-    if (status === 503) return body?.error === "budget" ? "budget" : "unavailable";
-    if (status === 400 || status === 403) return "denied";
-    return "unavailable";
-  };
-  var TRANSIENT = /* @__PURE__ */ new Set(["offline", "failed", "budget", "unavailable"]);
-  function voiceTile({
-    cacheName = "pip-tile-voice",
-    queueName = "pip-tile-queue",
-    endpoint = "/api/v1/voice/tile",
-    flagEndpoint = "/api/v1/voice/tile/flag",
-    replacedEndpoint = "/api/v1/voice/tile/replaced",
-    deadlineMs = 900
-  } = {}) {
-    let cacheP = null;
-    let queueP = null;
-    const store = () => cacheP ?? (cacheP = caches.open(cacheName));
-    const qstore = () => queueP ?? (queueP = caches.open(queueName));
-    const urlFor = (voice, text) => tileCacheUrl(voice, text);
-    async function cached(voice, text) {
-      if (typeof caches === "undefined") return null;
-      const res = await (await store()).match(await urlFor(voice, text)).catch(() => null);
-      return res ? res.blob() : null;
-    }
-    async function remember2(voice, text, blob) {
-      if (typeof caches === "undefined") return;
-      await (await store()).put(
-        await urlFor(voice, text),
-        new Response(blob, { headers: { "content-type": "audio/mpeg" } })
-      ).catch(() => {
-      });
-    }
-    async function evict(voice, textHash) {
-      if (typeof caches === "undefined") return;
-      await (await store()).delete(`https://voice.local/tile/${voice}/${textHash}`).catch(() => {
-      });
-    }
-    const inflight = /* @__PURE__ */ new Map();
-    const fetchOnce = (key, body) => {
-      if (!inflight.has(key)) {
-        inflight.set(key, (async () => {
-          const res = await fetch(endpoint, {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify(body)
-          });
-          if (!res.ok) {
-            return { ok: false, reason: reasonFor(res.status, await res.json().catch(() => null)) };
-          }
-          const blob = await res.blob();
-          await remember2(body.voice, body.text, blob);
-          return { ok: true, blob, cache: res.headers.get("x-tile-cache") ?? "mint" };
-        })().catch(() => ({ ok: false, reason: "offline" })).then((r) => {
-          if (r.ok) setTimeout(() => inflight.delete(key), 50);
-          else inflight.delete(key);
-          return r;
-        }));
-      }
-      return inflight.get(key);
-    };
-    const states = /* @__PURE__ */ new Map();
-    const listeners2 = /* @__PURE__ */ new Set();
-    const onStatus = (cb) => (listeners2.add(cb), () => listeners2.delete(cb));
-    const setState = async (voice, text, state4) => {
-      const key = `${voice}|${normalizeV1(text)}`;
-      if (state4 === states.get(key) && state4 !== "minting") return;
-      states.set(key, state4);
-      for (const cb of listeners2) cb(key, state4);
-    };
-    const status = (voice, text) => states.get(`${voice}|${normalizeV1(text)}`) ?? null;
-    const queueKey = async (voice, locale, text, source) => `https://voice.local/tile-queue/${voice}|${locale}|${await tileTextHash(text)}|${source}`;
-    async function enqueue(entry) {
-      if (typeof caches === "undefined") return;
-      await (await qstore()).put(
-        await queueKey(entry.voice, entry.locale, entry.text, entry.source),
-        new Response(
-          JSON.stringify(entry),
-          { headers: { "content-type": "application/json" } }
-        )
-      ).catch(() => {
-      });
-    }
-    async function request({ userId, license, trial = false, voice, locale, text, source = "user_typed", deadlineMs: deadline = deadlineMs }) {
-      if (!voice || !text) return { ok: false, reason: "unavailable" };
-      const hit = await cached(voice, text);
-      if (hit) return { ok: true, blob: hit, cache: "hit" };
-      if (!userId || !(license || trial)) return { ok: false, reason: "unavailable" };
-      const key = `${await urlFor(voice, text)}|${locale}|${source}`;
-      const work = fetchOnce(key, {
-        user_id: userId,
-        license,
-        voice,
-        locale,
-        text,
-        source
-      });
-      if (deadline == null) return work;
-      const first = await Promise.race([
-        work,
-        new Promise((r) => setTimeout(() => r("deadline"), deadline))
-      ]);
-      return first === "deadline" ? { ok: false, reason: "deadline" } : first;
-    }
-    async function ensure2(args) {
-      const { voice, text } = args;
-      await setState(voice, text, "minting");
-      const r = await request({ ...args, deadlineMs: null });
-      const state4 = r.ok ? "ready" : r.reason;
-      await setState(voice, text, state4);
-      if (!r.ok && TRANSIENT.has(r.reason)) {
-        await enqueue({ voice, locale: args.locale, text, source: args.source ?? "user_typed" });
-      }
-      return r;
-    }
-    async function drainQueue({ userId, license, trial = false, onProgress } = {}) {
-      if (typeof caches === "undefined" || !userId || !(license || trial)) return { done: 0, pending: 0 };
-      const reqs = await (await qstore()).keys().catch(() => []);
-      let done = 0, pending2 = 0;
-      for (const req of reqs) {
-        const entry = await (await (await qstore()).match(req).catch(() => null))?.json().catch(() => null);
-        if (!entry?.text || !entry?.voice) {
-          await (await qstore()).delete(req).catch(() => {
-          });
-          continue;
-        }
-        const r = await request({ userId, license, trial, ...entry, deadlineMs: null });
-        if (r.ok || !TRANSIENT.has(r.reason)) {
-          await (await qstore()).delete(req).catch(() => {
-          });
-          if (r.ok) {
-            done++;
-            await setState(entry.voice, entry.text, "ready");
-          } else {
-            await setState(entry.voice, entry.text, r.reason);
-          }
-          onProgress?.(entry, r);
-        } else {
-          await setState(entry.voice, entry.text, r.reason);
-          break;
-        }
-      }
-      pending2 = (await (await qstore()).keys().catch(() => [])).length;
-      return { done, pending: pending2 };
-    }
-    async function prefetch({ userId, license, voice, locale, texts, onProgress } = {}) {
-      let done = 0, skipped = 0, failed2 = 0;
-      for (const text of [...new Set(texts)].filter(Boolean)) {
-        if (await cached(voice, text)) {
-          skipped++;
-          continue;
-        }
-        const r = await ensure2({ userId, license, voice, locale, text });
-        r.ok ? done++ : failed2++;
-        onProgress?.({ text, done, skipped, failed: failed2, total: texts.length });
-        if (!r.ok && r.reason === "budget") break;
-      }
-      return { done, skipped, failed: failed2 };
-    }
-    async function flag({ userId, license, trial = false, voice, locale, text }) {
-      if (!userId || !(license || trial)) return false;
-      const res = await fetch(flagEndpoint, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ user_id: userId, license, voice, locale, text })
-      }).catch(() => null);
-      return res?.status === 204;
-    }
-    async function replacedSince({ userId, license, trial = false, voice, since }) {
-      if (!userId || !(license || trial)) return null;
-      const res = await fetch(
-        `${replacedEndpoint}?since=${Number(since) || 0}&voice=${encodeURIComponent(voice)}`,
-        {
-          headers: { "x-pip-user": userId, "x-pip-license": license ?? "" }
-        }
-      ).catch(() => null);
-      return res?.ok ? res.json().catch(() => null) : null;
-    }
-    async function sweepReplaced({ userId, license, trial = false, voice, since }) {
-      const res = await replacedSince({ userId, license, trial, voice, since });
-      if (!res) return null;
-      const ids = Array.isArray(res.ids) ? res.ids : [];
-      for (const id of ids) await evict(voice, id);
-      return { evicted: ids.length, next: res.next ?? null };
-    }
-    return {
-      request,
-      ensure: ensure2,
-      cached,
-      remember: remember2,
-      evict,
-      prefetch,
-      drainQueue,
-      flag,
-      replacedSince,
-      sweepReplaced,
-      status,
-      onStatus
-    };
-  }
-
-  // scripts/ios/app_say.mjs
-  var SPEAK_VOICE_WAIT_MS = 1e4;
-  var TRANSFORM_WAIT_MS = 15e3;
-  var sentenceVoice = voiceSentence();
-  var tileVoice = voiceTile();
-  var keys = openKeyStore();
-  var emit6 = (payload) => globalThis.__pipHost.emit("say", JSON.stringify({ play: null, toast: null, state: null, ...payload }));
-  var sessions = /* @__PURE__ */ new Map();
-  function X(s) {
-    let x = sessions.get(s.appId);
-    if (!x) {
-      x = {
-        userId: null,
-        trialEndsAt: null,
-        busy: false,
-        askShown: false,
-        speakSeq: 0,
-        tapSeq: 0
-      };
-      sessions.set(s.appId, x);
-    }
-    return x;
-  }
-  var trialActive = (x) => (x.trialEndsAt ?? 0) > Date.now();
-  var licenseOf = async (x) => {
-    try {
-      return await keys.get(`user/${x.userId}/license`) || void 0;
-    } catch {
-      return void 0;
-    }
-  };
-  var painted = (s) => appSpeakParts.state(s);
-  function identify(appId, userId) {
-    const s = appSession(appId);
-    const x = X(s);
-    x.userId = userId;
-    void boot(s, x);
-    return { ok: true };
-  }
-  async function refreshTrial(x) {
-    const license = await licenseOf(x);
-    const okKey = `user/${x.userId}/trial-ok`;
-    if (!await keys.get(okKey).catch(() => null) && !license) {
-      const res2 = await fetch("/api/v1/trial/start", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ user_id: x.userId })
-      }).catch(() => null);
-      if (res2?.ok) await keys.put(okKey, "1").catch(() => {
-      });
-    }
-    const res = await fetch("/api/v1/trial", {
-      headers: { "x-pip-user": x.userId, "x-pip-license": license ?? "" }
-    }).catch(() => null);
-    if (!res?.ok) return false;
-    const body = await res.json().catch(() => ({}));
-    x.trialLicensed = body.licensed === true;
-    x.trialEndsAt = typeof body.endsAt === "number" ? body.endsAt : null;
-    return true;
-  }
-  async function drain(x) {
-    await tileVoice.drainQueue({
-      userId: x.userId,
-      license: await licenseOf(x),
-      trial: trialActive(x)
-    }).catch(() => {
-    });
-  }
-  async function sweep(s, x) {
-    const key = `user/${x.userId}/tile-sweep:${s.voiceId}`;
-    const since = Number(await keys.get(key).catch(() => 0) ?? 0);
-    if (since && Date.now() - since < 864e5) return;
-    const res = await tileVoice.sweepReplaced({
-      userId: x.userId,
-      license: await licenseOf(x),
-      trial: trialActive(x),
-      voice: s.voiceId,
-      since
-    }).catch(() => null);
-    if (res?.next) await keys.put(key, String(res.next)).catch(() => {
-    });
-  }
-  function nudgeFor(endsAt, now, marks = [], licensed = false) {
-    if (licensed || !endsAt) return null;
-    const daysLeft = Math.ceil((endsAt - now) / 864e5);
-    const pick2 = daysLeft <= 0 ? ["expired", "The free trial is over \u2014 Pip Lifetime keeps the natural voice and every helper: $49 once."] : daysLeft === 3 ? ["d5", "Free trial \xB7 3 days left \u2014 Pip Lifetime keeps it all: $49 once."] : daysLeft === 2 ? ["d6", "Free trial \xB7 2 days left \u2014 Pip Lifetime keeps it all: $49 once."] : null;
-    return pick2 && !marks.includes(pick2[0]) ? { tag: pick2[0], msg: pick2[1] } : null;
-  }
-  async function trialNudge(s, x) {
-    const key = `user/${x.userId}/trial-nudge`;
-    let marks = [];
-    try {
-      marks = JSON.parse(await keys.get(key) ?? "[]");
-    } catch {
-    }
-    const n = nudgeFor(x.trialEndsAt, Date.now(), marks, x.trialLicensed === true);
-    if (!n) return;
-    await keys.put(key, JSON.stringify([...marks, n.tag])).catch(() => {
-    });
-    emit6({ appId: s.appId, toast: n.msg });
-  }
-  async function syncTrialVoice(s, x) {
-    const defId = s.d.prepare(
-      "SELECT id FROM voice WHERE locale = ? AND is_default = 1"
-    ).all(s.locale)[0]?.id;
-    if (!defId) return false;
-    const wantedKey = `user/${x.userId}/voice-wanted`;
-    const wanted2 = await keys.get(wantedKey).catch(() => null);
-    const set = (id) => globalThis.PIPCORE.app.appSetSetting(s.appId, "preferred_voice_id", id);
-    if (x.trialLicensed === true || s.licensed === true || trialActive(x)) {
-      if (wanted2 && wanted2 !== s.voiceId && s.d.prepare("SELECT 1 AS x FROM voice WHERE id = ? AND status = 'active'").all(wanted2)[0]) {
-        set(wanted2);
-        await keys.put(wantedKey, void 0).catch(() => {
-        });
-        return true;
-      }
-      return false;
-    }
-    if (s.voiceId !== defId && !s.d.prepare("SELECT is_default AS d FROM voice WHERE id = ?").all(s.voiceId)[0]?.d) {
-      await keys.put(wantedKey, s.voiceId).catch(() => {
-      });
-      set(defId);
-      return true;
-    }
-    return false;
-  }
-  async function trialBoot(s, x) {
-    if (!await refreshTrial(x).catch(() => false)) return false;
-    const changed2 = await syncTrialVoice(s, x).catch(() => false);
-    await trialNudge(s, x).catch(() => {
-    });
-    if (changed2) emit6({ appId: s.appId, state: painted(s) });
-    return true;
-  }
-  async function boot(s, x) {
-    await trialBoot(s, x);
-    await drain(x);
-    await sweep(s, x).catch(() => {
-    });
-  }
-  function trialRefresh(appId) {
-    const s = appSession(appId);
-    const x = X(s);
-    if (x.userId) void trialBoot(s, x).catch(() => {
-    });
-    return { ok: true };
-  }
-  onOnline(() => {
-    for (const [id, x] of sessions) {
-      if (!x.userId) continue;
-      void (async () => {
-        let s;
-        try {
-          s = appSession(id);
-        } catch {
-          return;
-        }
-        if (!trialActive(x)) await trialBoot(s, x);
-        await drain(x);
-      })();
-    }
-  });
-  function tileEnsure(s, text, source = "user_typed") {
-    const x = X(s);
-    if (!x.userId) return;
-    void (async () => {
-      await tileVoice.ensure({
-        userId: x.userId,
-        license: await licenseOf(x),
-        trial: trialActive(x),
-        voice: s.voiceId,
-        locale: s.locale,
-        text,
-        source
-      }).catch(() => ({ ok: false, reason: "failed" }));
-    })();
-  }
-  function tilePrefetch(s, texts, onProgress) {
-    const x = X(s);
-    if (!x.userId || !texts.length) return;
-    void (async () => {
-      await tileVoice.prefetch({
-        userId: x.userId,
-        license: await licenseOf(x),
-        trial: trialActive(x),
-        voice: s.voiceId,
-        locale: s.locale,
-        texts,
-        onProgress
-      });
-    })().catch(() => {
-    });
-  }
-  function flagTile(appId, text) {
-    const s = appSession(appId);
-    const x = X(s);
-    void (async () => {
-      const ok = x.userId ? await tileVoice.flag({
-        userId: x.userId,
-        license: await licenseOf(x),
-        trial: trialActive(x),
-        voice: s.voiceId,
-        locale: s.locale,
-        text
-      }).catch(() => false) : false;
-      globalThis.__pipHost.emit("card.flag", JSON.stringify({
-        appId,
-        ok,
-        toast: ok ? "Flagged for review \u2014 it keeps playing meanwhile" : "Couldn't flag \u2014 try again when you're online"
-      }));
-    })();
-    return { accepted: true };
-  }
-  async function tileFile(x, slot) {
-    const r = await tileVoice.request({
-      userId: x.userId,
-      license: await licenseOf(x),
-      trial: trialActive(x),
-      voice: slot.voice,
-      locale: slot.locale,
-      text: slot.text
-    }).catch(() => null);
-    return r?.ok && r.blob?._file ? { type: "file", key: r.blob._file } : null;
-  }
-  function tapSpeech(s, speech) {
-    const x = X(s);
-    const t = ++x.tapSeq;
-    if (speech?.type !== "tileclip") return speech;
-    void (async () => {
-      const file = await tileFile(x, speech);
-      if (t !== x.tapSeq || !file) return;
-      emit6({ appId: s.appId, play: [file] });
-    })();
-    return null;
-  }
-  async function speakCore(s, x, feeling = null) {
-    const { prepareSpeak: prepareSpeak2, finishSpeak: finishSpeak2, barSlots: barSlots2 } = appSpeakParts;
-    const seq = ++x.speakSeq;
-    x.tapSeq++;
-    prepareSpeak2(s);
-    const text = sentenceSpeakText(s.sentence);
-    let play = null;
-    if (s.sentence.length >= 2 || feeling) {
-      const blob = await sentenceVoice.request({
-        userId: x.userId,
-        license: await licenseOf(x),
-        trial: trialActive(x),
-        voice: s.voiceId,
-        text,
-        feeling: feeling ?? "neutral",
-        deadlineMs: SPEAK_VOICE_WAIT_MS
-      });
-      if (seq !== x.speakSeq) return null;
-      if (text !== sentenceSpeakText(s.sentence)) return speakCore(s, x, feeling);
-      if (blob?._file) play = [{ type: "file", key: blob._file }];
-    }
-    if (!play) {
-      play = [];
-      for (const slot of barSlots2(s)) {
-        if (slot.type === "tileclip") {
-          const file = await tileFile(x, slot);
-          if (seq !== x.speakSeq || text !== sentenceSpeakText(s.sentence)) return null;
-          play.push(file ?? { type: "silence" });
-        } else {
-          play.push(slot);
-        }
-      }
-    }
-    finishSpeak2(s, feeling);
-    try {
-      refreshStatsDays(s.d);
-    } catch (e) {
-      console.error(`stats: ${e}`);
-    }
-    report(s.d);
-    return play;
-  }
-  function speakStart(s) {
-    const x = X(s);
-    void speakCore(s, x).then(
-      (play) => {
-        if (play) emit6({ appId: s.appId, play, state: painted(s) });
-      },
-      (e) => console.error(`say.speak: ${e}`)
-    );
-  }
-  function speak(appId) {
-    const s = appSession(appId);
-    const x = X(s);
-    if (!s.sentence.length || x.busy) return painted(s);
-    restoreBar(s.sentence, s.barState);
-    speakStart(s);
-    return painted(s);
-  }
-  var NAMES = {
-    fix: "Fix it",
-    question: "Ask it",
-    past: "Say it in the past",
-    future: "Say it in the future"
-  };
-  function artForWord(s, word) {
-    const w = normalizeV1(
-      String(word).replace(/^[^\p{L}\p{N}'-]+|[^\p{L}\p{N}'-]+$/gu, "")
-    );
-    if (!w) return null;
-    for (const cand of wordLemmaCandidates(w)) {
-      const row2 = s.d.prepare(
-        `SELECT l.sense_id FROM label l
-       WHERE l.normalized_text = ? AND l.locale = ? AND l.status = 'approved'
-       ORDER BY (l.kind = 'lemma') DESC, l.default_for_text DESC LIMIT 1`
-      ).all(cand, s.locale)[0];
-      if (row2) return appSpeakParts.metaFor(s, row2.sense_id).art;
-    }
-    return null;
-  }
-  async function transformCore(s, x, mode) {
-    const raw = sourceText(s.sentence, s.barState);
-    const { masked: masked2, unmask } = maskNames(raw, entityNames(s.d));
-    let timedOut = false;
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => {
-      timedOut = true;
-      ctrl.abort();
-    }, TRANSFORM_WAIT_MS);
-    const res = x.userId ? await fetch("/api/v1/transform", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      signal: ctrl.signal,
-      body: JSON.stringify({
-        user_id: x.userId,
-        license: await licenseOf(x),
-        mode,
-        text: masked2,
-        // ❓ asks in the bar's tense; ⏪/⏩ on a question keep it one.
-        tense: s.barState.tense,
-        question: s.barState.question
-      })
-    }).catch(() => null) : null;
-    clearTimeout(timer);
-    const body = res ? await res.json().catch(() => ({})) : {};
-    const out = res?.ok ? body.text : null;
-    const fresh = sourceText(s.sentence, s.barState) === raw;
-    let toast2 = null;
-    if (out && fresh) {
-      snapshotBar(s.sentence, s.barState);
-      applyTransform(s.sentence, unmask(out), mode, s.barState);
-      for (const it of s.sentence) {
-        if (it.kind === "typed") it.art = artForWord(s, it.text);
-      }
-    } else if (!out) {
-      const name = NAMES[mode] ?? "That button";
-      if (!res) {
-        toast2 = timedOut ? `${name} took too long \u2014 spoke it as it was.` : `${name} needs the internet \u2014 spoke it as it was.`;
-      } else if (body?.error === "bad_license") {
-        if (!x.askShown) {
-          x.askShown = true;
-          toast2 = `${name} comes with Pip Lifetime \u2014 the free trial has ended.`;
-        }
-      } else if (body?.error === "fair_use") {
-        toast2 = `${name} reached today's limit \u2014 it will be back tomorrow.`;
-      } else {
-        toast2 = `${name} couldn't work just now \u2014 spoke it as it was.`;
-      }
-    }
-    return { toast: toast2, play: await speakCore(s, x) };
-  }
-  function transform(appId, mode) {
-    const s = appSession(appId);
-    const x = X(s);
-    if (!s.sentence.length || x.busy) return painted(s);
-    const settled = mode === "question" && s.barState.question || mode === "past" && s.barState.tense === "past" || mode === "future" && s.barState.tense === "future";
-    if (settled) {
-      speakStart(s);
-      return painted(s);
-    }
-    x.busy = true;
-    logTransform(s.d, mode, globalThis.PIPCORE.spot.childTap(`control:${mode}`));
-    void transformCore(s, x, mode).then(
-      ({ toast: toast2, play }) => {
-        x.busy = false;
-        if (toast2 || play) emit6({ appId: s.appId, play, toast: toast2, state: painted(s) });
-        else emit6({ appId: s.appId, state: painted(s) });
-      },
-      (e) => {
-        x.busy = false;
-        console.error(`say.transform: ${e}`);
-      }
-    );
-    return painted(s);
-  }
-  function entitled(s) {
-    const x = sessions.get(s.appId);
-    return !!(x && (x.trialLicensed === true || s.licensed === true || trialActive(x)));
   }
 
   // scripts/ios/app_voice.mjs
@@ -11763,7 +12083,7 @@ ${ts}`);
     const s = appSession(appId);
     const x = X(s);
     if (!FEELINGS.includes(feeling) || x.busy || !s.sentence.length) {
-      emit6({ appId: s.appId, done: "face" });
+      emit({ appId: s.appId, done: "face" });
       return painted(s);
     }
     x.busy = true;
@@ -11783,12 +12103,12 @@ ${ts}`);
     })().then(
       ({ toast: toast2, play }) => {
         x.busy = false;
-        emit6({ appId: s.appId, play, toast: toast2, state: painted(s), done: "face" });
+        emit({ appId: s.appId, play, toast: toast2, state: painted(s), done: "face" });
       },
       (e) => {
         x.busy = false;
         console.error(`say.speakFeeling: ${e}`);
-        emit6({ appId: s.appId, done: "face" });
+        emit({ appId: s.appId, done: "face" });
       }
     );
     return painted(s);
@@ -11813,329 +12133,16 @@ ${ts}`);
     })().then(
       (r) => {
         x.tryBusy = false;
-        emit6({ appId: s.appId, ...r, done: "try" });
+        emit({ appId: s.appId, ...r, done: "try" });
       },
       (e) => {
         x.tryBusy = false;
         console.error(`say.sampleFeeling: ${e}`);
-        emit6({ appId: s.appId, done: "try" });
+        emit({ appId: s.appId, done: "try" });
       }
     );
     return { ok: true };
   }
-
-  // scripts/ios/app_firstrun.mjs
-  var app_firstrun_exports = {};
-  __export(app_firstrun_exports, {
-    OFFER_WORLD_IN_FIRST_RUN: () => OFFER_WORLD_IN_FIRST_RUN,
-    SCRIPT: () => SCRIPT,
-    lookOf: () => lookOf,
-    setLook: () => setLook,
-    tourActive: () => tourActive,
-    tourEnd: () => tourEnd,
-    tourStart: () => tourStart,
-    tourTap: () => tourTap,
-    tourTransform: () => tourTransform,
-    welcome: () => welcome,
-    welcomeSave: () => welcomeSave,
-    worldApply: () => worldApply,
-    worldDone: () => worldDone,
-    worldOpen: () => worldOpen,
-    worldPreview: () => worldPreview
-  });
-  var PIP7 = () => globalThis.PIPCORE;
-  var one10 = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
-  var clip = (key) => ({ key, path: PIP7().onrampAudio.onrampClipPath(key) });
-  var PREVIEW = ["sns_0013", "sns_0128"];
-  var OFFER_WORLD_IN_FIRST_RUN = false;
-  function welcome(appId, { name = "" } = {}) {
-    const s = appSession(appId);
-    const tile = (id) => {
-      const l = one10(
-        s.d,
-        `SELECT l.text AS label, s.fitzgerald_role AS role FROM sense s
-       JOIN label l ON l.sense_id = s.id AND l.kind = 'lemma'
-         AND l.status = 'approved' AND l.locale = ? WHERE s.id = ?`,
-        [s.locale, id]
-      );
-      return { id, label: l?.label ?? id, role: l?.role ?? "None", art: appMeta(s, id).art };
-    };
-    return {
-      welcome: {
-        title: "Let's set up Pip",
-        nameLabel: "Name",
-        namePlaceholder: "Their name, or yours",
-        name,
-        whoQ: "Who's it for?",
-        choices: [
-          { value: "child", label: "A child", clip: clip("a-child") },
-          { value: "adult", label: "A teen or adult", clip: clip("a-teen-or-adult") }
-        ],
-        go: "Continue",
-        joinLead: "Already use Pip on another device? ",
-        join: "Enter a code",
-        clip: clip("welcome-setup")
-      },
-      look: {
-        title: "How should the buttons look?",
-        sub: "You can change this any time in Settings.",
-        choices: [
-          { value: "symbol", label: "Pictures and words", clip: clip("pictures-and-words") },
-          { value: "label", label: "Words only", clip: clip("words-only") }
-        ],
-        go: "Continue",
-        preview: PREVIEW.map(tile),
-        clip: clip("welcome-look")
-      },
-      offersWorld: OFFER_WORLD_IN_FIRST_RUN
-    };
-  }
-  function welcomeSave(appId, { name = "", audience }) {
-    if (audience !== "child" && audience !== "adult") throw new Error("welcomeSave: audience");
-    const s = appSession(appId);
-    const clean = String(name).trim();
-    PIP7().personName.nameToProfile(s.d, { name: clean });
-    return { name: clean, audience };
-  }
-  var LOOKS = ["symbol", "label"];
-  function setLook(appId, { look }) {
-    if (!LOOKS.includes(look)) throw new Error(`setLook: ${look}`);
-    appSetSetting(appId, "presentation_mode", look);
-    return lookOf(appId);
-  }
-  function lookOf(appId) {
-    const m = one10(
-      appSession(appId).d,
-      "SELECT presentation_mode AS m FROM learner_profile WHERE id = 'prf_local'"
-    )?.m ?? "symbol";
-    return { look: m, wordsOnly: m === "label" };
-  }
-  var WORLD = [
-    { key: "people", hint: "A name for each person. Tap the square to add their photo.", next: "Next" },
-    { key: "pets", title: "Any pets?", hint: "A name each, one per line \u2014 Buddy, Whiskers.", next: "Next" },
-    {
-      key: "foods",
-      title: "Favorite foods",
-      hint: "One per line \u2014 pizza, mac and cheese. Words the library knows get their picture.",
-      next: "Next"
-    },
-    {
-      key: "places",
-      title: "Places they go",
-      hint: "One per line \u2014 school, the park, Grandma's.",
-      next: "Done"
-    }
-  ];
-  var stepOf = (key) => WORLD.find((m) => m.key === key) ?? (() => {
-    throw new Error(`world step ${key}`);
-  })();
-  var groupOf = (key) => PIP7().setup.stepGroup(key);
-  var ownLeft2 = (s) => s.licensed ? Infinity : Math.max(0, PIP7().groups.OWN_WORDS_FREE - PIP7().groups.liveOwnWords(s.d));
-  var capToast = () => `That's your ${PIP7().groups.OWN_WORDS_FREE} free words \u2014 Pip Lifetime adds unlimited.`;
-  var categoryOf = (s, key) => s.catalog.groups.find((g2) => g2.id === groupOf(key))?.category ?? null;
-  var personName = (s, name) => (name ?? "").trim() || PIP7().personName.profileName(s.d) || "";
-  function worldOpen(appId, { name } = {}) {
-    const s = appSession(appId);
-    const who = personName(s, name);
-    const people = PIP7().setup.setupPeople(s.d).map((p) => ({ id: p.id, name: p.name, photoKey: p.photoKey }));
-    while (people.length < 2) people.push({ id: null, name: "", photoKey: null });
-    return {
-      steps: WORLD.map((m) => ({
-        key: m.key,
-        title: m.key === "people" ? `Who does ${who || "your child"} call for?` : m.title,
-        hint: m.hint,
-        next: m.next
-      })),
-      examples: ["Mom", "Dad"],
-      otherExample: "Grandma",
-      namePlaceholder: "Name",
-      people,
-      addRow: "Add someone",
-      skip: "Skip this step",
-      back: "Back"
-    };
-  }
-  function worldPreview(appId, { step, text = "" }) {
-    const s = appSession(appId);
-    const rows = PIP7().bulk.resolvePasteRows(s.d, text, { groupId: groupOf(step), locale: s.locale });
-    return {
-      rows: rows.map((r) => {
-        const art = r.kind === "sense" ? one10(s.d, `SELECT ${PIP7().images.SENSE_ART_SQL} AS art FROM sense s WHERE s.id = ?`, [r.id])?.art : null;
-        return {
-          label: r.label,
-          kind: r.kind,
-          art: art ?? null,
-          initial: (r.label[0] ?? "").toUpperCase(),
-          already: r.already,
-          tag: r.already ? "already here" : r.kind === "new" ? "new \u2014 picture later" : null
-        };
-      })
-    };
-  }
-  function worldApply(appId, { step, people = [], text = "" }) {
-    const s = appSession(appId);
-    stepOf(step);
-    let wrote = false, toast2 = null;
-    if (step === "people") {
-      const rows = people.filter((p) => (p.name ?? "").trim()).map((p) => ({ id: p.id ?? void 0, name: p.name, photoKey: p.photoKey ?? null }));
-      const res = PIP7().setup.applySetupPeople(s.d, {
-        people: rows,
-        locale: s.locale,
-        category: categoryOf(s, "people"),
-        maxNew: ownLeft2(s)
-      });
-      for (const r of rows) if (r.photoKey) PIP7().mediasync.queueUpload(r.photoKey);
-      if (res.refused) toast2 = capToast();
-      wrote = !!(res.added || res.updated);
-    } else {
-      const rows = PIP7().bulk.resolvePasteRows(s.d, text, { groupId: groupOf(step), locale: s.locale });
-      if (rows.some((r) => !r.already)) {
-        const res = PIP7().bulk.applyPasteRows(s.d, rows, {
-          groupId: groupOf(step),
-          category: categoryOf(s, step),
-          maxNew: ownLeft2(s)
-        });
-        if (res.refused) toast2 = capToast();
-        wrote = true;
-      }
-    }
-    return { wrote, toast: toast2, state: wrote ? appRepaint(appId) : null };
-  }
-  var worldDone = ({ wrote }) => ({ toast: wrote ? "Their world is set up" : null });
-  var SCRIPT = {
-    you: "sns_0002",
-    want: "sns_0013",
-    apple: "sns_0128",
-    fix: "You want an apple.",
-    question: "Do you want an apple?"
-  };
-  var tours = /* @__PURE__ */ new Map();
-  function buildSteps(s) {
-    const shown = PIP7().bar.barControls(s.d);
-    const steps = [
-      { id: "you", say: "Tap you.", clip: "tour-you", target: { kind: "cell", id: SCRIPT.you } },
-      { id: "want", say: "Tap want.", clip: "tour-want", target: { kind: "cell", id: SCRIPT.want } },
-      {
-        id: "apple",
-        say: "Now tap apple in the Smart bar.",
-        clip: "tour-apple",
-        target: { kind: "strip", id: SCRIPT.apple }
-      }
-    ];
-    if (shown.has("fix")) {
-      steps.push({
-        id: "fix",
-        say: "Tap \u2728 to make it a sentence.",
-        clip: "tour-fix",
-        target: { kind: "button", id: "fix" }
-      });
-    }
-    if (shown.has("question")) {
-      steps.push({
-        id: "question",
-        say: "Now tap \u2753 to ask it.",
-        clip: "tour-question",
-        target: { kind: "button", id: "question" }
-      });
-    }
-    steps.push({ id: "done", say: "That's Pip. Now try your own.", clip: "tour-done", target: null, done: true });
-    return steps;
-  }
-  function cardOf(t, online) {
-    const st = t.steps[t.step];
-    const hasModel = t.steps.some((x) => x.id === "fix" || x.id === "question");
-    const card2 = {
-      id: st.id,
-      say: st.say,
-      clip: clip(st.clip),
-      target: st.target,
-      done: !!st.done,
-      skip: st.done ? null : "Skip"
-    };
-    if (st.done) {
-      card2.note = !hasModel ? "Build a sentence and \u25B6 speaks it." : online === false ? "\u2728 and \u2753 need the internet to work on your own sentences. Connect when you can." : "\u2728 and \u2753 work on any sentence you build.";
-      card2.voices = "Try other voices";
-      card2.go = "Start talking";
-    }
-    return card2;
-  }
-  function tourStrip(s, t) {
-    if (t.steps[t.step].id !== "apple") return { cap: 4, mode: "predict", cards: [] };
-    const w = one10(
-      s.d,
-      `SELECT s.id, l.text AS label, s.fitzgerald_role AS role FROM sense s
-     JOIN label l ON l.sense_id = s.id AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
-     WHERE s.id = ?`,
-      [s.locale, SCRIPT.apple]
-    );
-    return {
-      cap: 4,
-      mode: "predict",
-      cards: [{ kind: "sense", id: w.id, label: w.label, role: w.role, art: appMeta(s, w.id).art }]
-    };
-  }
-  function paint2(appId, t, { online, ...extra } = {}) {
-    const s = appSession(appId);
-    if (online !== void 0) t.online = online;
-    return {
-      active: true,
-      card: cardOf(t, t.online),
-      bar: appBar(appId),
-      strip: tourStrip(s, t),
-      tense: s.barState.tense,
-      question: s.barState.question,
-      ...extra
-    };
-  }
-  var slotOf = (s, item) => PIP7().voice.resolveSlot(s.d, item, s.locale, s.voiceId);
-  var clipSlot = (key) => ({ type: "file", key: clip(key).path, text: null });
-  function tourStart(appId, { online } = {}) {
-    const s = appSession(appId);
-    const t = { steps: buildSteps(s), step: 0 };
-    tours.set(appId, t);
-    return paint2(appId, t, { online, play: [clipSlot(t.steps[0].clip)] });
-  }
-  function tourTap(appId, { kind, id, online } = {}) {
-    const s = appSession(appId);
-    const t = tours.get(appId);
-    if (!t) throw new Error("tourTap: no tour");
-    const cur = t.steps[t.step];
-    if (!["you", "want", "apple"].includes(cur.id) || kind !== "sense" || id !== SCRIPT[cur.id]) {
-      return paint2(appId, t, { online, play: [] });
-    }
-    const label = one10(
-      s.d,
-      `SELECT l.text AS t FROM label l WHERE l.sense_id = ? AND l.kind = 'lemma'
-     AND l.status = 'approved' AND l.locale = ?`,
-      [id, s.locale]
-    )?.t ?? "";
-    const item = { kind: "sense", id, text: label };
-    s.sentence.push(item);
-    PIP7().txbar.noteBarEdit(s.barState);
-    t.step++;
-    return paint2(appId, t, { online, play: [slotOf(s, item), clipSlot(t.steps[t.step].clip)] });
-  }
-  function tourTransform(appId, { mode, online } = {}) {
-    const s = appSession(appId);
-    const t = tours.get(appId);
-    if (!t) throw new Error("tourTransform: no tour");
-    const cur = t.steps[t.step];
-    if (cur.id !== mode || mode !== "fix" && mode !== "question") {
-      return paint2(appId, t, { online, play: [] });
-    }
-    PIP7().txbar.applyTransform(s.sentence, SCRIPT[mode], mode, s.barState);
-    for (const it of s.sentence) {
-      if (it.kind === "typed") it.art = artForWord(s, it.text);
-    }
-    t.step++;
-    const said = mode === "fix" ? "you-want-an-apple" : "do-you-want-an-apple";
-    return paint2(appId, t, { online, play: [clipSlot(said), clipSlot(t.steps[t.step].clip)] });
-  }
-  function tourEnd(appId) {
-    tours.delete(appId);
-    return { ...appClear(appId), active: false, settings: appSettings(appId) };
-  }
-  var tourActive = (appId) => ({ active: tours.has(appId) });
 
   // scripts/ios/app_help.mjs
   var app_help_exports = {};
@@ -14113,7 +14120,7 @@ ${ts}`);
   function countsSet(appId, { on }) {
     const s = appSession(appId);
     s.countsOn = !!on && !!s.editing;
-    return paint(appId);
+    return paint2(appId);
   }
 
   // scripts/ios/app_settings.mjs
@@ -14234,7 +14241,12 @@ ${ts}`);
         title: x.title,
         group: x.group ?? "person",
         intro: x.intro ? x.intro.replaceAll("{p}", who.inline).replaceAll("{P}", who.unnamed ? "This person" : who.inline) : null,
-        summary: summary[x.id] ?? ""
+        summary: summary[x.id] ?? "",
+        // settings-ui.js WARN.backup = needsCard: an owner's board that is
+        // worth protecting and has no recovery card (the PIN alone does not
+        // dot; the Protect line still names it). The Overview's update dot
+        // is the web's PWA update phase - no iPad equivalent.
+        attention: x.id === "backup" && !team && !cardMade && invested(d)
       })),
       checklist: {
         visible: left > 0,
@@ -14323,6 +14335,19 @@ ${ts}`);
     return { toast: "Family saved", families: families2(appId) };
   }
   var DIM_WORDS = { 60: "a little", 45: "medium", 30: "a lot" };
+  function lookPreview(s) {
+    const { SHOWCASE: SHOWCASE2, showcaseLit: showcaseLit2 } = PIP11().spotlightStarters;
+    return SHOWCASE2.tiles.slice(1, 5).map((id) => {
+      const r = one14(
+        s.d,
+        `SELECT l.text AS label, s.fitzgerald_role AS role, ${PIP11().images.SENSE_ART_SQL} AS art
+       FROM sense s JOIN label l ON l.sense_id = s.id AND l.kind = 'lemma'
+         AND l.status = 'approved' AND l.locale = ? WHERE s.id = ?`,
+        [s.locale, id]
+      );
+      return { id, label: r?.label ?? id, role: r?.role ?? "None", art: r?.art ?? null, lit: showcaseLit2(id) };
+    });
+  }
   function spotlightPage(appId, { role = null, name = "" } = {}) {
     const s = appSession(appId);
     const p = one14(s.d, "SELECT * FROM learner_profile WHERE id = 'prf_local'") ?? {};
@@ -14339,7 +14364,9 @@ ${ts}`);
       pulse,
       dim,
       modelSpeaks: (p.model_speaks ?? 0) === 1,
-      lookSummary: `${pulse ? "Pulsing" : "Steady"} glow \xB7 dim ${dimWord}`
+      lookSummary: `${pulse ? "Pulsing" : "Steady"} glow \xB7 dim ${dimWord}`,
+      // spotlight-sheet.js renderLook: HERO.slice(1, 5), lit by First words.
+      look: lookPreview(s)
     };
   }
 

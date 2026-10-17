@@ -111,6 +111,31 @@ final class FeelingUITests: XCTestCase {
         XCTAssertEqual(server.requests("/api/v1/voice/speak")[1].body["feeling"] as? String, "neutral")
     }
 
+    /// strip.js facesOn: Edit mode hides the faces AND releases their slot
+    /// (the core decides) - the strip goes back to words, no ghost cell.
+    func testEditModeReleasesTheFacesSlot() throws {
+        let app = launch()
+        XCTAssertTrue(app.buttons["want"].waitForExistence(timeout: 30))
+        app.buttons["want"].tap()   // "want" has plenty of continuations
+        XCTAssertTrue(app.buttons["face:sad"].waitForExistence(timeout: 10))
+        func words() -> Int {
+            app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'strip:'")).count
+        }
+        let withFaces = words()
+        app.buttons["settingsGear"].tap()
+        XCTAssertTrue(app.buttons["editBoard"].waitForExistence(timeout: 10))
+        app.buttons["editBoard"].tap()
+        XCTAssertTrue(app.buttons["editDone"].waitForExistence(timeout: 10))
+        wait("the faces leave") { !app.buttons["face:sad"].exists }
+        shot(app, "gaps-edit-mode-no-faces")
+        // (The iPad's Edit mode draws no strip at all - EditHeader replaces
+        // it - so the slot itself is proven in the core: app_say.test.mjs.)
+        XCTAssertGreaterThan(withFaces, 0, "continuations of 'want' were showing beside the faces")
+        app.buttons["editDone"].tap()
+        XCTAssertTrue(app.buttons["face:sad"].waitForExistence(timeout: 10), "leaving Edit mode brings them back")
+        XCTAssertEqual(words(), withFaces)
+    }
+
     /// After the trial a face speaks the bar the free way and the adult
     /// gets the ask once (speech.js askOnce).
     func testFaceAfterTrialAsksOnceAndSpeaksWordByWord() throws {

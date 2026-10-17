@@ -22,13 +22,10 @@ nonisolated struct FacesModel: Decodable, Sendable {
 private nonisolated struct SayOK: Decodable, Sendable { var ok: Bool? }
 
 extension AppModel {
-    /// strip.js facesOn, the parts the core can't see: online, not in Edit
-    /// mode, not the first-run demo (the core already checked the setting,
-    /// an empty bar and mid-word typing).
-    var facesShown: Bool {
-        strip?.faces != nil && tourCard == nil && !editing && !spot.modeling
-            && (host?.isOnline ?? true)
-    }
+    /// strip.js facesOn lives in the core (`facesModel`): setting, online,
+    /// not Edit mode, not modeling, not the tour, not mid-word. The strip
+    /// carries faces only when they show, and then they own the last slot.
+    var facesShown: Bool { strip?.faces != nil }
 
     /// A face tap: dark until the core answers (the audio is on its way).
     func sayFeeling(_ feeling: String) {

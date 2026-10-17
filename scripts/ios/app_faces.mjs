@@ -2,14 +2,19 @@
  * strip.js facesOn + faceCard (025 § 1), as data: the three feeling faces
  * own the strip's last slot from the first word, when the setting is on
  * and the keyboard isn't mid-word. (Edit mode, the supporter's modeling
- * bar, the tour and offline are Swift's: they hide the faces, as facesOn
- * does.) -> { lit: "happy"|"sad"|"angry"|null, feelings } or null.
+ * bar and the tour hide the faces here too, as facesOn does; offline
+ * is the NWPath verdict the host tells the core.) -> { lit: "happy"|"sad"|"angry"|null, feelings } or null.
  */
+import { tourActive } from "./app_firstrun.mjs";
+import { modelingActive } from "./app_spotlight.mjs";
 import { FEELINGS, expressiveOn, suggestedFeeling } from "../../public/shared/feeling.mjs";
 
 export function facesModel(s) {
   const data = s.catalog.feelingVoice;
   if (!data?.feelings || !s.sentence.length || s.kbBuffer) return null;
+  // strip.js facesOn: !live.tour, !live.modeling, !live.editing - hidden AND
+  // the slot released, so Edit mode / modeling / the tour show words, no ghost.
+  if (s.editing || modelingActive() || tourActive(s.appId).active) return null;
   // strip.js facesOn: `navigator.onLine !== false`. Offline the faces are
   // gone AND their slot is released (renderStrip/renderExpand count
   // facesOn() for the cap), so the family page never leaves a ghost cell.

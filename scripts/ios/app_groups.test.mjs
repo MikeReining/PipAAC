@@ -74,6 +74,15 @@ test("SY-11: the Protect line appears once the board is worth protecting, names 
   assert.equal(has({ team: true }).visible, false, "a Team device is never nagged");
 });
 
+test("Backup & privacy wears the attention dot like the web (settings-ui.js WARN.backup = needsCard): invested, owner, no recovery card", () => {
+  const dot = (o) => settingsUi.hub(appId, { name: "Maya", ...o }).sections.find((s) => s.id === "backup").attention;
+  assert.equal(dot({}), true, "the board is theirs (Sy11 group above) and no recovery card");
+  assert.equal(dot({ pinOn: true }), true, "a PIN alone does not clear it");
+  assert.equal(dot({ cardMade: true }), false, "card made: quiet");
+  assert.equal(dot({ team: true }), false, "a Team device is never nagged");
+  assert.equal(settingsUi.hub(appId, { name: "Maya" }).sections.filter((s) => s.attention).length, 1, "only Backup & privacy");
+});
+
 test("create, rename, reorder first, set the icon: the db and the ops hold exactly that", () => {
   let before = maxSeq();
   const made = groupsEdit.createGroupNamed(appId, { name: "Park" });

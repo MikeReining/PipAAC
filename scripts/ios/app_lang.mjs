@@ -98,6 +98,20 @@ export function familySave(appId, id, items) {
 
 const DIM_WORDS = { 60: "a little", 45: "medium", 30: "a lot" };
 
+/** The Look preview's four tiles: the board's own words, each glowing
+ *  (First words) or dimmed (spotlight-sheet.js renderLook / showcaseLit). */
+function lookPreview(s) {
+  const { SHOWCASE, showcaseLit } = PIP().spotlightStarters;
+  return SHOWCASE.tiles.slice(1, 5).map((id) => {
+    const r = one(s.d,
+      `SELECT l.text AS label, s.fitzgerald_role AS role, ${PIP().images.SENSE_ART_SQL} AS art
+       FROM sense s JOIN label l ON l.sense_id = s.id AND l.kind = 'lemma'
+         AND l.status = 'approved' AND l.locale = ? WHERE s.id = ?`,
+      [s.locale, id]);
+    return { id, label: r?.label ?? id, role: r?.role ?? "None", art: r?.art ?? null, lit: showcaseLit(id) };
+  });
+}
+
 /** spotlight-sheet.js renderModel + renderLook, as text and selections.
  *  `role` is the open person's role ("partner" = a supporter's device),
  *  `name` the person the board belongs to. */
@@ -118,5 +132,7 @@ export function spotlightPage(appId, { role = null, name = "" } = {}) {
       : "A spotlight started here glows on this board. Started from a supporter's device, nothing glows here until the supporter taps a word. Then that word lights up for a few seconds.",
     pulse, dim, modelSpeaks: (p.model_speaks ?? 0) === 1,
     lookSummary: `${pulse ? "Pulsing" : "Steady"} glow · dim ${dimWord}`,
+    // spotlight-sheet.js renderLook: HERO.slice(1, 5), lit by First words.
+    look: lookPreview(s),
   };
 }

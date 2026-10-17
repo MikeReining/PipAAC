@@ -127,6 +127,11 @@ test("ST-8: the Spotlight page copy and the Look summary are the web's", () => {
   assert.equal(device.modelHint,
     "A spotlight started here glows on this board. Started from a supporter's device, nothing glows here until the supporter taps a word. Then that word lights up for a few seconds.");
   assert.equal(device.lookSummary, "Pulsing glow · dim a lot");
+  // The Look preview: the web's four showcase tiles (more, go, we, play),
+  // lit exactly when First words holds them (showcaseLit): only "more".
+  assert.deepEqual(device.look.map((x) => [x.id, x.label, x.lit]),
+    [["sns_0055", "more", true], ["sns_0015", "go", false], ["sns_0009", "we", false], ["sns_0027", "play", false]]);
+  assert.ok(device.look.every((x) => x.role && x.art), "role and art come with each tile");
   const sup = lang.spotlightPage(appId, { role: "partner", name: "" });
   assert.equal(sup.roleNow, "This is a supporter's device.");
   assert.match(sup.modelHint, /^Start a spotlight here\. Its words light up on this screen, with a number for each time this person presses it\./);

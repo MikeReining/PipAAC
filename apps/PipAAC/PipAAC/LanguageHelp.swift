@@ -57,6 +57,16 @@ nonisolated struct SpotPageModel: Decodable, Sendable {
     let dim: Int
     let modelSpeaks: Bool
     let lookSummary: String
+    /// spotlight-sheet.js renderLook: the board's own tiles, glowing or dimmed.
+    var look: [SpotLookTile] = []
+}
+
+nonisolated struct SpotLookTile: Decodable, Sendable, Identifiable {
+    let id: String
+    let label: String
+    let role: String
+    let art: String?
+    let lit: Bool
 }
 
 // MARK: - The sheet

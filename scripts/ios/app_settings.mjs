@@ -132,6 +132,11 @@ export function hub(appId, { name = "", pinOn = false, licensed = false, cardMad
         ? x.intro.replaceAll("{p}", who.inline).replaceAll("{P}", who.unnamed ? "This person" : who.inline)
         : null,
       summary: summary[x.id] ?? "",
+      // settings-ui.js WARN.backup = needsCard: an owner's board that is
+      // worth protecting and has no recovery card (the PIN alone does not
+      // dot; the Protect line still names it). The Overview's update dot
+      // is the web's PWA update phase - no iPad equivalent.
+      attention: x.id === "backup" && !team && !cardMade && invested(d),
     })),
     checklist: {
       visible: left > 0,

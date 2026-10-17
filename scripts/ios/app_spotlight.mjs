@@ -176,6 +176,8 @@ export function childTap(key) {
 /** Modeling is on exactly when a real session runs on a supporter's
  *  device - no separate switch (spotlight-layer.js modelingNow). */
 const modelingNow = () => supporter() && !!spotlight()?.session;
+/** strip.js facesOn reads live.modeling: the same fact, for the faces. */
+export const modelingActive = () => modelingNow();
 
 function coachLabel(kind, id) {
   if (kind === "control") return CONTROLS[id]?.label ?? id;

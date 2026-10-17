@@ -89,6 +89,8 @@ final class GroupsUITests: XCTestCase {
         openSettings(app)
         XCTAssertTrue(app.buttons["settings:addWord"].waitForExistence(timeout: 10))
         XCTAssertFalse(app.buttons["settings:protect"].exists, "nothing customized yet")
+        XCTAssertEqual(app.buttons["settingsSection:backup"].value as? String, "",
+                       "nothing worth protecting yet: no attention dot")
 
         app.buttons["settingsSection:words"].tap()
         app.buttons["settings:editGroups"].tap()
@@ -114,6 +116,9 @@ final class GroupsUITests: XCTestCase {
         XCTAssertTrue(protect.label.contains("Protect this person's words"), protect.label)
         XCTAssertTrue(protect.label.contains("Add a Settings PIN and make the recovery card"), protect.label)
         shot(app, "sy11-protect-line")
+        // settings-ui.js WARN.backup: the Backup & privacy item wears the dot
+        // (VoiceOver hears it as the value) until the recovery card is made.
+        XCTAssertEqual(app.buttons["settingsSection:backup"].value as? String, "Needs attention")
         protect.tap()
         XCTAssertTrue(app.buttons["backup:card"].waitForExistence(timeout: 10), "it leads to Backup & privacy")
     }
