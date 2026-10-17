@@ -5,7 +5,7 @@
  * owners: People seats mom/dad and joins People, and a second pass
  * edits the same people instead of re-adding them; Pets lands in Animals;
  * Favorite foods lands in Snack (026/027 retired the Food door); Places
- * lands in Going out. A skipped step writes nothing, and no list step
+ * lands in Places. A skipped step writes nothing, and no list step
  * ever touches the core map.
  */
 import { test } from "node:test";
@@ -144,8 +144,8 @@ test("Pets, foods and places: library words resolve, new names become entities",
   });
   applyPasteRows(db, places, { groupId: stepGroup("places"), category: categoryOf(stepGroup("places")) });
   const going = groupItems(db, "grp_going_out").map((r) => r.label);
-  assert.ok(going.includes("school"), "school filed into Going out");
-  assert.ok(going.includes("Grandma's"), "Grandma's filed into Going out");
+  assert.ok(going.includes("school"), "school filed into Places");
+  assert.ok(going.includes("Grandma's"), "Grandma's filed into Places");
 
   // No list step touches the core map.
   assert.equal(coreMap(db), coreBefore);

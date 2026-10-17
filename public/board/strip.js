@@ -52,13 +52,15 @@ export function mountStrip({
   const traySpan = (cols) =>
     cols - ["anchor-groups", "anchor-kb", "anchor-add"]
       .filter((id) => { const el = $(id); return el && !el.hidden; }).length;
+  /** Counts only — base.css lays them along the row under the top bar,
+   *  strip-side.css down the side column in landscape (where the board
+   *  needs the height more than the width). */
   function sizeStrip(cols) {
-    $("strip").style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-    const tray = $("tray");
+    const strip = $("strip");
     const span = traySpan(cols);
-    tray.style.gridColumn = `span ${span}`;
-    $("modelbar").style.gridColumn = tray.style.gridColumn;
-    tray.style.gridTemplateColumns = `repeat(${Math.min(stripSlots(cols), span)}, 1fr)`;
+    strip.style.setProperty("--strip-n", cols);
+    strip.style.setProperty("--tray-span", span);
+    strip.style.setProperty("--tray-n", Math.min(stripSlots(cols), span));
   }
 
   // Idle-strip starters referenced by sense id — never by English text.
@@ -202,7 +204,7 @@ export function mountStrip({
     if (wordSlots < slots) els.push(faceCard());
     if (mine !== stripPaint) return;
     const tray = $("tray");
-    tray.style.gridTemplateColumns = `repeat(${slots}, 1fr)`;
+    $("strip").style.setProperty("--tray-n", slots);
     tray.replaceChildren(...els);
     if (live.openImpressionId !== null) {
       // shown_final replays what was painted — the face slot is not a word.

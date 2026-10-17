@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.28-63280d07633a",
-  "version": "1.1.28",
-  "payloadHash": "63280d07633a",
+  "buildId": "1.1.30-8a3d171aeb23",
+  "version": "1.1.30",
+  "payloadHash": "8a3d171aeb23",
   "files": [
     {
       "path": "/board.js",
@@ -25,8 +25,8 @@
     },
     {
       "path": "/board/base.css",
-      "bytes": 28541,
-      "sha256": "11d506d0e7f5019bf0d4ab8a397fd3cc3b5ac80b88fd2ccef3b5afe82e9d73ee"
+      "bytes": 28712,
+      "sha256": "3fb457e5baa69f02287b7d0dc8e1bad550143e98ca17fe934341d1f1025d7736"
     },
     {
       "path": "/board/cells-sheet.css",
@@ -90,13 +90,13 @@
     },
     {
       "path": "/board/grid.js",
-      "bytes": 20427,
-      "sha256": "ae404912bf4f8b42af8101dc7e1ceeb92925bd349e172b7e273a1580801f7a10"
+      "bytes": 21281,
+      "sha256": "7f6e6b783ce9e998058d53c42e4f3d94cc751b156891f8b0aeaa9a497e9ebc80"
     },
     {
       "path": "/board/group-glyph.js",
-      "bytes": 5314,
-      "sha256": "d6ef937bfb39fd163035b48213bf151b306e3c1afad51d3cd252ee4e351be052"
+      "bytes": 5311,
+      "sha256": "ea4a935cfab78798266c5dfe76100094259653cc55b5a86d8ff6b121973b21d4"
     },
     {
       "path": "/board/group-icon-picker.css",
@@ -294,9 +294,14 @@
       "sha256": "5bcd096015967e33bba4e0b5fea0e7dbbb77e3ec23ae59c3f8b4975ce12460e1"
     },
     {
+      "path": "/board/strip-side.css",
+      "bytes": 1675,
+      "sha256": "87abd85e8b4effa77db5126e651367e4369709216cd5d73fbaa2b29583e39d77"
+    },
+    {
       "path": "/board/strip.js",
-      "bytes": 14157,
-      "sha256": "de8abda252f64fa8297dcb09e84d0fd6a8dd275a5a18be518255b408316ded5f"
+      "bytes": 14257,
+      "sha256": "d755ac63536551e7394097cb5c468e0a78d837a47765f9e892bd441140d87029"
     },
     {
       "path": "/board/team-name-ui.js",
@@ -350,8 +355,8 @@
     },
     {
       "path": "/board/word-card.css",
-      "bytes": 9142,
-      "sha256": "16ccc29274246e5c49fbe7457fc667c2d637aad347fde212e6133687862928ff"
+      "bytes": 9150,
+      "sha256": "de2ec2eb344fba0dcc8a96cbb69da63a85b5fb6e6071e257e85b65b2daf5a7a1"
     },
     {
       "path": "/board/word-card.js",
@@ -405,8 +410,8 @@
     },
     {
       "path": "/catalog.json",
-      "bytes": 3760064,
-      "sha256": "1bd08b7730f860e4f220b3f45962e8349a3dfbfc7f6861fc7b7c28d123de0086"
+      "bytes": 3760061,
+      "sha256": "12646fcb262c56a9fb2264ef2c1191b94ff2c87927f06feb03d6facc71c91139"
     },
     {
       "path": "/db.js",
@@ -436,7 +441,7 @@
     {
       "path": "/fresh_db.sqlite",
       "bytes": 2555904,
-      "sha256": "2613caab2df6fa725711fc6294bb8af1b76dc126359c30ebb0c3191d70d2385f"
+      "sha256": "f79d0291e6217204097ff7e52ab84a1fdde851fa2c94f99cca8095ba30496fe1"
     },
     {
       "path": "/help.en.json",
@@ -770,8 +775,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 70375,
-      "sha256": "87b701d69126d21414dc34c54d326aef1908b36d2f4c339331c6cd0b9e04d400"
+      "bytes": 70434,
+      "sha256": "4ce5a4368ae0dfd8c68abf27a39f25d54a6606f749b0000665f2dafecee77cd1"
     },
     {
       "path": "/manifest.webmanifest",
@@ -1027,6 +1032,11 @@
       "path": "/shared/team_names.mjs",
       "bytes": 1247,
       "sha256": "fea13a95d808e408c4c48b0cc75b7d16a91d4b3f174a4e728afbeae6634aaea2"
+    },
+    {
+      "path": "/shared/tile_label.mjs",
+      "bytes": 783,
+      "sha256": "17d2321812b2b8b3383dfdf3b8e01eb59c24614596a0364c4eff5eab3c2f79c5"
     },
     {
       "path": "/shared/txbar.mjs",

@@ -23,10 +23,10 @@
   background: #fff; overflow: hidden; cursor: pointer;
   display: flex; flex-direction: column;
 }
-/* The label strip matches the board tile's (base.css .cell .tlabel: 33%);
-   a textarea can't centre vertically, so fitLabel sets its top padding. */
+/* The label strip matches the board tile's (grid.js fitLabels: 1.6 × the
+   font); a textarea can't centre vertically, so fitLabel sets its top padding. */
 .wc-tile .wc-label {
-  flex: none; height: 33%; width: 100%; resize: none; overflow: hidden;
+  flex: none; height: 32px; width: 100%; resize: none; overflow: hidden;
   background: var(--rf, var(--press-f)); color: var(--ink-text);
   border: none; border-radius: 0; padding: 0 8px; text-align: center;
   font-family: var(--word-font); font-weight: 700; font-size: 20px; line-height: 1.1;

@@ -109,7 +109,7 @@ await evalJs(`(() => { ${qTile}?.click(); })()`);
 await sleep(400);
 out.expanded = await evalJs(`(() => ({
   tiles: ${trayWords},
-  gridCols: document.querySelector('#tray').style.gridTemplateColumns,
+  gridCols: getComputedStyle(document.querySelector('#tray')).gridTemplateColumns,
 }))()`);
 
 // Tap `why` — it joins the sentence and the bar returns to Predict.

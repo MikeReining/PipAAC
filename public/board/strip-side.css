@@ -1,0 +1,38 @@
+/* Landscape: the strip stands down the right side instead of under the
+   top bar. A board's rows are what a wide screen runs short of — the
+   80px row cost every tile ~10% of its height — while one column of
+   width is cheap. Same slots and order, top to bottom; the cards turn
+   upright into ordinary word tiles. The board editor has no strip. */
+@media (orientation: landscape) {
+  body:not(.editor) {
+    --side-w: clamp(96px, 10.5vw, 150px);
+  }
+  body:not(.editor) #shell {
+    position: relative;
+    padding-right: calc(var(--side-w) + 2 * var(--gap));
+  }
+  body:not(.editor) #topbar { margin-right: calc(-1 * (var(--side-w) + var(--gap))); }
+  body:not(.editor) #strip {
+    position: absolute;
+    top: calc(68px + 2 * var(--gap));
+    right: var(--gap);
+    bottom: var(--gap);
+    width: var(--side-w);
+    height: auto;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(var(--strip-n, 10), minmax(0, 1fr));
+  }
+  body:not(.editor) #tray, body:not(.editor) #modelbar {
+    grid-column: auto;
+    grid-row: span var(--tray-span, 8);
+  }
+  body:not(.editor) #tray {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(var(--tray-n, 4), minmax(0, 1fr));
+  }
+  body:not(.editor) #modelbar { flex-direction: column; justify-content: center; text-align: center; }
+  body:not(.editor) #tray .pred { flex-direction: column; text-align: center; }
+  body:not(.editor) #tray .pred .plabel { order: -1; flex: none; height: var(--tl-h, 22%); }
+  body:not(.editor) #tray .pred .part { flex: 1; aspect-ratio: auto; max-height: none; padding: 2px 3% 3%; }
+  body:not(.editor) #tray .pred.faces { flex-direction: column; }
+}

@@ -132750,7 +132750,7 @@
     {
       "group_id": "grp_going_out",
       "locale": "en",
-      "text": "Going out"
+      "text": "Places"
     },
     {
       "group_id": "grp_things",
@@ -132882,5 +132882,5 @@
       "item_id": "sns_0068"
     }
   ],
-  "fingerprint": "170ea784cff0aec04205b119297064a281233ce8a863aca4e95cf0f354c7107d"
+  "fingerprint": "0c156f7638c608f52f3bcb2da22435782106d704bdb1e0cf276dde841c0bda41"
 }

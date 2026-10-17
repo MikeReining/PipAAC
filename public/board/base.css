@@ -266,22 +266,22 @@ body.groups #corner .g-home { display: block; }
   height: 80px;
   flex: none;
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(var(--strip-n, 10), 1fr);
   grid-template-rows: minmax(0, 1fr);
   gap: var(--gap);
   overflow: hidden;
 }
 /* The tray marks the zone that changes — neutral, so no prediction
    color is needed and lavender stays retired. */
+#tray, #modelbar { grid-column: span var(--tray-span, 8); }
 #tray {
-  grid-column: span 8;
   min-width: 0;
   min-height: 0;
   background: var(--tray);
   border-radius: 12px;
   padding: 5px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(var(--tray-n, 4), 1fr);
   grid-template-rows: minmax(0, 1fr);
   gap: var(--gap);
   overflow: hidden;
@@ -462,7 +462,7 @@ body.groups #corner .g-home { display: block; }
 }
 .cell .tlabel {
   flex: none;
-  height: 33%;
+  height: var(--tl-h, 24%); /* one readable line — fitLabels sizes it from the tile */
   width: 100%;
   background: var(--rf, var(--press-f));
   color: var(--ink-text);
@@ -473,11 +473,11 @@ body.groups #corner .g-home { display: block; }
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0 6%;
+  padding: 0 4%;
   overflow: hidden;
-  /* One label size per board: long labels wrap to a second line
-     (long words hyphenate at proper points via lang) rather than
-     shrinking into a different size. */
+  /* A label too long for its one line shrinks until it fits, wrapping
+     to two lines (long words hyphenate via lang) once it is small
+     enough — only that label changes size. */
   hyphens: auto;
   overflow-wrap: break-word;
 }
@@ -487,7 +487,7 @@ body.groups #corner .g-home { display: block; }
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3%;
+  padding: 2px 3% 3%;
 }
 .cell .tart img {
   max-width: 100%;
@@ -508,7 +508,7 @@ body.groups #corner .g-home { display: block; }
    the art padding and fits whole, like catalog art. */
 .cell.photo .tart { padding: 0; }
 .cell.photo .tart img { width: 100%; height: 100%; object-fit: cover; }
-.cell.photo .tart:has(img[src$="#art"]) { padding: 3%; }
+.cell.photo .tart:has(img[src$="#art"]) { padding: 2px 3% 3%; }
 .cell.photo .tart img[src$="#art"], .pred.photo .part img[src$="#art"],
 .chip.photo .cart img[src$="#art"] { object-fit: contain; border-radius: 0; }
 /* Pressed — border goes to ink, art area to warm fill. No scale,

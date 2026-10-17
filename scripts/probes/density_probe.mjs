@@ -81,8 +81,8 @@ const dump = `(() => {
     };
   });
   return {
-    stripCols: strip.style.gridTemplateColumns,
-    trayCols: tray.style.gridTemplateColumns,
+    stripCols: getComputedStyle(strip).gridTemplateColumns,
+    trayCols: cs.gridTemplateColumns,
     traySpan: cs.gridColumn,
     trayH: Math.round(tr.height),
     stripH: Math.round(strip.getBoundingClientRect().height),

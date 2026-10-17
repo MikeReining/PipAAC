@@ -10,7 +10,7 @@ import { groupPage } from "../shared/groups.mjs";
 
 /* 026 D7: door icons are ink glyphs from the chrome icon family. A
  * group with no entry keeps its seed emoji, so a new group shows its gap
- * until it gets a glyph. `places` serves Going out, `actions` (a pointing
+ * until it gets a glyph. `places` serves Places, `actions` (a pointing
  * hand) serves Touch & sound, the palette serves Colors, `food` (fork
  * and knife) serves Dinner, and Who & which borrows the chrome question
  * mark. */

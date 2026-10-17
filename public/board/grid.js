@@ -13,6 +13,7 @@ import { coreCells, moveCore, placeOnBoard } from "../shared/coremove.mjs";
 import { moveMarks } from "../shared/movecost.mjs";
 import { loadPhotoURL } from "../db.js";
 import { tileStateBadge } from "../shared/voice_tile.mjs";
+import { LABEL_LINE, tileLabelPx } from "../shared/tile_label.mjs";
 
 const $ = (id) => document.getElementById(id);
 const ALL = (db, sql, p = []) => db.all(sql, p);
@@ -87,21 +88,28 @@ export function mountGrid({
     return el;
   }
 
-  /** Uniform-size labels: every label on a board renders at the same size —
-   *  two lines fit the strip at nominal, so a long label wraps (long words
-   *  hyphenate) instead of shrinking. The shrink loop is the last resort
-   *  for a label that can't fit even wrapped. Text is measured with a
-   *  Range — scrollHeight reports the flex item's quirks, not the glyphs. */
+  /** Uniform-size labels: every label on a board renders at its tile's
+   *  size (tileLabelPx) in a one-line strip. A label too long for one line
+   *  shrinks — wrapping to two lines once the smaller size allows it — and
+   *  only that label. Text is measured with a Range — scrollHeight reports
+   *  the flex item's quirks, not the glyphs. */
   function fitLabels(root) {
     document.fonts.ready.then(() => {
       const range = document.createRange();
+      const wordsOnly = document.body.classList.contains("words-only");
       for (const lb of root.querySelectorAll(".tlabel, .plabel")) {
+        // An upright strip card (the landscape side column) is a word
+        // tile too; a sideways one keeps its one-line card label.
+        const tile = !wordsOnly && (lb.classList.contains("tlabel")
+          || getComputedStyle(lb.parentElement).flexDirection === "column")
+          ? tileLabelPx(lb.parentElement.clientWidth, lb.parentElement.clientHeight) : 0;
+        if (tile) lb.parentElement.style.setProperty("--tl-h", `${Math.ceil(tile * LABEL_LINE)}px`);
         const maxW = lb.clientWidth;
         const maxH = lb.clientHeight;
         if (!maxW || !maxH) continue;
-        // Tile labels: nominal fits two lines in the strip. Bar labels are
-        // single-line horizontal cards — keep the old one-line target.
-        let px = Math.floor(maxH * (lb.classList.contains("tlabel") ? 0.38 : 0.8));
+        // Words only: the label is the whole tile, two lines at nominal.
+        // Bar labels are single-line horizontal cards.
+        let px = tile || Math.floor(maxH * (lb.classList.contains("tlabel") ? 0.38 : 0.8));
         lb.style.fontSize = `${px}px`;
         for (let guard = 18; guard > 0 && px > 8; guard--) {
           range.selectNodeContents(lb);
@@ -128,7 +136,8 @@ export function mountGrid({
   }
 
   /** Tiles change size without re-rendering (the editor's word card opens
-   *  beside the board); refit labels whenever a grid's box changes. */
+   *  beside the board; a rotation moves the strip to the side and back);
+   *  refit labels whenever a grid's box changes. */
   {
     const seen = new Map();
     const dirty = new Set();
@@ -144,7 +153,7 @@ export function mountGrid({
         dirty.add(e.target);
       }
     });
-    for (const id of ["grid", "ed-grid"]) {
+    for (const id of ["grid", "ed-grid", "groupgrid", "kb", "tray"]) {
       const el = document.getElementById(id);
       if (el) ro.observe(el);
     }
@@ -191,9 +200,12 @@ export function mountGrid({
     const r = anchor.getBoundingClientRect();
     const hint = $("pathhint");
     hint.textContent = `Groups › ${name}`;
-    hint.style.left = `${r.left + r.width / 2}px`;
     hint.style.top = `${r.bottom + 4}px`;
     hint.hidden = false;
+    // Landscape puts the anchor at the screen's right edge — keep the
+    // centered caption on screen.
+    const half = hint.offsetWidth / 2 + 4;
+    hint.style.left = `${Math.min(Math.max(r.left + r.width / 2, half), innerWidth - half)}px`;
     anchor.classList.add("halo");
     clearTimeout(hintTimer);
     hintTimer = setTimeout(clearGroupHint, 1500);

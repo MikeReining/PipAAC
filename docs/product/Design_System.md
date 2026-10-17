@@ -91,12 +91,17 @@ Grammar roles (border / label-strip fill):
 
 **BUILT** (`public/index.html` `.cell`, `public/board.js` `wordTile`).
 
-- **Label strip:** top 33% of the tile, role fill, Andika Bold, centered.
-  One uniform size per board (`fitLabels` — nominal fits two lines in the
-  strip); a label that doesn't fit on one line wraps to two, hyphenating
-  long words (`hyphens: auto`), never shrinking into a different size.
-  Shrinking is the last resort when even two lines don't fit.
-- **Art area:** white, remaining 67%, ~3% padding, `object-fit: contain`.
+- **Label strip:** one line on top of the tile, role fill, Andika Bold,
+  centered. Its size comes from the tile (`grid.js` `tileLabelPx`: ~16%
+  of the tile's height, capped by its width, floor 11px, max 28px), and
+  the strip is 1.6× that (Andika's text box). A tall tile, whose art is
+  bound by its width, lets the label grow into height the art can't use.
+  A label that can't fit one line shrinks, wrapping to two lines once the
+  smaller size allows it, and only that label. **Why (2026-10-16):** the
+  old fixed 33% strip gave a 90-cell iPad board 8px labels in a wide band
+  and 34px symbols; a beta tester called the symbols too small.
+- **Art area:** white, the rest of the tile, 2px top / ~3% side and bottom
+  padding, `object-fit: contain`.
   Art is trimmed to the drawing's bounding box at build time; stick-figure
   symbols share one trim scale, objects are trimmed individually.
 - **Border:** 3px role border color, ~10px radius.
@@ -192,6 +197,12 @@ renders on the child's device.
   columns 1–8, anchors 9–10).
 - A strip card is a normal word tile turned sideways: art on a white
   square at left, the label on the role fill at right.
+- **Landscape:** the strip stands down the right side instead of under the
+  top bar — same slots and order, top to bottom, and the cards stand
+  upright as ordinary word tiles (faces stack). A wide screen runs short of
+  rows, not columns: on a 10th-gen iPad this took grid60 symbols 59→78px
+  and grid90 34→47px. Portrait keeps the row. The board editor has no
+  strip.
 - Empty slots are ghost cards: dashed `#d8d4c8`, nothing else.
 - Anchors: fill `#e8e3d6`, border `#5b5348`.
 
