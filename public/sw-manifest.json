@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.32-4d0308024249",
-  "version": "1.1.32",
-  "payloadHash": "4d0308024249",
+  "buildId": "1.1.33-8c49982130f1",
+  "version": "1.1.33",
+  "payloadHash": "8c49982130f1",
   "files": [
     {
       "path": "/board.js",
@@ -55,8 +55,8 @@
     },
     {
       "path": "/board/devices-ui.js",
-      "bytes": 47129,
-      "sha256": "899259b0ded229ed60b38c464406ef03998087bc3e0c440ef7d408e400b3fcbf"
+      "bytes": 47299,
+      "sha256": "d416cebcfc3c46ade767ef0f031c414d30e7110b1430f7a85d18e5882bd0b626"
     },
     {
       "path": "/board/edit-shared.js",

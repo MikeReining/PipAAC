@@ -23,7 +23,7 @@ registerHooks({
       : next(url, ctx);
   },
 });
-const { deviceName, mountDevices } = await import("../../public/board/devices-ui.js");
+const { deviceName, mountDevices, removeDeviceQuestion } = await import("../../public/board/devices-ui.js");
 
 function el() {
   const node = {
@@ -114,6 +114,14 @@ test("Add a user opens their board directly — no first-open setup (041 B5)", a
   // device that already has one opens their board, no setup question.
   assert.equal(row.needsSetup ?? false, false, "an added person skips the welcome");
   assert.equal(reloaded, true);
+});
+
+test("remove-device confirm names the device, never its id", () => {
+  const q = removeDeviceQuestion({ device_id: "dev_9f8e7d6c", label: "iPad · Safari" });
+  assert.match(q, /iPad · Safari/);
+  assert.doesNotMatch(q, /dev_9f8e7d6c/);
+  // A row from before device names has no label: still no raw id.
+  assert.doesNotMatch(removeDeviceQuestion({ device_id: "dev_9f8e7d6c" }), /dev_9f8e7d6c/);
 });
 
 test("devices are named the way a family says them", () => {

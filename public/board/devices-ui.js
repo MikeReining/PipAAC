@@ -42,6 +42,10 @@ export function deviceName(nav = globalThis.navigator) {
   return browser ? `${kind} · ${browser}` : kind;
 }
 
+/** What a linked device is called in a question: its own name, never its id. */
+export const removeDeviceQuestion = (d) =>
+  `Remove ${d?.label || "this device"}? It keeps what it already saw.`;
+
 /** The stored device role: "partner" is a supporter's device, "board"
  *  the person's own (an unset role reads as the person's own). */
 const SUPPORTER = "partner";
@@ -196,7 +200,7 @@ export function mountDevices({
           const rm = document.createElement("button");
           rm.className = "btn secondary";
           rm.textContent = "Remove";
-          rm.onclick = () => removeDeviceFlow(client, store, identity, d.device_id);
+          rm.onclick = () => removeDeviceFlow(client, store, identity, d);
           row.append(rm);
         }
         list.append(row);
@@ -297,9 +301,9 @@ export function mountDevices({
 
   /** Remove locks the door; rotating the user key means the removed
    *  device cannot read anything written after. */
-  async function removeDeviceFlow(client, store, identity, targetId) {
-    if (!confirm(`Remove ${targetId}? It keeps what it already saw.`)) return;
-    await client.removeDevice(targetId);
+  async function removeDeviceFlow(client, store, identity, device) {
+    if (!confirm(removeDeviceQuestion(device))) return;
+    await client.removeDevice(device.device_id);
     await rotateAfterRemoval(client, store);
     await renderDevices();
   }
