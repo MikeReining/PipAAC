@@ -32,12 +32,13 @@ const groupNameOf = (s, id, fallback = "") => {
 const seedCategory = (s, groupId) => s.catalog.groups?.find((g) => g.id === groupId)?.category ?? null;
 
 /** 028 § 5.3: the new words' voices are made one at a time after the rows
- *  land (add-flow.js bulk-add / photo-save), with the web's progress toast. */
-function prefetchVoices(s, texts) {
+ *  land (add-flow.js bulk-add / photo-save). A paste's progress rides after
+ *  its "Added N" line (`added`); the photo save shows none, as on the web. */
+function prefetchVoices(s, texts, added = null) {
   if (!texts.length) return;
   const voice = possessiveVoice(PIP().voices.voiceName(s.d, s.voiceId));
-  tilePrefetch(s, texts, (p) => emit({
-    appId: s.appId, toast: `Making ${voice}, ${p.done + p.failed} of ${texts.length}`,
+  tilePrefetch(s, texts, added == null ? () => {} : (p) => emit({
+    appId: s.appId, toast: `${added} · Making ${voice}, ${p.done + p.failed} of ${texts.length}`,
   }));
 }
 
@@ -206,13 +207,13 @@ export function bulkAdd(appId, { groupId = null, text = "" }) {
   });
   s.addRecent = [gid, ...(s.addRecent ?? []).filter((v) => v !== gid)].slice(0, 3);
   s.kbIndex = null;
-  prefetchVoices(s, newTexts);
-  void fillPastedPictures(x, s, res.newIds ?? []).catch((e) => console.error(`pics.fill: ${e}`));
   const name = groupNameOf(s, gid, "My Words");
   const msg = `Added ${res.placed} to ${name}` + (res.skipped ? ` (${res.skipped} already there)` : "");
   const toast = res.refused
     ? `${msg} — ${res.refused} more need${res.refused === 1 ? "s" : ""} Pip Lifetime`
     : msg;
+  prefetchVoices(s, newTexts, toast);
+  void fillPastedPictures(x, s, res.newIds ?? []).catch((e) => console.error(`pics.fill: ${e}`));
   x.bulk = null;
   return { ...PIP().edit.editState(appId), toast: { text: toast } };
 }

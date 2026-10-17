@@ -12581,12 +12581,13 @@ ${ts}`);
     return row2 ? PIP8().groups.groupDisplayName(s.d, row2, s.locale) : fallback;
   };
   var seedCategory2 = (s, groupId) => s.catalog.groups?.find((g2) => g2.id === groupId)?.category ?? null;
-  function prefetchVoices(s, texts) {
+  function prefetchVoices(s, texts, added = null) {
     if (!texts.length) return;
     const voice = possessiveVoice(PIP8().voices.voiceName(s.d, s.voiceId));
-    tilePrefetch(s, texts, (p) => emit7({
+    tilePrefetch(s, texts, added == null ? () => {
+    } : (p) => emit7({
       appId: s.appId,
-      toast: `Making ${voice}, ${p.done + p.failed} of ${texts.length}`
+      toast: `${added} \xB7 Making ${voice}, ${p.done + p.failed} of ${texts.length}`
     }));
   }
   function rowPicture(f) {
@@ -12738,11 +12739,11 @@ ${ts}`);
     });
     s.addRecent = [gid, ...(s.addRecent ?? []).filter((v) => v !== gid)].slice(0, 3);
     s.kbIndex = null;
-    prefetchVoices(s, newTexts);
-    void fillPastedPictures(x, s, res.newIds ?? []).catch((e) => console.error(`pics.fill: ${e}`));
     const name = groupNameOf(s, gid, "My Words");
     const msg = `Added ${res.placed} to ${name}` + (res.skipped ? ` (${res.skipped} already there)` : "");
     const toast2 = res.refused ? `${msg} \u2014 ${res.refused} more need${res.refused === 1 ? "s" : ""} Pip Lifetime` : msg;
+    prefetchVoices(s, newTexts, toast2);
+    void fillPastedPictures(x, s, res.newIds ?? []).catch((e) => console.error(`pics.fill: ${e}`));
     x.bulk = null;
     return { ...PIP8().edit.editState(appId), toast: { text: toast2 } };
   }
