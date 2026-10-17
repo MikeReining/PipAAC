@@ -90,6 +90,47 @@ test("a saved entity word fires exactly one background mint", async () => {
   assert.equal(ent.spoken_name, "Cooper"); // the tile is placed either way
 });
 
+/** After a paste the parent must be able to read how many were added, even
+ *  as the voice-making progress toasts arrive. */
+test("paste: voice progress keeps 'Added N' readable in every toast", async () => {
+  const db = createDatabase(":memory:");
+  db.exec(`INSERT INTO layout_shape (layout, cols, rows, frame) VALUES
+    ('grid60', 10, 6, '[9,19,39,49]')`);
+  db.prepare(
+    `INSERT INTO board_group (id, kind, name, glyph, index_slot)
+     VALUES ('grp_snacks', 'custom', 'Snacks', '🍎', 12)`,
+  ).run();
+  const $ = installDom();
+  const toasts = [];
+  const add = mountAddFlow({
+    db,
+    locale: "en",
+    all: (database, sql, p = []) => database.prepare(sql).all(...p),
+    catalog: { groups: [] },
+    open() {}, close() {},
+    toast: (m) => toasts.push(m),
+    async savePhoto() { return null; },
+    syncUploadBlob() {},
+    async loadPhotoURL() { return null; },
+    artInto() { return false; },
+    invalidateIndex() {}, rerenderView() {}, renderStrip() {}, renderLibrary() {},
+    openAddToBoards() {},
+    tile: {
+      name: () => "Pip",
+      async prefetch(texts, { onProgress }) {
+        texts.forEach((text, i) => onProgress({ text, done: i + 1, failed: 0, total: texts.length }));
+      },
+    },
+  });
+  add.openBulkForm("grp_snacks", "zorpwug\nblatnik");
+  await $("bulk-add").fire("click");
+  await new Promise((r) => setTimeout(r, 0));
+
+  assert.ok(toasts.length >= 2, "progress toasts fired");
+  for (const t of toasts) assert.match(t, /Added 2 to Snacks/, `toast lost the count: ${t}`);
+  assert.match(toasts.join("|"), /Making Pip's voice, 2 of 2/);
+});
+
 /** The drawings-left number in the paste sheet is what the server says
  *  NOW: a paste spends drawings, so the next open must ask again. */
 test("the paste sheet re-reads the drawing allowance on every open", async () => {

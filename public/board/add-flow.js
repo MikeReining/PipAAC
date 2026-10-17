@@ -633,10 +633,20 @@ export function mountAddFlow({
       category: catalog.groups.find((g) => g.id === bulkTarget)?.category ?? null,
       maxNew: ownLeft(),
     });
+    // "Added N" is what the parent needs to read; the voice progress rides
+    // after it in the same toast instead of replacing it.
+    const name = groupName(bulkTarget, "My Words");
+    let added = `Added ${res.placed} to ${name}` + (res.skipped ? ` (${res.skipped} already there)` : "");
+    let addedOpts;
+    if (res.refused) {
+      added += ` — ${res.refused} more need${res.refused === 1 ? "s" : ""} Pip Lifetime`;
+      addedOpts = { actionLabel: "See Pip Lifetime", onAction: () => openSettings?.("lifetime") };
+    }
     if (newTexts.length) {
       tile?.prefetch(newTexts, {
         onProgress: (p) =>
-          toast(`Making ${possessiveVoice(tile.name())}, ${p.done + p.failed} of ${newTexts.length}`),
+          toast(`${added} · Making ${possessiveVoice(tile.name())}, ${p.done + p.failed} of ${newTexts.length}`,
+            null, addedOpts),
       }).catch(() => {});
     }
     fillPastedPictures(res.newIds ?? []);
@@ -646,14 +656,7 @@ export function mountAddFlow({
     rerenderView();
     renderStrip();
     renderLibrary();
-    const name = groupName(bulkTarget, "My Words");
-    const msg = `Added ${res.placed} to ${name}` + (res.skipped ? ` (${res.skipped} already there)` : "");
-    if (res.refused) {
-      toast(`${msg} — ${res.refused} more need${res.refused === 1 ? "s" : ""} Pip Lifetime`,
-        null, { actionLabel: "See Pip Lifetime", onAction: () => openSettings?.("lifetime") });
-    } else {
-      toast(msg);
-    }
+    toast(added, null, addedOpts);
   });
 
   /** Pictures for the pasted words, one at a time in the background: the

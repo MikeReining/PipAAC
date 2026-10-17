@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.38-f60bcaf37918",
-  "version": "1.1.38",
-  "payloadHash": "f60bcaf37918",
+  "buildId": "1.1.39-2b2cc535808f",
+  "version": "1.1.39",
+  "payloadHash": "2b2cc535808f",
   "files": [
     {
       "path": "/board.js",
@@ -15,8 +15,8 @@
     },
     {
       "path": "/board/add-flow.js",
-      "bytes": 29831,
-      "sha256": "7d2fe06c8aa70d1a3ca765cbff640371e4ebc3a8cd2a462873f5e1228ea07498"
+      "bytes": 30030,
+      "sha256": "fb7d63a4dc0fe71e099dbf0e1398cd70c5249045c5582b6a842dc4ab2b4be955"
     },
     {
       "path": "/board/avatar.js",
