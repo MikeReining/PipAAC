@@ -108,6 +108,9 @@ public nonisolated final class PipHost: @unchecked Sendable {
     var streamHeads = Set<Int>()
     var pathMonitor: NWPathMonitor?
     private let online = OSAllocatedUnfairLock(initialState: true)
+    private let netHook = OSAllocatedUnfairLock<(@Sendable () -> Void)?>(initialState: nil)
+    /// Told on every change of the network verdict (any thread).
+    public func onNetChange(_ f: @escaping @Sendable () -> Void) { netHook.withLock { $0 = f } }
     /// The last NWPath verdict (navigator.onLine's stand-in); true until known.
     public var isOnline: Bool { online.withLock { $0 } }
 
@@ -191,7 +194,8 @@ public nonisolated final class PipHost: @unchecked Sendable {
             let reported = OSAllocatedUnfairLock<Bool?>(initialState: nil)
             m.pathUpdateHandler = { [weak self] path in
                 let up = path.status == .satisfied
-                self?.online.withLock { $0 = up }
+                let was = self?.online.withLock { s -> Bool in let o = s; s = up; return o }
+                if was != up, let f = self?.netHook.withLock({ $0 }) { f() }
                 // navigator.onLine's stand-in for the core (strip.js facesOn):
                 // every change of verdict, including the first.
                 if reported.withLock({ s -> Bool in let c = s != up; s = up; return c }) {

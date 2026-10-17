@@ -18,16 +18,19 @@ struct BoardView: View {
 
     var body: some View {
         GeometryReader { geo in
-            // Wider than tall, outside the board editor: the strip becomes
+            // Wider than tall: the strip becomes
             // the side column and the grid keeps every row of height.
-            let side = !model.editing && geo.size.width > geo.size.height
+            // The web keeps the strip (predictions, Groups, Keyboard) while
+            // editing (body.editing only swaps the corner for Done and adds
+            // the counts button), so the strip stays here too.
+            let side = geo.size.width > geo.size.height
             VStack(spacing: 8) {
                 if model.editing {
-                    EditHeader()           // EditMode.swift — Done, Groups/Board
+                    EditHeader()           // EditMode.swift — Done, counts, edit tools
                 } else {
                     topBar
-                    if !side { stripRow }
                 }
+                if !side { stripRow }
                 if side {
                     HStack(spacing: 8) {
                         gridArea
@@ -169,21 +172,21 @@ struct BoardView: View {
             }
             if model.controls.contains("fix") {
                 TxButton(system: "wand.and.stars", label: "Fix it",
-                         enabled: !model.bar.isEmpty,
+                         enabled: model.txEnabled("fix"),
                          spot: model.spot.controls["fix"]) { model.transform("fix") }
                     .tour(model.tourCard, kind: "button", id: "fix")
             }
             if model.controls.contains("question") {
                 TxButton(system: "questionmark", label: "Ask it as a question",
                          selected: model.question,
-                         enabled: !model.bar.isEmpty,
+                         enabled: model.txEnabled("question"),
                          spot: model.spot.controls["question"]) { model.transform("question") }
                     .tour(model.tourCard, kind: "button", id: "question")
             }
             if model.controls.contains("past") {
                 TxButton(system: "backward.fill", label: "Say it in the past",
                          selected: model.tense == "past",
-                         enabled: !model.bar.isEmpty) { model.transform("past") }
+                         enabled: model.txEnabled("past")) { model.transform("past") }
                     .tourQuiet(model.tourCard)
             }
             BarButton(system: "play.fill", label: "Play",
@@ -192,7 +195,7 @@ struct BoardView: View {
             if model.controls.contains("future") {
                 TxButton(system: "forward.fill", label: "Say it in the future",
                          selected: model.tense == "future",
-                         enabled: !model.bar.isEmpty) { model.transform("future") }
+                         enabled: model.txEnabled("future")) { model.transform("future") }
                     .tourQuiet(model.tourCard)
             }
             SpotChip()               // Spotlight.swift - "🔦 Name · End" while a glow runs

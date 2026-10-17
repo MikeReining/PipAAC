@@ -283,7 +283,7 @@ final class PipAACUITests: XCTestCase {
     /// Edit -> Groups -> open a group by its door.
     @MainActor
     private func openGroupInEdit(_ app: XCUIApplication, _ id: String) {
-        app.buttons["editGroups"].tap()
+        app.buttons["anchor:groups"].tap()
         let door = app.buttons["group:\(id)"]
         XCTAssertTrue(door.waitForExistence(timeout: 10))
         door.tap()

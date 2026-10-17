@@ -19,7 +19,7 @@
  * Swap/Replace, group management (later slices; see the inventory).
  */
 import {
-  appBoard, appGeom, appGroupPage, appMeta, appSession,
+  appBoard, appGeom, appGroupPage, appMeta, appSession, appStrip,
 } from "./app.mjs";
 import { mediaFor } from "./app_media.mjs";
 import { KINDS } from "../../public/board/word-card.js";
@@ -149,7 +149,9 @@ export function editOpen(appId) {
   s.editing = true;
   s.expand = null;
   s.kbOpen = false;
-  return paint(appId);
+  // The strip stays on screen while editing (as on the web), minus what
+  // strip.js facesOn drops when editing: repaint it.
+  return paint(appId, { strip: appStrip(appId) });
 }
 
 /** Leave Edit mode (✓ Done). */
@@ -158,7 +160,7 @@ export function editClose(appId) {
   s.editing = false;
   s.countsOn = false; // 📊 leaves with Edit mode (edit-shared.js setEditing)
   invalidate(s);
-  return paint(appId);
+  return paint(appId, { strip: appStrip(appId) });
 }
 
 /** The current edit paint without changing anything (a navigation

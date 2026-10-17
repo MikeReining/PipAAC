@@ -164,3 +164,7 @@ export function makeDb(dbId) {
 
 /** The invitee's side of a supporter invite (044 slice IL) - PIPCORE.invite */
 export * as invite from "./app_invite.mjs";
+
+/** The bar buttons' enabled state, via the web's txButtonDisabled
+ *  (044 parity) - PIPCORE.txbuttons.* */
+export * as txbuttons from "./app_txbuttons.mjs";

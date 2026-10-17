@@ -284,5 +284,44 @@ final class FirstRunUITests: XCTestCase {
         let again = launch(reset: false)
         XCTAssertTrue(again.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
         XCTAssertFalse(again.textFields["welcome:name"].exists)
+        XCTAssertFalse(again.staticTexts["tour:say"].waitForExistence(timeout: 3),
+                       "a skipped demo does not come back")
+    }
+
+    /// Web 96bd16d9 (tourIsOwed): the welcome ends with tourDone:false, so an
+    /// app closed mid-tour shows the demo again; Skip (tourDone:true) ends it
+    /// for good. Read from people.json, then from what a relaunch shows.
+    @MainActor
+    func testTourResumesAfterClose() throws {
+        let app = launch(reset: true)
+        XCTAssertTrue(app.textFields["welcome:name"].waitForExistence(timeout: 30))
+        tap(app, "welcome:choice:child")
+        tap(app, "welcome:continue")
+        XCTAssertTrue(app.staticTexts["tour:say"].waitForExistence(timeout: 20))
+        app.buttons["tile:sns_0002"].tap()           // you: now mid-tour
+        let wantSay = NSPredicate(format: "label == 'Tap want.'")
+        expectation(for: wantSay, evaluatedWith: app.staticTexts["tour:say"])
+        waitForExpectations(timeout: 10)
+        var row = try XCTUnwrap(people().first)
+        XCTAssertFalse(row.needsSetup)
+        XCTAssertEqual(row.tourDone, false, "the welcome's end owes the demo")
+        app.terminate()                              // closed mid-tour
+
+        let again = launch(reset: false)
+        XCTAssertTrue(again.staticTexts["tour:say"].waitForExistence(timeout: 30),
+                      "the demo resumes after a close")
+        XCTAssertEqual(again.staticTexts["tour:say"].label, "Tap you.")
+        XCTAssertFalse(again.textFields["welcome:name"].exists, "not the welcome")
+        shot(again, "30-tour-resumed")
+        tap(again, "tour:skip")
+        XCTAssertTrue(again.buttons["tile:sns_0013"].waitForExistence(timeout: 10))
+        row = try XCTUnwrap(people().first)
+        XCTAssertEqual(row.tourDone, true, "Skip ends the demo")
+        again.terminate()
+
+        let third = launch(reset: false)
+        XCTAssertTrue(third.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
+        XCTAssertFalse(third.staticTexts["tour:say"].waitForExistence(timeout: 3),
+                       "after Skip the demo is over")
     }
 }

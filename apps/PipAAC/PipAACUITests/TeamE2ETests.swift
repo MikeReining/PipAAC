@@ -131,10 +131,28 @@ final class TeamE2ETests: XCTestCase {
     @discardableResult
     private func reveal(_ app: XCUIApplication, _ el: XCUIElement) -> Bool {
         for i in 0..<10 {
-            if el.exists && el.isHittable { return true }
+            if el.exists && el.isHittable { return settled(el) }
             if i < 5 { app.swipeUp() } else { app.swipeDown() }
         }
-        return el.exists && el.isHittable
+        return el.exists && el.isHittable && settled(el)
+    }
+
+    /// A swipe leaves the form coasting: a button can be "hittable" while it
+    /// still moves, and a tap on a coasting scroll view only stops it (the
+    /// 'Make owner' step failed once at its next line, then passed on rerun).
+    /// Wait until the element's own frame has stopped, read twice in a row.
+    private func settled(_ el: XCUIElement) -> Bool {
+        var last = el.frame
+        var still = 0
+        let end = Date().addingTimeInterval(5)
+        while Date() < end {
+            Thread.sleep(forTimeInterval: 0.15)
+            let now = el.frame
+            still = now == last ? still + 1 : 0
+            last = now
+            if still >= 2 { return true }
+        }
+        return el.isHittable
     }
 
     /// A line of text somewhere on the (lazy) form, within `timeout` seconds.

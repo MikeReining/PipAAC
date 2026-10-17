@@ -110,6 +110,8 @@ nonisolated struct FRLookState: Decodable, Sendable {
     let wordsOnly: Bool
 }
 
+nonisolated struct FROwed: Decodable, Sendable { let owed: Bool }
+
 nonisolated struct FRTarget: Decodable, Sendable, Equatable {
     let kind: String   // cell | strip | button
     let id: String
@@ -238,7 +240,21 @@ final class FirstRunFlow: ObservableObject {
         }
         if p.needsSetup && !UITestHooks.skipFirstRun && phase == .none {
             Task { await begin(name: p.name) }
+        } else if !p.needsSetup && !UITestHooks.skipFirstRun && phase == .none {
+            Task { await resumeTourIfOwed(p) }
         }
+    }
+
+    /// board.js boot: an app closed mid-tour shows the demo again. The
+    /// decision is the web's own `tourIsOwed(me, flag)` (through the core):
+    /// past setup and the saved `tourDone === false`. A person from before
+    /// the flag (nil) or one who finished or skipped (true) is not owed one.
+    private func resumeTourIfOwed(_ p: PersonRecord) async {
+        var me: [String: Any] = ["needsSetup": p.needsSetup]
+        if let d = p.tourDone { me["tourDone"] = d }
+        guard let r: FROwed = try? await call("tourOwed", ["me": me, "flag": false]),
+              r.owed, phase == .none, model?.activeId == p.id else { return }
+        await startTour()
     }
 
     func begin(name: String) async {
@@ -398,7 +414,9 @@ final class FirstRunFlow: ObservableObject {
 
     /// onramp-ui.js finish(): needsSetup is cleared, then the demo starts.
     private func finishSetup() async {
-        patch(["needsSetup": false])
+        // tourDone:false = the demo is owed; tourEnd flips it, so an app
+        // closed mid-tour shows the tour again at the next launch.
+        patch(["needsSetup": false, "tourDone": false])
         await startTour()
     }
 

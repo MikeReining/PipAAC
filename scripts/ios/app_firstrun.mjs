@@ -37,6 +37,7 @@ import {
   appBar, appClear, appMeta, appRepaint, appSession, appSettings, appSetSetting,
 } from "./app.mjs";
 import { artForWord } from "./app_say.mjs";
+import { tourIsOwed } from "../../public/board/tour-ui.js";
 
 const PIP = () => globalThis.PIPCORE;
 const one = (d, sql, p = []) => d.prepare(sql).all(...p)[0];
@@ -362,6 +363,14 @@ export function tourEnd(appId) {
   // The web's real Clear button (#clear.click()): closes the logged
   // sentence 'cleared' if one is open, empties the bar.
   return { ...appClear(appId), active: false, settings: appSettings(appId) };
+}
+
+/** board.js boot: does this person owe the demo? The web's own
+ *  `tourIsOwed(me, flag)` - the welcome's one-shot flag, or the saved
+ *  `tourDone === false` (set when the welcome ends, flipped by end()),
+ *  so an app closed mid-tour resumes it. `me` is the registry row. */
+export function tourOwed(_appId, { me = {}, flag = false } = {}) {
+  return { owed: tourIsOwed(me, !!flag) };
 }
 
 export const tourActive = (appId) => ({ active: tours.has(appId) });

@@ -128,8 +128,8 @@ final class FeelingUITests: XCTestCase {
         XCTAssertTrue(app.buttons["editDone"].waitForExistence(timeout: 10))
         wait("the faces leave") { !app.buttons["face:sad"].exists }
         shot(app, "gaps-edit-mode-no-faces")
-        // (The iPad's Edit mode draws no strip at all - EditHeader replaces
-        // it - so the slot itself is proven in the core: app_say.test.mjs.)
+        // The strip stays in Edit mode (as on the web) and the faces' slot
+        // goes back to words (also proven in the core: app_say.test.mjs).
         XCTAssertGreaterThan(withFaces, 0, "continuations of 'want' were showing beside the faces")
         app.buttons["editDone"].tap()
         XCTAssertTrue(app.buttons["face:sad"].waitForExistence(timeout: 10), "leaving Edit mode brings them back")

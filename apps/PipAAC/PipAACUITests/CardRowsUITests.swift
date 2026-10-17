@@ -132,7 +132,7 @@ final class CardRowsUITests: XCTestCase {
         let app = launch()
         XCTAssertTrue(app.buttons["tile:sns_0013"].waitForExistence(timeout: 30))
         enterEdit(app)
-        app.buttons["editGroups"].tap()
+        app.buttons["anchor:groups"].tap()
         let door = app.buttons["group:grp_snack"]
         XCTAssertTrue(door.waitForExistence(timeout: 10))
         door.tap()

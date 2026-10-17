@@ -269,6 +269,25 @@ final class SpotlightE2ETests: XCTestCase {
 
         let seen = try wait("peer-saw-model.json", 90)
         XCTAssertTrue(seen.contains("\"t\":\"sense:sns_0013\""), seen)
+
+        // Web 60b062dc: on an EMPTY bar a supporter can still model ✨ and ❓
+        // (the press never reads this bar); ⏪ ⏩ stay off. The press is read
+        // off the relay by the peer, never off this screen.
+        let fix = app.buttons["Fix it"], ask = app.buttons["Ask it as a question"]
+        XCTAssertTrue(fix.waitForExistence(timeout: 10))
+        XCTAssertTrue(poll(10) { fix.isEnabled && ask.isEnabled }, "✨ and ❓ are enabled on an empty bar while modeling")
+        XCTAssertFalse(app.buttons["Say it in the past"].isEnabled, "⏪ has no words to turn")
+        XCTAssertFalse(app.buttons["Say it in the future"].isEnabled, "⏩ has no words to turn")
+        XCTAssertTrue(app.staticTexts["Tap a word to start."].exists, "the bar is still empty")
+        shot(app, "p2-supporter-controls-enabled")
+        fix.tap()
+        ask.tap()
+        XCTAssertTrue(app.staticTexts["Tap a word to start."].exists, "a modeling press never fills the bar")
+        put("ui-pressed-controls")
+        let ctl = try wait("peer-saw-controls.json", 90)
+        XCTAssertTrue(ctl.contains("\"t\":\"control:fix\""), ctl)
+        XCTAssertTrue(ctl.contains("\"t\":\"control:question\""), ctl)
+
         _ = try wait("peer-child-taps.json", 90)
         let count = app.staticTexts["model:count"]
         XCTAssertTrue(poll(60) { count.exists && count.label.hasSuffix(" pressed 2 times") }, "the child's presses are counted")

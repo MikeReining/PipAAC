@@ -85,6 +85,8 @@ nonisolated struct EditPaint: Decodable, Sendable {
     var groupPage: GroupPageModel?
     var card: WordCardModel?
     var toast: EditToastModel?
+    /// Only entering / leaving Edit repaints the strip (faces slot).
+    var strip: StripModel?
 }
 
 nonisolated struct CardSpeech: Decodable, Sendable {
@@ -128,6 +130,7 @@ extension AppModel {
         countsOn = p.countsOn ?? false
         board = p.board
         if let gp = p.groupPage { groupPage = gp }
+        if let st = p.strip { setStrip(st) }
         if p.card != nil {
             // A rename answered after the sheet was dismissed must not
             // reopen it.
@@ -323,8 +326,9 @@ nonisolated enum UITestHooks {
 
 // MARK: - Views
 
-/// The strip row's place while editing (body.editing: the corner is
-/// "Done editing"; the groups way in stays one tap away).
+/// The top bar's place while editing (body.editing: the corner is
+/// "Done editing" and the counts button appears). The strip stays below it,
+/// as on the web - its Groups anchor is the way in, so there is no second one here.
 struct EditHeader: View {
     @EnvironmentObject var model: AppModel
 
@@ -409,22 +413,6 @@ struct EditHeader: View {
             headerButton("All words", system: "books.vertical", id: "editLibrary", compact: compact) {
                 model.showLibrary = true
             }
-            Button {
-                if model.surface == .board { model.openGroups() } else { model.backToBoard() }
-            } label: {
-                Label(model.surface == .board ? "Groups" : "Board",
-                      systemImage: model.surface == .board ? "folder.fill" : "square.grid.3x3.fill")
-                    .font(.system(size: 16, weight: .semibold)).lineLimit(1).fixedSize()
-                    .padding(.horizontal, 14)
-                    .frame(height: 48)
-                    .background(Color.white)
-                    .foregroundStyle(PipStyle.ink)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(RoundedRectangle(cornerRadius: 10)
-                        .stroke(PipStyle.ink.opacity(0.35), lineWidth: 1.5))
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("editGroups")
         }
     }
 }

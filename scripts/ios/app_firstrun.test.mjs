@@ -351,3 +351,14 @@ test("first run shows on a fresh install only: the web's registry rows", async (
   assert.equal(added.needsSetup, false);
   assert.ok((await listUsers(store)).length >= 2);
 });
+
+/* ---------------- the tour resumes after a close (web 96bd16d9) ---------------- */
+
+test("tourOwed is the web tourIsOwed: flag, or past setup with tourDone === false", () => {
+  const owed = (me, flag) => fr.tourOwed("x", { me, flag }).owed;
+  assert.equal(owed({ needsSetup: false, tourDone: false }, false), true, "closed mid-tour");
+  assert.equal(owed({ needsSetup: false, tourDone: true }, false), false, "finished or skipped");
+  assert.equal(owed({ needsSetup: false }, false), false, "a person from before the flag");
+  assert.equal(owed({ needsSetup: true, tourDone: false }, false), false, "still in the welcome");
+  assert.equal(owed({ needsSetup: true }, true), true, "the one-shot flag");
+});

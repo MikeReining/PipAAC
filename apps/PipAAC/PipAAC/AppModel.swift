@@ -193,9 +193,14 @@ final class AppModel: ObservableObject {
     }
     @Published var board: BoardModel? { didSet { refreshSpot() } }
     /// The attention layer (Spotlight.swift, 044 D5): the core's render model.
-    @Published var spot = SpotModel()
+    @Published var spot = SpotModel() {
+        didSet { if spot.modeling != oldValue.modeling { refreshTx() } }
+    }
+    /// TxButtons.swift: which of ✨ ❓ ⏪ ⏩ are off (the core's txButtonDisabled).
+    @Published var txOff = TxDisabled()
+    var txSeq = 0
     @Published private(set) var strip: StripModel?
-    @Published private(set) var bar: [ChipModel] = []
+    @Published private(set) var bar: [ChipModel] = [] { didSet { refreshTx() } }
     @Published private(set) var groupIndex: GroupIndexModel?
     @Published var groupPage: GroupPageModel? { didSet { refreshSpot() } }
     @Published private(set) var bootError: String?
@@ -249,7 +254,7 @@ final class AppModel: ObservableObject {
     /// First run (FirstRun.swift, 044 E7): the demo's current card while it
     /// runs (nil otherwise), and the open person's "Words only" look.
     let firstRun = FirstRunFlow()
-    @Published var tourCard: TourCard?
+    @Published var tourCard: TourCard? { didSet { refreshTx() } }
     @Published var wordsOnly = false
     /// The device's people (PeopleRegistry), last opened first, and who is open.
     @Published private(set) var people: [PersonRecord] = []
@@ -313,6 +318,7 @@ final class AppModel: ObservableObject {
     func boot() {
         speaker.configure()
         firstRun.model = self
+        host?.onNetChange { [weak self] in Task { @MainActor in self?.refreshTx() } }
         speaker.onPlay = { [weak self] k in self?.lastClip = k }
         wireMediaStates()
         startMediaTestHook()
@@ -512,6 +518,9 @@ final class AppModel: ObservableObject {
         if let msg = st.toast { showToast(msg) }
     }
 
+    /// Edit mode repaints the strip alone (EditMode.applyEdit).
+    func setStrip(_ st: StripModel) { strip = st }
+
     func showToast(_ msg: String) {
         toastSeq += 1
         let seq = toastSeq
@@ -526,6 +535,9 @@ final class AppModel: ObservableObject {
     func tap(kind: String, id: String, text: String, source: String = "grid") {
         // A supporter's spotlight: the tap lights the word on the child's board.
         if spot.modeling { modelTap(kind: kind, id: id, text: text); return }
+        // Editing hides the sentence bar here (the Edit header takes its row),
+        // so a Smart-bar card must not add words to a bar nobody can see.
+        if editing && source != "grid" { return }
         // The first-run demo owns the board: its own tap, never logged (SN-11).
         if tourCard != nil { firstRun.tourTap(kind: kind, id: id); return }
         mutate("appTap", [["kind": kind, "id": id, "text": text, "source": source]])

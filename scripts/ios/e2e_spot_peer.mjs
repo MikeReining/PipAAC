@@ -90,6 +90,7 @@ async function spotlightFlow(db, dumpTo) {
  *   host -> peer-session.json {startedAt}   session started on a supporter's device
  *   ui -> ui-modeled (it tapped sns_0013)
  *   host: the model frame ARRIVED (relay), opened here -> peer-saw-model.json
+ *   ui -> ui-pressed-controls (✨ then ❓ on the empty bar); host -> peer-saw-controls.json
  *   host -> peer-child-taps.json            two child presses + one from another session
  *   ui -> ui-saw-count, ui-done */
 async function spotlightSupporterFlow(db, dumpTo) {
@@ -107,6 +108,16 @@ async function spotlightSupporterFlow(db, dumpTo) {
   const models = liveInbox.filter((m) => m.k === "model");
   put("peer-saw-model.json", JSON.stringify(models));
   log("supporter's tap via the relay", JSON.stringify(models));
+  // Web 60b062dc: the supporter models ✨ and ❓ on an empty bar - the frames ARRIVE.
+  await waitFor("ui-pressed-controls", 240000);
+  const t1 = Date.now();
+  const ctl = () => liveInbox.filter((m) => m.k === "model" && String(m.t).startsWith("control:"));
+  while (!(ctl().some((m) => m.t === "control:fix") && ctl().some((m) => m.t === "control:question"))) {
+    if (Date.now() - t1 > 60000) throw new Error("the supporter's fix/question model frames never arrived");
+    await sleep(100);
+  }
+  put("peer-saw-controls.json", JSON.stringify(ctl()));
+  log("supporter's control presses via the relay", JSON.stringify(ctl()));
   // The child's board (this peer) presses: two in this session, one from another.
   for (let i = 0; !has("ui-saw-count"); i++) {
     if (i === 0) {
