@@ -54,8 +54,9 @@ final class AccessibilityUITests: XCTestCase {
                        excluding skip: XCUIAccessibilityAuditType = [.dynamicType, .textClipped]) throws {
         let types = XCUIAccessibilityAuditType.all.subtracting(skip)
         var found: [String] = []
-        let tileWords = Set(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'tile:'"))
-            .allElementsBoundByIndex.map { $0.label })
+        let boardTiles = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'tile:'"))
+            .allElementsBoundByIndex.map { ($0.label, $0.frame) }
+        let tileWords = Set(boardTiles.map(\.0))
         try app.performAccessibilityAudit(for: types) { issue in
             let el = issue.element
             // Deliberately not failed (listed in the report too):
@@ -96,10 +97,13 @@ final class AccessibilityUITests: XCTestCase {
                ["Main board", "Hide this word"].contains(el?.label ?? "") { return true }
             //  - contrast on the board's own words behind the welcome/look scrim
             //    (dimmed by the scrim; the welcome is isModal, so VoiceOver cannot
-            //    reach them - asserted in testAuditWelcomeAndTour).
+            //    reach them - asserted in testAuditWelcomeAndTour). Which words the
+            //    audit samples varies with the tile size; a word counts as the
+            //    board's when it sits inside a board tile with that label.
             if issue.auditType == .contrast, screen == "welcome" || screen == "look",
                el?.elementType == .staticText, el?.identifier == "",
-               ["my", "where", "she", "who", "Tap a word to start."].contains(el?.label ?? "") { return true }
+               let el, el.label == "Tap a word to start."
+                || boardTiles.contains(where: { $0.0 == el.label && $0.1.insetBy(dx: -1, dy: -1).contains(el.frame) }) { return true }
             //  - contrast at AXXXL on the Spotlight page: the screenshot is
             //    legible; the audit samples page text blurred under the translucent
             //    navigation bar.

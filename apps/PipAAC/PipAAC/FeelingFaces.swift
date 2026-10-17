@@ -92,18 +92,21 @@ struct FaceButton: View {
 /// The strip's last slot: the three faces.
 struct FaceCard: View {
     let faces: FacesModel
+    /// The landscape side column stacks the three faces.
+    var upright = false
     @EnvironmentObject var model: AppModel
 
     var body: some View {
-        HStack(spacing: 2) {
+        let stack = upright ? AnyLayout(VStackLayout(spacing: 2)) : AnyLayout(HStackLayout(spacing: 2))
+        stack {
             ForEach(faces.feelings, id: \.self) { f in
                 FaceButton(feeling: f, lit: faces.lit == f, dark: model.speakingFace == f,
                            label: "Say it \(f)") { model.sayFeeling(f) }
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: upright ? .infinity : nil)
             }
         }
-        .padding(.horizontal, 4)
-        .frame(maxHeight: .infinity)
+        .padding(upright ? .vertical : .horizontal, 4)
+        .frame(maxWidth: upright ? .infinity : nil, maxHeight: .infinity)
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .overlay(RoundedRectangle(cornerRadius: 10).stroke(PipStyle.muted.opacity(0.4), lineWidth: 2))

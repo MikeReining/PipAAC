@@ -203,6 +203,9 @@ renders on the child's device.
   rows, not columns: on a 10th-gen iPad this took grid60 symbols 59→78px
   and grid90 34→47px. Portrait keeps the row. The board editor has no
   strip.
+- **iOS** mirrors both: `TileView.swift` `TileMetrics` (label size =
+  `shared/tile_label.mjs`) and the `BoardView.swift` side column. Proof:
+  `TileMetricsTests`, `BoardLayoutUITests`.
 - Empty slots are ghost cards: dashed `#d8d4c8`, nothing else.
 - Anchors: fill `#e8e3d6`, border `#5b5348`.
 

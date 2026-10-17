@@ -3,8 +3,10 @@
 //  PipAAC
 //
 //  The tile primitives (Design_System § Tiles, § Strip): a word tile is
-//  a role-tinted label strip over art on white; a strip card is the
-//  same tile sideways — art square at left, label on the role fill.
+//  a role-tinted label strip (one line of the board font) over art on
+//  white; a strip card is the same tile sideways — art square at left,
+//  label on the role fill. In the landscape side column the cards stand
+//  upright as ordinary word tiles.
 //  Colors are the web's --rb/--rf role pairs, verbatim.
 //
 
@@ -65,6 +67,55 @@ enum PipStyle {
     static let muted = Color(red: 0.357, green: 0.325, blue: 0.282)
 }
 
+/// shared/tile_label.mjs + grid.js fitLabels: a tile's label size comes from
+/// the tile, and the label strip is one line of it — the art keeps everything
+/// else. Same-size tiles get the same size and strip, so a board's art aligns.
+public enum TileMetrics {
+    /// The strip is this many label sizes tall (tile_label.mjs LABEL_LINE).
+    public static let labelLine: CGFloat = 1.6
+
+    /// The board font for a tile's inner size (tile_label.mjs tileLabelPx).
+    /// A tall tile's art is bound by its width, so the label may grow into
+    /// height the art could never use. The 11 pt floor keeps a 90-cell iPad
+    /// board legible; tiny previews scale below it.
+    public static func labelSize(_ tile: CGSize) -> CGFloat {
+        let w = tile.width, h = tile.height
+        let fit = max(min(h * 0.16, w * 0.2), min((h - w) / labelLine, w * 0.26)).rounded()
+        return min(28, max(fit, min(11, (h * 0.22).rounded())))
+    }
+    /// The label strip: one line of the board font.
+    public static func stripHeight(_ px: CGFloat) -> CGFloat { (px * labelLine).rounded(.up) }
+
+    /// Only a label that does not fit shrinks (×0.86 steps, floor 8 pt) —
+    /// wrapping to a second line once the smaller size lets two lines fit
+    /// the same strip. A single word never breaks mid-word.
+    public static func fittedSize(_ label: String, px: CGFloat, width: CGFloat, height: CGFloat) -> CGFloat {
+        guard width > 0, height > 0, !label.isEmpty else { return px }
+        func fits(_ size: CGFloat) -> Bool {
+            let font = UIFont.systemFont(ofSize: size, weight: .semibold)
+            let attrs: [NSAttributedString.Key: Any] = [.font: font]
+            let widest = label.split(separator: " ")
+                .map { (String($0) as NSString).size(withAttributes: attrs).width }.max() ?? 0
+            let box = (label as NSString).boundingRect(
+                with: CGSize(width: width, height: .greatestFiniteMagnitude),
+                options: [.usesLineFragmentOrigin], attributes: attrs, context: nil)
+            return widest <= width && ceil(box.height) <= height
+        }
+        var size = px
+        var guardSteps = 18
+        while guardSteps > 0, size > 8, !fits(size) {
+            size = max(8, (size * 0.86).rounded(.down))
+            guardSteps -= 1
+        }
+        return size
+    }
+
+    /// Landscape side column (base.css --side-w): clamp(96, 10.5 %, 150).
+    public static func sideWidth(_ boardWidth: CGFloat) -> CGFloat {
+        min(150, max(96, (boardWidth * 0.105).rounded()))
+    }
+}
+
 /// grid.js wordTile: label strip on top (role fill), art on white.
 struct WordTile: View {
     let label: String
@@ -91,28 +142,39 @@ struct WordTile: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(PipStyle.fill(role))
             } else {
-                VStack(spacing: 0) {
-                    Text(label)
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(PipStyle.inkText)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.55)
-                        .padding(.horizontal, 4)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 34)
-                        .background(PipStyle.fill(role))
-                    ZStack {
-                        Color.white
-                        if let ui = PipAssets.image(art) {
-                            Image(uiImage: ui)
-                                .resizable()
-                                .scaledToFit()
-                                .padding(4)
-                                .accessibilityHidden(true)
+                GeometryReader { geo in
+                    // Inside the border (the 2 pt stroke is half inside).
+                    let px = TileMetrics.labelSize(CGSize(width: geo.size.width - 2,
+                                                          height: geo.size.height - 2))
+                    let stripH = TileMetrics.stripHeight(px)
+                    let pad = geo.size.width * 0.04     // base.css .tlabel padding 0 4%
+                    let size = TileMetrics.fittedSize(label, px: px,
+                                                      width: geo.size.width - 2 * pad, height: stripH)
+                    VStack(spacing: 0) {
+                        Text(label)
+                            .font(.system(size: size, weight: .semibold))
+                            .foregroundStyle(PipStyle.inkText)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.8)
+                            .padding(.horizontal, pad)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: stripH)
+                            .background(PipStyle.fill(role))
+                        ZStack {
+                            Color.white
+                            if let ui = PipAssets.image(art) {
+                                // base.css .tart: padding 2px 3% 3%.
+                                Image(uiImage: ui)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .padding(.top, 2)
+                                    .padding([.horizontal, .bottom], geo.size.width * 0.03)
+                                    .accessibilityHidden(true)
+                            }
                         }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
         }

@@ -251,14 +251,19 @@ struct SpotChip: View {
 /// child pressed this session. Nothing to press is ever under it.
 struct ModelBar: View {
     let spot: SpotModel
+    /// The landscape side column: the line stands centred over its count.
+    var upright = false
     var body: some View {
-        HStack(spacing: 14) {
+        let stack = upright ? AnyLayout(VStackLayout(spacing: 10)) : AnyLayout(HStackLayout(spacing: 14))
+        stack {
             TipText(text: spot.line ?? "")
                 .accessibilityLabel(PipSpoken.words(spot.line ?? ""))
                 .font(.system(size: 15))
                 .foregroundStyle(Color.white)
-                .lineLimit(3)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .multilineTextAlignment(upright ? .center : .leading)
+                .lineLimit(upright ? 12 : 3)
+                .minimumScaleFactor(upright ? 0.7 : 1)
+                .frame(maxWidth: .infinity, alignment: upright ? .center : .leading)
                 .accessibilityIdentifier("model:line")
             if !spot.count.isEmpty {
                 Text(spot.count)
@@ -267,8 +272,8 @@ struct ModelBar: View {
                     .accessibilityIdentifier("model:count")
             }
         }
-        .padding(.horizontal, 14).padding(.vertical, 8)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .padding(.horizontal, upright ? 8 : 14).padding(.vertical, 8)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: upright ? .center : .leading)
         .background(SpotStyle.inkText)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .accessibilityElement(children: .combine)

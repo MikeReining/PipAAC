@@ -5,6 +5,8 @@
 //  The board screen — sentence bar, prediction strip (Groups/Keyboard
 //  anchors), and the coordinate-map grid, plus the group index and
 //  group pages as board surfaces (027: a board mode, not a modal).
+//  Landscape stands the strip down the right side (base.css
+//  @media orientation: landscape): rows are what a wide screen lacks.
 //
 
 import SwiftUI
@@ -15,14 +17,26 @@ struct BoardView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        VStack(spacing: 8) {
-            if model.editing {
-                EditHeader()           // EditMode.swift — Done, Groups/Board
-            } else {
-                topBar
-                stripRow
+        GeometryReader { geo in
+            // Wider than tall, outside the board editor: the strip becomes
+            // the side column and the grid keeps every row of height.
+            let side = !model.editing && geo.size.width > geo.size.height
+            VStack(spacing: 8) {
+                if model.editing {
+                    EditHeader()           // EditMode.swift — Done, Groups/Board
+                } else {
+                    topBar
+                    if !side { stripRow }
+                }
+                if side {
+                    HStack(spacing: 8) {
+                        gridArea
+                        stripColumn.frame(width: TileMetrics.sideWidth(geo.size.width))
+                    }
+                } else {
+                    gridArea
+                }
             }
-            gridArea
         }
         .padding(.horizontal, 10)
         .padding(.bottom, 8)
@@ -241,27 +255,75 @@ struct BoardView: View {
                     FaceCard(faces: faces).frame(maxWidth: .infinity)
                 }
             }
-            AnchorTile(icon: "folder.fill", label: "Groups", glow: model.spot.groups) {
-                switch model.surface {
-                case .board: model.openGroups()
-                case .group: model.openGroups()
-                case .index: model.backToBoard()
-                case .boot, .picker: break
-                }
-            }
-            .tourQuiet(model.tourCard)
-            AnchorTile(icon: "keyboard",
-                       label: model.kb == nil ? "Keyboard" : "Board") {
-                model.toggleKeyboard()
-            }
-            .accessibilityIdentifier("anchor:keyboard")
-            .tourQuiet(model.tourCard)
+            groupsAnchor()
+            keyboardAnchor()
         }
         .frame(height: 76)
     }
 
+    /// The landscape strip: `cols` equal rows (the board's columns, as the
+    /// row strip's slots are). Top to bottom is the row's left to right —
+    /// the tray takes the rows the anchors leave, one row per anchor at
+    /// the bottom; cards stand upright as ordinary word tiles.
+    private var stripColumn: some View {
+        GeometryReader { geo in
+            let gap: CGFloat = 6
+            let n = max(3, model.board?.cols ?? 10)
+            let anchors = 2
+            let rowH = (geo.size.height - gap * CGFloat(n - 1)) / CGFloat(n)
+            let trayH = rowH * CGFloat(n - anchors) + gap * CGFloat(n - anchors - 1)
+            VStack(spacing: gap) {
+                VStack(spacing: gap) {
+                    let cap = model.strip?.cap ?? 4
+                    let cards = model.strip?.cards ?? []
+                    if model.spot.modeling {
+                        ModelBar(spot: model.spot, upright: true)
+                    } else {
+                        let wordSlots = cap - (model.facesShown ? 1 : 0)
+                        ForEach(0..<wordSlots, id: \.self) { i in
+                            if i < cards.count {
+                                stripButton(cards[i], upright: true)
+                            } else {
+                                EmptyCell().frame(maxWidth: .infinity)
+                            }
+                        }
+                        .frame(maxHeight: .infinity)
+                        if model.facesShown, let faces = model.strip?.faces {
+                            FaceCard(faces: faces, upright: true).frame(maxHeight: .infinity)
+                        }
+                    }
+                }
+                .frame(height: trayH)
+                groupsAnchor(width: nil).frame(height: rowH)
+                keyboardAnchor(width: nil).frame(height: rowH)
+            }
+        }
+    }
+
+    private func groupsAnchor(width: CGFloat? = 92) -> some View {
+        AnchorTile(icon: "folder.fill", label: "Groups", glow: model.spot.groups, width: width) {
+            switch model.surface {
+            case .board: model.openGroups()
+            case .group: model.openGroups()
+            case .index: model.backToBoard()
+            case .boot, .picker: break
+            }
+        }
+        .accessibilityIdentifier("anchor:groups")
+        .tourQuiet(model.tourCard)
+    }
+
+    private func keyboardAnchor(width: CGFloat? = 92) -> some View {
+        AnchorTile(icon: "keyboard",
+                   label: model.kb == nil ? "Keyboard" : "Board", width: width) {
+            model.toggleKeyboard()
+        }
+        .accessibilityIdentifier("anchor:keyboard")
+        .tourQuiet(model.tourCard)
+    }
+
     @ViewBuilder
-    private func stripButton(_ card: CardModel) -> some View {
+    private func stripButton(_ card: CardModel, upright: Bool = false) -> some View {
         switch card.kind {
         case "more":
             ChromeTile(label: card.label ?? "more ›") { model.familyMore() }
@@ -276,8 +338,13 @@ struct BoardView: View {
                               source: model.strip?.mode == "complete" ? "keyboard" : "strip")
                 }
             } label: {
-                StripCard(label: card.label ?? "",
-                          role: card.role, art: card.art ?? card.photoKey)
+                if upright {
+                    WordTile(label: card.label ?? "",
+                             role: card.role, art: card.art ?? card.photoKey)
+                } else {
+                    StripCard(label: card.label ?? "",
+                              role: card.role, art: card.art ?? card.photoKey)
+                }
             }
             .buttonStyle(.plain)
             .accessibilityLabel(card.label ?? "")
@@ -383,7 +450,8 @@ struct BoardView: View {
                 outlined ? "likely next" : nil,
             ].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", "))
         case "groups":
-            AnchorTile(icon: "folder.fill", label: "Groups", glow: model.spot.groups) { model.openGroups() }
+            // A map-declared anchor (grid90) fills its slot like any cell.
+            AnchorTile(icon: "folder.fill", label: "Groups", glow: model.spot.groups, width: nil) { model.openGroups() }
         case "family":
             ChromeTile(label: cell?.glyph ?? cell?.label ?? "?") {
                 if let f = cell?.familyId { model.openFamily(f) }
@@ -504,6 +572,8 @@ struct AnchorTile: View {
     var dimmed = false
     /// Spotlight (D5): a target sits inside a group - the Groups button glows.
     var glow = false
+    /// The row strip's anchors are a fixed width; the side column's fill it.
+    var width: CGFloat? = 92
     var action: () -> Void
     var body: some View {
         Button(action: action) {
@@ -522,7 +592,7 @@ struct AnchorTile: View {
         .buttonStyle(.plain)
         .disabled(dimmed)
         .spotMark(glow ? SpotMark(glow: true) : nil, dim: 1)
-        .frame(width: 92)
+        .frame(width: width)
         .accessibilityLabel(label)
         .accessibilityValue(glow ? "glowing" : "")
     }
