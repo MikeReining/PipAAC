@@ -37,6 +37,14 @@ export const SCRIPT = {
   question: "Do you want an apple?",
 };
 
+/** Does this boot owe the person the demo? The welcome's one-shot flag,
+ *  or the saved `tourDone === false` (set when the welcome ends, flipped
+ *  by end()) so an app closed mid-tour resumes it. Only an explicit false
+ *  counts; a person who never had the flag, or is still in the welcome,
+ *  is not owed one. */
+export const tourIsOwed = (me, flag) =>
+  !!flag || (!me.needsSetup && me.tourDone === false);
+
 export function mountTour({ board, saveUser }) {
   let step = -1;
   let ring = null;

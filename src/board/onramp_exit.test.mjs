@@ -25,7 +25,7 @@ const finishBody = () => {
 
 test("finish() persists the user, then leaves the document — never reveals the board in place", () => {
   const body = finishBody();
-  const save = body.indexOf("saveUser({ needsSetup: false })");
+  const save = body.indexOf("saveUser({ needsSetup: false, tourDone: false })");
   const flush = body.indexOf("await flushDb");
   const flag = body.indexOf('sessionStorage.setItem("pip_tour"');
   const nav = body.indexOf("location.replace(");

@@ -1,12 +1,12 @@
 {
-  "buildId": "1.1.35-e813627edfdb",
-  "version": "1.1.35",
-  "payloadHash": "e813627edfdb",
+  "buildId": "1.1.36-85ab7ac43254",
+  "version": "1.1.36",
+  "payloadHash": "85ab7ac43254",
   "files": [
     {
       "path": "/board.js",
-      "bytes": 69040,
-      "sha256": "e286f6f060cd551c3b920c3311f852b4e1e5c73eee83ea7d1f4eca2a1037b1ad"
+      "bytes": 69220,
+      "sha256": "ef165bf4f9445a3fd15fbec98c5a8e0c704928f0097f996ff18616def659bea6"
     },
     {
       "path": "/board/add-flow.css",
@@ -180,8 +180,8 @@
     },
     {
       "path": "/board/onramp-ui.js",
-      "bytes": 5529,
-      "sha256": "3a500194f5448291051449c44e84ee5f93a055a94ced735b6c1501b0c5758a49"
+      "bytes": 5680,
+      "sha256": "13d3dde278afe1a3ef91d7ff16192c4c43f3d7f574dbc5d348430b5919766781"
     },
     {
       "path": "/board/people-ui.js",
@@ -310,8 +310,8 @@
     },
     {
       "path": "/board/tour-ui.js",
-      "bytes": 7972,
-      "sha256": "0434ca475a0b4914cfdbff589590f6626501ac15479ae51ce55323b4ab25fe58"
+      "bytes": 8387,
+      "sha256": "b7b1c0376aa4095ff8b59fa9f4fab3019fd3c50213b8dbadfa94ab4225a91e07"
     },
     {
       "path": "/board/unlock.js",

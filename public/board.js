@@ -73,7 +73,7 @@ import { mountPeople, pickPerson, takeReopen } from "./board/people-ui.js";
 import { mountGroupShows } from "./board/group-shows.js";
 import { installViewportPin } from "./board/viewport.js";
 import { mountOnramp } from "./board/onramp-ui.js";
-import { mountTour } from "./board/tour-ui.js";
+import { mountTour, tourIsOwed } from "./board/tour-ui.js";
 import { initVersionUI, showVersion } from "./board/version.js";
 import { mountVoice } from "./board/voice-ui.js";
 import { mountLifetime, mountTrialClock } from "./board/lifetime-ui.js";
@@ -1483,8 +1483,10 @@ initVersionUI({
 });
 // 034: the welcome's Continue navigates away (a fresh document is the only
 // proven fix for the iPad keyboard-pan residue); the flag resumes the tour
-// on that boot. Consume before starting so a mid-tour refresh can't replay.
-if (sessionStorage.getItem("pip_tour")) {
+// on that boot. The flag is one-shot; the saved `tourDone === false` is what
+// survives closing the app mid-tour (tour-ui end() sets it true). Only an
+// explicit false counts: people from before the flag never see the tour.
+if (tourIsOwed(me, !!sessionStorage.getItem("pip_tour"))) {
   sessionStorage.removeItem("pip_tour");
   tourUi.start();
 } else if (me.needsSetup) onramp.start();

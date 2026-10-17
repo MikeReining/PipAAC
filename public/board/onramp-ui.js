@@ -128,7 +128,9 @@ export function mountOnramp({ me, saveUser, setLook, flushDb, tileFor, say = () 
     // normal — the only proven-good path is a fresh document (034).
     // flushDb: the adult look choice sits in sqlite's 300 ms debounce.
     document.activeElement?.blur?.();
-    await saveUser({ needsSetup: false });
+    // tourDone:false = the demo is owed; tour-ui end() flips it, so an app
+    // closed mid-tour shows the tour again at next boot.
+    await saveUser({ needsSetup: false, tourDone: false });
     await flushDb?.();
     sessionStorage.setItem("pip_tour", "1");
     location.replace(location.pathname);
