@@ -21,6 +21,7 @@ import {
   handlePick, handlePictureImage, handlePicturesAdmin, handleReject,
 } from "./pictures.js";
 import { licenseFor } from "./license.mjs";
+import { handleNestRedeem } from "./nest.mjs";
 import { handleAppStoreRedeem, handleAppStoreNotification } from "./appstore.mjs";
 import { UsageLedger } from "./usage_ledger.mjs";
 
@@ -536,6 +537,8 @@ export default {
     if (path === "/api/v1/appstore/notifications" && request.method === "POST") {
       return handleAppStoreNotification(request, env);
     }
+    // The Nest grant (nest.mjs): Pip Lifetime free while SLP Nest knows the code.
+    if (path === "/api/v1/nest/redeem" && request.method === "POST") return handleNestRedeem(request, env);
     // Code redeem is bearer — the code is the authority, like the QR
     // card. The dir marks it spent, then the relay grants; a failed
     // grant releases the code so a family never loses it to an outage.

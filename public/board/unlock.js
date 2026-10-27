@@ -12,6 +12,7 @@
  * stripped at once so a token doesn't linger in the address bar.
  */
 import { kv } from "../shared/platform.mjs";
+import { nestCode } from "../shared/nest.mjs";
 const LOOPBACK = ["localhost", "127.0.0.1", "[::1]"];
 
 /** ?unlicensed (localhost only) — the 040 trial preview: stops the
@@ -128,5 +129,27 @@ export function orderFromUrl({ me, ensureUser, redeemLicense, claimPurchasedLice
       await new Promise((r) => setTimeout(r, 1500));
     }
     toast(`Payment received — your code is in the email too; paste it in Your account if it doesn't land.`);
+  })();
+}
+
+/** The Nest grant (founder 2026-10-27): a device that arrived on an SLP
+ *  Nest link (?nest=, nest.mjs) gets Pip Lifetime free for the person
+ *  open here, while the Nest knows the student code. The worker asks the
+ *  Nest and grants on the relay (src/worker/nest.mjs), which asks again
+ *  daily; the device then picks its license copy up like a redeemed code.
+ *  Once per code on this device; an unknown code changes nothing, and
+ *  offline or a Nest outage tries again next launch. */
+export function nestFromDevice({ me, ensureUser, claimPurchasedLicense }) {
+  const code = nestCode(kv);
+  if (!code || kv.getItem("pip-nest-granted") === code) return;
+  (async () => {
+    const res = await fetch("/api/v1/nest/redeem", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ user_id: me.id, code }),
+    }).catch(() => null);
+    if (!res?.ok) return;
+    await ensureUser({ quiet: true }).catch(() => {});
+    if (await claimPurchasedLicense().catch(() => null)) kv.setItem("pip-nest-granted", code);
   })();
 }

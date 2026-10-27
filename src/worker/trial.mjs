@@ -100,13 +100,14 @@ async function relayPaymentIssue(env, uid) {
 }
 
 /** The one predicate (040 § 5.1): a valid presented license wins unless
- *  the relay has it revoked (043 K — refund/dispute); a presented-but-bad
+ *  the relay has it revoked (043 K — refund/dispute; or a Nest grant whose
+ *  code the Nest forgot, nest_ended); a presented-but-bad
  *  one is forged — callers answer bad_license; nothing presented → the
  *  trial decides. */
 export async function licenseHolds(env, uid, presented) {
   if (!(await checkLicense(env.PIP_LICENSE_SECRET, uid, presented))) return false;
   const issue = await relayPaymentIssue(env, uid);
-  return !(issue === "refunded" || issue === "dispute");
+  return !(issue === "refunded" || issue === "dispute" || issue === "nest_ended");
 }
 
 /** Pictures (030 § 6.1, Pricing § 4.2 "5 drawings" on Free; founder

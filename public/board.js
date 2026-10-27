@@ -61,7 +61,7 @@ import { mountAddFlow } from "./board/add-flow.js";
 import { mountLibrary } from "./board/library-ui.js";
 import { mountWordCard } from "./board/word-card.js";
 import { mountDevices } from "./board/devices-ui.js";
-import { checkoutFromUrl, orderFromUrl, purchasedFromUrl, unlicensedFromUrl, unlicensedPreview, unlockFromUrl } from "./board/unlock.js";
+import { checkoutFromUrl, nestFromDevice, orderFromUrl, purchasedFromUrl, unlicensedFromUrl, unlicensedPreview, unlockFromUrl } from "./board/unlock.js";
 import { mountPlacePicker } from "./board/place-ui.js";
 import { mountSetup } from "./board/setup-ui.js";
 import { mountRecovery } from "./board/recovery-ui.js";
@@ -1194,8 +1194,10 @@ const devicesUi = mountDevices({
 unlicensedFromUrl({ me });
 unlockFromUrl({ me, activateLicense: devicesUi.activateLicense, toast });
 // ?purchased — back from Stripe Checkout; the webhook grants lifetime
-// and the device picks its license copy up from the relay.
+// and the device picks its license copy up from the relay. A Nest link's
+// student code grants it free while SLP Nest knows the code.
 purchasedFromUrl({ me, claimPurchasedLicense: devicesUi.claimPurchasedLicense, toast });
+nestFromDevice({ me, ensureUser: devicesUi.ensureUser, claimPurchasedLicense: devicesUi.claimPurchasedLicense });
 // ?buy — the "Send an unlock link" URL: a hosted $49 code checkout,
 // no account, nothing personal in the link (040 § 8).
 checkoutFromUrl({ toast });

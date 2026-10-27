@@ -242,7 +242,9 @@ export function mountDevices({
         await store.put(issueKey, issue);
         toast(issue === "failed"
           ? "Your payment didn't finish — Pip isn't unlocked yet."
-          : "Your payment was refunded — Pip Lifetime is off for this user.");
+          : issue === "nest_ended"
+            ? "Your SLP's link has ended — Pip Lifetime is off for this user."
+            : "Your payment was refunded — Pip Lifetime is off for this user.");
       }
     }
     const local = await store.get(key);

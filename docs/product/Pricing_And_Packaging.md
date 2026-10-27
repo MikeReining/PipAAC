@@ -261,6 +261,18 @@ caseload product for school SLPs (SLP Nest repo, Vision § 1 and § 6).
   license (§ 4.5).
 - **Why it fits § 1.** The grant is one-time, like the license itself, so a
   lapsed seat cannot turn the extras into rent.
+- **Amended 2026-10-27** (founder, final, relayed by the SLP Nest session):
+  every student an SLP adds gets Pip Lifetime free and families never pay;
+  the grant lasts **while the Nest still knows the student code**, which
+  replaces "kept for good" above. Billing is not built and every seat is in
+  early access, so the Nest knowing the code is the whole check. **BUILT:**
+  the app redeems the device's Nest code at `POST /api/v1/nest/redeem`
+  (`src/worker/nest.mjs` `handleNestRedeem`): the worker asks the Nest and
+  grants on the relay with source `nest`; the relay asks again at most daily
+  (`nestRecheck`, called from `relay.js` fetch); an outage keeps it, a
+  forgotten code ends it as `nest_ended`. A paid Lifetime is never ended by
+  a Nest code. One grant per code is not enforced yet. Proof:
+  `src/worker/nest_grant.test.mjs`.
 - **Leak guard.** Only the Nest mints these grants, one per student code,
   bound to one child's device. A seat over 100 active students asks why and
   is reviewed by a person (SLP Nest repo, Vision § 6).

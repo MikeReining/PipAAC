@@ -1,12 +1,12 @@
 {
-  "buildId": "1.1.43-e73fd8eb3424",
-  "version": "1.1.43",
-  "payloadHash": "e73fd8eb3424",
+  "buildId": "1.1.44-c3f44ff2bbbe",
+  "version": "1.1.44",
+  "payloadHash": "c3f44ff2bbbe",
   "files": [
     {
       "path": "/board.js",
-      "bytes": 69316,
-      "sha256": "e765deaa52ad807f42e992fb2bcf578ad4425a7cbd9e25c55653cf60711a45a1"
+      "bytes": 69522,
+      "sha256": "fb8e68a5ac4577dabebead1a9a6e1cb28c78fe2505bf8cf0d305f6d12b0ebaa7"
     },
     {
       "path": "/board/add-flow.css",
@@ -55,8 +55,8 @@
     },
     {
       "path": "/board/devices-ui.js",
-      "bytes": 47299,
-      "sha256": "d416cebcfc3c46ade767ef0f031c414d30e7110b1430f7a85d18e5882bd0b626"
+      "bytes": 47417,
+      "sha256": "273e84d83daf03ccb861f2f46cd6dce043f94ad7bbddc58ba2474666ecb5000e"
     },
     {
       "path": "/board/edit-shared.js",
@@ -315,8 +315,8 @@
     },
     {
       "path": "/board/unlock.js",
-      "bytes": 5789,
-      "sha256": "26f72139495b1b860830f2e938f59134437927e4e3344c50794f634d6a1b0385"
+      "bytes": 6913,
+      "sha256": "c88734e1f3d8bf747aba9879b8df94e1ce6f5f31bbc4944c1f716412fceea659"
     },
     {
       "path": "/board/version.js",

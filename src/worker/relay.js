@@ -16,6 +16,7 @@
  * the worker graph without cloudflare:workers.
  */
 import { checkLicense, licenseFor } from "./license.mjs";
+import { nestRecheck } from "./nest.mjs";
 import { indexProof, proofIndexKey } from "./restore.js";
 import { recoveryId, replaceRecovery, requestRotation, revokeDevice, revokeSupporter, rotateKeys } from "./rotation.mjs";
 
@@ -241,6 +242,7 @@ export class UserRelay {
     const url = new URL(request.url);
     const route = url.pathname.split("/").slice(3).join("/"); // after /users/:id
     const method = request.method;
+    await nestRecheck(this); // a Nest grant ends when the Nest forgets its code
 
     // The user creator registers itself at creation — the one call an
     // unknown device may make. It also leaves the recovery proof: the
@@ -419,6 +421,9 @@ export class UserRelay {
       }
       let parsed = null;
       try { parsed = JSON.parse(td.decode(bodyBytes)); } catch { /* fall */ }
+      // A paid Lifetime stays the record under a Nest grant (nest.mjs).
+      if (parsed?.source === "nest" && this.entitlement() === "lifetime"
+        && this.metaGet("license_source") !== "nest") return json({ ok: true, entitlement: "lifetime" });
       this.metaSet("entitlement", "lifetime");
       this.metaSet("license_source", String(parsed?.source ?? "unknown"));
       this.metaSet("license_ref", String(parsed?.ref ?? ""));
@@ -471,9 +476,8 @@ export class UserRelay {
       let txns = {};
       try { txns = JSON.parse(this.metaGet("apple_txns") ?? "{}"); } catch { /* fresh */ }
       const grantNow = () => {
-        // Already lifetime from Stripe or a code: that grant stays the
-        // record, so an App Store refund cannot take it back.
-        if (this.entitlement() !== "lifetime") {
+        // Already lifetime from Stripe or a code: that grant stays the record, so an App Store refund cannot take it back (a Nest one gives way).
+        if (this.entitlement() !== "lifetime" || this.metaGet("license_source") === "nest") {
           this.metaSet("license_source", "appstore");
           this.metaSet("license_ref", otid);
           this.metaSet("licensed_at", Date.now());
@@ -686,7 +690,7 @@ export class UserRelay {
       // 043 K — a revoked account (refund/dispute) rejects re-presented
       // license tokens; only a fresh worker-side grant reopens it.
       const issue = this.metaGet("payment_issue");
-      if (issue === "refunded" || issue === "dispute") {
+      if (issue === "refunded" || issue === "dispute" || issue === "nest_ended") {
         return bad("payment_revoked", 403);
       }
       if (!(await checkLicense(this.env.PIP_LICENSE_SECRET, userId, license))) {

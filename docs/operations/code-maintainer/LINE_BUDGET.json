@@ -7,7 +7,7 @@
     "scripts/ios/app_say.test.mjs": 784,
     "public/audio-review-elevenlabs-tiles.html": 802,
     "public/audio-review-elevenlabs-v4-lab.html": 758,
-    "public/board.js": 1650,
+    "public/board.js": 1652,
     "public/board/add-flow.js": 743,
     "public/board/base.css": 848,
     "public/board/devices-ui.js": 1077,
@@ -36,12 +36,12 @@
     "src/board/sync_reliability.test.mjs": 912,
     "src/worker/accounts.heavy.test.mjs": 517,
     "src/worker/accounts.js": 643,
-    "src/worker/index.js": 602,
+    "src/worker/index.js": 605,
     "src/worker/pictures.test.mjs": 803,
     "src/worker/pictures_draw.js": 510,
     "src/worker/pictures_draw.test.mjs": 694,
     "src/worker/relay.heavy.test.mjs": 605,
-    "src/worker/relay.js": 979,
+    "src/worker/relay.js": 983,
     "src/worker/tile.js": 779,
     "scripts/ios/app.mjs": 951
   }
