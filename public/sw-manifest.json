@@ -1,7 +1,7 @@
 {
-  "buildId": "1.1.42-7bd5749e0c25",
-  "version": "1.1.42",
-  "payloadHash": "7bd5749e0c25",
+  "buildId": "1.1.43-e73fd8eb3424",
+  "version": "1.1.43",
+  "payloadHash": "e73fd8eb3424",
   "files": [
     {
       "path": "/board.js",
@@ -920,8 +920,8 @@
     },
     {
       "path": "/shared/nest.mjs",
-      "bytes": 3886,
-      "sha256": "44c6303e8798bb7ed5b5ffa986515f07d1d40783bdd916196c2a916308ab259f"
+      "bytes": 4145,
+      "sha256": "14a9aad1a4420b7552454317dd07d045244dd198bfe1b756aa6f5be547ebda96"
     },
     {
       "path": "/shared/normalize.mjs",

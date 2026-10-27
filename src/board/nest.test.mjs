@@ -16,7 +16,7 @@ import { saveSpotList, setListGoal } from "../../public/shared/spotlight.mjs";
 import { setDeviceId } from "../../public/shared/ops.mjs";
 import {
   captureNest, nestCode, nestTargets, nestTargetKey,
-  emitNest, isGoalWord, goalWordEvent, maybeEmitGoalWord,
+  emitNest, isGoalWord, goalWordEvent, maybeEmitGoalWord, nestOriginFor,
 } from "../../public/shared/nest.mjs";
 
 // Cross-repo on purpose: the contract is proven, not restated.
@@ -121,4 +121,11 @@ test("the event shape validates and offline reports false", async () => {
   assert.equal(await emitNest(e, { fetchImpl: nestFetch(env) }), true);
   assert.equal(env.events.length, 1);
   assert.equal(await emitNest(e, { fetchImpl: () => { throw new Error("offline"); } }), false);
+});
+
+test("production sends to app.slpnest.com, never localhost; only this Mac uses the dev Nest", () => {
+  assert.equal(nestOriginFor("app.pipaac.org"), "https://app.slpnest.com");
+  assert.equal(nestOriginFor("pippaac.emailmike.workers.dev"), "https://app.slpnest.com");
+  assert.equal(nestOriginFor(undefined), "https://app.slpnest.com");
+  for (const h of ["localhost", "127.0.0.1", "[::1]"]) assert.equal(nestOriginFor(h), "http://localhost:8795");
 });

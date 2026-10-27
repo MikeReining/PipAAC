@@ -9,9 +9,16 @@
  * the real Nest handler.
  */
 
-// Dev default; the Nest has no production origin yet. One line at ship —
-// listed in SLPNest docs/product/SSOT.md when it lands.
-export const NEST_ORIGIN = "http://localhost:8795";
+export const NEST_PROD_ORIGIN = "https://app.slpnest.com";
+const NEST_DEV_ORIGIN = "http://localhost:8795";
+const LOOPBACK = ["localhost", "127.0.0.1", "[::1]"];
+
+/** The Nest's production origin everywhere but this Mac, where its dev server runs. */
+export function nestOriginFor(hostname) {
+  return LOOPBACK.includes(hostname) ? NEST_DEV_ORIGIN : NEST_PROD_ORIGIN;
+}
+
+export const NEST_ORIGIN = nestOriginFor(globalThis.location?.hostname);
 
 const LS_CODE = "pipaac.nestCode";
 const LS_TARGETS = "pipaac.nestTargets";
